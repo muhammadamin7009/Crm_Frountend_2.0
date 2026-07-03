@@ -1,0 +1,312 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #8f1d20;
+  --color-secondary: #f8fafc;
+  --color-dark: #0f172a;
+}
+
+:root {
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color: #0f172a;
+  background: #f5f7fb;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #f5f6f8;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #cbd5e1;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.app-shell {
+  height: 100vh;
+  overflow: hidden;
+  background: #f5f6f8;
+}
+
+.glass-card {
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(18px);
+}
+
+.crm-card {
+  border: 1px solid #e6edf7 !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.06) !important;
+}
+
+.crm-soft-card {
+  border: 1px solid #e6edf7 !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.05) !important;
+}
+
+.MuiPaper-root {
+  border-radius: 8px !important;
+}
+
+.MuiButton-root {
+  border-radius: 8px !important;
+  text-transform: none !important;
+  font-weight: 800 !important;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root,
+.MuiSelect-root,
+.MuiOutlinedInput-root {
+  border-radius: 8px !important;
+  background: #ffffff;
+}
+
+.MuiTableHead-root .MuiTableCell-root {
+  border-bottom: 1px solid #e2e8f0 !important;
+  background: #f8fafc;
+  color: #64748b !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.01em;
+}
+
+.MuiTableBody-root .MuiTableRow-root:hover {
+  background: #f8fbff;
+}
+
+.MuiTableCell-root {
+  border-bottom-color: #edf2f7 !important;
+}
+
+.MuiChip-root {
+  border-radius: 999px !important;
+  font-weight: 800 !important;
+}
+
+@keyframes softFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Premium CRM polish for every internal page */
+.top-search-card {
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(18px);
+}
+
+.top-search-input:focus-within {
+  border-color: rgba(143, 29, 32, 0.45);
+  box-shadow: 0 10px 24px rgba(143, 29, 32, 0.1);
+}
+
+.crm-page {
+  position: relative;
+  gap: 0;
+}
+
+.crm-page > .MuiBox-root:first-child,
+.crm-page > div:first-child {
+  border: 1px solid #e6edf7;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.05);
+  padding: 18px;
+}
+
+.crm-page > .MuiBox-root:first-child .MuiTypography-h5,
+.crm-page > div:first-child .MuiTypography-h5 {
+  color: #0f172a;
+  letter-spacing: 0;
+}
+
+.crm-page .MuiPaper-root {
+  border: 1px solid #e6edf7 !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.055) !important;
+}
+
+.crm-page .MuiPaper-root .MuiPaper-root {
+  background: #ffffff !important;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.045) !important;
+}
+
+.crm-page .MuiButton-contained {
+  background: #8f1d20 !important;
+  box-shadow: 0 8px 20px rgba(143, 29, 32, 0.2) !important;
+}
+
+.crm-page .MuiButton-outlined {
+  border-color: #dbe7f5 !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+.crm-page .MuiButton-text {
+  color: #475569 !important;
+}
+
+.crm-page .MuiTextField-root .MuiOutlinedInput-root,
+.crm-page .MuiOutlinedInput-root {
+  border-radius: 8px !important;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(226, 232, 240, 0.2);
+}
+
+.crm-page .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(143, 29, 32, 0.6) !important;
+  border-width: 1px !important;
+}
+
+.crm-page .MuiTableContainer-root,
+.crm-page .MuiTable-root {
+  background: transparent;
+}
+
+.crm-page .MuiTableHead-root .MuiTableCell-root {
+  background: #f8fbff !important;
+  color: #64748b !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+}
+
+.crm-page .MuiTableBody-root .MuiTableRow-root {
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.crm-page .MuiTableBody-root .MuiTableRow-root:hover {
+  background: #f8fbff !important;
+}
+
+.crm-page .MuiAvatar-root {
+  border: 3px solid #fff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+}
+
+.crm-page .MuiChip-root {
+  border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.MuiDialog-paper {
+  border: 1px solid #e6edf7 !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.18) !important;
+}
+
+.MuiDialogTitle-root {
+  padding-top: 24px !important;
+  color: #0f172a;
+}
+
+.MuiDialogActions-root {
+  padding: 16px 24px 24px !important;
+}
+
+/* Auth pages */
+.auth-page {
+  overflow: auto;
+  background: #f4f5f7;
+}
+
+.auth-shell {
+  border: 1px solid rgba(226, 232, 240, 0.95) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: 0 30px 90px rgba(15, 23, 42, 0.14) !important;
+  backdrop-filter: blur(18px);
+}
+
+.auth-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, #111827 0%, #171717 62%, #3f1113 100%);
+}
+
+.auth-hero::after {
+  position: absolute;
+  right: -80px;
+  bottom: -80px;
+  width: 260px;
+  height: 260px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  content: "";
+}
+
+.auth-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.auth-form-panel {
+  background: #ffffff;
+}
+
+.auth-form-panel .MuiTextField-root .MuiOutlinedInput-root {
+  border-radius: 8px !important;
+  background: #fff;
+}
+
+.auth-form-panel .MuiButton-contained,
+.auth-info-card.accent a {
+  background: #8f1d20 !important;
+  box-shadow: 0 10px 24px rgba(143, 29, 32, 0.22) !important;
+}
+
+.auth-info-card {
+  border-color: #e6edf7 !important;
+  background: rgba(248, 251, 255, 0.9) !important;
+}
+
+.auth-info-card.accent {
+  border-color: rgba(143, 29, 32, 0.18) !important;
+  background: rgba(239, 246, 255, 0.95) !important;
+}
