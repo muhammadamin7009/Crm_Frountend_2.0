@@ -132,7 +132,7 @@ const Sidebar = () => {
   const companyName = user?.company_name || (isZerrShoes ? "ZERR CRM" : "Korxona CRM");
 
   return (
-    <aside className="hidden h-screen w-[272px] shrink-0 p-3 md:block">
+    <aside className="hidden h-screen w-68 shrink-0 p-3 md:block">
       <Box className="flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-slate-950 text-white shadow-[0_18px_48px_rgba(15,23,42,0.22)]">
         <Box className="px-5 pb-5 pt-5">
           <Box className="flex items-center gap-3">
@@ -181,7 +181,12 @@ const Sidebar = () => {
                 : hasActiveItem || hoveredGroup === group.label);
 
             return (
-              <Box key={group.label} className="mb-3" onMouseEnter={() => isCollapsible && setHoveredGroup(group.label)} onMouseLeave={() => isCollapsible && setHoveredGroup(null)}>
+              <Box
+                key={group.label}
+                className="mb-3"
+                onMouseEnter={() => isCollapsible && setHoveredGroup(group.label)}
+                onMouseLeave={() => isCollapsible && setHoveredGroup(null)}
+              >
                 <Box
                   component={isCollapsible ? "button" : "div"}
                   type={isCollapsible ? "button" : undefined}
@@ -196,11 +201,19 @@ const Sidebar = () => {
                   sx={{
                     cursor: isCollapsible ? "pointer" : "default",
                     transition: "background-color 180ms ease, color 180ms ease",
-                    "&:hover": isCollapsible ? { backgroundColor: "rgba(255,255,255,.05)" } : undefined,
+                    "&:hover": isCollapsible
+                      ? { backgroundColor: "rgba(255,255,255,.05)" }
+                      : undefined,
                   }}
                 >
-                  <Typography variant="caption" className="font-black uppercase text-slate-500">{group.label}</Typography>
-                  {isCollapsible && <Typography aria-hidden="true" className="text-slate-600" sx={{ fontSize: 16 }}>{isOpen ? "−" : "+"}</Typography>}
+                  <Typography variant="caption" className="font-black uppercase text-slate-500">
+                    {group.label}
+                  </Typography>
+                  {isCollapsible && (
+                    <Typography aria-hidden="true" className="text-slate-600" sx={{ fontSize: 16 }}>
+                      {isOpen ? "−" : "+"}
+                    </Typography>
+                  )}
                 </Box>
                 <List
                   disablePadding
@@ -211,8 +224,7 @@ const Sidebar = () => {
                     transform: isOpen ? "translateY(0)" : "translateY(-6px)",
                     overflow: "hidden",
                     pointerEvents: isOpen ? "auto" : "none",
-                    transition:
-                      "max-height 260ms ease, opacity 180ms ease, transform 220ms ease",
+                    transition: "max-height 500ms ease, opacity 180ms ease, transform 220ms ease",
                   }}
                 >
                   {visibleItems.map((item) => (
@@ -266,7 +278,9 @@ const Sidebar = () => {
                         },
                       }}
                     >
-                      <span className="menu-icon"><img src={item.icon} alt="" /></span>
+                      <span className="menu-icon">
+                        <img src={item.icon} alt="" />
+                      </span>
                       <ListItemText primary={item.label} />
                     </ListItemButton>
                   ))}
@@ -277,7 +291,7 @@ const Sidebar = () => {
         </Box>
 
         <Box className="px-4 pb-4">
-          <Box className="mb-3 rounded-lg border border-white/10 bg-white/[0.06] p-3">
+          <Box className="mb-3 rounded-lg border border-white/10 bg-white/0.06 p-3">
             <Box className="mb-3 flex items-center gap-3">
               <Avatar
                 src={getImageUrl(user?.user_image)}

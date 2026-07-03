@@ -21,6 +21,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+
 import { useAuth } from "../../Context/AuthContext";
 import CrmPagination from "../../Components/Common/CrmPagination";
 import { getUsers } from "../../api/getUsers";
@@ -70,6 +71,14 @@ const getLocalUser = () => {
   }
 };
 
+const getImageUrl = (path) => {
+  if (!path) return undefined;
+  if (path.startsWith("http")) return path;
+
+  const baseUrl = String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+  return `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
+};
+
 const formatMoney = (value) => {
   if (value === null || value === undefined || value === "") return "0 so'm";
   return `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
@@ -77,14 +86,214 @@ const formatMoney = (value) => {
 
 const formatDate = (value) => {
   if (!value) return "-";
-  return new Date(value).toLocaleDateString("uz-UZ");
+
+  return new Intl.DateTimeFormat("uz-UZ", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date(value));
 };
 
-const getImageUrl = (path) => {
-  if (!path) return undefined;
-  if (path.startsWith("http")) return path;
-  const baseUrl = String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
-  return `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
+const getInitial = (value) =>
+  String(value || "I")
+    .trim()
+    .slice(0, 1)
+    .toUpperCase();
+
+const Card = ({ children, sx = {} }) => (
+  <Paper
+    elevation={0}
+    sx={{
+      borderRadius: "20px",
+      border: "1px solid rgba(148, 163, 184, 0.22)",
+      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
+      boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+      overflow: "hidden",
+      ...sx,
+    }}
+  >
+    {children}
+  </Paper>
+);
+
+const MiniStat = ({ label, value, tone = "default" }) => {
+  const tones = {
+    default: {
+      color: "#0f172a",
+      bg: "#ffffff",
+      border: "rgba(148, 163, 184, 0.24)",
+    },
+    blue: {
+      color: "#2563eb",
+      bg: "rgba(37, 99, 235, 0.08)",
+      border: "rgba(37, 99, 235, 0.18)",
+    },
+    green: {
+      color: "#15803d",
+      bg: "rgba(34, 197, 94, 0.1)",
+      border: "rgba(34, 197, 94, 0.22)",
+    },
+    red: {
+      color: "#8b0101",
+      bg: "rgba(139, 1, 1, 0.08)",
+      border: "rgba(139, 1, 1, 0.18)",
+    },
+    orange: {
+      color: "#92400e",
+      bg: "rgba(245, 158, 11, 0.12)",
+      border: "rgba(245, 158, 11, 0.24)",
+    },
+  };
+
+  const current = tones[tone] || tones.default;
+
+  return (
+    <Box
+      sx={{
+        minWidth: 130,
+        px: 2,
+        py: 1.35,
+        borderRadius: "16px",
+        background: current.bg,
+        border: `1px solid ${current.border}`,
+        boxShadow: "0 10px 26px rgba(15, 23, 42, 0.05)",
+      }}
+    >
+      <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+
+      <Typography
+        sx={{
+          mt: 0.35,
+          fontSize: 18,
+          fontWeight: 950,
+          color: current.color,
+          letterSpacing: "-0.04em",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {value}
+      </Typography>
+    </Box>
+  );
+};
+
+const PaymentTypeChip = ({ type }) => {
+  const styles = {
+    salary: {
+      color: "#15803d",
+      bg: "rgba(34, 197, 94, 0.12)",
+      border: "rgba(34, 197, 94, 0.24)",
+    },
+    bonus: {
+      color: "#2563eb",
+      bg: "rgba(37, 99, 235, 0.08)",
+      border: "rgba(37, 99, 235, 0.16)",
+    },
+    other: {
+      color: "#92400e",
+      bg: "rgba(245, 158, 11, 0.12)",
+      border: "rgba(245, 158, 11, 0.24)",
+    },
+  };
+
+  const current = styles[type] || styles.other;
+
+  return (
+    <Chip
+      size="small"
+      label={paymentTypeLabels[type] || type || "-"}
+      sx={{
+        height: 26,
+        px: 0.35,
+        fontSize: 12,
+        fontWeight: 900,
+        color: current.color,
+        background: current.bg,
+        border: `1px solid ${current.border}`,
+      }}
+    />
+  );
+};
+
+const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "sm" }) => (
+  <Dialog
+    open={open}
+    onClose={onClose}
+    fullWidth
+    maxWidth={maxWidth}
+    PaperProps={{
+      sx: {
+        borderRadius: "22px",
+        border: "1px solid rgba(148, 163, 184, 0.22)",
+        boxShadow: "0 30px 80px rgba(15, 23, 42, 0.22)",
+        overflow: "hidden",
+      },
+    }}
+  >
+    <DialogTitle
+      sx={{
+        px: 3,
+        py: 2.2,
+        fontSize: 22,
+        fontWeight: 950,
+        color: "#0f172a",
+        borderBottom: "1px solid rgba(148, 163, 184, 0.18)",
+        background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+      }}
+    >
+      {title}
+    </DialogTitle>
+
+    <DialogContent sx={{ px: 3, py: 2.5 }}>{children}</DialogContent>
+
+    {actions && (
+      <DialogActions
+        sx={{
+          px: 3,
+          py: 2,
+          borderTop: "1px solid rgba(148, 163, 184, 0.18)",
+          background: "rgba(248, 250, 252, 0.72)",
+        }}
+      >
+        {actions}
+      </DialogActions>
+    )}
+  </Dialog>
+);
+
+const BalanceBox = ({ label, value, tone = "default" }) => {
+  const colors = {
+    default: "#0f172a",
+    green: "#15803d",
+    red: "#8b0101",
+    blue: "#2563eb",
+    orange: "#92400e",
+  };
+
+  return (
+    <Box
+      sx={{
+        p: 1.5,
+        borderRadius: "15px",
+        background: "#fff",
+        border: "1px solid rgba(148, 163, 184, 0.2)",
+      }}
+    >
+      <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+
+      <Typography
+        sx={{
+          mt: 0.45,
+          fontSize: 15,
+          fontWeight: 950,
+          color: colors[tone] || colors.default,
+          letterSpacing: "-0.035em",
+        }}
+      >
+        {value}
+      </Typography>
+    </Box>
+  );
 };
 
 const WorkerPayments = () => {
@@ -100,7 +309,6 @@ const WorkerPayments = () => {
     remaining: 0,
   });
   const [pageInfo, setPageInfo] = useState({ total: 0, offset: 0, limit: 10 });
-  const [totals, setTotals] = useState({ total_paid: 0 });
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [summaryLoading, setSummaryLoading] = useState(false);
@@ -155,6 +363,7 @@ const WorkerPayments = () => {
         sort_by: "created_at",
         sort_order: "desc",
       });
+
       setWorkers((data.users || data.list || []).filter((user) => user.role === "worker"));
     } catch (error) {
       toast.error(error?.response?.data?.message || "Ishchilarni olishda xato.");
@@ -185,8 +394,8 @@ const WorkerPayments = () => {
 
       try {
         const { data } = await getWorkerPayments(buildParams(offset, limit));
+
         setPayments(data.worker_payments || []);
-        setTotals(data.totals || { total_paid: 0 });
         setPageInfo(data.pageInfo || { total: 0, offset, limit });
       } catch (error) {
         toast.error(error?.response?.data?.message || "To'lovlarni olishda xato.");
@@ -223,7 +432,7 @@ const WorkerPayments = () => {
     } finally {
       setSummaryLoading(false);
     }
-  }, [buildParams, filters.group_by, filters.worker_id, filters.date_from, filters.date_to]);
+  }, [filters.worker_id, filters.date_from, filters.date_to]);
 
   useEffect(() => {
     fetchWorkers();
@@ -234,8 +443,9 @@ const WorkerPayments = () => {
       fetchPayments(0, pageInfo.limit);
       fetchSummary();
     }, 250);
+
     return () => clearTimeout(timer);
-  }, [filters, pageInfo.limit]);
+  }, [filters, pageInfo.limit, fetchPayments, fetchSummary]);
 
   const handleFilterChange = (field) => (event) => {
     setFilters((previous) => ({ ...previous, [field]: event.target.value }));
@@ -247,6 +457,9 @@ const WorkerPayments = () => {
         total_earned: 0,
         total_paid: 0,
         remaining: 0,
+        total_advance: 0,
+        advance_deducted: 0,
+        remaining_advance: 0,
       });
       return;
     }
@@ -285,11 +498,7 @@ const WorkerPayments = () => {
       fetchSelectedWorkerBalance(value);
     }
 
-    if (field === "period_from") {
-      fetchSelectedWorkerBalance(form.worker_id);
-    }
-
-    if (field === "period_to") {
+    if (field === "period_from" || field === "period_to") {
       fetchSelectedWorkerBalance(form.worker_id);
     }
   };
@@ -304,8 +513,22 @@ const WorkerPayments = () => {
     fetchSummary();
   };
 
+  const resetFilters = () => {
+    setFilters({
+      q: "",
+      worker_id: "",
+      payment_type: "",
+      date_from: "",
+      date_to: "",
+      sort_by: "paid_at",
+      sort_order: "desc",
+      group_by: "worker",
+    });
+  };
+
   const openCreateModal = () => {
     setSelectedPayment(null);
+
     const nextForm = {
       ...emptyForm,
       period_from: filters.date_from || "",
@@ -315,11 +538,12 @@ const WorkerPayments = () => {
 
     setForm(nextForm);
     setModalOpen(true);
-    fetchSelectedWorkerBalance(nextForm.worker_id, nextForm.period_from, nextForm.period_to);
+    fetchSelectedWorkerBalance(nextForm.worker_id);
   };
 
   const openEditModal = (payment) => {
     setSelectedPayment(payment);
+
     const nextForm = {
       worker_id: payment.worker_id || "",
       amount: payment.amount ?? "",
@@ -333,7 +557,7 @@ const WorkerPayments = () => {
 
     setForm(nextForm);
     setModalOpen(true);
-    fetchSelectedWorkerBalance(nextForm.worker_id, nextForm.period_from, nextForm.period_to);
+    fetchSelectedWorkerBalance(nextForm.worker_id);
   };
 
   const closeModals = () => {
@@ -347,6 +571,9 @@ const WorkerPayments = () => {
       total_earned: 0,
       total_paid: 0,
       remaining: 0,
+      total_advance: 0,
+      advance_deducted: 0,
+      remaining_advance: 0,
     });
   };
 
@@ -355,24 +582,28 @@ const WorkerPayments = () => {
       toast.error("Ishchini tanlang.");
       return false;
     }
+
     if (!form.amount || Number(form.amount) <= 0) {
       if (Number(form.advance_deduction || 0) <= 0) {
         toast.error("Naqd summa yoki avans ushlanmasini kiriting.");
         return false;
       }
     }
+
     if (
       Number(form.advance_deduction || 0) > Number(selectedWorkerBalance.remaining_advance || 0)
     ) {
       toast.error("Avans ushlanmasi qolgan avansdan oshmasin.");
       return false;
     }
+
     if (paymentExceedsBalance) {
       toast.error(
         `Ogohlantirish: to'lov qolgan ${formatMoney(availableWorkerBalance)} ish haqidan oshmasin.`,
       );
       return false;
     }
+
     if (
       form.period_from &&
       form.period_to &&
@@ -381,12 +612,13 @@ const WorkerPayments = () => {
       toast.error("Davr boshlanishi tugash sanasidan katta bo'lmasin.");
       return false;
     }
+
     return true;
   };
 
   const buildPayload = () => ({
     worker_id: Number(form.worker_id),
-    amount: Number(form.amount),
+    amount: Number(form.amount || 0),
     advance_deduction: Number(form.advance_deduction || 0),
     payment_type: form.payment_type,
     paid_at: form.paid_at || undefined,
@@ -397,6 +629,7 @@ const WorkerPayments = () => {
 
   const handleSave = async () => {
     if (!validateForm()) return;
+
     setSaving(true);
 
     try {
@@ -419,6 +652,7 @@ const WorkerPayments = () => {
 
   const handleDelete = async () => {
     if (!selectedPayment) return;
+
     setDeleting(true);
 
     try {
@@ -435,10 +669,12 @@ const WorkerPayments = () => {
 
   const openWorkerPayment = (workerId) => {
     setSelectedPayment(null);
+
     const nextForm = { ...emptyForm, worker_id: workerId };
+
     setForm(nextForm);
     setModalOpen(true);
-    fetchSelectedWorkerBalance(workerId, "", "");
+    fetchSelectedWorkerBalance(workerId);
   };
 
   const handleSaveAdvance = async () => {
@@ -446,7 +682,9 @@ const WorkerPayments = () => {
       toast.error("Ishchi va avans summasini kiriting.");
       return;
     }
+
     setAdvanceSaving(true);
+
     try {
       await createWorkerAdvance({
         worker_id: Number(advanceForm.worker_id),
@@ -454,6 +692,7 @@ const WorkerPayments = () => {
         given_at: advanceForm.given_at,
         note: advanceForm.note.trim() || null,
       });
+
       toast.success("Avans berildi.");
       closeModals();
       refreshPage();
@@ -467,6 +706,7 @@ const WorkerPayments = () => {
   const openAdvancesHistory = async () => {
     setAdvancesOpen(true);
     setAdvancesLoading(true);
+
     try {
       const { data } = await getWorkerAdvances({
         worker_id: filters.worker_id || undefined,
@@ -475,6 +715,7 @@ const WorkerPayments = () => {
         sort_by: "given_at",
         sort_order: "desc",
       });
+
       setAdvances(data.worker_advances || []);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Avanslarni olishda xato.");
@@ -484,64 +725,112 @@ const WorkerPayments = () => {
   };
 
   return (
-    <Box className="crm-page flex h-full min-h-0 flex-col">
-      <Box className="mb-5 flex shrink-0 flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <Box>
-          <Typography variant="h5" fontWeight={800} className="text-slate-950">
-            Oyliklar
-          </Typography>
-          <Typography variant="body2" className="mt-1 text-slate-500">
-            Ishchilarga berilgan oylik, avans va balans nazorati
-          </Typography>
-        </Box>
+    <Box
+      sx={{
+        height: "100%",
+        minHeight: 0,
+        display: "flex",
+        flexDirection: "column",
+        pb: 2,
+      }}
+    >
+      <Card sx={{ mb: 1, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: { xs: "flex-start", xl: "center" },
+            justifyContent: "space-between",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Chip
+              label="ZERR CRM • oyliklar"
+              size="small"
+              sx={{
+                mb: 1,
+                height: 25,
+                fontSize: 12,
+                fontWeight: 950,
+                color: "#2563eb",
+                background: "rgba(37, 99, 235, 0.08)",
+                border: "1px solid rgba(37, 99, 235, 0.16)",
+              }}
+            />
 
-        <Box className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-          <Box className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-            <Typography variant="body2" className="text-slate-500">
-              Ishlab topgan
+            <Typography
+              sx={{
+                fontSize: { xs: 27, md: 33 },
+                fontWeight: 950,
+                color: "#0f172a",
+                letterSpacing: "-0.055em",
+                lineHeight: 1.05,
+              }}
+            >
+              Oyliklar
             </Typography>
-            <Typography variant="h6" fontWeight={800}>
-              {formatMoney(balance.total_earned)}
-            </Typography>
-          </Box>
-          <Box className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-            <Typography variant="body2" className="text-slate-500">
-              Berilgan
-            </Typography>
-            <Typography variant="h6" fontWeight={800}>
-              {formatMoney(balance.total_paid)}
-            </Typography>
-          </Box>
-          <Box className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-            <Typography variant="body2" className="text-slate-500">
-              Qolgan
-            </Typography>
-            <Typography variant="h6" fontWeight={800}>
-              {formatMoney(balance.remaining)}
+
+            <Typography
+              sx={{
+                mt: 0.7,
+                fontSize: 14,
+                fontWeight: 650,
+                color: "#64748b",
+              }}
+            >
+              Ishchilarga berilgan oylik, avans va balans nazorati.
             </Typography>
           </Box>
-          <Box className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-            <Typography variant="body2" className="text-slate-500">
-              To'lovlar
-            </Typography>
-            <Typography variant="h6" fontWeight={800}>
-              {pageInfo.total}
-            </Typography>
-          </Box>
-          <Box className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-            <Typography variant="body2" className="text-slate-500">
-              Olinmagan avans
-            </Typography>
-            <Typography variant="h6" fontWeight={800}>
-              {formatMoney(balance.remaining_advance)}
-            </Typography>
+
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "repeat(2, 1fr)",
+                sm: "repeat(3, auto)",
+                xl: "repeat(5, auto)",
+              },
+              gap: 1.2,
+              width: { xs: "100%", xl: "auto" },
+            }}
+          >
+            <MiniStat label="Ishlab topgan" value={formatMoney(balance.total_earned)} tone="blue" />
+            <MiniStat label="Berilgan" value={formatMoney(balance.total_paid)} tone="green" />
+            <MiniStat label="Qolgan" value={formatMoney(balance.remaining)} tone="red" />
+            <MiniStat label="To'lovlar" value={pageInfo.total} tone="default" />
+            <MiniStat
+              label="Qolgan avans"
+              value={formatMoney(balance.remaining_advance)}
+              tone="orange"
+            />
           </Box>
         </Box>
-      </Box>
+      </Card>
 
-      <Paper elevation={0} className="mb-4 shrink-0 rounded-2xl border border-slate-200 p-4">
-        <Box className="flex flex-col gap-1 xl:flex-row xl:items-center xl:justify-between">
-          <Box className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+      <Card sx={{ mb: 1, p: 2, flexShrink: 0 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: { xs: "stretch", xl: "center" },
+            justifyContent: "space-between",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+          }}
+        >
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, 1fr)",
+                lg: "repeat(4, 1fr)",
+                xl: "repeat(7, 1fr)",
+              },
+              gap: 1.2,
+              flex: 1,
+            }}
+          >
             <TextField
               size="small"
               label="Qidirish"
@@ -551,6 +840,7 @@ const WorkerPayments = () => {
                 if (event.key === "Enter") applyFilters();
               }}
             />
+
             <TextField
               select
               size="small"
@@ -565,6 +855,7 @@ const WorkerPayments = () => {
                 </MenuItem>
               ))}
             </TextField>
+
             <TextField
               select
               size="small"
@@ -579,30 +870,25 @@ const WorkerPayments = () => {
                 </MenuItem>
               ))}
             </TextField>
+
             <TextField
               size="small"
               type="date"
               label="Dan"
               value={filters.date_from}
               onChange={handleFilterChange("date_from")}
-              slotProps={{
-                inputLabel: {
-                  shrink: true,
-                },
-              }}
+              slotProps={{ inputLabel: { shrink: true } }}
             />
+
             <TextField
               size="small"
               type="date"
               label="Gacha"
               value={filters.date_to}
               onChange={handleFilterChange("date_to")}
-              slotProps={{
-                inputLabel: {
-                  shrink: true,
-                },
-              }}
+              slotProps={{ inputLabel: { shrink: true } }}
             />
+
             <TextField
               select
               size="small"
@@ -614,34 +900,45 @@ const WorkerPayments = () => {
               <MenuItem value="payment_type">To'lov turi</MenuItem>
               <MenuItem value="day">Kun</MenuItem>
             </TextField>
+
             <Button
               variant="outlined"
-              color="warning"
-              onClick={() =>
-                setFilters({
-                  q: "",
-                  worker_id: "",
-                  payment_type: "",
-                  date_from: "",
-                  date_to: "",
-                  sort_by: "paid_at",
-                  sort_order: "desc",
-                  group_by: "worker",
-                })
-              }
+              onClick={resetFilters}
+              sx={{
+                height: 42,
+                borderRadius: "13px",
+                textTransform: "none",
+                fontWeight: 900,
+                color: "#0f172a",
+                borderColor: "rgba(37, 99, 235, 0.22)",
+                background: "#fff",
+              }}
             >
               Tozalash
             </Button>
           </Box>
 
           {canManage && (
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
-              <Button sx={{ paddingX: "32px" }} variant="outlined" onClick={openAdvancesHistory}>
-                Avanslar
-              </Button>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.2}>
               <Button
                 variant="outlined"
-                sx={{ width: "150px" }}
+                onClick={openAdvancesHistory}
+                sx={{
+                  minWidth: 120,
+                  height: 42,
+                  borderRadius: "13px",
+                  textTransform: "none",
+                  fontWeight: 900,
+                  color: "#0f172a",
+                  borderColor: "rgba(37, 99, 235, 0.22)",
+                  background: "#fff",
+                }}
+              >
+                Avanslar
+              </Button>
+
+              <Button
+                variant="outlined"
                 onClick={() => {
                   setAdvanceForm({
                     ...emptyAdvanceForm,
@@ -649,140 +946,276 @@ const WorkerPayments = () => {
                   });
                   setAdvanceOpen(true);
                 }}
+                sx={{
+                  minWidth: 130,
+                  height: 42,
+                  borderRadius: "13px",
+                  textTransform: "none",
+                  fontWeight: 900,
+                  color: "#0f172a",
+                  borderColor: "rgba(37, 99, 235, 0.22)",
+                  background: "#fff",
+                }}
               >
                 Avans berish
               </Button>
+
               <Button
                 variant="contained"
                 onClick={openCreateModal}
-                sx={{ borderRadius: 2, minWidth: "180px" }}
+                sx={{
+                  minWidth: 135,
+                  height: 42,
+                  borderRadius: "13px",
+                  textTransform: "none",
+                  fontWeight: 950,
+                  background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                  boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
+                  "&:hover": {
+                    background: "linear-gradient(135deg, #7f0101, #991b1b)",
+                  },
+                }}
               >
                 Oylik berish
               </Button>
             </Stack>
           )}
         </Box>
-      </Paper>
+      </Card>
 
-      <Box className="mb-4 shrink-0 overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50 p-3">
+      <Card sx={{ mb: 1, p: 1.6, flexShrink: 0 }}>
         {summaryLoading ? (
-          <Box className="flex min-h-28 items-center justify-center">
+          <Box sx={{ minHeight: 92, display: "grid", placeItems: "center" }}>
             <CircularProgress size={24} />
           </Box>
         ) : workerDues.length ? (
-          <Box className="flex w-max gap-3">
+          <Box sx={{ display: "flex", gap: 1.4, overflowX: "auto", pb: 0.3 }}>
             {workerDues.map((item) => (
-              <Paper
+              <Box
                 key={item.worker_id}
-                elevation={0}
-                className="flex w-80 shrink-0 items-center gap-3 rounded-xl border border-slate-200 bg-white p-3"
+                sx={{
+                  width: 315,
+                  flexShrink: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.4,
+                  p: 1.4,
+                  borderRadius: "17px",
+                  background: "#fff",
+                  border: "1px solid rgba(148, 163, 184, 0.22)",
+                  boxShadow: "0 10px 24px rgba(15, 23, 42, 0.04)",
+                }}
               >
-                <Avatar src={getImageUrl(item.user_image)} sx={{ bgcolor: "#7F1D1D" }}>
-                  {item.first_name?.[0]?.toUpperCase() || "I"}
+                <Avatar
+                  src={getImageUrl(item.user_image)}
+                  sx={{
+                    width: 46,
+                    height: 46,
+                    bgcolor: "#8b0101",
+                    color: "#fff",
+                    fontWeight: 950,
+                  }}
+                >
+                  {getInitial(item.first_name)}
                 </Avatar>
-                <Box className="min-w-0 flex-1">
-                  <Typography className="truncate" fontWeight={700}>
+
+                <Box sx={{ minWidth: 0, flex: 1 }}>
+                  <Typography
+                    sx={{
+                      fontSize: 14,
+                      fontWeight: 900,
+                      color: "#0f172a",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
                     {item.first_name} {item.last_name}
                   </Typography>
-                  <Typography fontWeight={800} className="text-red-700">
+
+                  <Typography sx={{ mt: 0.2, fontSize: 15, fontWeight: 950, color: "#8b0101" }}>
                     {formatMoney(item.remaining)}
                   </Typography>
-                  <Typography variant="body2" className="text-slate-500">
+
+                  <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#64748b" }}>
                     Berilishi kerak
                   </Typography>
                 </Box>
+
                 <Button
                   size="small"
                   variant="outlined"
                   onClick={() => openWorkerPayment(item.worker_id)}
+                  sx={{
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    fontWeight: 900,
+                  }}
                 >
                   Berish
                 </Button>
-              </Paper>
+              </Box>
             ))}
           </Box>
         ) : (
-          <Box className="flex min-h-24 items-center justify-center">
-            <Typography variant="body2" className="text-slate-500">
+          <Box sx={{ minHeight: 92, display: "grid", placeItems: "center" }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 750, color: "#64748b" }}>
               Oyligi qolgan ishchilar yo'q.
             </Typography>
           </Box>
         )}
-      </Box>
+      </Card>
 
-      <Paper
-        elevation={0}
-        className="flex min-h-0 flex-1 flex-col rounded-2xl border border-slate-200 bg-white"
+      <Card
+        sx={{
+          minHeight: 0,
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
-        <Box className="min-h-0 flex-1 overflow-auto">
-          <Table sx={{ minWidth: 1080 }}>
+        <Box sx={{ minHeight: 0, flex: 1, overflow: "auto" }}>
+          <Table
+            sx={{
+              minWidth: canManage ? 1080 : 940,
+              "& th": {
+                py: 1.7,
+                fontSize: 12,
+                fontWeight: 950,
+                color: "#64748b",
+                textTransform: "uppercase",
+                letterSpacing: "0.03em",
+                background: "rgba(248, 250, 252, 0.95)",
+                borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
+              },
+              "& td": {
+                py: 1.55,
+                borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+              },
+              "& tbody tr:hover": {
+                background: "rgba(37, 99, 235, 0.035)",
+              },
+            }}
+          >
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 700 }}>Ishchi</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>To'lov turi</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Summa</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>To'lov sanasi</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Davr</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Izoh</TableCell>
-                {canManage && (
-                  <TableCell align="right" sx={{ fontWeight: 700 }}>
-                    Amallar
-                  </TableCell>
-                )}
+                <TableCell>Ishchi</TableCell>
+                <TableCell>To'lov turi</TableCell>
+                <TableCell>Summa</TableCell>
+                <TableCell>To'lov sanasi</TableCell>
+                <TableCell>Davr</TableCell>
+                <TableCell>Izoh</TableCell>
+                {canManage && <TableCell align="right">Amallar</TableCell>}
               </TableRow>
             </TableHead>
+
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={canManage ? 7 : 6} align="center">
-                    <CircularProgress size={28} />
+                  <TableCell colSpan={canManage ? 7 : 6} align="center" sx={{ py: 7 }}>
+                    <CircularProgress size={30} />
                   </TableCell>
                 </TableRow>
               ) : payments.length ? (
                 payments.map((payment) => (
                   <TableRow key={payment.id} hover>
                     <TableCell>
-                      <Box className="flex items-center gap-3">
-                        <Avatar sx={{ width: 40, height: 40, bgcolor: "#7F1D1D" }}>
-                          {payment.worker_name?.[0]?.toUpperCase() || "I"}
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.6 }}>
+                        <Avatar
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            bgcolor: "#8b0101",
+                            color: "#fff",
+                            fontWeight: 950,
+                            border: "3px solid #fff",
+                            boxShadow: "0 10px 24px rgba(139, 1, 1, 0.14)",
+                          }}
+                        >
+                          {getInitial(payment.worker_name)}
                         </Avatar>
-                        <Box>
-                          <Typography fontWeight={700}>{payment.worker_name}</Typography>
-                          <Typography variant="body2" className="text-slate-500">
+
+                        <Box sx={{ minWidth: 0 }}>
+                          <Typography
+                            sx={{
+                              fontSize: 14.5,
+                              fontWeight: 900,
+                              color: "#0f172a",
+                              lineHeight: 1.15,
+                            }}
+                          >
+                            {payment.worker_name || "-"}
+                          </Typography>
+
+                          <Typography
+                            sx={{
+                              mt: 0.35,
+                              fontSize: 12.5,
+                              fontWeight: 700,
+                              color: "#64748b",
+                            }}
+                          >
                             @{payment.worker_username || "worker"}
                           </Typography>
                         </Box>
                       </Box>
                     </TableCell>
+
                     <TableCell>
-                      <Chip
-                        size="small"
-                        label={paymentTypeLabels[payment.payment_type] || payment.payment_type}
-                      />
+                      <PaymentTypeChip type={payment.payment_type} />
                     </TableCell>
+
                     <TableCell>
-                      <Typography fontWeight={800}>{formatMoney(payment.amount)}</Typography>
+                      <Typography sx={{ fontSize: 14.5, fontWeight: 950, color: "#0f172a" }}>
+                        {formatMoney(payment.amount)}
+                      </Typography>
+
                       {Number(payment.advance_deduction || 0) > 0 && (
-                        <Typography variant="body2" className="text-slate-500">
+                        <Typography
+                          sx={{
+                            mt: 0.35,
+                            fontSize: 12.5,
+                            fontWeight: 700,
+                            color: "#64748b",
+                          }}
+                        >
                           Avansdan: {formatMoney(payment.advance_deduction)}
                         </Typography>
                       )}
                     </TableCell>
-                    <TableCell>{formatDate(payment.paid_at)}</TableCell>
-                    <TableCell>
+
+                    <TableCell sx={{ fontWeight: 800, color: "#334155" }}>
+                      {formatDate(payment.paid_at)}
+                    </TableCell>
+
+                    <TableCell sx={{ fontWeight: 750, color: "#334155" }}>
                       {formatDate(payment.period_from)} - {formatDate(payment.period_to)}
                     </TableCell>
-                    <TableCell>{payment.note || "-"}</TableCell>
+
+                    <TableCell sx={{ maxWidth: 220, color: "#64748b", fontWeight: 700 }}>
+                      {payment.note || "-"}
+                    </TableCell>
+
                     {canManage && (
                       <TableCell align="right">
-                        <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          sx={{ justifyContent: "flex-end", flexWrap: "wrap" }}
+                        >
                           <Button
                             size="small"
                             variant="outlined"
                             onClick={() => openEditModal(payment)}
+                            sx={{
+                              borderRadius: "10px",
+                              textTransform: "none",
+                              fontWeight: 900,
+                            }}
                           >
                             O'zgartirish
                           </Button>
+
                           <Button
                             size="small"
                             color="error"
@@ -790,6 +1223,11 @@ const WorkerPayments = () => {
                             onClick={() => {
                               setSelectedPayment(payment);
                               setDeleteOpen(true);
+                            }}
+                            sx={{
+                              borderRadius: "10px",
+                              textTransform: "none",
+                              fontWeight: 900,
                             }}
                           >
                             O'chirish
@@ -801,7 +1239,11 @@ const WorkerPayments = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={canManage ? 7 : 6} align="center">
+                  <TableCell
+                    colSpan={canManage ? 7 : 6}
+                    align="center"
+                    sx={{ py: 7, color: "#64748b", fontWeight: 850 }}
+                  >
                     To'lovlar topilmadi
                   </TableCell>
                 </TableRow>
@@ -810,336 +1252,471 @@ const WorkerPayments = () => {
           </Table>
         </Box>
 
-        <CrmPagination total={pageInfo.total} page={page} limit={pageInfo.limit} onPageChange={(nextPage) => fetchPayments(nextPage * pageInfo.limit, pageInfo.limit)} onLimitChange={(limit) => fetchPayments(0, limit)} />
-      </Paper>
+        <Box
+          sx={{
+            borderTop: "1px solid rgba(148, 163, 184, 0.18)",
+            background: "rgba(248, 250, 252, 0.65)",
+          }}
+        >
+          <CrmPagination
+            total={pageInfo.total}
+            page={page}
+            limit={pageInfo.limit}
+            onPageChange={(nextPage) => fetchPayments(nextPage * pageInfo.limit, pageInfo.limit)}
+            onLimitChange={(limit) => fetchPayments(0, limit)}
+          />
+        </Box>
+      </Card>
 
-      <Dialog open={modalOpen} onClose={closeModals} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 800 }}>
-          {selectedPayment ? "To'lovni tahrirlash" : "Oylik berish"}
-        </DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} className="pt-2">
+      <PremiumDialog
+        open={modalOpen}
+        onClose={closeModals}
+        title={selectedPayment ? "To'lovni tahrirlash" : "Oylik berish"}
+        maxWidth="md"
+        actions={
+          <>
+            <Button
+              onClick={closeModals}
+              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+            >
+              Bekor qilish
+            </Button>
+
+            <Button
+              variant="contained"
+              onClick={handleSave}
+              disabled={saving || paymentExceedsBalance}
+              sx={{
+                minWidth: 120,
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 900,
+                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                boxShadow: "0 12px 25px rgba(139, 1, 1, 0.2)",
+              }}
+            >
+              {saving ? "Saqlanmoqda..." : "Saqlash"}
+            </Button>
+          </>
+        }
+      >
+        <Stack spacing={2.1}>
+          <TextField
+            select
+            required
+            label="Ishchi"
+            value={form.worker_id}
+            onChange={handleFormChange("worker_id")}
+          >
+            {workers.map((worker) => (
+              <MenuItem key={worker.id} value={worker.id}>
+                {worker.first_name} {worker.last_name}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: "18px",
+              background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+              border: paymentExceedsBalance
+                ? "1px solid rgba(220, 38, 38, 0.35)"
+                : "1px solid rgba(148, 163, 184, 0.22)",
+            }}
+          >
+            <Box
+              sx={{
+                mb: 1.5,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 1.5,
+              }}
+            >
+              <Typography sx={{ fontSize: 16, fontWeight: 950, color: "#0f172a" }}>
+                Tanlangan ishchi balansi
+              </Typography>
+
+              {balanceLoading && <CircularProgress size={18} />}
+            </Box>
+
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" },
+                gap: 1.2,
+              }}
+            >
+              <BalanceBox
+                label="Oldingi qoldiq"
+                value={formatMoney(selectedWorkerBalance.previous_remaining)}
+                tone="blue"
+              />
+              <BalanceBox
+                label="Yangi ish haqi"
+                value={formatMoney(selectedWorkerBalance.new_earnings)}
+                tone="green"
+              />
+              <BalanceBox
+                label="Berilishi kerak"
+                value={formatMoney(selectedWorkerBalance.remaining)}
+                tone="red"
+              />
+              <BalanceBox
+                label="Qolgan avans"
+                value={formatMoney(selectedWorkerBalance.remaining_advance)}
+                tone="orange"
+              />
+            </Box>
+          </Box>
+
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+              gap: 1.6,
+            }}
+          >
+            <TextField
+              required
+              type="number"
+              label="Naqd beriladi"
+              value={form.amount}
+              onChange={handleFormChange("amount")}
+              error={paymentExceedsBalance}
+              helperText={
+                paymentExceedsBalance ? `Maksimum ${formatMoney(availableWorkerBalance)}` : " "
+              }
+              slotProps={{ htmlInput: { min: 0, step: 1000 } }}
+            />
+
+            <TextField
+              type="number"
+              label="Avansdan ushlash"
+              value={form.advance_deduction}
+              onChange={handleFormChange("advance_deduction")}
+              error={paymentExceedsBalance}
+              helperText={
+                paymentExceedsBalance
+                  ? "Jami summa qolgan ish haqidan oshdi"
+                  : `Maksimum: ${formatMoney(selectedWorkerBalance.remaining_advance)}`
+              }
+              slotProps={{ htmlInput: { min: 0, step: 1000 } }}
+            />
+
             <TextField
               select
-              required
-              label="Ishchi"
-              value={form.worker_id}
-              onChange={handleFormChange("worker_id")}
+              label="To'lov turi"
+              value={form.payment_type}
+              onChange={handleFormChange("payment_type")}
             >
-              {workers.map((worker) => (
-                <MenuItem key={worker.id} value={worker.id}>
-                  {worker.first_name} {worker.last_name}
+              {Object.entries(paymentTypeLabels).map(([value, label]) => (
+                <MenuItem key={value} value={value}>
+                  {label}
                 </MenuItem>
               ))}
             </TextField>
 
-            <Box className="auth-info-card rounded-2xl border p-4">
-              <Box className="mb-3 flex items-center justify-between gap-3">
-                <Typography fontWeight={800} className="text-slate-950">
-                  Tanlangan ishchi balansi
-                </Typography>
-                {balanceLoading && <CircularProgress size={18} />}
-              </Box>
-
-              <Box className="grid grid-cols-1 gap-3 sm:grid-cols-4">
-                <Box className="rounded-xl border border-slate-200 bg-white p-3">
-                  <Typography variant="body2" className="text-slate-500">
-                    Oldingi qoldiq
-                  </Typography>
-                  <Typography fontWeight={800}>
-                    {formatMoney(selectedWorkerBalance.previous_remaining)}
-                  </Typography>
-                </Box>
-                <Box className="rounded-xl border border-slate-200 bg-white p-3">
-                  <Typography variant="body2" className="text-slate-500">
-                    Yangi ish haqi
-                  </Typography>
-                  <Typography fontWeight={800}>
-                    {formatMoney(selectedWorkerBalance.new_earnings)}
-                  </Typography>
-                </Box>
-                <Box className="rounded-xl border border-slate-200 bg-white p-3">
-                  <Typography variant="body2" className="text-slate-500">
-                    Berilishi kerak
-                  </Typography>
-                  <Typography fontWeight={800} className="text-slate-950">
-                    {formatMoney(selectedWorkerBalance.remaining)}
-                  </Typography>
-                </Box>
-                <Box className="rounded-xl border border-slate-200 bg-white p-3">
-                  <Typography variant="body2" className="text-slate-500">
-                    Qolgan avans
-                  </Typography>
-                  <Typography fontWeight={800}>
-                    {formatMoney(selectedWorkerBalance.remaining_advance)}
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-
-            <Box className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <TextField
-                required
-                type="number"
-                label="Naqd beriladi"
-                value={form.amount}
-                onChange={handleFormChange("amount")}
-                error={paymentExceedsBalance}
-                helperText={
-                  paymentExceedsBalance
-                    ? `Ogohlantirish: maksimum ${formatMoney(availableWorkerBalance)}`
-                    : " "
-                }
-                slotProps={{ htmlInput: { min: 0, step: 1000 } }}
-              />
-              <TextField
-                type="number"
-                label="Avansdan ushlash"
-                value={form.advance_deduction}
-                onChange={handleFormChange("advance_deduction")}
-                error={paymentExceedsBalance}
-                helperText={
-                  paymentExceedsBalance
-                    ? "Kiritilgan jami summa qolgan ish haqidan oshdi"
-                    : `Maksimum: ${formatMoney(selectedWorkerBalance.remaining_advance)}`
-                }
-                slotProps={{ htmlInput: { min: 0, step: 1000 } }}
-              />
-              <TextField
-                select
-                label="To'lov turi"
-                value={form.payment_type}
-                onChange={handleFormChange("payment_type")}
-              >
-                {Object.entries(paymentTypeLabels).map(([value, label]) => (
-                  <MenuItem key={value} value={value}>
-                    {label}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                type="date"
-                label="To'lov sanasi"
-                value={form.paid_at}
-                onChange={handleFormChange("paid_at")}
-                InputLabelProps={{ shrink: true }}
-              />
-              <TextField
-                type="date"
-                label="Davr boshidan"
-                value={form.period_from}
-                onChange={handleFormChange("period_from")}
-                slotProps={{
-                  inputLabel: {
-                    shrink: true,
-                  },
-                }}
-              />
-              <TextField
-                type="date"
-                label="Davr oxirigacha"
-                value={form.period_to}
-                onChange={handleFormChange("period_to")}
-                slotProps={{
-                  inputLabel: {
-                    shrink: true,
-                  },
-                }}
-              />
-            </Box>
-            {paymentExceedsBalance && (
-              <Box className="rounded-xl border border-red-300 bg-red-50 px-4 py-3">
-                <Typography fontWeight={800} className="text-red-700">
-                  Ogohlantirish: kiritilgan {formatMoney(enteredPaymentTotal)} summa ishchining
-                  qolgan {formatMoney(availableWorkerBalance)} haqidan oshib ketdi.
-                </Typography>
-              </Box>
-            )}
-            <Box
-              className={`grid grid-cols-1 gap-3 rounded-2xl border p-4 sm:grid-cols-3 ${paymentExceedsBalance ? "border-red-300 bg-red-50" : "border-slate-200 bg-slate-50"}`}
-            >
-              <Box>
-                <Typography variant="body2" className="text-slate-500">
-                  Oylikdan yopiladi
-                </Typography>
-                <Typography fontWeight={800}>
-                  {formatMoney(Number(form.amount || 0) + Number(form.advance_deduction || 0))}
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="body2" className="text-slate-500">
-                  Naqd beriladi
-                </Typography>
-                <Typography fontWeight={800}>{formatMoney(form.amount)}</Typography>
-              </Box>
-              <Box>
-                <Typography variant="body2" className="text-slate-500">
-                  Qoladigan avans
-                </Typography>
-                <Typography fontWeight={800}>
-                  {formatMoney(
-                    Math.max(
-                      Number(selectedWorkerBalance.remaining_advance || 0) -
-                        Number(form.advance_deduction || 0),
-                      0,
-                    ),
-                  )}
-                </Typography>
-              </Box>
-            </Box>
             <TextField
-              fullWidth
-              multiline
-              minRows={3}
-              label="Izoh"
-              value={form.note}
-              onChange={handleFormChange("note")}
+              type="date"
+              label="To'lov sanasi"
+              value={form.paid_at}
+              onChange={handleFormChange("paid_at")}
+              InputLabelProps={{ shrink: true }}
             />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeModals}>Bekor qilish</Button>
-          <Button
-            variant="contained"
-            onClick={handleSave}
-            disabled={saving || paymentExceedsBalance}
-          >
-            {saving ? "Saqlanmoqda..." : "Saqlash"}
-          </Button>
-        </DialogActions>
-      </Dialog>
 
-      <Dialog open={advancesOpen} onClose={() => setAdvancesOpen(false)} fullWidth maxWidth="md">
-        <DialogTitle sx={{ fontWeight: 800 }}>Avanslar tarixi</DialogTitle>
-        <DialogContent dividers>
-          {advancesLoading ? (
-            <Box className="flex min-h-32 items-center justify-center">
-              <CircularProgress size={28} />
+            <TextField
+              type="date"
+              label="Davr boshidan"
+              value={form.period_from}
+              onChange={handleFormChange("period_from")}
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
+
+            <TextField
+              type="date"
+              label="Davr oxirigacha"
+              value={form.period_to}
+              onChange={handleFormChange("period_to")}
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
+          </Box>
+
+          {paymentExceedsBalance && (
+            <Box
+              sx={{
+                px: 2,
+                py: 1.5,
+                borderRadius: "16px",
+                background: "rgba(254, 242, 242, 0.95)",
+                border: "1px solid rgba(220, 38, 38, 0.3)",
+              }}
+            >
+              <Typography sx={{ fontSize: 14, fontWeight: 900, color: "#b91c1c" }}>
+                Ogohlantirish: kiritilgan {formatMoney(enteredPaymentTotal)} summa ishchining qolgan{" "}
+                {formatMoney(availableWorkerBalance)} haqidan oshib ketdi.
+              </Typography>
             </Box>
-          ) : (
-            <Table size="small">
+          )}
+
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" },
+              gap: 1.2,
+              p: 1.5,
+              borderRadius: "18px",
+              background: paymentExceedsBalance ? "rgba(254, 242, 242, 0.95)" : "#f8fafc",
+              border: paymentExceedsBalance
+                ? "1px solid rgba(220, 38, 38, 0.3)"
+                : "1px solid rgba(148, 163, 184, 0.2)",
+            }}
+          >
+            <BalanceBox
+              label="Oylikdan yopiladi"
+              value={formatMoney(Number(form.amount || 0) + Number(form.advance_deduction || 0))}
+              tone="blue"
+            />
+
+            <BalanceBox label="Naqd beriladi" value={formatMoney(form.amount)} tone="green" />
+
+            <BalanceBox
+              label="Qoladigan avans"
+              value={formatMoney(
+                Math.max(
+                  Number(selectedWorkerBalance.remaining_advance || 0) -
+                    Number(form.advance_deduction || 0),
+                  0,
+                ),
+              )}
+              tone="orange"
+            />
+          </Box>
+
+          <TextField
+            fullWidth
+            multiline
+            minRows={3}
+            label="Izoh"
+            value={form.note}
+            onChange={handleFormChange("note")}
+          />
+        </Stack>
+      </PremiumDialog>
+
+      <PremiumDialog
+        open={advancesOpen}
+        onClose={() => setAdvancesOpen(false)}
+        title="Avanslar tarixi"
+        maxWidth="md"
+        actions={
+          <Button
+            onClick={() => setAdvancesOpen(false)}
+            sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+          >
+            Yopish
+          </Button>
+        }
+      >
+        {advancesLoading ? (
+          <Box sx={{ minHeight: 160, display: "grid", placeItems: "center" }}>
+            <CircularProgress size={28} />
+          </Box>
+        ) : (
+          <Box sx={{ overflowX: "auto" }}>
+            <Table
+              size="small"
+              sx={{
+                minWidth: 720,
+                "& th": {
+                  py: 1.5,
+                  fontSize: 12,
+                  fontWeight: 950,
+                  color: "#64748b",
+                  textTransform: "uppercase",
+                  background: "#f8fafc",
+                },
+                "& td": {
+                  py: 1.4,
+                  borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+                },
+              }}
+            >
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 700 }}>Ishchi</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Avans</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Sana</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Izoh</TableCell>
+                  <TableCell>Ishchi</TableCell>
+                  <TableCell>Avans</TableCell>
+                  <TableCell>Sana</TableCell>
+                  <TableCell>Izoh</TableCell>
                 </TableRow>
               </TableHead>
+
               <TableBody>
                 {advances.length ? (
                   advances.map((advance) => (
-                    <TableRow key={advance.id}>
-                      <TableCell>{advance.worker_name}</TableCell>
-                      <TableCell>
-                        <Typography fontWeight={800}>{formatMoney(advance.amount)}</Typography>
+                    <TableRow key={advance.id} hover>
+                      <TableCell sx={{ fontWeight: 900, color: "#0f172a" }}>
+                        {advance.worker_name}
                       </TableCell>
-                      <TableCell>{formatDate(advance.given_at)}</TableCell>
-                      <TableCell>{advance.note || "-"}</TableCell>
+
+                      <TableCell>
+                        <Typography sx={{ fontWeight: 950, color: "#8b0101" }}>
+                          {formatMoney(advance.amount)}
+                        </Typography>
+                      </TableCell>
+
+                      <TableCell sx={{ fontWeight: 750, color: "#334155" }}>
+                        {formatDate(advance.given_at)}
+                      </TableCell>
+
+                      <TableCell sx={{ fontWeight: 700, color: "#64748b" }}>
+                        {advance.note || "-"}
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} align="center">
+                    <TableCell colSpan={4} align="center" sx={{ py: 6, fontWeight: 850 }}>
                       Avans yozuvlari topilmadi
                     </TableCell>
                   </TableRow>
                 )}
               </TableBody>
             </Table>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setAdvancesOpen(false)}>Yopish</Button>
-        </DialogActions>
-      </Dialog>
+          </Box>
+        )}
+      </PremiumDialog>
 
-      <Dialog open={advanceOpen} onClose={closeModals} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 800 }}>Ishchiga avans berish</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} className="pt-2">
-            <TextField
-              select
-              required
-              label="Ishchi"
-              value={advanceForm.worker_id}
-              onChange={(event) =>
-                setAdvanceForm((previous) => ({
-                  ...previous,
-                  worker_id: event.target.value,
-                }))
-              }
+      <PremiumDialog
+        open={advanceOpen}
+        onClose={closeModals}
+        title="Ishchiga avans berish"
+        maxWidth="sm"
+        actions={
+          <>
+            <Button
+              onClick={closeModals}
+              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
             >
-              {workers.map((worker) => (
-                <MenuItem key={worker.id} value={worker.id}>
-                  {worker.first_name} {worker.last_name}
-                </MenuItem>
-              ))}
-            </TextField>
-            <Box className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <TextField
-                required
-                type="number"
-                label="Avans summasi"
-                value={advanceForm.amount}
-                onChange={(event) =>
-                  setAdvanceForm((previous) => ({
-                    ...previous,
-                    amount: event.target.value,
-                  }))
-                }
-                slotProps={{ htmlInput: { min: 0, step: 1000 } }}
-              />
-              <TextField
-                type="date"
-                label="Berilgan sana"
-                value={advanceForm.given_at}
-                onChange={(event) =>
-                  setAdvanceForm((previous) => ({
-                    ...previous,
-                    given_at: event.target.value,
-                  }))
-                }
-                slotProps={{ inputLabel: { shrink: true } }}
-              />
-            </Box>
+              Bekor qilish
+            </Button>
+
+            <Button
+              variant="contained"
+              onClick={handleSaveAdvance}
+              disabled={advanceSaving}
+              sx={{
+                minWidth: 125,
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 900,
+                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                boxShadow: "0 12px 25px rgba(139, 1, 1, 0.2)",
+              }}
+            >
+              {advanceSaving ? "Saqlanmoqda..." : "Avans berish"}
+            </Button>
+          </>
+        }
+      >
+        <Stack spacing={2}>
+          <TextField
+            select
+            required
+            label="Ishchi"
+            value={advanceForm.worker_id}
+            onChange={(event) =>
+              setAdvanceForm((previous) => ({
+                ...previous,
+                worker_id: event.target.value,
+              }))
+            }
+          >
+            {workers.map((worker) => (
+              <MenuItem key={worker.id} value={worker.id}>
+                {worker.first_name} {worker.last_name}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <Box
+            sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.6 }}
+          >
             <TextField
-              multiline
-              minRows={3}
-              label="Izoh"
-              value={advanceForm.note}
+              required
+              type="number"
+              label="Avans summasi"
+              value={advanceForm.amount}
               onChange={(event) =>
                 setAdvanceForm((previous) => ({
                   ...previous,
-                  note: event.target.value,
+                  amount: event.target.value,
                 }))
               }
+              slotProps={{ htmlInput: { min: 0, step: 1000 } }}
             />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeModals}>Bekor qilish</Button>
-          <Button variant="contained" onClick={handleSaveAdvance} disabled={advanceSaving}>
-            {advanceSaving ? "Saqlanmoqda..." : "Avans berish"}
-          </Button>
-        </DialogActions>
-      </Dialog>
 
-      <Dialog open={deleteOpen} onClose={closeModals} fullWidth maxWidth="xs">
-        <DialogTitle sx={{ fontWeight: 800 }}>To'lovni o'chirish</DialogTitle>
-        <DialogContent>
-          <Typography>
-            {selectedPayment?.worker_name} uchun {formatMoney(selectedPayment?.amount)} to'lovni
-            o'chirmoqchimisiz?
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeModals}>Bekor qilish</Button>
-          <Button color="error" variant="contained" onClick={handleDelete} disabled={deleting}>
-            {deleting ? "O'chirilmoqda..." : "O'chirish"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+            <TextField
+              type="date"
+              label="Berilgan sana"
+              value={advanceForm.given_at}
+              onChange={(event) =>
+                setAdvanceForm((previous) => ({
+                  ...previous,
+                  given_at: event.target.value,
+                }))
+              }
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
+          </Box>
+
+          <TextField
+            multiline
+            minRows={3}
+            label="Izoh"
+            value={advanceForm.note}
+            onChange={(event) =>
+              setAdvanceForm((previous) => ({
+                ...previous,
+                note: event.target.value,
+              }))
+            }
+          />
+        </Stack>
+      </PremiumDialog>
+
+      <PremiumDialog
+        open={deleteOpen}
+        onClose={closeModals}
+        title="To'lovni o'chirish"
+        maxWidth="xs"
+        actions={
+          <>
+            <Button
+              onClick={closeModals}
+              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+            >
+              Bekor qilish
+            </Button>
+
+            <Button
+              color="error"
+              variant="contained"
+              onClick={handleDelete}
+              disabled={deleting}
+              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 900 }}
+            >
+              {deleting ? "O'chirilmoqda..." : "O'chirish"}
+            </Button>
+          </>
+        }
+      >
+        <Typography sx={{ color: "#334155", fontWeight: 700 }}>
+          {selectedPayment?.worker_name} uchun {formatMoney(selectedPayment?.amount)} to'lovni
+          o'chirmoqchimisiz?
+        </Typography>
+      </PremiumDialog>
     </Box>
   );
 };

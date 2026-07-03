@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import {
   Box,
   Button,
+  Chip,
   CircularProgress,
   Dialog,
   DialogActions,
@@ -19,13 +20,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+
 import {
   createMaterialPurchase,
   createRawMaterial,
   createSupplier,
   createSupplierPayment,
-  deleteSupplier,
   deleteMaterialPurchase,
+  deleteSupplier,
   getMaterialPurchases,
   getRawMaterials,
   getSupplierBalance,
@@ -35,6 +37,7 @@ import {
 import CrmPagination from "../../Components/Common/CrmPagination";
 
 const today = () => new Date().toISOString().slice(0, 10);
+
 const emptyPurchase = {
   supplier_id: "",
   purchased_at: today(),
@@ -42,6 +45,7 @@ const emptyPurchase = {
   note: "",
   items: [{ raw_material_id: "", quantity: "", unit_price: "" }],
 };
+
 const emptySupplier = {
   name: "",
   phone: "",
@@ -49,7 +53,9 @@ const emptySupplier = {
   opening_balance: "",
   note: "",
 };
+
 const emptyMaterial = { name: "", unit: "dona", note: "" };
+
 const emptyPayment = {
   supplier_id: "",
   amount: "",
@@ -58,17 +64,173 @@ const emptyPayment = {
 };
 
 const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
-const date = (value) => (value ? new Date(value).toLocaleDateString("uz-UZ") : "-");
 
-const Stat = ({ label, value }) => (
-  <Box className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-    <Typography variant="body2" className="text-slate-500">
-      {label}
-    </Typography>
-    <Typography variant="h6" fontWeight={800}>
-      {value}
-    </Typography>
-  </Box>
+const date = (value) => {
+  if (!value) return "-";
+
+  return new Intl.DateTimeFormat("uz-UZ", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date(value));
+};
+
+const Card = ({ children, sx = {} }) => (
+  <Paper
+    elevation={0}
+    sx={{
+      borderRadius: "20px",
+      border: "1px solid rgba(148, 163, 184, 0.22)",
+      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
+      boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+      overflow: "hidden",
+      ...sx,
+    }}
+  >
+    {children}
+  </Paper>
+);
+
+const MiniStat = ({ label, value, tone = "default" }) => {
+  const tones = {
+    default: {
+      color: "#0f172a",
+      bg: "#ffffff",
+      border: "rgba(148, 163, 184, 0.24)",
+    },
+    blue: {
+      color: "#2563eb",
+      bg: "rgba(37, 99, 235, 0.08)",
+      border: "rgba(37, 99, 235, 0.18)",
+    },
+    green: {
+      color: "#15803d",
+      bg: "rgba(34, 197, 94, 0.1)",
+      border: "rgba(34, 197, 94, 0.22)",
+    },
+    red: {
+      color: "#8b0101",
+      bg: "rgba(139, 1, 1, 0.08)",
+      border: "rgba(139, 1, 1, 0.18)",
+    },
+    orange: {
+      color: "#92400e",
+      bg: "rgba(245, 158, 11, 0.12)",
+      border: "rgba(245, 158, 11, 0.24)",
+    },
+  };
+
+  const current = tones[tone] || tones.default;
+
+  return (
+    <Box
+      sx={{
+        minWidth: 135,
+        px: 2,
+        py: 1.35,
+        borderRadius: "16px",
+        background: current.bg,
+        border: `1px solid ${current.border}`,
+        boxShadow: "0 10px 26px rgba(15, 23, 42, 0.05)",
+      }}
+    >
+      <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+
+      <Typography
+        sx={{
+          mt: 0.35,
+          fontSize: 18,
+          fontWeight: 950,
+          color: current.color,
+          letterSpacing: "-0.04em",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {value}
+      </Typography>
+    </Box>
+  );
+};
+
+const BalanceBox = ({ label, value, tone = "default" }) => {
+  const colors = {
+    default: "#0f172a",
+    blue: "#2563eb",
+    green: "#15803d",
+    red: "#8b0101",
+    orange: "#92400e",
+  };
+
+  return (
+    <Box
+      sx={{
+        p: 1.5,
+        borderRadius: "15px",
+        background: "#fff",
+        border: "1px solid rgba(148, 163, 184, 0.2)",
+      }}
+    >
+      <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+
+      <Typography
+        sx={{
+          mt: 0.45,
+          fontSize: 15,
+          fontWeight: 950,
+          color: colors[tone] || colors.default,
+          letterSpacing: "-0.035em",
+        }}
+      >
+        {value}
+      </Typography>
+    </Box>
+  );
+};
+
+const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md" }) => (
+  <Dialog
+    open={open}
+    onClose={onClose}
+    fullWidth
+    maxWidth={maxWidth}
+    PaperProps={{
+      sx: {
+        borderRadius: "22px",
+        border: "1px solid rgba(148, 163, 184, 0.22)",
+        boxShadow: "0 30px 80px rgba(15, 23, 42, 0.22)",
+        overflow: "hidden",
+      },
+    }}
+  >
+    <DialogTitle
+      sx={{
+        px: 3,
+        py: 2.2,
+        fontSize: 22,
+        fontWeight: 950,
+        color: "#0f172a",
+        borderBottom: "1px solid rgba(148, 163, 184, 0.18)",
+        background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+      }}
+    >
+      {title}
+    </DialogTitle>
+
+    <DialogContent sx={{ px: 3, py: 2.5 }}>{children}</DialogContent>
+
+    {actions && (
+      <DialogActions
+        sx={{
+          px: 3,
+          py: 2,
+          borderTop: "1px solid rgba(148, 163, 184, 0.18)",
+          background: "rgba(248, 250, 252, 0.72)",
+        }}
+      >
+        {actions}
+      </DialogActions>
+    )}
+  </Dialog>
 );
 
 const MaterialPurchases = () => {
@@ -83,6 +245,7 @@ const MaterialPurchases = () => {
     debt_amount: 0,
   });
   const [loading, setLoading] = useState(false);
+
   const [filters, setFilters] = useState({
     q: "",
     supplier_id: "",
@@ -90,26 +253,31 @@ const MaterialPurchases = () => {
     date_to: "",
   });
   const [filtersOpen, setFiltersOpen] = useState(false);
+
   const [purchaseForm, setPurchaseForm] = useState(emptyPurchase);
   const [supplierForm, setSupplierForm] = useState(emptySupplier);
   const [selectedSupplierForEdit, setSelectedSupplierForEdit] = useState(null);
   const [materialForm, setMaterialForm] = useState(emptyMaterial);
   const [paymentForm, setPaymentForm] = useState(emptyPayment);
+
   const [purchaseOpen, setPurchaseOpen] = useState(false);
   const [supplierOpen, setSupplierOpen] = useState(false);
   const [materialOpen, setMaterialOpen] = useState(false);
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [quickMaterialOpen, setQuickMaterialOpen] = useState(false);
+
   const [quickMaterialIndex, setQuickMaterialIndex] = useState(0);
   const [quickMaterialForm, setQuickMaterialForm] = useState(emptyMaterial);
   const [saving, setSaving] = useState(false);
 
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
+
   const openingPeriodDebt = Math.max(
     0,
     Number(balance.debt_amount || 0) -
       (Number(balance.total_purchase || 0) - Number(balance.total_paid || 0)),
   );
+
   const subtotal = useMemo(
     () =>
       purchaseForm.items.reduce(
@@ -118,10 +286,14 @@ const MaterialPurchases = () => {
       ),
     [purchaseForm.items],
   );
+
   const selectedSupplier = suppliers.find(
     (item) => Number(item.id) === Number(purchaseForm.supplier_id),
   );
+
   const previousDebt = Number(selectedSupplier?.current_debt || 0);
+  const paidAmount = Number(purchaseForm.paid_amount || 0);
+  const newDebt = previousDebt + subtotal - paidAmount;
 
   const fetchDictionaries = useCallback(async () => {
     try {
@@ -129,15 +301,19 @@ const MaterialPurchases = () => {
         getSuppliers({ limit: 100 }),
         getRawMaterials({ limit: 100 }),
       ]);
+
       const rows = suppliersRes.data.suppliers || [];
+
       const withBalances = await Promise.all(
         rows.map(async (supplier) => {
           const { data } = await getSupplierBalance({
             supplier_id: supplier.id,
           });
+
           return { ...supplier, current_debt: data.debt_amount || 0 };
         }),
       );
+
       setSuppliers(withBalances);
       setMaterials(materialsRes.data.raw_materials || []);
     } catch (error) {
@@ -148,11 +324,14 @@ const MaterialPurchases = () => {
   const fetchPurchases = useCallback(
     async (offset = 0, limit = pageInfo.limit) => {
       setLoading(true);
+
       try {
         const params = { offset, limit, sort_order: "desc" };
+
         Object.entries(filters).forEach(([key, value]) => {
           if (value !== "") params[key] = value;
         });
+
         const [purchasesRes, balanceRes] = await Promise.all([
           getMaterialPurchases(params),
           getSupplierBalance({
@@ -161,6 +340,7 @@ const MaterialPurchases = () => {
             date_to: filters.date_to || undefined,
           }),
         ]);
+
         setPurchases(purchasesRes.data.material_purchases || []);
         setPageInfo(purchasesRes.data.pageInfo || { total: 0, offset, limit });
         setBalance(
@@ -183,10 +363,17 @@ const MaterialPurchases = () => {
   useEffect(() => {
     fetchDictionaries();
   }, [fetchDictionaries]);
+
   useEffect(() => {
     const timer = setTimeout(() => fetchPurchases(0, pageInfo.limit), 250);
+
     return () => clearTimeout(timer);
-  }, [filters, pageInfo.limit]);
+  }, [filters, pageInfo.limit, fetchPurchases]);
+
+  const resetFilters = () => {
+    setFilters({ q: "", supplier_id: "", date_from: "", date_to: "" });
+    setFiltersOpen(false);
+  };
 
   const close = () => {
     setPurchaseOpen(false);
@@ -200,10 +387,12 @@ const MaterialPurchases = () => {
     setMaterialForm(emptyMaterial);
     setPaymentForm(emptyPayment);
   };
+
   const refresh = () => {
     fetchDictionaries();
     fetchPurchases(pageInfo.offset, pageInfo.limit);
   };
+
   const changeItem = (index, field, value) =>
     setPurchaseForm((previous) => ({
       ...previous,
@@ -211,13 +400,19 @@ const MaterialPurchases = () => {
     }));
 
   const saveSupplier = async () => {
-    if (!supplierForm.name.trim()) return toast.error("Ta'minotchi nomini kiriting.");
+    if (!supplierForm.name.trim()) {
+      toast.error("Ta'minotchi nomini kiriting.");
+      return;
+    }
+
     setSaving(true);
+
     try {
       const payload = {
         ...supplierForm,
         opening_balance: Number(supplierForm.opening_balance || 0),
       };
+
       if (selectedSupplierForEdit) {
         await updateSupplier(selectedSupplierForEdit.id, payload);
         toast.success("Ta'minotchi yangilandi.");
@@ -225,6 +420,7 @@ const MaterialPurchases = () => {
         await createSupplier(payload);
         toast.success("Ta'minotchi qo'shildi.");
       }
+
       setSupplierForm(emptySupplier);
       setSelectedSupplierForEdit(null);
       await fetchDictionaries();
@@ -234,6 +430,7 @@ const MaterialPurchases = () => {
       setSaving(false);
     }
   };
+
   const editSupplier = (supplier) => {
     setSelectedSupplierForEdit(supplier);
     setSupplierForm({
@@ -244,23 +441,33 @@ const MaterialPurchases = () => {
       note: supplier.note || "",
     });
   };
+
   const removeSupplier = async (supplier) => {
     if (!window.confirm(`${supplier.name} ta'minotchisini o'chirmoqchimisiz?`)) return;
+
     try {
       await deleteSupplier(supplier.id);
       toast.success("Ta'minotchi o'chirildi.");
+
       if (selectedSupplierForEdit?.id === supplier.id) {
         setSelectedSupplierForEdit(null);
         setSupplierForm(emptySupplier);
       }
+
       refresh();
     } catch (error) {
       toast.error(error?.response?.data?.message || "Ta'minotchini o'chirishda xato.");
     }
   };
+
   const saveMaterial = async () => {
-    if (!materialForm.name.trim()) return toast.error("Homashyo nomini kiriting.");
+    if (!materialForm.name.trim()) {
+      toast.error("Homashyo nomini kiriting.");
+      return;
+    }
+
     setSaving(true);
+
     try {
       await createRawMaterial(materialForm);
       toast.success("Homashyo qo'shildi.");
@@ -272,12 +479,19 @@ const MaterialPurchases = () => {
       setSaving(false);
     }
   };
+
   const saveQuickMaterial = async () => {
-    if (!quickMaterialForm.name.trim()) return toast.error("Homashyo nomini kiriting.");
+    if (!quickMaterialForm.name.trim()) {
+      toast.error("Homashyo nomini kiriting.");
+      return;
+    }
+
     setSaving(true);
+
     try {
       const { data } = await createRawMaterial(quickMaterialForm);
       const newMaterial = data.raw_material;
+
       setMaterials((previous) => [...previous, newMaterial]);
       changeItem(quickMaterialIndex, "raw_material_id", newMaterial.id);
       setQuickMaterialOpen(false);
@@ -289,6 +503,7 @@ const MaterialPurchases = () => {
       setSaving(false);
     }
   };
+
   const savePurchase = async () => {
     if (
       !purchaseForm.supplier_id ||
@@ -296,9 +511,13 @@ const MaterialPurchases = () => {
         (item) =>
           !item.raw_material_id || Number(item.quantity) <= 0 || Number(item.unit_price) < 0,
       )
-    )
-      return toast.error("Ta'minotchi va barcha homashyo qatorlarini to'ldiring.");
+    ) {
+      toast.error("Ta'minotchi va barcha homashyo qatorlarini to'ldiring.");
+      return;
+    }
+
     setSaving(true);
+
     try {
       await createMaterialPurchase({
         ...purchaseForm,
@@ -310,6 +529,7 @@ const MaterialPurchases = () => {
           unit_price: Number(item.unit_price),
         })),
       });
+
       toast.success("Homashyo xaridi saqlandi.");
       close();
       refresh();
@@ -319,16 +539,22 @@ const MaterialPurchases = () => {
       setSaving(false);
     }
   };
+
   const savePayment = async () => {
-    if (!paymentForm.supplier_id || Number(paymentForm.amount) <= 0)
-      return toast.error("Ta'minotchi va summani kiriting.");
+    if (!paymentForm.supplier_id || Number(paymentForm.amount) <= 0) {
+      toast.error("Ta'minotchi va summani kiriting.");
+      return;
+    }
+
     setSaving(true);
+
     try {
       await createSupplierPayment({
         ...paymentForm,
         supplier_id: Number(paymentForm.supplier_id),
         amount: Number(paymentForm.amount),
       });
+
       toast.success("Ta'minotchi to'lovi saqlandi.");
       close();
       refresh();
@@ -340,162 +566,367 @@ const MaterialPurchases = () => {
   };
 
   return (
-    <Box className="crm-page flex h-full min-h-0 flex-col">
-      <Box className="mb-5 flex shrink-0 flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-        <Box>
-          <Typography variant="h5" fontWeight={800}>
-            Homashyo xaridi
-          </Typography>
-          <Typography variant="body2" className="mt-1 text-slate-500">
-            Qayerdan, nima, qancha va nech pulga kelganini nazorat qilish
-          </Typography>
-        </Box>
-        <Box className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          <Stat label="Tanlangan davr xaridi" value={money(balance.total_purchase)} />
-          <Stat label="Tanlangan davrda berildi" value={money(balance.total_paid)} />
-          <Stat label="Oldingi qarz" value={money(openingPeriodDebt)} />
-          <Stat label="Umumiy qarz" value={money(balance.debt_amount)} />
-        </Box>
-      </Box>
+    <Box
+      sx={{
+        height: "100%",
+        minHeight: 0,
+        display: "flex",
+        flexDirection: "column",
+        pb: 2,
+      }}
+    >
+      <Card sx={{ mb: 1, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: { xs: "flex-start", xl: "center" },
+            justifyContent: "space-between",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Chip
+              label="ZERR CRM • homashyo xaridi"
+              size="small"
+              sx={{
+                mb: 1,
+                height: 25,
+                fontSize: 12,
+                fontWeight: 950,
+                color: "#2563eb",
+                background: "rgba(37, 99, 235, 0.08)",
+                border: "1px solid rgba(37, 99, 235, 0.16)",
+              }}
+            />
 
-      <Paper elevation={0} className="mb-4 shrink-0 rounded-2xl border border-slate-200 p-4">
-        <Box className="flex flex-col gap-3">
-          <Box className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-            <Box className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <TextField
-                size="small"
-                label="Qidirish"
-                value={filters.q}
-                onChange={(e) => setFilters((p) => ({ ...p, q: e.target.value }))}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") fetchPurchases(0, pageInfo.limit);
-                }}
-              />
-              <TextField
-                select
-                size="small"
-                label="Ta'minotchi"
-                value={filters.supplier_id}
-                onChange={(e) => setFilters((p) => ({ ...p, supplier_id: e.target.value }))}
-              >
-                <MenuItem value="">Barchasi</MenuItem>
-                {suppliers.map((s) => (
-                  <MenuItem key={s.id} value={s.id}>
-                    {s.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <Button variant="text" onClick={() => setFiltersOpen((open) => !open)}>
-                {filtersOpen ? "Filtrlarni yopish" : "Batafsil filtrlar"}
-              </Button>
-              <Button
-                variant="outlined"
-                color="warning"
-                onClick={() => {
-                  setFilters({ q: "", supplier_id: "", date_from: "", date_to: "" });
-                  setFiltersOpen(false);
-                }}
-              >
-                Tozalash
-              </Button>
-            </Box>
-            <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: "nowrap" }}>
-              <Button variant="outlined" onClick={() => setSupplierOpen(true)}>
-                Ta'minotchilar
-              </Button>
-              <Button variant="outlined" onClick={() => setMaterialOpen(true)}>
-                Homashyo
-              </Button>
-              <Button variant="outlined" onClick={() => setPaymentOpen(true)}>
-                To'lov
-              </Button>
-              <Button variant="contained" onClick={() => setPurchaseOpen(true)}>
-                Xarid qo'shish
-              </Button>
-            </Stack>
+            <Typography
+              sx={{
+                fontSize: { xs: 27, md: 33 },
+                fontWeight: 950,
+                color: "#0f172a",
+                letterSpacing: "-0.055em",
+                lineHeight: 1.05,
+              }}
+            >
+              Homashyo xaridi
+            </Typography>
+
+            <Typography
+              sx={{
+                mt: 0.7,
+                fontSize: 14,
+                fontWeight: 650,
+                color: "#64748b",
+              }}
+            >
+              Qayerdan, nima, qancha va nech pulga kelganini nazorat qilish.
+            </Typography>
           </Box>
 
-          {filtersOpen && (
-            <Box className="grid grid-cols-1 gap-3 border-t border-slate-200 pt-3 sm:grid-cols-2">
-              <TextField
-                size="small"
-                type="date"
-                label="Dan"
-                value={filters.date_from}
-                onChange={(e) => setFilters((p) => ({ ...p, date_from: e.target.value }))}
-                slotProps={{ inputLabel: { shrink: true } }}
-              />
-              <TextField
-                size="small"
-                type="date"
-                label="Gacha"
-                value={filters.date_to}
-                onChange={(e) => setFilters((p) => ({ ...p, date_to: e.target.value }))}
-                slotProps={{ inputLabel: { shrink: true } }}
-              />
-            </Box>
-          )}
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(4, auto)" },
+              gap: 1.2,
+              width: { xs: "100%", xl: "auto" },
+            }}
+          >
+            <MiniStat label="Davr xaridi" value={money(balance.total_purchase)} tone="blue" />
+            <MiniStat label="Berildi" value={money(balance.total_paid)} tone="green" />
+            <MiniStat label="Oldingi qarz" value={money(openingPeriodDebt)} tone="orange" />
+            <MiniStat label="Umumiy qarz" value={money(balance.debt_amount)} tone="red" />
+          </Box>
         </Box>
-      </Paper>
+      </Card>
 
-      <Paper
-        elevation={0}
-        className="flex min-h-0 flex-1 flex-col rounded-2xl border border-slate-200 bg-white"
+      <Card sx={{ mb: 1, p: 2, flexShrink: 0 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: { xs: "stretch", xl: "start" },
+            justifyContent: "space-between",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+          }}
+        >
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" },
+              gap: 1.2,
+              flex: 1,
+            }}
+          >
+            <TextField
+              size="small"
+              label="Qidirish"
+              value={filters.q}
+              onChange={(e) => setFilters((p) => ({ ...p, q: e.target.value }))}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") fetchPurchases(0, pageInfo.limit);
+              }}
+            />
+
+            <TextField
+              select
+              size="small"
+              label="Ta'minotchi"
+              value={filters.supplier_id}
+              onChange={(e) => setFilters((p) => ({ ...p, supplier_id: e.target.value }))}
+            >
+              <MenuItem value="">Barchasi</MenuItem>
+              {suppliers.map((supplier) => (
+                <MenuItem key={supplier.id} value={supplier.id}>
+                  {supplier.name}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <Button
+              variant="outlined"
+              onClick={() => setFiltersOpen((open) => !open)}
+              sx={{
+                height: 42,
+                borderRadius: "13px",
+                textTransform: "none",
+                fontWeight: 900,
+                color: "#0f172a",
+                borderColor: "rgba(37, 99, 235, 0.22)",
+                background: "#fff",
+              }}
+            >
+              {filtersOpen ? "Filtrlarni yopish" : "Batafsil filtrlar"}
+            </Button>
+
+            <Button
+              variant="outlined"
+              onClick={resetFilters}
+              sx={{
+                height: 42,
+                borderRadius: "13px",
+                textTransform: "none",
+                fontWeight: 900,
+                color: "#0f172a",
+                borderColor: "rgba(37, 99, 235, 0.22)",
+                background: "#fff",
+              }}
+            >
+              Tozalash
+            </Button>
+
+            {filtersOpen && (
+              <>
+                <TextField
+                  size="small"
+                  type="date"
+                  label="Dan"
+                  value={filters.date_from}
+                  onChange={(e) => setFilters((p) => ({ ...p, date_from: e.target.value }))}
+                  slotProps={{ inputLabel: { shrink: true } }}
+                />
+
+                <TextField
+                  size="small"
+                  type="date"
+                  label="Gacha"
+                  value={filters.date_to}
+                  onChange={(e) => setFilters((p) => ({ ...p, date_to: e.target.value }))}
+                  slotProps={{ inputLabel: { shrink: true } }}
+                />
+              </>
+            )}
+          </Box>
+
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.2}>
+            <Button
+              variant="outlined"
+              onClick={() => setSupplierOpen(true)}
+              sx={{
+                minWidth: 135,
+                height: 42,
+                borderRadius: "13px",
+                textTransform: "none",
+                fontWeight: 900,
+                color: "#0f172a",
+                borderColor: "rgba(37, 99, 235, 0.22)",
+                background: "#fff",
+              }}
+            >
+              Ta'minotchilar
+            </Button>
+
+            <Button
+              variant="outlined"
+              onClick={() => setMaterialOpen(true)}
+              sx={{
+                minWidth: 115,
+                height: 42,
+                borderRadius: "13px",
+                textTransform: "none",
+                fontWeight: 900,
+                color: "#0f172a",
+                borderColor: "rgba(37, 99, 235, 0.22)",
+                background: "#fff",
+              }}
+            >
+              Homashyo
+            </Button>
+
+            <Button
+              variant="outlined"
+              onClick={() => setPaymentOpen(true)}
+              sx={{
+                minWidth: 95,
+                height: 42,
+                borderRadius: "13px",
+                textTransform: "none",
+                fontWeight: 900,
+                color: "#0f172a",
+                borderColor: "rgba(37, 99, 235, 0.22)",
+                background: "#fff",
+              }}
+            >
+              To'lov
+            </Button>
+
+            <Button
+              variant="contained"
+              onClick={() => setPurchaseOpen(true)}
+              sx={{
+                minWidth: 135,
+                height: 42,
+                borderRadius: "13px",
+                textTransform: "none",
+                fontWeight: 950,
+                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
+                "&:hover": {
+                  background: "linear-gradient(135deg, #7f0101, #991b1b)",
+                },
+              }}
+            >
+              Xarid qo'shish
+            </Button>
+          </Stack>
+        </Box>
+      </Card>
+
+      <Card
+        sx={{
+          minHeight: 0,
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
-        <Box className="min-h-0 flex-1 overflow-auto">
-          <Table size="small" sx={{ tableLayout: "fixed", width: "100%" }}>
+        <Box sx={{ minHeight: 0, flex: 1, overflow: "auto" }}>
+          <Table
+            sx={{
+              minWidth: 980,
+              "& th": {
+                py: 1.7,
+                fontSize: 12,
+                fontWeight: 950,
+                color: "#64748b",
+                textTransform: "uppercase",
+                letterSpacing: "0.03em",
+                background: "rgba(248, 250, 252, 0.95)",
+                borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
+              },
+              "& td": {
+                py: 1.55,
+                borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+              },
+              "& tbody tr:hover": {
+                background: "rgba(37, 99, 235, 0.035)",
+              },
+            }}
+          >
             <TableHead>
               <TableRow>
-                <TableCell width="42%">Ta'minotchi va homashyolar</TableCell>
-                <TableCell width="28%">Ushbu xarid hisobi</TableCell>
-                <TableCell width="15%">Sana va izoh</TableCell>
+                <TableCell>Ta'minotchi va homashyolar</TableCell>
+                <TableCell>Ushbu xarid hisobi</TableCell>
+                <TableCell>Sana va izoh</TableCell>
                 <TableCell align="right">Amal</TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={4} align="center">
-                    <CircularProgress size={28} />
+                  <TableCell colSpan={4} align="center" sx={{ py: 7 }}>
+                    <CircularProgress size={30} />
                   </TableCell>
                 </TableRow>
               ) : purchases.length ? (
                 purchases.map((purchase) => (
                   <TableRow key={purchase.id} hover>
                     <TableCell>
-                      <Typography fontWeight={800}>{purchase.supplier_name}</Typography>
-                      {purchase.items.map((item) => (
-                        <Typography key={item.id} variant="body2">
-                          {item.material_name}: {Number(item.quantity)} {item.unit} ×{" "}
-                          {money(item.unit_price)}
-                        </Typography>
-                      ))}
+                      <Typography sx={{ fontSize: 14.5, fontWeight: 950, color: "#0f172a" }}>
+                        {purchase.supplier_name}
+                      </Typography>
+
+                      <Stack spacing={0.6} sx={{ mt: 0.8 }}>
+                        {purchase.items.map((item) => (
+                          <Typography
+                            key={item.id}
+                            sx={{ fontSize: 12.8, fontWeight: 700, color: "#64748b" }}
+                          >
+                            {item.material_name}: {Number(item.quantity)} {item.unit} ×{" "}
+                            {money(item.unit_price)}
+                          </Typography>
+                        ))}
+                      </Stack>
                     </TableCell>
+
                     <TableCell>
-                      <Typography fontWeight={800}>Jami: {money(purchase.subtotal)}</Typography>
-                      <Typography variant="body2" className="text-emerald-700">
+                      <Typography sx={{ fontSize: 14.5, fontWeight: 950, color: "#0f172a" }}>
+                        Jami: {money(purchase.subtotal)}
+                      </Typography>
+
+                      <Typography
+                        sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 800, color: "#15803d" }}
+                      >
                         Berildi: {money(purchase.paid_amount)}
                       </Typography>
-                      <Typography variant="body2" className="text-red-700">
+
+                      <Typography
+                        sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 800, color: "#8b0101" }}
+                      >
                         Qarz qo'shildi: {money(purchase.debt_amount)}
                       </Typography>
                     </TableCell>
+
                     <TableCell>
-                      <Typography variant="body2">{date(purchase.purchased_at)}</Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography sx={{ fontSize: 13.5, fontWeight: 800, color: "#334155" }}>
+                        {date(purchase.purchased_at)}
+                      </Typography>
+
+                      <Typography
+                        sx={{
+                          mt: 0.35,
+                          maxWidth: 240,
+                          fontSize: 12.5,
+                          fontWeight: 700,
+                          color: "#64748b",
+                        }}
+                      >
                         {purchase.note || "Izoh yo'q"}
                       </Typography>
                     </TableCell>
+
                     <TableCell align="right">
                       <Button
                         size="small"
                         color="error"
                         variant="outlined"
                         onClick={async () => {
-                          if (!confirm("Xarid o'chirilsinmi?")) return;
+                          if (!window.confirm("Xarid o'chirilsinmi?")) return;
                           await deleteMaterialPurchase(purchase.id);
                           refresh();
                         }}
+                        sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
                       >
                         O'chirish
                       </Button>
@@ -504,7 +935,7 @@ const MaterialPurchases = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} align="center">
+                  <TableCell colSpan={4} align="center" sx={{ py: 7, fontWeight: 850 }}>
                     Xaridlar topilmadi
                   </TableCell>
                 </TableRow>
@@ -512,251 +943,424 @@ const MaterialPurchases = () => {
             </TableBody>
           </Table>
         </Box>
-        <CrmPagination total={pageInfo.total} page={page} limit={pageInfo.limit} onPageChange={(nextPage) => fetchPurchases(nextPage * pageInfo.limit, pageInfo.limit)} onLimitChange={(limit) => fetchPurchases(0, limit)} />
-      </Paper>
 
-      <Dialog open={purchaseOpen} onClose={close} fullWidth maxWidth="md">
-        <DialogTitle sx={{ fontWeight: 800 }}>Homashyo xaridi</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} className="pt-2">
-            <Box className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <TextField
-                select
-                label="Ta'minotchi"
-                value={purchaseForm.supplier_id}
-                onChange={(e) =>
-                  setPurchaseForm((p) => ({
-                    ...p,
-                    supplier_id: e.target.value,
-                  }))
-                }
-              >
-                {suppliers.map((s) => (
-                  <MenuItem key={s.id} value={s.id}>
-                    {s.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                type="date"
-                label="Xarid sanasi"
-                value={purchaseForm.purchased_at}
-                onChange={(e) =>
-                  setPurchaseForm((p) => ({
-                    ...p,
-                    purchased_at: e.target.value,
-                  }))
-                }
-                slotProps={{ inputLabel: { shrink: true } }}
-              />
-            </Box>
-            {purchaseForm.items.map((item, index) => (
-              <Box
-                key={index}
-                className="grid grid-cols-1 gap-3 rounded-xl border border-slate-200 p-3 sm:grid-cols-[1.5fr_1fr_1fr_auto]"
-              >
-                <Box>
-                  <TextField
-                    select
-                    fullWidth
-                    label="Homashyo"
-                    value={item.raw_material_id}
-                    onChange={(e) => changeItem(index, "raw_material_id", e.target.value)}
-                  >
-                    {materials.map((m) => (
-                      <MenuItem key={m.id} value={m.id}>
-                        {m.name} ({m.unit})
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                  <Button
-                    size="small"
-                    sx={{ mt: 0.5, px: 0 }}
-                    onClick={() => {
-                      setQuickMaterialIndex(index);
-                      setQuickMaterialForm(emptyMaterial);
-                      setQuickMaterialOpen(true);
-                    }}
-                  >
-                    Yangi homashyo yaratish
-                  </Button>
-                </Box>
-                <TextField
-                  type="number"
-                  label="Miqdor"
-                  value={item.quantity}
-                  onChange={(e) => changeItem(index, "quantity", e.target.value)}
-                />
-                <TextField
-                  type="number"
-                  label="Birlik narxi"
-                  value={item.unit_price}
-                  onChange={(e) => changeItem(index, "unit_price", e.target.value)}
-                />
-                <Button
-                  color="error"
-                  disabled={purchaseForm.items.length === 1}
-                  onClick={() =>
-                    setPurchaseForm((p) => ({
-                      ...p,
-                      items: p.items.filter((_, i) => i !== index),
-                    }))
-                  }
-                >
-                  Olib tashlash
-                </Button>
-              </Box>
-            ))}
-            {quickMaterialOpen && (
-              <Box className="grid grid-cols-1 gap-3 rounded-xl border border-slate-300 bg-slate-50 p-4 sm:grid-cols-[1.5fr_1fr_auto_auto]">
-                <TextField
-                  size="small"
-                  label="Yangi homashyo nomi"
-                  value={quickMaterialForm.name}
-                  onChange={(e) => setQuickMaterialForm((p) => ({ ...p, name: e.target.value }))}
-                />
-                <TextField
-                  size="small"
-                  label="Birligi"
-                  value={quickMaterialForm.unit}
-                  onChange={(e) => setQuickMaterialForm((p) => ({ ...p, unit: e.target.value }))}
-                  helperText="dona, kg, metr, litr"
-                />
-                <Button variant="contained" disabled={saving} onClick={saveQuickMaterial}>
-                  Yaratish
-                </Button>
-                <Button onClick={() => setQuickMaterialOpen(false)}>Bekor qilish</Button>
-              </Box>
-            )}
+        <Box
+          sx={{
+            borderTop: "1px solid rgba(148, 163, 184, 0.18)",
+            background: "rgba(248, 250, 252, 0.65)",
+          }}
+        >
+          <CrmPagination
+            total={pageInfo.total}
+            page={page}
+            limit={pageInfo.limit}
+            onPageChange={(nextPage) => fetchPurchases(nextPage * pageInfo.limit, pageInfo.limit)}
+            onLimitChange={(limit) => fetchPurchases(0, limit)}
+          />
+        </Box>
+      </Card>
+
+      <PremiumDialog
+        open={purchaseOpen}
+        onClose={close}
+        title="Homashyo xaridi"
+        actions={
+          <>
             <Button
-              variant="outlined"
-              onClick={() =>
+              onClick={close}
+              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+            >
+              Bekor qilish
+            </Button>
+
+            <Button
+              variant="contained"
+              disabled={saving}
+              onClick={savePurchase}
+              sx={{
+                minWidth: 110,
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 900,
+                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+              }}
+            >
+              {saving ? "Saqlanmoqda..." : "Saqlash"}
+            </Button>
+          </>
+        }
+      >
+        <Stack spacing={2.1}>
+          <Box
+            sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.6 }}
+          >
+            <TextField
+              select
+              label="Ta'minotchi"
+              value={purchaseForm.supplier_id}
+              onChange={(e) =>
                 setPurchaseForm((p) => ({
                   ...p,
-                  items: [...p.items, { raw_material_id: "", quantity: "", unit_price: "" }],
+                  supplier_id: e.target.value,
                 }))
               }
             >
-              Yana homashyo
-            </Button>
-            <TextField
-              type="number"
-              label="To'lanadigan summa"
-              value={purchaseForm.paid_amount}
-              onChange={(e) => setPurchaseForm((p) => ({ ...p, paid_amount: e.target.value }))}
-              slotProps={{ htmlInput: { min: 0, step: 1000 } }}
-            />
-            <Box className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <Stat label="Xarid" value={money(subtotal)} />
-              <Stat label="Oldingi qarz" value={money(previousDebt)} />
-              <Stat label="Beriladi" value={money(purchaseForm.paid_amount)} />
-              <Stat
-                label="Yangi qarz"
-                value={money(previousDebt + subtotal - Number(purchaseForm.paid_amount || 0))}
-              />
-            </Box>
-            <TextField
-              multiline
-              minRows={2}
-              label="Izoh"
-              value={purchaseForm.note}
-              onChange={(e) => setPurchaseForm((p) => ({ ...p, note: e.target.value }))}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={close}>Bekor qilish</Button>
-          <Button variant="contained" disabled={saving} onClick={savePurchase}>
-            Saqlash
-          </Button>
-        </DialogActions>
-      </Dialog>
+              {suppliers.map((supplier) => (
+                <MenuItem key={supplier.id} value={supplier.id}>
+                  {supplier.name}
+                </MenuItem>
+              ))}
+            </TextField>
 
-      <Dialog open={supplierOpen} onClose={close} fullWidth maxWidth="md">
-        <DialogTitle sx={{ fontWeight: 800 }}>Ta'minotchilar</DialogTitle>
-        <DialogContent dividers>
-          <Stack spacing={2} className="pt-1">
-            <Typography fontWeight={700}>
-              {selectedSupplierForEdit ? "Ta'minotchini tahrirlash" : "Yangi ta'minotchi"}
-            </Typography>
-            <Box className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <TextField
-                label="Nomi"
-                value={supplierForm.name}
-                onChange={(e) => setSupplierForm((p) => ({ ...p, name: e.target.value }))}
-              />
-              <TextField
-                label="Telefon"
-                value={supplierForm.phone}
-                onChange={(e) => setSupplierForm((p) => ({ ...p, phone: e.target.value }))}
-              />
-              <TextField
-                label="Manzil"
-                value={supplierForm.address}
-                onChange={(e) => setSupplierForm((p) => ({ ...p, address: e.target.value }))}
-              />
-              <TextField
-                type="number"
-                label="Boshlang'ich qarz"
-                value={supplierForm.opening_balance}
-                onChange={(e) =>
-                  setSupplierForm((p) => ({
+            <TextField
+              type="date"
+              label="Xarid sanasi"
+              value={purchaseForm.purchased_at}
+              onChange={(e) =>
+                setPurchaseForm((p) => ({
+                  ...p,
+                  purchased_at: e.target.value,
+                }))
+              }
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
+          </Box>
+
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: "18px",
+              background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+              border: "1px solid rgba(148, 163, 184, 0.22)",
+            }}
+          >
+            <Box
+              sx={{
+                mb: 1.6,
+                display: "flex",
+                alignItems: { xs: "flex-start", sm: "center" },
+                justifyContent: "space-between",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: 1.3,
+              }}
+            >
+              <Box>
+                <Typography sx={{ fontSize: 16, fontWeight: 950, color: "#0f172a" }}>
+                  Homashyo qatorlari
+                </Typography>
+
+                <Typography sx={{ mt: 0.4, fontSize: 13, fontWeight: 650, color: "#64748b" }}>
+                  Bir nechta homashyoni bitta xaridga qo'shishingiz mumkin.
+                </Typography>
+              </Box>
+
+              <Button
+                variant="outlined"
+                onClick={() =>
+                  setPurchaseForm((p) => ({
                     ...p,
-                    opening_balance: e.target.value,
+                    items: [...p.items, { raw_material_id: "", quantity: "", unit_price: "" }],
                   }))
                 }
-              />
+                sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 900 }}
+              >
+                Yana homashyo
+              </Button>
             </Box>
-            <TextField
-              multiline
-              minRows={2}
-              label="Izoh"
-              value={supplierForm.note}
-              onChange={(e) => setSupplierForm((p) => ({ ...p, note: e.target.value }))}
-            />
-            <Stack direction="row" spacing={1} justifyContent="flex-end">
-              {selectedSupplierForEdit && (
-                <Button
-                  onClick={() => {
-                    setSelectedSupplierForEdit(null);
-                    setSupplierForm(emptySupplier);
+
+            <Stack spacing={1.4}>
+              {purchaseForm.items.map((item, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", md: "1.5fr 1fr 1fr auto" },
+                    gap: 1.3,
+                    p: 1.4,
+                    borderRadius: "16px",
+                    background: "#ffffff",
+                    border: "1px solid rgba(148, 163, 184, 0.2)",
                   }}
                 >
-                  Tozalash
-                </Button>
-              )}
-              <Button variant="contained" disabled={saving} onClick={saveSupplier}>
-                {saving ? "Saqlanmoqda..." : selectedSupplierForEdit ? "Yangilash" : "Qo'shish"}
-              </Button>
-            </Stack>
-          </Stack>
+                  <Box>
+                    <TextField
+                      select
+                      fullWidth
+                      label="Homashyo"
+                      value={item.raw_material_id}
+                      onChange={(e) => changeItem(index, "raw_material_id", e.target.value)}
+                    >
+                      {materials.map((material) => (
+                        <MenuItem key={material.id} value={material.id}>
+                          {material.name} ({material.unit})
+                        </MenuItem>
+                      ))}
+                    </TextField>
 
-          <Box className="mt-5 overflow-auto rounded-xl border border-slate-200">
-            <Table size="small" sx={{ minWidth: 720 }}>
+                    <Button
+                      size="small"
+                      sx={{ mt: 0.5, px: 0, textTransform: "none", fontWeight: 850 }}
+                      onClick={() => {
+                        setQuickMaterialIndex(index);
+                        setQuickMaterialForm(emptyMaterial);
+                        setQuickMaterialOpen(true);
+                      }}
+                    >
+                      Yangi homashyo yaratish
+                    </Button>
+                  </Box>
+
+                  <TextField
+                    type="number"
+                    label="Miqdor"
+                    value={item.quantity}
+                    onChange={(e) => changeItem(index, "quantity", e.target.value)}
+                  />
+
+                  <TextField
+                    type="number"
+                    label="Birlik narxi"
+                    value={item.unit_price}
+                    onChange={(e) => changeItem(index, "unit_price", e.target.value)}
+                  />
+
+                  <Button
+                    color="error"
+                    disabled={purchaseForm.items.length === 1}
+                    onClick={() =>
+                      setPurchaseForm((p) => ({
+                        ...p,
+                        items: p.items.filter((_, i) => i !== index),
+                      }))
+                    }
+                    sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+                  >
+                    Olib tashlash
+                  </Button>
+                </Box>
+              ))}
+            </Stack>
+          </Box>
+
+          {quickMaterialOpen && (
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", sm: "1.5fr 1fr auto auto" },
+                gap: 1.3,
+                p: 1.6,
+                borderRadius: "18px",
+                background: "#f8fafc",
+                border: "1px solid rgba(148, 163, 184, 0.28)",
+              }}
+            >
+              <TextField
+                size="small"
+                label="Yangi homashyo nomi"
+                value={quickMaterialForm.name}
+                onChange={(e) => setQuickMaterialForm((p) => ({ ...p, name: e.target.value }))}
+              />
+
+              <TextField
+                size="small"
+                label="Birligi"
+                value={quickMaterialForm.unit}
+                onChange={(e) => setQuickMaterialForm((p) => ({ ...p, unit: e.target.value }))}
+                helperText="dona, kg, metr, litr"
+              />
+
+              <Button
+                variant="contained"
+                disabled={saving}
+                onClick={saveQuickMaterial}
+                sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 900 }}
+              >
+                Yaratish
+              </Button>
+
+              <Button
+                onClick={() => setQuickMaterialOpen(false)}
+                sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+              >
+                Bekor qilish
+              </Button>
+            </Box>
+          )}
+
+          <TextField
+            type="number"
+            label="To'lanadigan summa"
+            value={purchaseForm.paid_amount}
+            onChange={(e) => setPurchaseForm((p) => ({ ...p, paid_amount: e.target.value }))}
+            slotProps={{ htmlInput: { min: 0, step: 1000 } }}
+          />
+
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" },
+              gap: 1.2,
+              p: 1.5,
+              borderRadius: "18px",
+              background: "#f8fafc",
+              border: "1px solid rgba(148, 163, 184, 0.2)",
+            }}
+          >
+            <BalanceBox label="Xarid" value={money(subtotal)} tone="blue" />
+            <BalanceBox label="Oldingi qarz" value={money(previousDebt)} tone="orange" />
+            <BalanceBox label="Beriladi" value={money(paidAmount)} tone="green" />
+            <BalanceBox label="Yangi qarz" value={money(newDebt)} tone="red" />
+          </Box>
+
+          <TextField
+            multiline
+            minRows={2}
+            label="Izoh"
+            value={purchaseForm.note}
+            onChange={(e) => setPurchaseForm((p) => ({ ...p, note: e.target.value }))}
+          />
+        </Stack>
+      </PremiumDialog>
+
+      <PremiumDialog
+        open={supplierOpen}
+        onClose={close}
+        title="Ta'minotchilar"
+        maxWidth="md"
+        actions={
+          <Button
+            onClick={close}
+            sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+          >
+            Yopish
+          </Button>
+        }
+      >
+        <Stack spacing={2}>
+          <Typography sx={{ fontSize: 16, fontWeight: 950, color: "#0f172a" }}>
+            {selectedSupplierForEdit ? "Ta'minotchini tahrirlash" : "Yangi ta'minotchi"}
+          </Typography>
+
+          <Box
+            sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.4 }}
+          >
+            <TextField
+              label="Nomi"
+              value={supplierForm.name}
+              onChange={(e) => setSupplierForm((p) => ({ ...p, name: e.target.value }))}
+            />
+
+            <TextField
+              label="Telefon"
+              value={supplierForm.phone}
+              onChange={(e) => setSupplierForm((p) => ({ ...p, phone: e.target.value }))}
+            />
+
+            <TextField
+              label="Manzil"
+              value={supplierForm.address}
+              onChange={(e) => setSupplierForm((p) => ({ ...p, address: e.target.value }))}
+            />
+
+            <TextField
+              type="number"
+              label="Boshlang'ich qarz"
+              value={supplierForm.opening_balance}
+              onChange={(e) =>
+                setSupplierForm((p) => ({
+                  ...p,
+                  opening_balance: e.target.value,
+                }))
+              }
+            />
+          </Box>
+
+          <TextField
+            multiline
+            minRows={2}
+            label="Izoh"
+            value={supplierForm.note}
+            onChange={(e) => setSupplierForm((p) => ({ ...p, note: e.target.value }))}
+          />
+
+          <Stack direction="row" spacing={1} justifyContent="flex-end">
+            {selectedSupplierForEdit && (
+              <Button
+                onClick={() => {
+                  setSelectedSupplierForEdit(null);
+                  setSupplierForm(emptySupplier);
+                }}
+                sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+              >
+                Tozalash
+              </Button>
+            )}
+
+            <Button
+              variant="contained"
+              disabled={saving}
+              onClick={saveSupplier}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 900,
+                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+              }}
+            >
+              {saving ? "Saqlanmoqda..." : selectedSupplierForEdit ? "Yangilash" : "Qo'shish"}
+            </Button>
+          </Stack>
+        </Stack>
+
+        <Card sx={{ mt: 2.5, boxShadow: "none" }}>
+          <Box sx={{ overflowX: "auto" }}>
+            <Table
+              size="small"
+              sx={{
+                minWidth: 760,
+                "& th": {
+                  py: 1.5,
+                  fontSize: 12,
+                  fontWeight: 950,
+                  color: "#64748b",
+                  textTransform: "uppercase",
+                  background: "#f8fafc",
+                },
+                "& td": {
+                  py: 1.4,
+                  borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+                },
+              }}
+            >
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 700 }}>Nomi</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Telefon</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Manzil</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Boshlang'ich qarz</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Hozirgi qarz</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 700 }}>
-                    Amallar
-                  </TableCell>
+                  <TableCell>Nomi</TableCell>
+                  <TableCell>Telefon</TableCell>
+                  <TableCell>Manzil</TableCell>
+                  <TableCell>Boshlang'ich qarz</TableCell>
+                  <TableCell>Hozirgi qarz</TableCell>
+                  <TableCell align="right">Amallar</TableCell>
                 </TableRow>
               </TableHead>
+
               <TableBody>
                 {suppliers.length ? (
                   suppliers.map((supplier) => (
                     <TableRow key={supplier.id} hover>
-                      <TableCell>
-                        <Typography fontWeight={700}>{supplier.name}</Typography>
+                      <TableCell sx={{ fontWeight: 900, color: "#0f172a" }}>
+                        {supplier.name}
                       </TableCell>
-                      <TableCell>{supplier.phone || "-"}</TableCell>
-                      <TableCell>{supplier.address || "-"}</TableCell>
-                      <TableCell>{money(supplier.opening_balance)}</TableCell>
-                      <TableCell>
-                        <Typography fontWeight={700}>{money(supplier.current_debt)}</Typography>
+                      <TableCell sx={{ fontWeight: 700, color: "#334155" }}>
+                        {supplier.phone || "-"}
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 700, color: "#334155" }}>
+                        {supplier.address || "-"}
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 800, color: "#64748b" }}>
+                        {money(supplier.opening_balance)}
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 950, color: "#8b0101" }}>
+                        {money(supplier.current_debt)}
                       </TableCell>
                       <TableCell align="right">
                         <Stack direction="row" spacing={1} justifyContent="flex-end">
@@ -764,14 +1368,17 @@ const MaterialPurchases = () => {
                             size="small"
                             variant="outlined"
                             onClick={() => editSupplier(supplier)}
+                            sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
                           >
                             O'zgartirish
                           </Button>
+
                           <Button
                             size="small"
                             variant="outlined"
                             color="error"
                             onClick={() => removeSupplier(supplier)}
+                            sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
                           >
                             O'chirish
                           </Button>
@@ -781,7 +1388,7 @@ const MaterialPurchases = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} align="center">
+                    <TableCell colSpan={6} align="center" sx={{ py: 6, fontWeight: 850 }}>
                       Ta'minotchilar topilmadi
                     </TableCell>
                   </TableRow>
@@ -789,80 +1396,125 @@ const MaterialPurchases = () => {
               </TableBody>
             </Table>
           </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={close}>Yopish</Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={materialOpen} onClose={close} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 800 }}>Homashyo qo'shish</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} className="pt-2">
-            <TextField
-              label="Nomi"
-              value={materialForm.name}
-              onChange={(e) => setMaterialForm((p) => ({ ...p, name: e.target.value }))}
-            />
-            <TextField
-              label="O'lchov birligi"
-              value={materialForm.unit}
-              onChange={(e) => setMaterialForm((p) => ({ ...p, unit: e.target.value }))}
-              helperText="dona, kg, metr yoki litr"
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={close}>Bekor qilish</Button>
-          <Button variant="contained" disabled={saving} onClick={saveMaterial}>
-            Saqlash
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={paymentOpen} onClose={close} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 800 }}>Ta'minotchiga to'lov</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} className="pt-2">
-            <TextField
-              select
-              label="Ta'minotchi"
-              value={paymentForm.supplier_id}
-              onChange={(e) => setPaymentForm((p) => ({ ...p, supplier_id: e.target.value }))}
+        </Card>
+      </PremiumDialog>
+
+      <PremiumDialog
+        open={materialOpen}
+        onClose={close}
+        title="Homashyo qo'shish"
+        maxWidth="sm"
+        actions={
+          <>
+            <Button
+              onClick={close}
+              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
             >
-              {suppliers.map((s) => (
-                <MenuItem key={s.id} value={s.id}>
-                  {s.name} — qarz {money(s.current_debt)}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              type="number"
-              label="Summa"
-              value={paymentForm.amount}
-              onChange={(e) => setPaymentForm((p) => ({ ...p, amount: e.target.value }))}
-            />
-            <TextField
-              type="date"
-              label="Sana"
-              value={paymentForm.paid_at}
-              onChange={(e) => setPaymentForm((p) => ({ ...p, paid_at: e.target.value }))}
-              slotProps={{ inputLabel: { shrink: true } }}
-            />
-            <TextField
-              multiline
-              minRows={2}
-              label="Izoh"
-              value={paymentForm.note}
-              onChange={(e) => setPaymentForm((p) => ({ ...p, note: e.target.value }))}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={close}>Bekor qilish</Button>
-          <Button variant="contained" disabled={saving} onClick={savePayment}>
-            To'lov qilish
-          </Button>
-        </DialogActions>
-      </Dialog>
+              Bekor qilish
+            </Button>
+
+            <Button
+              variant="contained"
+              disabled={saving}
+              onClick={saveMaterial}
+              sx={{
+                minWidth: 110,
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 900,
+                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+              }}
+            >
+              Saqlash
+            </Button>
+          </>
+        }
+      >
+        <Stack spacing={2}>
+          <TextField
+            label="Nomi"
+            value={materialForm.name}
+            onChange={(e) => setMaterialForm((p) => ({ ...p, name: e.target.value }))}
+          />
+
+          <TextField
+            label="O'lchov birligi"
+            value={materialForm.unit}
+            onChange={(e) => setMaterialForm((p) => ({ ...p, unit: e.target.value }))}
+            helperText="dona, kg, metr yoki litr"
+          />
+        </Stack>
+      </PremiumDialog>
+
+      <PremiumDialog
+        open={paymentOpen}
+        onClose={close}
+        title="Ta'minotchiga to'lov"
+        maxWidth="sm"
+        actions={
+          <>
+            <Button
+              onClick={close}
+              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+            >
+              Bekor qilish
+            </Button>
+
+            <Button
+              variant="contained"
+              disabled={saving}
+              onClick={savePayment}
+              sx={{
+                minWidth: 125,
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 900,
+                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+              }}
+            >
+              To'lov qilish
+            </Button>
+          </>
+        }
+      >
+        <Stack spacing={2}>
+          <TextField
+            select
+            label="Ta'minotchi"
+            value={paymentForm.supplier_id}
+            onChange={(e) => setPaymentForm((p) => ({ ...p, supplier_id: e.target.value }))}
+          >
+            {suppliers.map((supplier) => (
+              <MenuItem key={supplier.id} value={supplier.id}>
+                {supplier.name} — qarz {money(supplier.current_debt)}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            type="number"
+            label="Summa"
+            value={paymentForm.amount}
+            onChange={(e) => setPaymentForm((p) => ({ ...p, amount: e.target.value }))}
+          />
+
+          <TextField
+            type="date"
+            label="Sana"
+            value={paymentForm.paid_at}
+            onChange={(e) => setPaymentForm((p) => ({ ...p, paid_at: e.target.value }))}
+            slotProps={{ inputLabel: { shrink: true } }}
+          />
+
+          <TextField
+            multiline
+            minRows={2}
+            label="Izoh"
+            value={paymentForm.note}
+            onChange={(e) => setPaymentForm((p) => ({ ...p, note: e.target.value }))}
+          />
+        </Stack>
+      </PremiumDialog>
     </Box>
   );
 };

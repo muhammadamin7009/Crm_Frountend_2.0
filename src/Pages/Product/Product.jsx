@@ -14,6 +14,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+
 import { getProduct, saveProductDepartmentPrices } from "../../api/products";
 import { useAuth } from "../../Context/AuthContext";
 
@@ -31,7 +32,7 @@ const getImageUrl = (imagePath) => {
   if (!imagePath) return undefined;
   if (imagePath.startsWith("http")) return imagePath;
 
-  const baseUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, "");
+  const baseUrl = String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
   return `${baseUrl}${imagePath.startsWith("/") ? imagePath : `/${imagePath}`}`;
 };
 
@@ -42,6 +43,7 @@ const formatMoney = (value) => {
 
 const formatDate = (value) => {
   if (!value) return "-";
+
   return new Intl.DateTimeFormat("uz-UZ", {
     dateStyle: "medium",
     timeStyle: "short",
@@ -58,22 +60,123 @@ const normalizeDepartmentPrices = (prices = []) =>
     is_active: item.is_active ?? true,
   }));
 
+const getInitial = (value) =>
+  String(value || "Z")
+    .trim()
+    .slice(0, 1)
+    .toUpperCase();
+
+const Card = ({ children, sx = {} }) => (
+  <Paper
+    elevation={0}
+    sx={{
+      borderRadius: "20px",
+      border: "1px solid rgba(148, 163, 184, 0.22)",
+      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
+      boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+      overflow: "hidden",
+      ...sx,
+    }}
+  >
+    {children}
+  </Paper>
+);
+
 const InfoItem = ({ label, value }) => (
-  <Box className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-    <Typography variant="body2" className="text-slate-500">
-      {label}
-    </Typography>
-    <Typography className="mt-1 wrap-break-word text-slate-950" fontWeight={700}>
+  <Box
+    sx={{
+      p: 1.7,
+      borderRadius: "16px",
+      background: "#ffffff",
+      border: "1px solid rgba(148, 163, 184, 0.22)",
+      boxShadow: "0 10px 24px rgba(15, 23, 42, 0.04)",
+    }}
+  >
+    <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+
+    <Typography
+      sx={{
+        mt: 0.6,
+        fontSize: 15,
+        fontWeight: 900,
+        color: "#0f172a",
+        wordBreak: "break-word",
+      }}
+    >
       {value || "-"}
     </Typography>
   </Box>
 );
 
+const PriceCard = ({ label, value, tone = "blue" }) => {
+  const tones = {
+    blue: {
+      bg: "rgba(37, 99, 235, 0.08)",
+      color: "#2563eb",
+      border: "rgba(37, 99, 235, 0.16)",
+    },
+    green: {
+      bg: "rgba(34, 197, 94, 0.1)",
+      color: "#15803d",
+      border: "rgba(34, 197, 94, 0.22)",
+    },
+    red: {
+      bg: "rgba(139, 1, 1, 0.08)",
+      color: "#8b0101",
+      border: "rgba(139, 1, 1, 0.18)",
+    },
+  };
+
+  const current = tones[tone] || tones.blue;
+
+  return (
+    <Box
+      sx={{
+        p: 2,
+        borderRadius: "18px",
+        background: current.bg,
+        border: `1px solid ${current.border}`,
+      }}
+    >
+      <Typography sx={{ fontSize: 13, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+
+      <Typography
+        sx={{
+          mt: 0.7,
+          fontSize: 22,
+          fontWeight: 950,
+          color: current.color,
+          letterSpacing: "-0.04em",
+        }}
+      >
+        {value}
+      </Typography>
+    </Box>
+  );
+};
+
+const StatusChip = ({ active }) => (
+  <Chip
+    size="small"
+    label={active ? "Faol" : "Nofaol"}
+    sx={{
+      height: 27,
+      px: 0.4,
+      fontSize: 12,
+      fontWeight: 950,
+      color: active ? "#15803d" : "#64748b",
+      background: active ? "rgba(34, 197, 94, 0.12)" : "#f1f5f9",
+      border: active ? "1px solid rgba(34, 197, 94, 0.24)" : "1px solid rgba(148, 163, 184, 0.24)",
+    }}
+  />
+);
+
 const Product = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const currentUser = user || getLocalUser();
+
+  const auth = useAuth() || {};
+  const currentUser = auth.user || getLocalUser();
   const canManagePrices = MANAGER_ROLES.includes(currentUser?.role);
 
   const [product, setProduct] = useState(null);
@@ -84,10 +187,12 @@ const Product = () => {
   const [priceSaving, setPriceSaving] = useState(false);
 
   const images = product?.images || [];
+
   const primaryImage = useMemo(
     () => images.find((image) => image.is_primary) || images[0],
     [images],
   );
+
   const activeImage = selectedImage || primaryImage?.image_url || "";
 
   const fetchProduct = useCallback(async () => {
@@ -105,14 +210,17 @@ const Product = () => {
           receivedProduct?.images?.[0]?.image_url ||
           "",
       );
-    } catch (error) {
-      const status = error?.response?.status;
+    } catch (requestError) {
+      const status = requestError?.response?.status;
 
-      if (status === 404) setError("Mahsulot topilmadi.");
-      else if (status === 403) setError("Bu mahsulot ma'lumotlarini ko'rishga ruxsatingiz yo'q.");
-      else {
+      if (status === 404) {
+        setError("Mahsulot topilmadi.");
+      } else if (status === 403) {
+        setError("Bu mahsulot ma'lumotlarini ko'rishga ruxsatingiz yo'q.");
+      } else {
         setError(
-          error?.response?.data?.message || "Mahsulot ma'lumotlarini olishda xatolik yuz berdi.",
+          requestError?.response?.data?.message ||
+            "Mahsulot ma'lumotlarini olishda xatolik yuz berdi.",
         );
       }
     } finally {
@@ -155,8 +263,8 @@ const Product = () => {
       }
 
       toast.success("Bo'lim narxlari saqlandi.");
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Bo'lim narxlarini saqlashda xatolik.");
+    } catch (requestError) {
+      toast.error(requestError?.response?.data?.message || "Bo'lim narxlarini saqlashda xatolik.");
     } finally {
       setPriceSaving(false);
     }
@@ -164,7 +272,7 @@ const Product = () => {
 
   if (loading) {
     return (
-      <Box className="flex min-h-72 items-center justify-center">
+      <Box sx={{ minHeight: 380, display: "grid", placeItems: "center" }}>
         <CircularProgress size={34} />
       </Box>
     );
@@ -174,7 +282,12 @@ const Product = () => {
     return (
       <Box>
         <Alert severity="error">{error}</Alert>
-        <Button variant="outlined" className="mt-4" onClick={() => navigate("/products")}>
+
+        <Button
+          variant="outlined"
+          sx={{ mt: 2, borderRadius: "12px", fontWeight: 900, textTransform: "none" }}
+          onClick={() => navigate("/products")}
+        >
           Mahsulotlarga qaytish
         </Button>
       </Box>
@@ -184,200 +297,423 @@ const Product = () => {
   if (!product) return <Alert severity="warning">Mahsulot topilmadi.</Alert>;
 
   return (
-    <Box className="crm-page h-full overflow-auto pr-1">
-      <Box className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <Box>
-          <Typography variant="h5" fontWeight={800} className="text-slate-950">
-            Mahsulot ma'lumotlari
-          </Typography>
-          <Typography variant="body2" className="mt-1 text-slate-500">
-            Katalogdagi mahsulot, narx va rasm ma'lumotlari
-          </Typography>
+    <Box
+      sx={{
+        width: "100%",
+        maxWidth: "100%",
+        minHeight: 0,
+        pb: 3,
+      }}
+    >
+      <Card sx={{ p: { xs: 2, md: 2.5 } }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: { xs: "flex-start", md: "center" },
+            justifyContent: "space-between",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 2,
+            mb: 2.5,
+          }}
+        >
+          <Box sx={{ minWidth: 0 }}>
+            <Chip
+              label="ZERR CRM • mahsulot profili"
+              size="small"
+              sx={{
+                mb: 1,
+                height: 25,
+                fontSize: 12,
+                fontWeight: 950,
+                color: "#2563eb",
+                background: "rgba(37, 99, 235, 0.08)",
+                border: "1px solid rgba(37, 99, 235, 0.16)",
+              }}
+            />
+
+            <Typography
+              sx={{
+                fontSize: { xs: 25, md: 32 },
+                fontWeight: 950,
+                color: "#0f172a",
+                letterSpacing: "-0.055em",
+                lineHeight: 1.08,
+                wordBreak: "break-word",
+              }}
+            >
+              {product.name || "Nomsiz mahsulot"}
+            </Typography>
+
+            <Typography
+              sx={{
+                mt: 0.7,
+                fontSize: 14,
+                fontWeight: 700,
+                color: "#64748b",
+              }}
+            >
+              {product.category_name || "Kategoriyasiz"} / {product.unit || "dona"}
+            </Typography>
+          </Box>
+
+          <Button
+            variant="outlined"
+            onClick={() => navigate("/products")}
+            sx={{
+              minWidth: 105,
+              height: 40,
+              borderRadius: "13px",
+              borderColor: "rgba(37, 99, 235, 0.22)",
+              color: "#0f172a",
+              fontWeight: 900,
+              textTransform: "none",
+              background: "#fff",
+              flexShrink: 0,
+              "&:hover": {
+                borderColor: "#2563eb",
+                background: "rgba(37, 99, 235, 0.04)",
+              },
+            }}
+          >
+            Orqaga
+          </Button>
         </Box>
 
-        <Button variant="outlined" onClick={() => navigate("/products")} sx={{ borderRadius: 2 }}>
-          Orqaga
-        </Button>
-      </Box>
-
-      <Box className="grid grid-cols-1 gap-5 xl:grid-cols-[440px_1fr]">
-        <Paper
-          elevation={0}
-          className="overflow-hidden rounded-2xl border border-slate-200 bg-white p-4"
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", lg: "340px 1fr" },
+            gap: 2.3,
+            alignItems: "start",
+          }}
         >
-          <Box className="flex aspect-square items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-            {activeImage ? (
-              <img
-                src={getImageUrl(activeImage)}
-                alt={product.name}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <Avatar
-                variant="rounded"
-                sx={{ width: 110, height: 110, fontSize: 42, bgcolor: "#7F1D1D" }}
-              >
-                {product.name?.[0]?.toUpperCase()}
-              </Avatar>
-            )}
-          </Box>
-
-          <Box className="mt-3 grid grid-cols-4 gap-2">
-            {images.map((image) => (
-              <Button
-                key={image.id}
-                variant={activeImage === image.image_url ? "contained" : "outlined"}
-                className="h-20 min-w-0 overflow-hidden p-0"
-                sx={{ borderRadius: 2 }}
-                onClick={() => setSelectedImage(image.image_url)}
-              >
+          <Box>
+            <Box
+              sx={{
+                height: { xs: 260, sm: 310, lg: 320 },
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+                borderRadius: "20px",
+                border: "1px solid rgba(148, 163, 184, 0.22)",
+                background:
+                  "linear-gradient(135deg, rgba(248,250,252,0.95), rgba(241,245,249,0.85))",
+              }}
+            >
+              {activeImage ? (
                 <img
-                  src={getImageUrl(image.image_url)}
+                  src={getImageUrl(activeImage)}
                   alt={product.name}
-                  className="h-full w-full object-cover"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    display: "block",
+                  }}
                 />
-              </Button>
-            ))}
-          </Box>
-        </Paper>
-
-        <Paper elevation={0} className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <Box className="flex flex-wrap items-start justify-between gap-4">
-            <Box>
-              <Typography variant="h4" fontWeight={800} className="text-slate-950">
-                {product.name || "Nomsiz mahsulot"}
-              </Typography>
-              <Typography className="mt-1 text-slate-500">
-                {product.category_name || "Kategoriyasiz"} / {product.unit || "dona"}
-              </Typography>
+              ) : (
+                <Avatar
+                  variant="rounded"
+                  sx={{
+                    width: 110,
+                    height: 110,
+                    borderRadius: "26px",
+                    fontSize: 44,
+                    fontWeight: 950,
+                    bgcolor: "#8b0101",
+                    color: "#fff",
+                    boxShadow: "0 18px 38px rgba(139, 1, 1, 0.18)",
+                  }}
+                >
+                  {getInitial(product.name)}
+                </Avatar>
+              )}
             </Box>
 
-            <Chip
-              label={product.is_active ? "Faol" : "Nofaol"}
-              color={product.is_active ? "success" : "default"}
-              variant={product.is_active ? "filled" : "outlined"}
-            />
-          </Box>
+            {images.length > 0 ? (
+              <Box
+                sx={{
+                  mt: 1.3,
+                  display: "grid",
+                  gridTemplateColumns: "repeat(4, 1fr)",
+                  gap: 1,
+                }}
+              >
+                {images.slice(0, 8).map((image) => {
+                  const selected = activeImage === image.image_url;
 
-          <Box
-            className={`mt-5 mb-3 grid grid-cols-1 gap-3 ${canManagePrices ? "sm:grid-cols-2" : ""}`}
-          >
-            {canManagePrices && (
-              <Box className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                <Typography variant="body2" className="text-slate-500">
-                  Xarid narxi
-                </Typography>
-                <Typography variant="h6" fontWeight={800}>
-                  {formatMoney(product.purchase_price)}
+                  return (
+                    <Button
+                      key={image.id}
+                      variant="outlined"
+                      onClick={() => setSelectedImage(image.image_url)}
+                      sx={{
+                        height: 66,
+                        minWidth: 0,
+                        p: 0,
+                        overflow: "hidden",
+                        borderRadius: "14px",
+                        borderWidth: selected ? 2 : 1,
+                        borderColor: selected ? "#2563eb" : "rgba(148, 163, 184, 0.28)",
+                        boxShadow: selected ? "0 10px 22px rgba(37, 99, 235, 0.16)" : "none",
+                      }}
+                    >
+                      <img
+                        src={getImageUrl(image.image_url)}
+                        alt={product.name}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          display: "block",
+                        }}
+                      />
+                    </Button>
+                  );
+                })}
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  mt: 1.3,
+                  p: 1.6,
+                  borderRadius: "16px",
+                  background: "#f8fafc",
+                  border: "1px dashed rgba(148, 163, 184, 0.42)",
+                  textAlign: "center",
+                }}
+              >
+                <Typography sx={{ fontSize: 13.5, fontWeight: 750, color: "#64748b" }}>
+                  Mahsulot rasmi yuklanmagan.
                 </Typography>
               </Box>
             )}
-            <Box className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-              <Typography variant="body2" className="text-slate-500">
-                Sotuv narxi
+          </Box>
+
+          <Box sx={{ minWidth: 0 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: 1,
+                mb: 1.7,
+              }}
+            >
+              <StatusChip active={product.is_active} />
+
+              {product.sku && (
+                <Chip
+                  size="small"
+                  label={`SKU: ${product.sku}`}
+                  sx={{
+                    height: 27,
+                    px: 0.4,
+                    fontSize: 12,
+                    fontWeight: 900,
+                    color: "#334155",
+                    background: "#f1f5f9",
+                    border: "1px solid rgba(148, 163, 184, 0.24)",
+                  }}
+                />
+              )}
+
+              {product.model && (
+                <Chip
+                  size="small"
+                  label={`Model: ${product.model}`}
+                  sx={{
+                    height: 27,
+                    px: 0.4,
+                    fontSize: 12,
+                    fontWeight: 900,
+                    color: "#334155",
+                    background: "#f1f5f9",
+                    border: "1px solid rgba(148, 163, 184, 0.24)",
+                  }}
+                />
+              )}
+            </Box>
+
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: canManagePrices ? "1fr 1fr" : "1fr",
+                },
+                gap: 1.4,
+                mb: 1.8,
+              }}
+            >
+              {canManagePrices && (
+                <PriceCard
+                  label="Xarid narxi"
+                  value={formatMoney(product.purchase_price)}
+                  tone="blue"
+                />
+              )}
+
+              <PriceCard label="Sotuv narxi" value={formatMoney(product.sale_price)} tone="green" />
+            </Box>
+
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  xl: "repeat(4, 1fr)",
+                },
+                gap: 1.2,
+              }}
+            >
+              <InfoItem label="ID" value={product.id} />
+              <InfoItem label="Rang" value={product.color} />
+              <InfoItem label="Kategoriya" value={product.category_name} />
+              <InfoItem label="Birlik" value={product.unit} />
+              <InfoItem label="Yaratilgan vaqt" value={formatDate(product.created_at)} />
+              <InfoItem label="Yangilangan vaqt" value={formatDate(product.updated_at)} />
+            </Box>
+
+            <Box
+              sx={{
+                mt: 1.8,
+                p: 2,
+                borderRadius: "18px",
+                background: "#f8fafc",
+                border: "1px solid rgba(148, 163, 184, 0.18)",
+              }}
+            >
+              <Typography sx={{ fontSize: 14, fontWeight: 900, color: "#0f172a" }}>
+                Tavsif
               </Typography>
-              <Typography variant="h6" fontWeight={800}>
-                {formatMoney(product.sale_price)}
+
+              <Typography
+                sx={{
+                  mt: 0.7,
+                  fontSize: 14,
+                  fontWeight: 650,
+                  color: "#334155",
+                  lineHeight: 1.6,
+                  wordBreak: "break-word",
+                }}
+              >
+                {product.description || "Tavsif kiritilmagan."}
               </Typography>
             </Box>
           </Box>
+        </Box>
+      </Card>
 
-          <Divider />
+      {canManagePrices && (
+        <Card sx={{ mt: 2.5, p: { xs: 2, md: 2.5 } }}>
+          <Box
+            sx={{
+              mb: 2,
+              display: "flex",
+              alignItems: { xs: "flex-start", sm: "center" },
+              justifyContent: "space-between",
+              flexDirection: { xs: "column", sm: "row" },
+              gap: 1.5,
+            }}
+          >
+            <Box>
+              <Typography sx={{ fontSize: 18, fontWeight: 950, color: "#0f172a" }}>
+                Bo'lim narxlari
+              </Typography>
 
-          <Box className="my-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <InfoItem label="ID" value={product.id} />
-            <InfoItem label="SKU" value={product.sku} />
-            <InfoItem label="Model" value={product.model} />
-            <InfoItem label="Rang" value={product.color} />
-            <InfoItem label="Kategoriya" value={product.category_name} />
-            <InfoItem label="Birlik" value={product.unit} />
-            <InfoItem label="Yaratilgan vaqt" value={formatDate(product.created_at)} />
-            <InfoItem label="Yangilangan vaqt" value={formatDate(product.updated_at)} />
+              <Typography sx={{ mt: 0.5, fontSize: 13.5, fontWeight: 650, color: "#64748b" }}>
+                Har bir bo'lim uchun bitta mahsulotga to'lanadigan ish haqi.
+              </Typography>
+            </Box>
+
+            <Button
+              variant="contained"
+              onClick={handleSavePrices}
+              disabled={priceSaving || !priceRows.length}
+              sx={{
+                minWidth: 165,
+                height: 40,
+                borderRadius: "13px",
+                textTransform: "none",
+                fontWeight: 950,
+                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
+                "&:hover": {
+                  background: "linear-gradient(135deg, #7f0101, #991b1b)",
+                },
+              }}
+            >
+              {priceSaving ? "Saqlanmoqda..." : "Narxlarni saqlash"}
+            </Button>
           </Box>
 
-          {canManagePrices && (
-            <>
-              <Divider />
+          {priceRows.length ? (
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  xl: "repeat(3, 1fr)",
+                },
+                gap: 1.3,
+              }}
+            >
+              {priceRows.map((row) => (
+                <Box
+                  key={row.department_id}
+                  sx={{
+                    p: 1.6,
+                    borderRadius: "18px",
+                    background: "#ffffff",
+                    border: "1px solid rgba(148, 163, 184, 0.22)",
+                    boxShadow: "0 10px 24px rgba(15, 23, 42, 0.04)",
+                  }}
+                >
+                  <Stack spacing={1.4}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        justifyContent: "space-between",
+                        gap: 1.5,
+                      }}
+                    >
+                      <Box>
+                        <Typography sx={{ fontSize: 15, fontWeight: 950, color: "#0f172a" }}>
+                          {row.department_name}
+                        </Typography>
 
-              <Box className="my-4">
-                <Box className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <Box>
-                    <Typography fontWeight={800} className="text-slate-950">
-                      Bo'lim narxlari
-                    </Typography>
-                    <Typography variant="body2" className="text-slate-500">
-                      Har bir bo'lim uchun bitta mahsulotga to'lanadigan ish haqi
-                    </Typography>
-                  </Box>
-
-                  <Button
-                    variant="contained"
-                    onClick={handleSavePrices}
-                    disabled={priceSaving || !priceRows.length}
-                    sx={{ borderRadius: 2 }}
-                  >
-                    {priceSaving ? "Saqlanmoqda..." : "Narxlarni saqlash"}
-                  </Button>
-                </Box>
-
-                {priceRows.length ? (
-                  <Box className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    {priceRows.map((row) => (
-                      <Box
-                        key={row.department_id}
-                        className="auth-info-card rounded-2xl border p-4"
-                      >
-                        <Stack spacing={1.5}>
-                          <Box className="flex items-center justify-between gap-3">
-                            <Box>
-                              <Typography fontWeight={800} className="text-slate-950">
-                                {row.department_name}
-                              </Typography>
-                              <Typography variant="body2" className="text-slate-500">
-                                {row.department_code || "Kod kiritilmagan"}
-                              </Typography>
-                            </Box>
-                            <Chip
-                              size="small"
-                              label={row.is_active ? "Faol" : "Nofaol"}
-                              color={row.is_active ? "success" : "default"}
-                              variant="outlined"
-                            />
-                          </Box>
-
-                          <TextField
-                            label="Ish haqi"
-                            type="number"
-                            size="small"
-                            value={row.price_per_unit}
-                            onChange={(event) =>
-                              handlePriceChange(row.department_id, event.target.value)
-                            }
-                            InputProps={{ inputProps: { min: 0, step: 100 } }}
-                          />
-                        </Stack>
+                        <Typography
+                          sx={{ mt: 0.3, fontSize: 13, fontWeight: 650, color: "#64748b" }}
+                        >
+                          {row.department_code || "Kod kiritilmagan"}
+                        </Typography>
                       </Box>
-                    ))}
-                  </Box>
-                ) : (
-                  <Alert severity="info">Bu mahsulot uchun bo'lim narxlari hali topilmadi.</Alert>
-                )}
-              </Box>
 
-              <Divider />
-            </>
+                      <StatusChip active={row.is_active} />
+                    </Box>
+
+                    <TextField
+                      label="Ish haqi"
+                      type="number"
+                      size="small"
+                      value={row.price_per_unit}
+                      onChange={(event) => handlePriceChange(row.department_id, event.target.value)}
+                      InputProps={{ inputProps: { min: 0, step: 100 } }}
+                    />
+                  </Stack>
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            <Alert severity="info">Bu mahsulot uchun bo'lim narxlari hali topilmadi.</Alert>
           )}
-
-          <Box className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <Typography variant="body2" className="text-slate-500">
-              Tavsif
-            </Typography>
-            <Typography className="mt-2 wrap-break-word text-slate-950" fontWeight={600}>
-              {product.description || "Tavsif kiritilmagan."}
-            </Typography>
-          </Box>
-        </Paper>
-      </Box>
+        </Card>
+      )}
     </Box>
   );
 };

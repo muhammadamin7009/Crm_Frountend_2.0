@@ -313,9 +313,10 @@ const PlatformDashboard = () => {
                         />
                       </TableCell>
                       <TableCell align="right">
-                        <Box className="flex justify-end gap-1">
+                        <Box className="flex justify-end gap-2">
                           <Button
                             size="small"
+                            variant="outlined"
                             onClick={() => {
                               setForm({ company_id: company.id, plan_code: company.plan_code });
                               setDialog("plan");
@@ -325,6 +326,7 @@ const PlatformDashboard = () => {
                           </Button>
                           <Button
                             size="small"
+                            variant="outlined"
                             onClick={() => {
                               setForm({
                                 company_id: company.id,
@@ -342,6 +344,7 @@ const PlatformDashboard = () => {
                           </Button>
                           <Button
                             size="small"
+                            variant="contained"
                             color={company.status === "active" ? "error" : "success"}
                             onClick={() => toggle(company)}
                           >

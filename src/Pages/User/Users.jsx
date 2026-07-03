@@ -21,6 +21,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
 import { useAuth } from "../../Context/AuthContext";
 import CrmPagination from "../../Components/Common/CrmPagination";
 import {
@@ -33,14 +35,6 @@ import {
   updateUser,
   updateUserImage,
 } from "../../api/getUsers";
-import { useNavigate } from "react-router-dom";
-
-const getImageUrl = (path) => {
-  if (!path) return undefined;
-  if (path.startsWith("http")) return path;
-
-  return `${import.meta.env.VITE_API_URL}${path}`;
-};
 
 const STAFF_ROLES = ["client", "customer", "worker"];
 const SUPER_ADMIN_CREATE_ROLES = ["admin", ...STAFF_ROLES];
@@ -53,19 +47,37 @@ const roleNames = {
   worker: "Ishchi",
 };
 
-const getRoleColor = (role) => {
-  if (role === "super_admin") return "error";
-  if (role === "admin") return "warning";
-  if (role === "client") return "success";
-  return "default";
-};
-
-const getLocalUser = () => {
-  try {
-    return JSON.parse(localStorage.getItem("user") || "null");
-  } catch {
-    return null;
-  }
+const roleStyles = {
+  super_admin: {
+    color: "#8b0101",
+    bg: "rgba(139, 1, 1, 0.09)",
+    border: "rgba(139, 1, 1, 0.18)",
+  },
+  admin: {
+    color: "#1d4ed8",
+    bg: "rgba(37, 99, 235, 0.09)",
+    border: "rgba(37, 99, 235, 0.18)",
+  },
+  client: {
+    color: "#15803d",
+    bg: "rgba(34, 197, 94, 0.12)",
+    border: "rgba(34, 197, 94, 0.24)",
+  },
+  customer: {
+    color: "#6d28d9",
+    bg: "rgba(139, 92, 246, 0.11)",
+    border: "rgba(139, 92, 246, 0.22)",
+  },
+  worker: {
+    color: "#92400e",
+    bg: "rgba(245, 158, 11, 0.13)",
+    border: "rgba(245, 158, 11, 0.26)",
+  },
+  default: {
+    color: "#475569",
+    bg: "#f1f5f9",
+    border: "rgba(148, 163, 184, 0.24)",
+  },
 };
 
 const emptyForm = {
@@ -76,6 +88,271 @@ const emptyForm = {
   phone: "",
   role: "customer",
 };
+
+const getImageUrl = (path) => {
+  if (!path) return undefined;
+  if (path.startsWith("http")) return path;
+
+  const base = String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
+};
+
+const getLocalUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem("user") || "null");
+  } catch {
+    return null;
+  }
+};
+
+const getInitial = (user) => {
+  const first = user?.first_name?.[0];
+  const last = user?.last_name?.[0];
+  const username = user?.username?.[0];
+
+  return (first || last || username || "Z").toUpperCase();
+};
+
+const formatDate = (value) => {
+  if (!value) return "-";
+
+  return new Intl.DateTimeFormat("uz-UZ", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date(value));
+};
+
+const Card = ({ children, sx = {} }) => (
+  <Paper
+    elevation={0}
+    sx={{
+      borderRadius: "20px",
+      border: "1px solid rgba(148, 163, 184, 0.22)",
+      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
+      boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+      overflow: "hidden",
+      ...sx,
+    }}
+  >
+    {children}
+  </Paper>
+);
+
+const MiniStat = ({ label, value }) => (
+  <Box
+    sx={{
+      minWidth: 105,
+      px: 2,
+      py: 1.4,
+      borderRadius: "16px",
+      background: "#ffffff",
+      border: "1px solid rgba(148, 163, 184, 0.24)",
+      boxShadow: "0 10px 26px rgba(15, 23, 42, 0.05)",
+    }}
+  >
+    <Typography sx={{ fontSize: 12, fontWeight: 800, color: "#64748b" }}>{label}</Typography>
+    <Typography
+      sx={{
+        mt: 0.3,
+        fontSize: 20,
+        fontWeight: 900,
+        color: "#0f172a",
+        letterSpacing: "-0.04em",
+      }}
+    >
+      {value}
+    </Typography>
+  </Box>
+);
+
+const RoleChip = ({ role }) => {
+  const style = roleStyles[role] || roleStyles.default;
+
+  return (
+    <Chip
+      size="small"
+      label={roleNames[role] || role || "-"}
+      sx={{
+        height: 26,
+        px: 0.35,
+        fontSize: 12,
+        fontWeight: 900,
+        color: style.color,
+        background: style.bg,
+        border: `1px solid ${style.border}`,
+      }}
+    />
+  );
+};
+
+const FormDialog = ({
+  open,
+  title,
+  form,
+  selectedUser,
+  saving,
+  imagePreview,
+  imageFileAllowed,
+  roleOptions,
+  canEditRole,
+  onClose,
+  onSave,
+  onFormChange,
+  onImageChange,
+  submitText,
+}) => (
+  <Dialog
+    open={open}
+    onClose={onClose}
+    fullWidth
+    maxWidth="sm"
+    PaperProps={{
+      sx: {
+        borderRadius: "22px",
+        border: "1px solid rgba(148, 163, 184, 0.22)",
+        boxShadow: "0 30px 80px rgba(15, 23, 42, 0.22)",
+      },
+    }}
+  >
+    <DialogTitle sx={{ pb: 1, fontSize: 22, fontWeight: 950, color: "#0f172a" }}>
+      {title}
+    </DialogTitle>
+
+    <DialogContent>
+      <Stack spacing={2} sx={{ pt: 1 }}>
+        {selectedUser && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              p: 1.5,
+              borderRadius: "16px",
+              background: "#f8fafc",
+              border: "1px solid rgba(148, 163, 184, 0.18)",
+            }}
+          >
+            <Avatar
+              src={imagePreview || getImageUrl(selectedUser?.user_image)}
+              sx={{
+                width: 64,
+                height: 64,
+                bgcolor: "#8b0101",
+                fontWeight: 900,
+                border: "4px solid #fff",
+              }}
+            >
+              {form.first_name?.[0]}
+            </Avatar>
+
+            <Box>
+              <Typography sx={{ fontWeight: 900, color: "#0f172a" }}>
+                {form.first_name || "Foydalanuvchi"} {form.last_name}
+              </Typography>
+              <Typography sx={{ fontSize: 13, fontWeight: 650, color: "#64748b" }}>
+                Profil ma'lumotlarini yangilash
+              </Typography>
+
+              {imageFileAllowed && (
+                <Button
+                  variant="outlined"
+                  component="label"
+                  size="small"
+                  sx={{
+                    mt: 1,
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    fontWeight: 850,
+                  }}
+                >
+                  Rasm tanlash
+                  <input hidden type="file" accept="image/*" onChange={onImageChange} />
+                </Button>
+              )}
+            </Box>
+          </Box>
+        )}
+
+        <TextField
+          fullWidth
+          label="Ism"
+          value={form.first_name}
+          onChange={onFormChange("first_name")}
+        />
+        <TextField
+          fullWidth
+          label="Familiya"
+          value={form.last_name}
+          onChange={onFormChange("last_name")}
+        />
+        <TextField
+          fullWidth
+          label="Username"
+          value={form.username}
+          onChange={onFormChange("username")}
+        />
+        <TextField
+          fullWidth
+          label={selectedUser ? "Yangi password" : "Password"}
+          type="password"
+          value={form.password}
+          onChange={onFormChange("password")}
+        />
+        <TextField fullWidth label="Telefon" value={form.phone} onChange={onFormChange("phone")} />
+
+        {(!selectedUser || canEditRole) && (
+          <TextField
+            select
+            fullWidth
+            label="Ruxsat turi"
+            value={form.role}
+            onChange={onFormChange("role")}
+          >
+            {roleOptions.map((role) => (
+              <MenuItem key={role} value={role}>
+                {roleNames[role] || role}
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
+      </Stack>
+    </DialogContent>
+
+    <DialogActions sx={{ px: 3, pb: 2.5 }}>
+      <Button
+        onClick={onClose}
+        sx={{
+          borderRadius: "12px",
+          textTransform: "none",
+          fontWeight: 850,
+          color: "#475569",
+        }}
+      >
+        Bekor qilish
+      </Button>
+
+      <Button
+        variant="contained"
+        onClick={onSave}
+        disabled={saving}
+        sx={{
+          minWidth: 120,
+          borderRadius: "12px",
+          textTransform: "none",
+          fontWeight: 900,
+          background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+          boxShadow: "0 12px 25px rgba(139, 1, 1, 0.2)",
+          "&:hover": {
+            background: "linear-gradient(135deg, #7f0101, #991b1b)",
+          },
+        }}
+      >
+        {saving ? "Saqlanmoqda..." : submitText}
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
 
 const Users = () => {
   const auth = useAuth();
@@ -119,26 +396,25 @@ const Users = () => {
     return [];
   }, [currentUser?.role]);
 
+  const editRoleOptions = useMemo(() => {
+    if (currentUser?.role === "super_admin") return SUPER_ADMIN_CREATE_ROLES;
+    if (currentUser?.role === "admin") return STAFF_ROLES;
+    return [];
+  }, [currentUser?.role]);
+
   const canCreateUser = ["super_admin", "admin"].includes(currentUser?.role);
   const isWorkerView = currentUser?.role === "worker";
   const canOpenUserDetail = ["super_admin", "admin"].includes(currentUser?.role);
   const showingDeleted = deletedFilter === "true";
 
-  const isCurrentUser = (user) => {
-    return Number(currentUser?.id) === Number(user?.id);
-  };
+  const isCurrentUser = (user) => Number(currentUser?.id) === Number(user?.id);
 
   const canEditUser = (user) => {
     if (!currentUser || !user) return false;
     if (user.is_deleted) return currentUser.role === "super_admin";
-
     if (isCurrentUser(user)) return true;
-
     if (currentUser.role === "super_admin") return true;
-
-    if (currentUser.role === "admin") {
-      return STAFF_ROLES.includes(user.role);
-    }
+    if (currentUser.role === "admin") return STAFF_ROLES.includes(user.role);
 
     return false;
   };
@@ -153,22 +429,11 @@ const Users = () => {
     if (!currentUser || !user) return false;
     if (user.is_deleted) return currentUser.role === "super_admin";
 
-    if (currentUser.role === "super_admin") {
-      return user.role !== "super_admin";
-    }
-
-    if (currentUser.role === "admin") {
-      return STAFF_ROLES.includes(user.role);
-    }
+    if (currentUser.role === "super_admin") return user.role !== "super_admin";
+    if (currentUser.role === "admin") return STAFF_ROLES.includes(user.role);
 
     return false;
   };
-
-  const editRoleOptions = useMemo(() => {
-    if (currentUser?.role === "super_admin") return SUPER_ADMIN_CREATE_ROLES;
-    if (currentUser?.role === "admin") return STAFF_ROLES;
-    return [];
-  }, [currentUser?.role]);
 
   const fetchUsers = async (offset = 0, limit = pageInfo.limit) => {
     setLoading(true);
@@ -197,6 +462,7 @@ const Users = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => fetchUsers(0, pageInfo.limit), 250);
+
     return () => clearTimeout(timer);
   }, [query, sortBy, sortOrder, roleFilter, deletedFilter, pageInfo.limit]);
 
@@ -318,13 +584,8 @@ const Users = () => {
         phone: form.phone || null,
       };
 
-      if (form.password) {
-        payload.password = form.password;
-      }
-
-      if (canEditRole(selectedUser)) {
-        payload.role = form.role;
-      }
+      if (form.password) payload.password = form.password;
+      if (canEditRole(selectedUser)) payload.role = form.role;
 
       const res = await updateUser(selectedUser.id, payload);
       const updatedUser = res.data?.user || res.data?.updated_user || res.data || {};
@@ -378,6 +639,7 @@ const Users = () => {
 
   const handleDeletedAction = async () => {
     if (!selectedUser || !deletedAction) return;
+
     setDeleting(true);
 
     try {
@@ -402,51 +664,115 @@ const Users = () => {
     fetchUsers(newPage * pageInfo.limit, pageInfo.limit);
   };
 
+  const resetFilters = () => {
+    setQuery("");
+    setRoleFilter("");
+    setDeletedFilter("false");
+    setSortBy("created_at");
+    setSortOrder("desc");
+  };
+
   return (
-    <Box className="crm-page flex h-full min-h-0 flex-col">
-      <Box className="mb-5 flex justify-between items-center shrink-0">
-        <Box>
-          <Typography variant="h5" fontWeight={800} className="text-slate-950">
-            Foydalanuvchilar
-          </Typography>
-          <Typography variant="body2" className="mt-1 text-slate-500">
-            {isWorkerView
-              ? "Korxonadagi hamkasblaringiz, ularning lavozimi va bo'limi"
-              : "Korxona hodimlari, ruxsatlari va tizimdagi ma'lumotlari"}
-          </Typography>
-        </Box>
+    <Box
+      sx={{
+        height: "100%",
+        minHeight: 0,
+        display: "flex",
+        flexDirection: "column",
+        pb: 2,
+      }}
+    >
+      <Card sx={{ mb: 2.5, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: { xs: "flex-start", md: "center" },
+            justifyContent: "space-between",
+            flexDirection: { xs: "column", md: "row" },
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Chip
+              label="ZERR CRM • foydalanuvchilar"
+              size="small"
+              sx={{
+                mb: 1,
+                height: 25,
+                fontSize: 12,
+                fontWeight: 950,
+                color: "#2563eb",
+                background: "rgba(37, 99, 235, 0.08)",
+                border: "1px solid rgba(37, 99, 235, 0.16)",
+              }}
+            />
 
-        <Box className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <Box className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-            <Typography variant="body2" className="text-slate-500">
-              Jami
+            <Typography
+              sx={{
+                fontSize: { xs: 27, md: 33 },
+                fontWeight: 950,
+                color: "#0f172a",
+                letterSpacing: "-0.055em",
+                lineHeight: 1.05,
+              }}
+            >
+              Foydalanuvchilar
             </Typography>
-            <Typography variant="h6" fontWeight={800}>
-              {pageInfo.total}
+
+            <Typography
+              sx={{
+                mt: 0.7,
+                fontSize: 14,
+                fontWeight: 650,
+                color: "#64748b",
+              }}
+            >
+              {isWorkerView
+                ? "Korxonadagi hamkasblar, lavozim va bo'lim ma'lumotlari."
+                : "Korxona hodimlari, ruxsatlari va tizimdagi ma'lumotlari."}
             </Typography>
           </Box>
-          <Box className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-            <Typography variant="body2" className="text-slate-500">
-              Sahifada
-            </Typography>
-            <Typography variant="h6" fontWeight={800}>
-              {users.length}
-            </Typography>
-          </Box>
-          <Box className="hidden rounded-2xl border border-slate-200 bg-white px-4 py-3 sm:block">
-            <Typography variant="body2" className="text-slate-500">
-              Ruxsat turi
-            </Typography>
-            <Typography variant="h6" fontWeight={800}>
-              {currentUser?.role === "super_admin" ? "Barcha" : "Cheklangan"}
-            </Typography>
+
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(3, auto)" },
+              gap: 1.4,
+              width: { xs: "100%", md: "auto" },
+            }}
+          >
+            <MiniStat label="Jami" value={pageInfo.total} />
+            <MiniStat label="Sahifada" value={users.length} />
+            <MiniStat
+              label="Ruxsat turi"
+              value={currentUser?.role === "super_admin" ? "Barcha" : "Cheklangan"}
+            />
           </Box>
         </Box>
-      </Box>
+      </Card>
 
-      <Paper elevation={0} className="mb-4 shrink-0 rounded-2xl border border-slate-200 p-4">
-        <Box className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-          <Box className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
+      <Card sx={{ mb: 2.5, p: 2, flexShrink: 0 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: { xs: "stretch", xl: "center" },
+            justifyContent: "space-between",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+          }}
+        >
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, 1fr)",
+                lg: currentUser?.role === "super_admin" ? "repeat(5, 1fr)" : "repeat(4, 1fr)",
+              },
+              gap: 1.4,
+              flex: 1,
+            }}
+          >
             <TextField
               size="small"
               label="Qidirish"
@@ -464,7 +790,7 @@ const Users = () => {
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
             >
-              <MenuItem value="">Barcha ruxsat turlari</MenuItem>
+              <MenuItem value="">Barchasi</MenuItem>
               <MenuItem value="super_admin">Super admin</MenuItem>
               <MenuItem value="admin">Admin</MenuItem>
               {!isWorkerView && <MenuItem value="client">Mijoz</MenuItem>}
@@ -506,69 +832,112 @@ const Users = () => {
               <MenuItem value="desc">Yangidan eskiga</MenuItem>
               <MenuItem value="asc">Eskidan yangiga</MenuItem>
             </TextField>
+          </Box>
 
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1.4,
+              flexDirection: { xs: "column", sm: "row" },
+            }}
+          >
             <Button
               variant="outlined"
-              color="warning"
-              onClick={() => {
-                setQuery("");
-                setRoleFilter("");
-                setDeletedFilter("false");
-                setSortBy("created_at");
-                setSortOrder("desc");
+              onClick={resetFilters}
+              sx={{
+                minWidth: 135,
+                height: 42,
+                borderRadius: "13px",
+                textTransform: "none",
+                fontWeight: 900,
+                color: "#0f172a",
+                borderColor: "rgba(37, 99, 235, 0.2)",
+                background: "#fff",
               }}
             >
               Tozalash
             </Button>
+
+            {canCreateUser && (
+              <Button
+                variant="contained"
+                onClick={openCreateModal}
+                sx={{
+                  minWidth: 215,
+                  height: 42,
+                  borderRadius: "13px",
+                  textTransform: "none",
+                  fontWeight: 950,
+                  background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                  boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
+                  "&:hover": {
+                    background: "linear-gradient(135deg, #7f0101, #991b1b)",
+                  },
+                }}
+              >
+                Foydalanuvchi qo'shish
+              </Button>
+            )}
           </Box>
-
-          {canCreateUser && (
-            <Button
-              variant="contained"
-              onClick={openCreateModal}
-              sx={{ borderRadius: 2, minHeight: 40, px: 3, minWidth: 247 }}
-            >
-              Foydalanuvchi qo'shish
-            </Button>
-          )}
         </Box>
-      </Paper>
+      </Card>
 
-      <Paper
-        elevation={0}
-        className="flex min-h-0 flex-1 flex-col rounded-2xl border border-slate-200 bg-white"
+      <Card
+        sx={{
+          minHeight: 0,
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
-        <Box className="min-h-0 flex-1 overflow-auto">
-          <Table sx={{ minWidth: isWorkerView ? 650 : 900 }}>
+        <Box sx={{ minHeight: 0, flex: 1, overflow: "auto" }}>
+          <Table
+            sx={{
+              minWidth: isWorkerView ? 720 : 980,
+              "& th": {
+                py: 1.7,
+                fontSize: 12,
+                fontWeight: 950,
+                color: "#64748b",
+                textTransform: "uppercase",
+                letterSpacing: "0.03em",
+                background: "rgba(248, 250, 252, 0.95)",
+                borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
+              },
+              "& td": {
+                py: 1.55,
+                borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+              },
+              "& tbody tr:hover": {
+                background: canOpenUserDetail ? "rgba(37, 99, 235, 0.035)" : "inherit",
+              },
+            }}
+          >
             <TableHead>
-              <TableRow className="bg-slate-50">
-                <TableCell sx={{ fontWeight: 700 }}>Foydalanuvchi</TableCell>
+              <TableRow>
+                <TableCell>Foydalanuvchi</TableCell>
                 {isWorkerView ? (
                   <>
-                    <TableCell sx={{ fontWeight: 700 }}>Lavozim</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Bo'lim</TableCell>
+                    <TableCell>Lavozim</TableCell>
+                    <TableCell>Bo'lim</TableCell>
                   </>
                 ) : (
                   <>
-                    <TableCell sx={{ fontWeight: 700 }}>Username</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Telefon</TableCell>
+                    <TableCell>Username</TableCell>
+                    <TableCell>Telefon</TableCell>
                   </>
                 )}
-                <TableCell sx={{ fontWeight: 700 }}>Ruxsat turi</TableCell>
-                {!isWorkerView && <TableCell sx={{ fontWeight: 700 }}>Yangilangan sana</TableCell>}
-                {!isWorkerView && (
-                  <TableCell align="right" sx={{ fontWeight: 700 }}>
-                    Amallar
-                  </TableCell>
-                )}
+                <TableCell>Ruxsat turi</TableCell>
+                {!isWorkerView && <TableCell>Yangilangan sana</TableCell>}
+                {!isWorkerView && <TableCell align="right">Amallar</TableCell>}
               </TableRow>
             </TableHead>
 
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={isWorkerView ? 4 : 6} align="center">
-                    <CircularProgress size={28} />
+                  <TableCell colSpan={isWorkerView ? 4 : 6} align="center" sx={{ py: 7 }}>
+                    <CircularProgress size={30} />
                   </TableCell>
                 </TableRow>
               ) : users.length ? (
@@ -576,67 +945,84 @@ const Users = () => {
                   <TableRow
                     key={user.id}
                     hover
-                    className={canOpenUserDetail && !user.is_deleted ? "cursor-pointer" : ""}
                     onClick={() => {
                       if (canOpenUserDetail && !user.is_deleted) navigate(`/users/${user.id}`);
                     }}
                     sx={{
-                      "&:last-child td": { borderBottom: 0 },
-                      "&:hover":
-                        canOpenUserDetail && !user.is_deleted ? { backgroundColor: "#FFF7ED" } : {},
-                      opacity: user.is_deleted ? 0.72 : 1,
+                      cursor: canOpenUserDetail && !user.is_deleted ? "pointer" : "default",
+                      opacity: user.is_deleted ? 0.65 : 1,
                     }}
                   >
                     <TableCell>
-                      <Box className="flex items-center gap-3">
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.6 }}>
                         <Avatar
                           src={getImageUrl(user.user_image)}
-                          sx={{ width: 44, height: 44, bgcolor: "#7F1D1D" }}
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            bgcolor: "#8b0101",
+                            color: "#fff",
+                            fontWeight: 950,
+                            border: "3px solid #fff",
+                            boxShadow: "0 10px 24px rgba(139, 1, 1, 0.14)",
+                          }}
                         >
-                          {user.first_name?.[0]}
+                          {getInitial(user)}
                         </Avatar>
 
-                        <Box>
-                          <Typography fontWeight={600}>
+                        <Box sx={{ minWidth: 0 }}>
+                          <Typography
+                            sx={{
+                              fontSize: 14.5,
+                              fontWeight: 900,
+                              color: "#0f172a",
+                              lineHeight: 1.15,
+                            }}
+                          >
                             {user.first_name} {user.last_name}
                           </Typography>
-                          {user.is_deleted && (
-                            <Typography variant="caption" color="error">
-                              O'chirilgan
-                            </Typography>
-                          )}
-                          {!isWorkerView && (
-                            <Typography variant="body2" color="text.secondary">
-                              ID: {user.id}
-                            </Typography>
-                          )}
+
+                          <Typography
+                            sx={{
+                              mt: 0.35,
+                              fontSize: 12.5,
+                              fontWeight: 700,
+                              color: user.is_deleted ? "#dc2626" : "#64748b",
+                            }}
+                          >
+                            {user.is_deleted ? "O'chirilgan" : `ID: ${user.id}`}
+                          </Typography>
                         </Box>
                       </Box>
                     </TableCell>
 
                     {isWorkerView ? (
                       <>
-                        <TableCell>{user.position_name || "Lavozim biriktirilmagan"}</TableCell>
-                        <TableCell>{user.department_name || "Bo'lim biriktirilmagan"}</TableCell>
+                        <TableCell sx={{ fontWeight: 750, color: "#334155" }}>
+                          {user.position_name || "Lavozim biriktirilmagan"}
+                        </TableCell>
+                        <TableCell sx={{ fontWeight: 750, color: "#334155" }}>
+                          {user.department_name || "Bo'lim biriktirilmagan"}
+                        </TableCell>
                       </>
                     ) : (
                       <>
-                        <TableCell>{user.username}</TableCell>
-                        <TableCell>{user.phone || "-"}</TableCell>
+                        <TableCell sx={{ fontWeight: 800, color: "#334155" }}>
+                          {user.username || "-"}
+                        </TableCell>
+                        <TableCell sx={{ fontWeight: 800, color: "#334155" }}>
+                          {user.phone || "-"}
+                        </TableCell>
                       </>
                     )}
+
                     <TableCell>
-                      <Chip
-                        size="small"
-                        label={roleNames[user.role] || user.role}
-                        color={getRoleColor(user.role)}
-                        variant={user.role === "customer" ? "outlined" : "filled"}
-                      />
+                      <RoleChip role={user.role} />
                     </TableCell>
 
                     {!isWorkerView && (
-                      <TableCell>
-                        {user.updated_at ? new Date(user.updated_at).toLocaleDateString() : "-"}
+                      <TableCell sx={{ fontWeight: 750, color: "#334155" }}>
+                        {formatDate(user.updated_at)}
                       </TableCell>
                     )}
 
@@ -660,6 +1046,7 @@ const Users = () => {
                               >
                                 Tahrirlash
                               </Button>
+
                               <Button
                                 size="small"
                                 color="success"
@@ -671,6 +1058,7 @@ const Users = () => {
                               >
                                 Qayta tiklash
                               </Button>
+
                               <Button
                                 size="small"
                                 color="error"
@@ -693,6 +1081,11 @@ const Users = () => {
                                     event.stopPropagation();
                                     openEditModal(user);
                                   }}
+                                  sx={{
+                                    borderRadius: "10px",
+                                    textTransform: "none",
+                                    fontWeight: 900,
+                                  }}
                                 >
                                   O'zgartirish
                                 </Button>
@@ -707,6 +1100,11 @@ const Users = () => {
                                     event.stopPropagation();
                                     openDeleteModal(user);
                                   }}
+                                  sx={{
+                                    borderRadius: "10px",
+                                    textTransform: "none",
+                                    fontWeight: 900,
+                                  }}
                                 >
                                   O'chirish
                                 </Button>
@@ -720,7 +1118,15 @@ const Users = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={isWorkerView ? 4 : 6} align="center">
+                  <TableCell
+                    colSpan={isWorkerView ? 4 : 6}
+                    align="center"
+                    sx={{
+                      py: 7,
+                      color: "#64748b",
+                      fontWeight: 850,
+                    }}
+                  >
                     Foydalanuvchilar topilmadi
                   </TableCell>
                 </TableRow>
@@ -729,159 +1135,71 @@ const Users = () => {
           </Table>
         </Box>
 
-        <CrmPagination total={pageInfo.total} page={page} limit={pageInfo.limit} onPageChange={(nextPage) => handleChangePage(null, nextPage)} onLimitChange={(limit) => fetchUsers(0, limit)} />
-      </Paper>
+        <Box
+          sx={{
+            borderTop: "1px solid rgba(148, 163, 184, 0.18)",
+            background: "rgba(248, 250, 252, 0.65)",
+          }}
+        >
+          <CrmPagination
+            total={pageInfo.total}
+            page={page}
+            limit={pageInfo.limit}
+            onPageChange={(nextPage) => handleChangePage(null, nextPage)}
+            onLimitChange={(limit) => fetchUsers(0, limit)}
+          />
+        </Box>
+      </Card>
 
-      <Dialog open={createOpen} onClose={closeCreateModal} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 800 }}>Foydalanuvchi qo'shish</DialogTitle>
+      <FormDialog
+        open={createOpen}
+        title="Foydalanuvchi qo'shish"
+        form={form}
+        saving={saving}
+        roleOptions={createRoleOptions}
+        onClose={closeCreateModal}
+        onSave={handleCreateUser}
+        onFormChange={handleFormChange}
+        submitText="Qo'shish"
+      />
 
-        <DialogContent>
-          <Stack spacing={2} className="pt-2">
-            <TextField
-              fullWidth
-              label="Ism"
-              value={form.first_name}
-              onChange={handleFormChange("first_name")}
-            />
-            <TextField
-              fullWidth
-              label="Familiya"
-              value={form.last_name}
-              onChange={handleFormChange("last_name")}
-            />
-            <TextField
-              fullWidth
-              label="Username"
-              value={form.username}
-              onChange={handleFormChange("username")}
-            />
-            <TextField
-              fullWidth
-              label="Password"
-              type="password"
-              value={form.password}
-              onChange={handleFormChange("password")}
-            />
-            <TextField
-              fullWidth
-              label="Telefon"
-              value={form.phone}
-              onChange={handleFormChange("phone")}
-            />
+      <FormDialog
+        open={editOpen}
+        title="Foydalanuvchini tahrirlash"
+        form={form}
+        selectedUser={selectedUser}
+        saving={saving}
+        imagePreview={imagePreview}
+        imageFileAllowed={selectedUser && isCurrentUser(selectedUser)}
+        roleOptions={editRoleOptions}
+        canEditRole={selectedUser && canEditRole(selectedUser)}
+        onClose={closeEditModal}
+        onSave={handleUpdateUser}
+        onFormChange={handleFormChange}
+        onImageChange={handleImageChange}
+        submitText="Saqlash"
+      />
 
-            <TextField
-              select
-              fullWidth
-              label="Ruxsat turi"
-              value={form.role}
-              onChange={handleFormChange("role")}
-            >
-              {createRoleOptions.map((role) => (
-                <MenuItem key={role} value={role}>
-                  {roleNames[role] || role}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Stack>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={closeCreateModal}>Bekor qilish</Button>
-          <Button variant="contained" onClick={handleCreateUser} disabled={saving}>
-            {saving ? "Saqlanmoqda..." : "Qo'shish"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={editOpen} onClose={closeEditModal} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 800 }}>Foydalanuvchini tahrirlash</DialogTitle>
+      <Dialog
+        open={deleteOpen}
+        onClose={closeDeleteModal}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{
+          sx: {
+            borderRadius: "22px",
+          },
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: 950 }}>Foydalanuvchini o'chirish</DialogTitle>
 
         <DialogContent>
-          <Stack spacing={2} className="pt-2">
-            <Box className="flex items-center gap-3">
-              <Avatar
-                src={imagePreview || getImageUrl(selectedUser?.user_image)}
-                sx={{ width: 64, height: 64 }}
-              >
-                {form.first_name?.[0]}
-              </Avatar>
-
-              {selectedUser && isCurrentUser(selectedUser) && (
-                <Button variant="outlined" component="label">
-                  Rasm tanlash
-                  <input hidden type="file" accept="image/*" onChange={handleImageChange} />
-                </Button>
-              )}
-            </Box>
-
-            <TextField
-              fullWidth
-              label="Ism"
-              value={form.first_name}
-              onChange={handleFormChange("first_name")}
-            />
-            <TextField
-              fullWidth
-              label="Familiya"
-              value={form.last_name}
-              onChange={handleFormChange("last_name")}
-            />
-            <TextField
-              fullWidth
-              label="Username"
-              value={form.username}
-              onChange={handleFormChange("username")}
-            />
-            <TextField
-              fullWidth
-              label="Yangi password"
-              type="password"
-              value={form.password}
-              onChange={handleFormChange("password")}
-            />
-            <TextField
-              fullWidth
-              label="Telefon"
-              value={form.phone}
-              onChange={handleFormChange("phone")}
-            />
-
-            {selectedUser && canEditRole(selectedUser) && (
-              <TextField
-                select
-                fullWidth
-                label="Ruxsat turi"
-                value={form.role}
-                onChange={handleFormChange("role")}
-              >
-                {editRoleOptions.map((role) => (
-                  <MenuItem key={role} value={role}>
-                    {roleNames[role] || role}
-                  </MenuItem>
-                ))}
-              </TextField>
-            )}
-          </Stack>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={closeEditModal}>Bekor qilish</Button>
-          <Button variant="contained" onClick={handleUpdateUser} disabled={saving}>
-            {saving ? "Saqlanmoqda..." : "Saqlash"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={deleteOpen} onClose={closeDeleteModal} fullWidth maxWidth="xs">
-        <DialogTitle sx={{ fontWeight: 800 }}>Foydalanuvchini o'chirish</DialogTitle>
-
-        <DialogContent>
-          <Typography>
+          <Typography sx={{ color: "#334155", fontWeight: 650 }}>
             {selectedUser?.first_name} {selectedUser?.last_name} ni o'chirmoqchimisiz?
           </Typography>
         </DialogContent>
 
-        <DialogActions>
+        <DialogActions sx={{ px: 3, pb: 2.5 }}>
           <Button onClick={closeDeleteModal}>Bekor qilish</Button>
           <Button color="error" variant="contained" onClick={handleDeleteUser} disabled={deleting}>
             {deleting ? "O'chirilmoqda..." : "O'chirish"}
@@ -889,21 +1207,33 @@ const Users = () => {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={Boolean(deletedAction)} onClose={closeDeletedAction} fullWidth maxWidth="xs">
-        <DialogTitle sx={{ fontWeight: 800 }}>
+      <Dialog
+        open={Boolean(deletedAction)}
+        onClose={closeDeletedAction}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{
+          sx: {
+            borderRadius: "22px",
+          },
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: 950 }}>
           {deletedAction === "restore"
             ? "Foydalanuvchini qayta tiklash"
             : "Foydalanuvchini butkul o'chirish"}
         </DialogTitle>
+
         <DialogContent>
-          <Typography>
+          <Typography sx={{ color: "#334155", fontWeight: 650 }}>
             {selectedUser?.first_name} {selectedUser?.last_name}
             {deletedAction === "restore"
               ? " qayta faol hodimlar ro'yxatiga o'tkazilsinmi?"
               : " bazadan butkul o'chirilsinmi? Bu amalni ortga qaytarib bo'lmaydi."}
           </Typography>
         </DialogContent>
-        <DialogActions>
+
+        <DialogActions sx={{ px: 3, pb: 2.5 }}>
           <Button onClick={closeDeletedAction}>Bekor qilish</Button>
           <Button
             color={deletedAction === "restore" ? "success" : "error"}

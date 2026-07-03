@@ -21,12 +21,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+
 import { useAuth } from "../../Context/AuthContext";
 import CrmPagination from "../../Components/Common/CrmPagination";
 import { getUsers } from "../../api/getUsers";
 import { getProducts } from "../../api/products";
 import {
-  createClientSale,
   createBulkClientSale,
   deleteClientSale,
   getClientBalance,
@@ -72,23 +72,204 @@ const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(val
 
 const formatDate = (value) => {
   if (!value) return "-";
-  return new Date(value).toLocaleDateString("uz-UZ");
+
+  return new Intl.DateTimeFormat("uz-UZ", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(new Date(value));
 };
 
-const StatBox = ({ label, value, helper }) => (
-  <Box className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-    <Typography variant="body2" className="text-slate-500">
-      {label}
-    </Typography>
-    <Typography variant="h6" fontWeight={800} className="text-slate-950">
-      {value}
-    </Typography>
-    {helper && (
-      <Typography variant="body2" className="mt-1 text-slate-500">
-        {helper}
+const getInitial = (value) =>
+  String(value || "M")
+    .trim()
+    .slice(0, 1)
+    .toUpperCase();
+
+const Card = ({ children, sx = {} }) => (
+  <Paper
+    elevation={0}
+    sx={{
+      borderRadius: "20px",
+      border: "1px solid rgba(148, 163, 184, 0.22)",
+      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
+      boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+      overflow: "hidden",
+      ...sx,
+    }}
+  >
+    {children}
+  </Paper>
+);
+
+const MiniStat = ({ label, value, tone = "default", helper }) => {
+  const tones = {
+    default: {
+      color: "#0f172a",
+      bg: "#ffffff",
+      border: "rgba(148, 163, 184, 0.24)",
+    },
+    blue: {
+      color: "#2563eb",
+      bg: "rgba(37, 99, 235, 0.08)",
+      border: "rgba(37, 99, 235, 0.18)",
+    },
+    green: {
+      color: "#15803d",
+      bg: "rgba(34, 197, 94, 0.1)",
+      border: "rgba(34, 197, 94, 0.22)",
+    },
+    red: {
+      color: "#8b0101",
+      bg: "rgba(139, 1, 1, 0.08)",
+      border: "rgba(139, 1, 1, 0.18)",
+    },
+    orange: {
+      color: "#92400e",
+      bg: "rgba(245, 158, 11, 0.12)",
+      border: "rgba(245, 158, 11, 0.24)",
+    },
+  };
+
+  const current = tones[tone] || tones.default;
+
+  return (
+    <Box
+      sx={{
+        minWidth: 122,
+        px: 2,
+        py: 1.35,
+        borderRadius: "16px",
+        background: current.bg,
+        border: `1px solid ${current.border}`,
+        boxShadow: "0 10px 26px rgba(15, 23, 42, 0.05)",
+      }}
+    >
+      <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+
+      <Typography
+        sx={{
+          mt: 0.35,
+          fontSize: 18,
+          fontWeight: 950,
+          color: current.color,
+          letterSpacing: "-0.04em",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {value}
       </Typography>
+
+      {helper && (
+        <Typography sx={{ mt: 0.35, fontSize: 12, fontWeight: 700, color: "#64748b" }}>
+          {helper}
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
+const BalanceBox = ({ label, value, tone = "default" }) => {
+  const colors = {
+    default: "#0f172a",
+    blue: "#2563eb",
+    green: "#15803d",
+    red: "#8b0101",
+    orange: "#92400e",
+  };
+
+  return (
+    <Box
+      sx={{
+        p: 1.5,
+        borderRadius: "15px",
+        background: "#fff",
+        border: "1px solid rgba(148, 163, 184, 0.2)",
+      }}
+    >
+      <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+
+      <Typography
+        sx={{
+          mt: 0.45,
+          fontSize: 15,
+          fontWeight: 950,
+          color: colors[tone] || colors.default,
+          letterSpacing: "-0.035em",
+        }}
+      >
+        {value}
+      </Typography>
+    </Box>
+  );
+};
+
+const DebtChip = ({ debt }) => {
+  const hasDebt = Number(debt || 0) > 0;
+
+  return (
+    <Chip
+      size="small"
+      label={`Qarz: ${formatMoney(debt)}`}
+      sx={{
+        height: 26,
+        px: 0.35,
+        fontSize: 12,
+        fontWeight: 900,
+        color: hasDebt ? "#92400e" : "#15803d",
+        background: hasDebt ? "rgba(245, 158, 11, 0.12)" : "rgba(34, 197, 94, 0.12)",
+        border: hasDebt
+          ? "1px solid rgba(245, 158, 11, 0.24)"
+          : "1px solid rgba(34, 197, 94, 0.24)",
+      }}
+    />
+  );
+};
+
+const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md" }) => (
+  <Dialog
+    open={open}
+    onClose={onClose}
+    fullWidth
+    maxWidth={maxWidth}
+    PaperProps={{
+      sx: {
+        borderRadius: "22px",
+        border: "1px solid rgba(148, 163, 184, 0.22)",
+        boxShadow: "0 30px 80px rgba(15, 23, 42, 0.22)",
+        overflow: "hidden",
+      },
+    }}
+  >
+    <DialogTitle
+      sx={{
+        px: 3,
+        py: 2.2,
+        fontSize: 22,
+        fontWeight: 950,
+        color: "#0f172a",
+        borderBottom: "1px solid rgba(148, 163, 184, 0.18)",
+        background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+      }}
+    >
+      {title}
+    </DialogTitle>
+
+    <DialogContent sx={{ px: 3, py: 2.5 }}>{children}</DialogContent>
+
+    {actions && (
+      <DialogActions
+        sx={{
+          px: 3,
+          py: 2,
+          borderTop: "1px solid rgba(148, 163, 184, 0.18)",
+          background: "rgba(248, 250, 252, 0.72)",
+        }}
+      >
+        {actions}
+      </DialogActions>
     )}
-  </Box>
+  </Dialog>
 );
 
 const ClientSales = () => {
@@ -156,6 +337,7 @@ const ClientSales = () => {
           (sum, item) => sum + Number(item.quantity || 0) * Number(item.unit_price || 0),
           0,
         );
+
     const paid = Number(form.paid_amount || 0);
 
     return {
@@ -217,6 +399,7 @@ const ClientSales = () => {
 
       try {
         const { data } = await getClientSales(buildParams(offset, limit));
+
         setSales(data.client_sales || []);
         setTotals(data.totals || { total_amount: 0, paid_amount: 0, debt_amount: 0 });
         setPageInfo(data.pageInfo || { total: 0, offset, limit });
@@ -271,8 +454,9 @@ const ClientSales = () => {
       fetchSales(0, pageInfo.limit);
       fetchSummary();
     }, 250);
+
     return () => clearTimeout(timer);
-  }, [filters, pageInfo.limit]);
+  }, [filters, pageInfo.limit, fetchSales, fetchSummary]);
 
   const handleFilterChange = (field) => (event) => {
     setFilters((previous) => ({ ...previous, [field]: event.target.value }));
@@ -283,6 +467,7 @@ const ClientSales = () => {
 
     if (field === "product_id") {
       const product = products.find((item) => Number(item.id) === Number(value));
+
       setForm((previous) => ({
         ...previous,
         product_id: value,
@@ -299,14 +484,17 @@ const ClientSales = () => {
       ...previous,
       items: previous.items.map((item, itemIndex) => {
         if (itemIndex !== index) return item;
+
         if (field === "product_id") {
           const product = products.find((row) => Number(row.id) === Number(value));
+
           return {
             ...item,
             product_id: value,
             unit_price: product?.sale_price ?? item.unit_price,
           };
         }
+
         return { ...item, [field]: value };
       }),
     }));
@@ -320,6 +508,20 @@ const ClientSales = () => {
   const refreshPage = () => {
     fetchSales(pageInfo.offset, pageInfo.limit);
     fetchSummary();
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      q: "",
+      client_id: "",
+      product_id: "",
+      date_from: "",
+      date_to: "",
+      sort_by: "sold_at",
+      sort_order: "desc",
+      group_by: "client",
+    });
+    setFiltersOpen(false);
   };
 
   const openCreateModal = () => {
@@ -369,6 +571,7 @@ const ClientSales = () => {
 
     try {
       const { data } = await getClientBalance({ client_id: clientId });
+
       setPaymentBalance(
         data.balance || {
           total_amount: 0,
@@ -385,6 +588,7 @@ const ClientSales = () => {
 
   const openPaymentModal = (sale = null) => {
     setSelectedSale(sale);
+
     const nextForm = {
       ...emptyPaymentForm,
       client_id: sale?.client_id || filters.client_id || "",
@@ -428,6 +632,7 @@ const ClientSales = () => {
 
     if (field === "client_sale_id") {
       const sale = sales.find((item) => Number(item.id) === Number(value));
+
       if (sale) {
         setPaymentBalance({
           total_amount: Number(sale.total_amount || 0),
@@ -459,6 +664,7 @@ const ClientSales = () => {
       toast.error("Mijozni tanlang.");
       return false;
     }
+
     if (selectedSale) {
       if (!form.product_id || !form.quantity || Number(form.quantity) <= 0) {
         toast.error("Mahsulot va miqdorni to'g'ri kiriting.");
@@ -477,14 +683,17 @@ const ClientSales = () => {
       toast.error("Barcha mahsulot qatorlarini to'liq kiriting.");
       return false;
     }
+
     if (Number(form.paid_amount || 0) < 0) {
       toast.error("To'langan summa manfiy bo'lmasin.");
       return false;
     }
+
     if (preview.overPaid) {
       toast.error("To'langan summa jami savdo summasidan oshmasin.");
       return false;
     }
+
     return true;
   };
 
@@ -512,6 +721,7 @@ const ClientSales = () => {
 
   const handleSave = async () => {
     if (!validateForm()) return;
+
     setSaving(true);
 
     try {
@@ -534,10 +744,12 @@ const ClientSales = () => {
 
   const handleDelete = async () => {
     if (!selectedSale) return;
+
     setDeleting(true);
 
     try {
       await deleteClientSale(selectedSale.id);
+
       toast.success("Savdo o'chirildi.");
       closeModals();
       refreshPage();
@@ -553,25 +765,34 @@ const ClientSales = () => {
       toast.error("Mijozni tanlang.");
       return false;
     }
+
+    if (!paymentForm.client_sale_id) {
+      toast.error("Qaysi savdodan to'lov qilinishini tanlang.");
+      return false;
+    }
+
     if (!paymentForm.amount || Number(paymentForm.amount) <= 0) {
       toast.error("To'lov summasini to'g'ri kiriting.");
       return false;
     }
+
     if (Number(paymentForm.amount) > Number(paymentBalance.debt_amount || 0)) {
       toast.error("To'lov summasi qolgan qarzdan oshmasin.");
       return false;
     }
+
     return true;
   };
 
   const handleSavePayment = async () => {
     if (!validatePaymentForm()) return;
+
     setPaymentSaving(true);
 
     try {
       await createClientPayment({
         client_id: Number(paymentForm.client_id),
-        client_sale_id: paymentForm.client_sale_id ? Number(paymentForm.client_sale_id) : null,
+        client_sale_id: Number(paymentForm.client_sale_id),
         amount: Number(paymentForm.amount),
         paid_at: paymentForm.paid_at || undefined,
         note: paymentForm.note.trim() || null,
@@ -588,28 +809,105 @@ const ClientSales = () => {
   };
 
   return (
-    <Box className="crm-page flex h-full min-h-0 flex-col">
-      <Box className="mb-5 flex shrink-0 items-center justify-between">
-        <Box>
-          <Typography variant="h5" fontWeight={800} className="text-slate-950">
-            Mijoz savdo
-          </Typography>
-          <Typography variant="body2" className="mt-1 text-slate-500">
-            Mijozlarga berilgan mahsulotlar, to'lovlar va qarzdorlik nazorati
-          </Typography>
-        </Box>
+    <Box
+      sx={{
+        height: "100%",
+        minHeight: 0,
+        display: "flex",
+        flexDirection: "column",
+        pb: 2,
+      }}
+    >
+      <Card sx={{ mb: 0.5, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: { xs: "flex-start", xl: "center" },
+            justifyContent: "space-between",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Chip
+              label="ZERR CRM • mijoz savdo"
+              size="small"
+              sx={{
+                mb: 1,
+                height: 25,
+                fontSize: 12,
+                fontWeight: 950,
+                color: "#2563eb",
+                background: "rgba(37, 99, 235, 0.08)",
+                border: "1px solid rgba(37, 99, 235, 0.16)",
+              }}
+            />
 
-        <Box className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          <StatBox label="Savdo" value={formatMoney(balance.total_amount)} />
-          <StatBox label="To'langan" value={formatMoney(balance.paid_amount)} />
-          <StatBox label="Qarz" value={formatMoney(balance.debt_amount)} />
-          <StatBox label="Yozuvlar" value={pageInfo.total} />
-        </Box>
-      </Box>
+            <Typography
+              sx={{
+                fontSize: { xs: 27, md: 33 },
+                fontWeight: 950,
+                color: "#0f172a",
+                letterSpacing: "-0.055em",
+                lineHeight: 1.05,
+              }}
+            >
+              Mijoz savdo
+            </Typography>
 
-      <Paper elevation={0} className="mb-4 shrink-0 rounded-2xl border border-slate-200 p-4">
-        <Box className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
-          <Box className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <Typography
+              sx={{
+                mt: 0.7,
+                fontSize: 14,
+                fontWeight: 650,
+                color: "#64748b",
+              }}
+            >
+              Mijozlarga berilgan mahsulotlar, to'lovlar va qarzdorlik nazorati.
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "repeat(2, 1fr)",
+                sm: "repeat(4, auto)",
+              },
+              gap: 1.2,
+              width: { xs: "100%", xl: "auto" },
+            }}
+          >
+            <MiniStat label="Savdo" value={formatMoney(balance.total_amount)} tone="blue" />
+            <MiniStat label="To'langan" value={formatMoney(balance.paid_amount)} tone="green" />
+            <MiniStat label="Qarz" value={formatMoney(balance.debt_amount)} tone="orange" />
+            <MiniStat label="Yozuvlar" value={pageInfo.total} tone="default" />
+          </Box>
+        </Box>
+      </Card>
+
+      <Card sx={{ mb: 1, p: 2, flexShrink: 0 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: { xs: "stretch", xl: "flex-start" },
+            justifyContent: "space-between",
+            flexDirection: { xs: "column", xl: "row" },
+            gap: 2,
+          }}
+        >
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, 1fr)",
+                lg: "repeat(4, 1fr)",
+              },
+              gap: 1.2,
+              flex: 1,
+            }}
+          >
             <TextField
               size="small"
               label="Qidirish"
@@ -619,6 +917,7 @@ const ClientSales = () => {
                 if (event.key === "Enter") applyFilters();
               }}
             />
+
             <TextField
               select
               size="small"
@@ -633,13 +932,45 @@ const ClientSales = () => {
                 </MenuItem>
               ))}
             </TextField>
+
+            <Button
+              variant="outlined"
+              onClick={() => setFiltersOpen((open) => !open)}
+              sx={{
+                height: 42,
+                borderRadius: "13px",
+                textTransform: "none",
+                fontWeight: 900,
+                color: "#0f172a",
+                borderColor: "rgba(37, 99, 235, 0.22)",
+                background: "#fff",
+              }}
+            >
+              {filtersOpen ? "Filtrlarni yopish" : "Batafsil filtrlar"}
+            </Button>
+
+            <Button
+              variant="outlined"
+              onClick={resetFilters}
+              sx={{
+                height: 42,
+                borderRadius: "13px",
+                textTransform: "none",
+                fontWeight: 900,
+                color: "#0f172a",
+                borderColor: "rgba(37, 99, 235, 0.22)",
+                background: "#fff",
+              }}
+            >
+              Tozalash
+            </Button>
+
             {filtersOpen && (
               <>
                 <TextField
                   select
                   size="small"
                   label="Mahsulot"
-                  sx={{ order: 2 }}
                   value={filters.product_id}
                   onChange={handleFilterChange("product_id")}
                 >
@@ -650,29 +981,29 @@ const ClientSales = () => {
                     </MenuItem>
                   ))}
                 </TextField>
+
                 <TextField
                   size="small"
                   type="date"
                   label="Dan"
-                  sx={{ order: 2 }}
                   value={filters.date_from}
                   onChange={handleFilterChange("date_from")}
                   slotProps={{ inputLabel: { shrink: true } }}
                 />
+
                 <TextField
                   size="small"
                   type="date"
                   label="Gacha"
-                  sx={{ order: 2 }}
                   value={filters.date_to}
                   onChange={handleFilterChange("date_to")}
                   slotProps={{ inputLabel: { shrink: true } }}
                 />
+
                 <TextField
                   select
                   size="small"
                   label="Saralash"
-                  sx={{ order: 2 }}
                   value={filters.sort_by}
                   onChange={handleFilterChange("sort_by")}
                 >
@@ -682,22 +1013,22 @@ const ClientSales = () => {
                   <MenuItem value="total_amount">Savdo summa</MenuItem>
                   <MenuItem value="debt_amount">Qarz summa</MenuItem>
                 </TextField>
+
                 <TextField
                   select
                   size="small"
                   label="Tartib"
-                  sx={{ order: 2 }}
                   value={filters.sort_order}
                   onChange={handleFilterChange("sort_order")}
                 >
                   <MenuItem value="desc">Yangidan eskiga</MenuItem>
                   <MenuItem value="asc">Eskidan yangiga</MenuItem>
                 </TextField>
+
                 <TextField
                   select
                   size="small"
                   label="Guruhlash"
-                  sx={{ order: 2 }}
                   value={filters.group_by}
                   onChange={handleFilterChange("group_by")}
                 >
@@ -707,191 +1038,307 @@ const ClientSales = () => {
                 </TextField>
               </>
             )}
-            <Button
-              variant="text"
-              sx={{ order: 1 }}
-              onClick={() => setFiltersOpen((open) => !open)}
-            >
-              {filtersOpen ? "Filtrlarni yopish" : "Batafsil filtrlar"}
-            </Button>
-            <Button
-              variant="outlined"
-              color="warning"
-              sx={{ order: 1 }}
-              onClick={() => {
-                setFilters({
-                  q: "",
-                  client_id: "",
-                  product_id: "",
-                  date_from: "",
-                  date_to: "",
-                  sort_by: "sold_at",
-                  sort_order: "desc",
-                  group_by: "client",
-                });
-                setFiltersOpen(false);
-              }}
-            >
-              Tozalash
-            </Button>
           </Box>
 
           {canManage && (
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.2}>
               <Button
                 variant="outlined"
                 onClick={() => openPaymentModal()}
-                sx={{ borderRadius: 2, minWidth: 160 }}
+                sx={{
+                  minWidth: 145,
+                  height: 42,
+                  borderRadius: "13px",
+                  textTransform: "none",
+                  fontWeight: 900,
+                  color: "#0f172a",
+                  borderColor: "rgba(37, 99, 235, 0.22)",
+                  background: "#fff",
+                }}
               >
                 Kirim qo'shish
               </Button>
+
               <Button
                 variant="contained"
                 onClick={openCreateModal}
-                sx={{ borderRadius: 2, minWidth: 190 }}
+                sx={{
+                  minWidth: 150,
+                  height: 42,
+                  borderRadius: "13px",
+                  textTransform: "none",
+                  fontWeight: 950,
+                  background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                  boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
+                  "&:hover": {
+                    background: "linear-gradient(135deg, #7f0101, #991b1b)",
+                  },
+                }}
               >
                 Savdo qo'shish
               </Button>
             </Stack>
           )}
         </Box>
-      </Paper>
+      </Card>
 
-      <Box className="mb-4 grid shrink-0 grid-cols-1 gap-3 md:grid-cols-4">
+      <Card sx={{ mb: 1, p: 1.6, flexShrink: 0 }}>
         {summaryLoading ? (
-          <Paper elevation={0} className="rounded-2xl border border-slate-200 p-4 md:col-span-4">
+          <Box sx={{ minHeight: 92, display: "grid", placeItems: "center" }}>
             <CircularProgress size={24} />
-          </Paper>
+          </Box>
         ) : summary.length ? (
-          summary.slice(0, 4).map((item) => (
-            <Paper
-              key={String(item.group_id)}
-              elevation={0}
-              className="rounded-2xl border border-slate-200 p-4"
-            >
-              <Typography variant="body2" className="truncate text-slate-500">
-                {item.group_name || "-"}
-              </Typography>
-              <Typography className="mt-1 text-slate-950" fontWeight={800}>
-                {formatMoney(item.total_amount)}
-              </Typography>
-              <Typography variant="body2" className="mt-1 text-slate-500">
-                Qarz: {formatMoney(item.debt_amount)} / {item.sales_count} savdo
-              </Typography>
-            </Paper>
-          ))
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, 1fr)",
+                xl: "repeat(4, 1fr)",
+              },
+              gap: 1.4,
+            }}
+          >
+            {summary.slice(0, 4).map((item) => (
+              <Box
+                key={String(item.group_id)}
+                sx={{
+                  p: 1.6,
+                  borderRadius: "17px",
+                  background: "#fff",
+                  border: "1px solid rgba(148, 163, 184, 0.22)",
+                  boxShadow: "0 10px 24px rgba(15, 23, 42, 0.04)",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: 13,
+                    fontWeight: 800,
+                    color: "#64748b",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {item.group_name || "-"}
+                </Typography>
+
+                <Typography
+                  sx={{
+                    mt: 0.45,
+                    fontSize: 18,
+                    fontWeight: 950,
+                    color: "#0f172a",
+                    letterSpacing: "-0.04em",
+                  }}
+                >
+                  {formatMoney(item.total_amount)}
+                </Typography>
+
+                <Typography sx={{ mt: 0.45, fontSize: 12.5, fontWeight: 750, color: "#64748b" }}>
+                  Qarz: {formatMoney(item.debt_amount)} / {item.sales_count} savdo
+                </Typography>
+              </Box>
+            ))}
+          </Box>
         ) : (
-          <Paper elevation={0} className="rounded-2xl border border-slate-200 p-4 md:col-span-4">
-            <Typography variant="body2" className="text-slate-500">
+          <Box sx={{ minHeight: 92, display: "grid", placeItems: "center" }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 750, color: "#64748b" }}>
               Summary uchun savdo ma'lumoti topilmadi.
             </Typography>
-          </Paper>
+          </Box>
         )}
-      </Box>
+      </Card>
 
-      <Paper
-        elevation={0}
-        className="flex min-h-0 flex-1 flex-col rounded-2xl border border-slate-200 bg-white"
+      <Card
+        sx={{
+          minHeight: 0,
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
-        <Box className="min-h-0 flex-1 overflow-auto">
-          <Table size="small" sx={{ tableLayout: "fixed", width: "100%" }}>
+        <Box sx={{ minHeight: 0, flex: 1, overflow: "auto" }}>
+          <Table
+            sx={{
+              minWidth: canManage ? 1050 : 900,
+              "& th": {
+                py: 1.7,
+                fontSize: 12,
+                fontWeight: 950,
+                color: "#64748b",
+                textTransform: "uppercase",
+                letterSpacing: "0.03em",
+                background: "rgba(248, 250, 252, 0.95)",
+                borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
+              },
+              "& td": {
+                py: 1.55,
+                borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+              },
+              "& tbody tr:hover": {
+                background: "rgba(37, 99, 235, 0.035)",
+              },
+            }}
+          >
             <TableHead>
               <TableRow>
-                <TableCell width="25%" sx={{ fontWeight: 700 }}>
-                  Mijoz
-                </TableCell>
-                <TableCell width="22%" sx={{ fontWeight: 700 }}>
-                  Savdo
-                </TableCell>
-                <TableCell width="25%" sx={{ fontWeight: 700 }}>
-                  Hisob
-                </TableCell>
-                <TableCell width="14%" sx={{ fontWeight: 700 }}>
-                  Sana va izoh
-                </TableCell>
-                {canManage && (
-                  <TableCell align="right" sx={{ fontWeight: 700 }}>
-                    Amallar
-                  </TableCell>
-                )}
+                <TableCell>Mijoz</TableCell>
+                <TableCell>Savdo</TableCell>
+                <TableCell>Hisob</TableCell>
+                <TableCell>Sana va izoh</TableCell>
+                {canManage && <TableCell align="right">Amallar</TableCell>}
               </TableRow>
             </TableHead>
+
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={canManage ? 5 : 4} align="center">
-                    <CircularProgress size={28} />
+                  <TableCell colSpan={canManage ? 5 : 4} align="center" sx={{ py: 7 }}>
+                    <CircularProgress size={30} />
                   </TableCell>
                 </TableRow>
               ) : sales.length ? (
                 sales.map((sale) => (
                   <TableRow key={sale.id} hover>
                     <TableCell>
-                      <Box className="flex items-center gap-3">
-                        <Avatar sx={{ bgcolor: "#7F1D1D" }}>
-                          {sale.client_name?.[0]?.toUpperCase() || "C"}
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.6 }}>
+                        <Avatar
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            bgcolor: "#8b0101",
+                            color: "#fff",
+                            fontWeight: 950,
+                            border: "3px solid #fff",
+                            boxShadow: "0 10px 24px rgba(139, 1, 1, 0.14)",
+                          }}
+                        >
+                          {getInitial(sale.client_name)}
                         </Avatar>
-                        <Box>
-                          <Typography fontWeight={700}>{sale.client_name}</Typography>
-                          <Typography variant="body2" className="text-slate-500">
+
+                        <Box sx={{ minWidth: 0 }}>
+                          <Typography
+                            sx={{
+                              fontSize: 14.5,
+                              fontWeight: 900,
+                              color: "#0f172a",
+                              lineHeight: 1.15,
+                            }}
+                          >
+                            {sale.client_name || "-"}
+                          </Typography>
+
+                          <Typography
+                            sx={{
+                              mt: 0.35,
+                              fontSize: 12.5,
+                              fontWeight: 700,
+                              color: "#64748b",
+                            }}
+                          >
                             @{sale.client_username || "client"}
                           </Typography>
                         </Box>
                       </Box>
                     </TableCell>
+
                     <TableCell>
-                      <Typography fontWeight={700}>{sale.product_name}</Typography>
-                      <Typography variant="body2" className="text-slate-500">
+                      <Typography sx={{ fontSize: 14.5, fontWeight: 900, color: "#0f172a" }}>
+                        {sale.product_name || "-"}
+                      </Typography>
+
+                      <Typography
+                        sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 700, color: "#64748b" }}
+                      >
                         {sale.product_sku || "-"}
                       </Typography>
-                      <Typography variant="body2" className="text-slate-500">
+
+                      <Typography
+                        sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 700, color: "#64748b" }}
+                      >
                         {formatNumber(sale.quantity)} dona × {formatMoney(sale.unit_price)}
                       </Typography>
                     </TableCell>
+
                     <TableCell>
-                      <Typography fontWeight={800}>
+                      <Typography sx={{ fontSize: 14.5, fontWeight: 950, color: "#0f172a" }}>
                         Jami: {formatMoney(sale.total_amount)}
                       </Typography>
-                      <Typography variant="body2" className="text-emerald-700">
+
+                      <Typography
+                        sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 800, color: "#15803d" }}
+                      >
                         To'landi: {formatMoney(sale.current_paid_amount ?? sale.paid_amount)}
                       </Typography>
+
                       {Number(sale.extra_paid_amount || 0) > 0 && (
-                        <Typography variant="body2" className="text-slate-500">
+                        <Typography
+                          sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 700, color: "#64748b" }}
+                        >
                           Keyingi: {formatMoney(sale.extra_paid_amount)}
                         </Typography>
                       )}
-                      <Chip
-                        size="small"
-                        label={`Qarz: ${formatMoney(sale.debt_amount)}`}
-                        color={Number(sale.debt_amount) > 0 ? "warning" : "success"}
-                        className="mt-1"
-                      />
+
+                      <Box sx={{ mt: 0.8 }}>
+                        <DebtChip debt={sale.remaining_debt ?? sale.debt_amount} />
+                      </Box>
                     </TableCell>
+
                     <TableCell>
-                      <Typography variant="body2">{formatDate(sale.sold_at)}</Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography sx={{ fontSize: 13.5, fontWeight: 800, color: "#334155" }}>
+                        {formatDate(sale.sold_at)}
+                      </Typography>
+
+                      <Typography
+                        sx={{
+                          mt: 0.35,
+                          maxWidth: 220,
+                          fontSize: 12.5,
+                          fontWeight: 700,
+                          color: "#64748b",
+                        }}
+                      >
                         {sale.note || "Izoh yo'q"}
                       </Typography>
                     </TableCell>
+
                     {canManage && (
                       <TableCell align="right">
-                        <Stack direction="column" spacing={0.5} sx={{ alignItems: "stretch" }}>
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          useFlexGap
+                          sx={{ justifyContent: "flex-end", flexWrap: "wrap" }}
+                        >
                           <Button
                             size="small"
                             variant="outlined"
                             color="success"
-                            disabled={Number(sale.debt_amount || 0) <= 0}
+                            disabled={Number(sale.remaining_debt ?? sale.debt_amount ?? 0) <= 0}
                             onClick={() => openPaymentModal(sale)}
+                            sx={{
+                              borderRadius: "10px",
+                              textTransform: "none",
+                              fontWeight: 900,
+                            }}
                           >
                             To'lov
                           </Button>
+
                           <Button
                             size="small"
                             variant="outlined"
                             onClick={() => openEditModal(sale)}
+                            sx={{
+                              borderRadius: "10px",
+                              textTransform: "none",
+                              fontWeight: 900,
+                            }}
                           >
                             O'zgartirish
                           </Button>
+
                           <Button
                             size="small"
                             color="error"
@@ -899,6 +1346,11 @@ const ClientSales = () => {
                             onClick={() => {
                               setSelectedSale(sale);
                               setDeleteOpen(true);
+                            }}
+                            sx={{
+                              borderRadius: "10px",
+                              textTransform: "none",
+                              fontWeight: 900,
                             }}
                           >
                             O'chirish
@@ -910,7 +1362,11 @@ const ClientSales = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={canManage ? 5 : 4} align="center">
+                  <TableCell
+                    colSpan={canManage ? 5 : 4}
+                    align="center"
+                    sx={{ py: 7, color: "#64748b", fontWeight: 850 }}
+                  >
                     Savdo yozuvlari topilmadi
                   </TableCell>
                 </TableRow>
@@ -919,82 +1375,182 @@ const ClientSales = () => {
           </Table>
         </Box>
 
-        <CrmPagination total={pageInfo.total} page={page} limit={pageInfo.limit} onPageChange={(nextPage) => fetchSales(nextPage * pageInfo.limit, pageInfo.limit)} onLimitChange={(limit) => fetchSales(0, limit)} />
-      </Paper>
+        <Box
+          sx={{
+            borderTop: "1px solid rgba(148, 163, 184, 0.18)",
+            background: "rgba(248, 250, 252, 0.65)",
+          }}
+        >
+          <CrmPagination
+            total={pageInfo.total}
+            page={page}
+            limit={pageInfo.limit}
+            onPageChange={(nextPage) => fetchSales(nextPage * pageInfo.limit, pageInfo.limit)}
+            onLimitChange={(limit) => fetchSales(0, limit)}
+          />
+        </Box>
+      </Card>
 
-      <Dialog open={modalOpen} onClose={closeModals} fullWidth maxWidth="md">
-        <DialogTitle sx={{ fontWeight: 800 }}>
-          {selectedSale ? "Savdoni tahrirlash" : "Mijozga mahsulot sotish"}
-        </DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} className="pt-2">
-            <Box className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <TextField
-                select
-                required
-                label="Mijoz"
-                value={form.client_id}
-                onChange={handleFormChange("client_id")}
+      <PremiumDialog
+        open={modalOpen}
+        onClose={closeModals}
+        title={selectedSale ? "Savdoni tahrirlash" : "Mijozga mahsulot sotish"}
+        maxWidth="md"
+        actions={
+          <>
+            <Button
+              onClick={closeModals}
+              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+            >
+              Bekor qilish
+            </Button>
+
+            <Button
+              variant="contained"
+              onClick={handleSave}
+              disabled={saving}
+              sx={{
+                minWidth: 120,
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 900,
+                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                boxShadow: "0 12px 25px rgba(139, 1, 1, 0.2)",
+              }}
+            >
+              {saving ? "Saqlanmoqda..." : "Saqlash"}
+            </Button>
+          </>
+        }
+      >
+        <Stack spacing={2.1}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+              gap: 1.6,
+            }}
+          >
+            <TextField
+              select
+              required
+              label="Mijoz"
+              value={form.client_id}
+              onChange={handleFormChange("client_id")}
+            >
+              {clients.map((client) => (
+                <MenuItem key={client.id} value={client.id}>
+                  {client.first_name} {client.last_name}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            {selectedSale && (
+              <>
+                <TextField
+                  select
+                  required
+                  label="Mahsulot"
+                  value={form.product_id}
+                  onChange={handleFormChange("product_id")}
+                >
+                  {products.map((product) => (
+                    <MenuItem key={product.id} value={product.id}>
+                      {product.name} - {formatMoney(product.sale_price)}
+                    </MenuItem>
+                  ))}
+                </TextField>
+
+                <TextField
+                  required
+                  type="number"
+                  label="Miqdor"
+                  value={form.quantity}
+                  onChange={handleFormChange("quantity")}
+                  slotProps={{ htmlInput: { min: 0, step: 1 } }}
+                />
+
+                <TextField
+                  required
+                  type="number"
+                  label="Sotish narxi"
+                  value={form.unit_price}
+                  onChange={handleFormChange("unit_price")}
+                  helperText={
+                    selectedProduct
+                      ? `Default: ${formatMoney(selectedProduct.sale_price)}`
+                      : "Mahsulot tanlanganda avtomatik tushadi"
+                  }
+                  slotProps={{ htmlInput: { min: 0, step: 1000 } }}
+                />
+              </>
+            )}
+
+            <TextField
+              type="date"
+              label="Sotilgan sana"
+              value={form.sold_at}
+              onChange={handleFormChange("sold_at")}
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
+          </Box>
+
+          {!selectedSale && (
+            <Box
+              sx={{
+                p: 2,
+                borderRadius: "18px",
+                background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+                border: "1px solid rgba(148, 163, 184, 0.22)",
+              }}
+            >
+              <Box
+                sx={{
+                  mb: 1.6,
+                  display: "flex",
+                  alignItems: { xs: "flex-start", sm: "center" },
+                  justifyContent: "space-between",
+                  flexDirection: { xs: "column", sm: "row" },
+                  gap: 1.3,
+                }}
               >
-                {clients.map((client) => (
-                  <MenuItem key={client.id} value={client.id}>
-                    {client.first_name} {client.last_name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              {selectedSale && (
-                <>
-                  <TextField
-                    select
-                    required
-                    label="Mahsulot"
-                    value={form.product_id}
-                    onChange={handleFormChange("product_id")}
-                  >
-                    {products.map((product) => (
-                      <MenuItem key={product.id} value={product.id}>
-                        {product.name} - {formatMoney(product.sale_price)}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                  <TextField
-                    required
-                    type="number"
-                    label="Miqdor"
-                    value={form.quantity}
-                    onChange={handleFormChange("quantity")}
-                    slotProps={{ htmlInput: { min: 0, step: 1 } }}
-                  />
-                  <TextField
-                    required
-                    type="number"
-                    label="Sotish narxi"
-                    value={form.unit_price}
-                    onChange={handleFormChange("unit_price")}
-                    helperText={
-                      selectedProduct
-                        ? `Default: ${formatMoney(selectedProduct.sale_price)}`
-                        : "Mahsulot tanlanganda avtomatik tushadi"
-                    }
-                    slotProps={{ htmlInput: { min: 0, step: 1000 } }}
-                  />
-                </>
-              )}
-              <TextField
-                type="date"
-                label="Sotilgan sana"
-                value={form.sold_at}
-                onChange={handleFormChange("sold_at")}
-                slotProps={{ inputLabel: { shrink: true } }}
-              />
-            </Box>
+                <Box>
+                  <Typography sx={{ fontSize: 16, fontWeight: 950, color: "#0f172a" }}>
+                    Mahsulotlar
+                  </Typography>
 
-            {!selectedSale && (
-              <Stack spacing={1.5}>
+                  <Typography sx={{ mt: 0.4, fontSize: 13, fontWeight: 650, color: "#64748b" }}>
+                    Bir nechta mahsulotni bitta savdoga qo'shishingiz mumkin.
+                  </Typography>
+                </Box>
+
+                <Button
+                  variant="outlined"
+                  onClick={() =>
+                    setForm((previous) => ({
+                      ...previous,
+                      items: [...previous.items, { product_id: "", quantity: "", unit_price: "" }],
+                    }))
+                  }
+                  sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 900 }}
+                >
+                  Yana mahsulot
+                </Button>
+              </Box>
+
+              <Stack spacing={1.4}>
                 {form.items.map((item, index) => (
                   <Box
                     key={index}
-                    className="grid grid-cols-1 gap-3 rounded-xl border border-slate-200 p-3 sm:grid-cols-[1.5fr_0.8fr_1fr_auto]"
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: { xs: "1fr", md: "1.5fr 0.8fr 1fr auto" },
+                      gap: 1.3,
+                      p: 1.4,
+                      borderRadius: "16px",
+                      background: "#ffffff",
+                      border: "1px solid rgba(148, 163, 184, 0.2)",
+                    }}
                   >
                     <TextField
                       select
@@ -1010,6 +1566,7 @@ const ClientSales = () => {
                         </MenuItem>
                       ))}
                     </TextField>
+
                     <TextField
                       type="number"
                       label="Miqdor"
@@ -1019,6 +1576,7 @@ const ClientSales = () => {
                       }
                       slotProps={{ htmlInput: { min: 0, step: 1 } }}
                     />
+
                     <TextField
                       type="number"
                       label="Sotish narxi"
@@ -1028,6 +1586,7 @@ const ClientSales = () => {
                       }
                       slotProps={{ htmlInput: { min: 0, step: 1000 } }}
                     />
+
                     <Button
                       color="error"
                       disabled={form.items.length === 1}
@@ -1037,192 +1596,258 @@ const ClientSales = () => {
                           items: previous.items.filter((_, itemIndex) => itemIndex !== index),
                         }))
                       }
+                      sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
                     >
                       Olib tashlash
                     </Button>
                   </Box>
                 ))}
-                <Button
-                  variant="outlined"
-                  onClick={() =>
-                    setForm((previous) => ({
-                      ...previous,
-                      items: [...previous.items, { product_id: "", quantity: "", unit_price: "" }],
-                    }))
-                  }
-                >
-                  Yana mahsulot
-                </Button>
               </Stack>
-            )}
+            </Box>
+          )}
 
+          <TextField
+            fullWidth
+            type="number"
+            label="To'langan summa"
+            value={form.paid_amount}
+            onChange={handleFormChange("paid_amount")}
+            error={preview.overPaid}
+            helperText={
+              preview.overPaid
+                ? "To'lov jami summadan oshmasin"
+                : "Qisman to'lov yoki 0 bo'lishi mumkin"
+            }
+            slotProps={{ htmlInput: { min: 0, step: 1000 } }}
+          />
+
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" },
+              gap: 1.2,
+              p: 1.5,
+              borderRadius: "18px",
+              background: preview.overPaid ? "rgba(254, 242, 242, 0.95)" : "#f8fafc",
+              border: preview.overPaid
+                ? "1px solid rgba(220, 38, 38, 0.3)"
+                : "1px solid rgba(148, 163, 184, 0.2)",
+            }}
+          >
+            <BalanceBox label="Jami" value={formatMoney(preview.total)} tone="blue" />
+            <BalanceBox label="To'langan" value={formatMoney(preview.paid)} tone="green" />
+            <BalanceBox label="Qoladigan qarz" value={formatMoney(preview.debt)} tone="orange" />
+          </Box>
+
+          <TextField
+            fullWidth
+            multiline
+            minRows={3}
+            label="Izoh"
+            value={form.note}
+            onChange={handleFormChange("note")}
+          />
+        </Stack>
+      </PremiumDialog>
+
+      <PremiumDialog
+        open={deleteOpen}
+        onClose={closeModals}
+        title="Savdoni o'chirish"
+        maxWidth="xs"
+        actions={
+          <>
+            <Button
+              onClick={closeModals}
+              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+            >
+              Bekor qilish
+            </Button>
+
+            <Button
+              color="error"
+              variant="contained"
+              onClick={handleDelete}
+              disabled={deleting}
+              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 900 }}
+            >
+              {deleting ? "O'chirilmoqda..." : "O'chirish"}
+            </Button>
+          </>
+        }
+      >
+        <Typography sx={{ color: "#334155", fontWeight: 700 }}>
+          {selectedSale?.client_name} uchun {formatMoney(selectedSale?.total_amount)} savdo yozuvini
+          o'chirmoqchimisiz?
+        </Typography>
+      </PremiumDialog>
+
+      <PremiumDialog
+        open={paymentOpen}
+        onClose={closeModals}
+        title="Mijozdan to'lov"
+        maxWidth="sm"
+        actions={
+          <>
+            <Button
+              onClick={closeModals}
+              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+            >
+              Bekor qilish
+            </Button>
+
+            <Button
+              variant="contained"
+              onClick={handleSavePayment}
+              disabled={paymentSaving}
+              sx={{
+                minWidth: 120,
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 900,
+                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                boxShadow: "0 12px 25px rgba(139, 1, 1, 0.2)",
+              }}
+            >
+              {paymentSaving ? "Saqlanmoqda..." : "Kirim qilish"}
+            </Button>
+          </>
+        }
+      >
+        <Stack spacing={2.1}>
+          <TextField
+            select
+            required
+            label="Mijoz"
+            value={paymentForm.client_id}
+            onChange={handlePaymentChange("client_id")}
+            disabled={Boolean(selectedSale)}
+          >
+            {clients.map((client) => (
+              <MenuItem key={client.id} value={client.id}>
+                {client.first_name} {client.last_name}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            select
+            required
+            label="Qaysi savdodan"
+            value={paymentForm.client_sale_id}
+            onChange={handlePaymentChange("client_sale_id")}
+            disabled={Boolean(selectedSale)}
+            helperText="Savdoni tanlash majburiy"
+          >
+            {sales
+              .filter(
+                (sale) =>
+                  !paymentForm.client_id ||
+                  Number(sale.client_id) === Number(paymentForm.client_id),
+              )
+              .filter((sale) => Number(sale.remaining_debt ?? sale.debt_amount ?? 0) > 0)
+              .map((sale) => (
+                <MenuItem key={sale.id} value={sale.id}>
+                  #{sale.id} - {sale.product_name} / qarz{" "}
+                  {formatMoney(sale.remaining_debt ?? sale.debt_amount)}
+                </MenuItem>
+              ))}
+          </TextField>
+
+          <Box
+            sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.6 }}
+          >
             <TextField
-              fullWidth
+              required
               type="number"
-              label="To'langan summa"
-              value={form.paid_amount}
-              onChange={handleFormChange("paid_amount")}
-              error={preview.overPaid}
+              label="Kirim summa"
+              value={paymentForm.amount}
+              onChange={handlePaymentChange("amount")}
+              error={Number(paymentForm.amount || 0) > Number(paymentBalance.debt_amount || 0)}
               helperText={
-                preview.overPaid
-                  ? "To'lov jami summadan oshmasin"
-                  : "Qisman to'lov yoki 0 bo'lishi mumkin"
+                Number(paymentForm.amount || 0) > Number(paymentBalance.debt_amount || 0)
+                  ? "Summa qolgan qarzdan oshmasin"
+                  : "Masalan: 1700000"
               }
               slotProps={{ htmlInput: { min: 0, step: 1000 } }}
             />
 
-            <Box className="grid grid-cols-1 gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:grid-cols-3">
-              <StatBox label="Jami" value={formatMoney(preview.total)} />
-              <StatBox label="To'langan" value={formatMoney(preview.paid)} />
-              <StatBox label="Qoladigan qarz" value={formatMoney(preview.debt)} />
+            <TextField
+              type="date"
+              label="To'lov sanasi"
+              value={paymentForm.paid_at}
+              onChange={handlePaymentChange("paid_at")}
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
+          </Box>
+
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: "18px",
+              background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+              border: "1px solid rgba(148, 163, 184, 0.22)",
+            }}
+          >
+            <Box
+              sx={{
+                mb: 1.5,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 1.5,
+              }}
+            >
+              <Typography sx={{ fontSize: 16, fontWeight: 950, color: "#0f172a" }}>
+                Qarz holati
+              </Typography>
+
+              {paymentBalanceLoading && <CircularProgress size={18} />}
             </Box>
 
-            <TextField
-              fullWidth
-              multiline
-              minRows={3}
-              label="Izoh"
-              value={form.note}
-              onChange={handleFormChange("note")}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeModals}>Bekor qilish</Button>
-          <Button variant="contained" onClick={handleSave} disabled={saving}>
-            {saving ? "Saqlanmoqda..." : "Saqlash"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={deleteOpen} onClose={closeModals} fullWidth maxWidth="xs">
-        <DialogTitle sx={{ fontWeight: 800 }}>Savdoni o'chirish</DialogTitle>
-        <DialogContent>
-          <Typography>
-            {selectedSale?.client_name} uchun {formatMoney(selectedSale?.total_amount)} savdo
-            yozuvini o'chirmoqchimisiz?
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeModals}>Bekor qilish</Button>
-          <Button color="error" variant="contained" onClick={handleDelete} disabled={deleting}>
-            {deleting ? "O'chirilmoqda..." : "O'chirish"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={paymentOpen} onClose={closeModals} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 800 }}>Mijozdan to'lov</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} className="pt-2">
-            <TextField
-              select
-              required
-              label="Mijoz"
-              value={paymentForm.client_id}
-              onChange={handlePaymentChange("client_id")}
-              disabled={Boolean(selectedSale)}
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)" },
+                gap: 1.2,
+              }}
             >
-              {clients.map((client) => (
-                <MenuItem key={client.id} value={client.id}>
-                  {client.first_name} {client.last_name}
-                </MenuItem>
-              ))}
-            </TextField>
-
-            <TextField
-              select
-              required
-              label="Qaysi savdodan"
-              value={paymentForm.client_sale_id}
-              onChange={handlePaymentChange("client_sale_id")}
-              disabled={Boolean(selectedSale)}
-              helperText="Savdoni tanlash majburiy"
-            >
-              {sales
-                .filter(
-                  (sale) =>
-                    !paymentForm.client_id ||
-                    Number(sale.client_id) === Number(paymentForm.client_id),
-                )
-                .map((sale) => (
-                  <MenuItem key={sale.id} value={sale.id}>
-                    #{sale.id} - {sale.product_name} / qarz{" "}
-                    {formatMoney(sale.remaining_debt ?? sale.debt_amount)}
-                  </MenuItem>
-                ))}
-            </TextField>
-
-            <Box className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <TextField
-                required
-                type="number"
-                label="Kirim summa"
-                value={paymentForm.amount}
-                onChange={handlePaymentChange("amount")}
-                error={Number(paymentForm.amount || 0) > Number(paymentBalance.debt_amount || 0)}
-                helperText={
-                  Number(paymentForm.amount || 0) > Number(paymentBalance.debt_amount || 0)
-                    ? "Summa qolgan qarzdan oshmasin"
-                    : "Masalan: 1700000"
-                }
-                slotProps={{ htmlInput: { min: 0, step: 1000 } }}
+              <BalanceBox
+                label="Savdo"
+                value={formatMoney(paymentBalance.total_amount)}
+                tone="blue"
               />
-              <TextField
-                type="date"
-                label="To'lov sanasi"
-                value={paymentForm.paid_at}
-                onChange={handlePaymentChange("paid_at")}
-                slotProps={{ inputLabel: { shrink: true } }}
+              <BalanceBox label="Kirim" value={formatMoney(paymentForm.amount)} tone="green" />
+              <BalanceBox
+                label="Jami to'langan"
+                value={formatMoney(
+                  Number(paymentBalance.paid_amount || 0) + Number(paymentForm.amount || 0),
+                )}
+                tone="green"
+              />
+              <BalanceBox
+                label="Qolgan qarz"
+                value={formatMoney(
+                  Math.max(
+                    Number(paymentBalance.debt_amount || 0) - Number(paymentForm.amount || 0),
+                    0,
+                  ),
+                )}
+                tone="orange"
               />
             </Box>
+          </Box>
 
-            <Box className="auth-info-card rounded-2xl border p-4">
-              <Box className="mb-3 flex items-center justify-between gap-3">
-                <Typography fontWeight={800} className="text-slate-950">
-                  Qarz holati
-                </Typography>
-                {paymentBalanceLoading && <CircularProgress size={18} />}
-              </Box>
-
-              <Box className="grid grid-cols-1 gap-3 sm:grid-cols-4">
-                <StatBox label="Savdo" value={formatMoney(paymentBalance.total_amount)} />
-                <StatBox label="Kirim" value={formatMoney(paymentForm.amount)} />
-                <StatBox
-                  label="Jami to'langan"
-                  value={formatMoney(
-                    Number(paymentBalance.paid_amount || 0) + Number(paymentForm.amount || 0),
-                  )}
-                />
-                <StatBox
-                  label="Qolgan qarz"
-                  value={formatMoney(
-                    Math.max(
-                      Number(paymentBalance.debt_amount || 0) - Number(paymentForm.amount || 0),
-                      0,
-                    ),
-                  )}
-                />
-              </Box>
-            </Box>
-
-            <TextField
-              fullWidth
-              multiline
-              minRows={3}
-              label="Izoh"
-              value={paymentForm.note}
-              onChange={handlePaymentChange("note")}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeModals}>Bekor qilish</Button>
-          <Button variant="contained" onClick={handleSavePayment} disabled={paymentSaving}>
-            {paymentSaving ? "Saqlanmoqda..." : "Kirim qilish"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <TextField
+            fullWidth
+            multiline
+            minRows={3}
+            label="Izoh"
+            value={paymentForm.note}
+            onChange={handlePaymentChange("note")}
+          />
+        </Stack>
+      </PremiumDialog>
     </Box>
   );
 };
