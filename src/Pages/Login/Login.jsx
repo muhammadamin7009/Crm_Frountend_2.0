@@ -181,12 +181,12 @@ const Login = () => {
                   />
                   <TextField
                     fullWidth
-                    label="Username"
+                    label="Foydalanuvchi nomi"
                     autoComplete="username"
                     error={Boolean(errors.username)}
                     helperText={errors.username?.message}
                     {...register("username", {
-                      required: "Username majburiy",
+                      required: "Foydalanuvchi nomi majburiy",
                     })}
                     sx={{ marginBottom: "12px", marginTop: "12px" }}
                   />

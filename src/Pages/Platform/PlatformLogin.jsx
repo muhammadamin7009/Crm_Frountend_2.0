@@ -89,7 +89,7 @@ const PlatformLogin = () => {
             <Box component="form" onSubmit={submit} className="mt-8 grid gap-4">
               <TextField
                 name="username"
-                label="Username"
+                label="Foydalanuvchi nomi"
                 value={form.username}
                 onChange={handleChange}
                 autoComplete="username"

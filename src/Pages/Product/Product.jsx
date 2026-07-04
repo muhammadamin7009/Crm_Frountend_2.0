@@ -8,7 +8,6 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Divider,
   Paper,
   Stack,
   TextField,
@@ -186,7 +185,7 @@ const Product = () => {
   const [priceRows, setPriceRows] = useState([]);
   const [priceSaving, setPriceSaving] = useState(false);
 
-  const images = product?.images || [];
+  const images = useMemo(() => product?.images || [], [product?.images]);
 
   const primaryImage = useMemo(
     () => images.find((image) => image.is_primary) || images[0],

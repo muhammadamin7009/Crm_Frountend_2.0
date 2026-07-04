@@ -286,7 +286,7 @@ const ClientSales = () => {
     paid_amount: 0,
     debt_amount: 0,
   });
-  const [totals, setTotals] = useState({
+  const [, setTotals] = useState({
     total_amount: 0,
     paid_amount: 0,
     debt_amount: 0,
@@ -1144,7 +1144,7 @@ const ClientSales = () => {
         ) : (
           <Box sx={{ minHeight: 92, display: "grid", placeItems: "center" }}>
             <Typography sx={{ fontSize: 14, fontWeight: 750, color: "#64748b" }}>
-              Summary uchun savdo ma'lumoti topilmadi.
+              Umumiy savdo ma'lumoti topilmadi.
             </Typography>
           </Box>
         )}
@@ -1478,7 +1478,7 @@ const ClientSales = () => {
                   onChange={handleFormChange("unit_price")}
                   helperText={
                     selectedProduct
-                      ? `Default: ${formatMoney(selectedProduct.sale_price)}`
+                      ? `Standart narx: ${formatMoney(selectedProduct.sale_price)}`
                       : "Mahsulot tanlanganda avtomatik tushadi"
                   }
                   slotProps={{ htmlInput: { min: 0, step: 1000 } }}

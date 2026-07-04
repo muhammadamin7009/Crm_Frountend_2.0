@@ -1283,7 +1283,7 @@ const MaterialPurchases = () => {
             onChange={(e) => setSupplierForm((p) => ({ ...p, note: e.target.value }))}
           />
 
-          <Stack direction="row" spacing={1} justifyContent="flex-end">
+          <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
             {selectedSupplierForEdit && (
               <Button
                 onClick={() => {
@@ -1363,7 +1363,7 @@ const MaterialPurchases = () => {
                         {money(supplier.current_debt)}
                       </TableCell>
                       <TableCell align="right">
-                        <Stack direction="row" spacing={1} justifyContent="flex-end">
+                        <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
                           <Button
                             size="small"
                             variant="outlined"

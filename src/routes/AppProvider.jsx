@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
   }, [navigate]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <p>Yuklanmoqda...</p>;
   }
 
   return (

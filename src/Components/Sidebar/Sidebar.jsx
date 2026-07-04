@@ -27,7 +27,7 @@ import { clearSession } from "../../utils/auth";
 const menuGroups = [
   {
     label: "Asosiy",
-    items: [{ icon: DashboardIcon, label: "Dashboard", path: "/", end: true }],
+    items: [{ icon: DashboardIcon, label: "Bosh sahifa", path: "/", end: true }],
   },
   {
     label: "Boshqaruv",

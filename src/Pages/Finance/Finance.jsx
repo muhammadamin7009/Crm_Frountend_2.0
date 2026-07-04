@@ -758,7 +758,7 @@ const Payroll = ({ data, detail, show, open, closePeriod }) => (
           date(item.payment_date),
           money(item.total_earned),
           money(item.cash_amount),
-          <StatusChip status={item.status} />,
+          <StatusChip key={`period-status-${item.id}`} status={item.status} />,
         ],
       }))}
     />
@@ -970,7 +970,7 @@ const Accounts = ({ data, open }) => (
       rows={data.transactions.map((item) => ({
         cells: [
           item.account_name,
-          <TypeChip type={item.transaction_type} />,
+          <TypeChip key={`transaction-type-${item.id}`} type={item.transaction_type} />,
           money(item.amount),
           item.description || "-",
           date(item.transacted_at),

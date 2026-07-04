@@ -15,5 +15,10 @@ export const getCompanies = () => platformApi.get("/companies");
 export const getSubscriptionPlans = () => platformApi.get("/plans");
 export const createCompany = (data) => platformApi.post("/companies", data);
 export const updateCompany = (id, data) => platformApi.patch(`/companies/${id}`, data);
+export const getCompanyManagement = (id) => platformApi.get(`/companies/${id}/management`);
+export const updateCompanyManagement = (id, data) =>
+  platformApi.patch(`/companies/${id}/management`, data);
+export const deleteCompany = (id, confirmSlug) =>
+  platformApi.delete(`/companies/${id}`, { data: { confirm_slug: confirmSlug } });
 export const getSubscriptionPayments = (params) => platformApi.get("/payments", { params });
 export const createSubscriptionPayment = (data) => platformApi.post("/payments", data);

@@ -262,7 +262,7 @@ const WorkerDashboard = ({ user }) => {
   );
 };
 
-const AdminDashboard = ({ user }) => {
+const _AdminDashboard = ({ user }) => {
   const [viewMode, setViewMode] = useState("internal");
   const [externalMode, setExternalMode] = useState("sales");
   const [stats, setStats] = useState({
@@ -365,7 +365,7 @@ const AdminDashboard = ({ user }) => {
       });
       setRecentPurchases(purchasesRes.data.material_purchases || []);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Dashboard ma'lumotlarini olishda xato.");
+      toast.error(error?.response?.data?.message || "Bosh sahifa ma'lumotlarini olishda xato.");
     } finally {
       setLoading(false);
     }
@@ -534,7 +534,7 @@ const AdminDashboard = ({ user }) => {
               <StatCard
                 label="Savdo summasi"
                 value={formatMoney(clientStats.totalAmount)}
-                helper="Bu oy clientlarga sotilgan"
+                helper="Bu oy mijozlarga sotilgan"
               />
               <StatCard
                 label="To'langan"
@@ -584,7 +584,7 @@ const AdminDashboard = ({ user }) => {
                     ))}
                   </Box>
                 ) : (
-                  <EmptyState text="Bu oy client savdolari hali yo'q." />
+                  <EmptyState text="Bu oy mijoz savdolari hali yo'q." />
                 )}
               </Paper>
 

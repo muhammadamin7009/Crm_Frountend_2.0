@@ -23,9 +23,12 @@ import { toast } from "react-toastify";
 import {
   createCompany,
   createSubscriptionPayment,
+  deleteCompany,
   getCompanies,
+  getCompanyManagement,
   getSubscriptionPlans,
   updateCompany,
+  updateCompanyManagement,
 } from "../../api/platform";
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -82,6 +85,7 @@ const PlatformDashboard = () => {
   const [dialog, setDialog] = useState("");
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
+  const [managementLoading, setManagementLoading] = useState(false);
 
   const totals = useMemo(
     () => ({
@@ -147,7 +151,30 @@ const PlatformDashboard = () => {
         });
       }
       if (dialog === "plan") await updateCompany(form.company_id, { plan_code: form.plan_code });
-      toast.success("Saqlandi.");
+      if (dialog === "management") {
+        await updateCompanyManagement(form.company_id, {
+          company: {
+            name: form.name,
+            phone: form.phone || null,
+          },
+          super_admin: {
+            first_name: form.first_name,
+            last_name: form.last_name,
+            username: form.username,
+            phone: form.admin_phone || null,
+            ...(form.password ? { password: form.password } : {}),
+          },
+        });
+      }
+      if (dialog === "delete") {
+        if (form.confirm_slug !== form.slug) {
+          toast.error("Korxona kodini aynan kiriting.");
+          setSaving(false);
+          return;
+        }
+        await deleteCompany(form.company_id, form.confirm_slug);
+      }
+      toast.success(dialog === "delete" ? "Korxona butunlay o'chirildi." : "Saqlandi.");
       setDialog("");
       await load();
     } catch (error) {
@@ -170,6 +197,28 @@ const PlatformDashboard = () => {
     }
   };
 
+  const openManagement = async (company) => {
+    setManagementLoading(true);
+    try {
+      const { data } = await getCompanyManagement(company.id);
+      setForm({
+        company_id: company.id,
+        name: data.company?.name || "",
+        phone: data.company?.phone || "",
+        first_name: data.super_admin?.first_name || "",
+        last_name: data.super_admin?.last_name || "",
+        username: data.super_admin?.username || "",
+        admin_phone: data.super_admin?.phone || "",
+        password: "",
+      });
+      setDialog("management");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Boshqaruv ma'lumotlarini olishda xato.");
+    } finally {
+      setManagementLoading(false);
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem("platform_token");
     localStorage.removeItem("platform_admin");
@@ -177,8 +226,8 @@ const PlatformDashboard = () => {
   };
 
   return (
-    <Box className="auth-page min-h-screen p-4 md:p-7">
-      <Box className="crm-page mx-auto max-w-7xl">
+    <Box className="auth-page h-screen overflow-hidden p-4 md:p-7">
+      <Box className="crm-page mx-auto flex h-full max-w-7xl flex-col overflow-hidden">
         <Box className="mb-5 flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
           <Box>
             <Typography
@@ -239,7 +288,7 @@ const PlatformDashboard = () => {
 
         <Paper
           elevation={0}
-          className="overflow-hidden border border-slate-200 bg-white"
+          className="flex min-h-0 flex-1 flex-col overflow-hidden border border-slate-200 bg-white"
           sx={{ borderRadius: 2 }}
         >
           <Box className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
@@ -258,8 +307,8 @@ const PlatformDashboard = () => {
               <CircularProgress />
             </Box>
           ) : (
-            <Box className="overflow-auto">
-              <Table sx={{ minWidth: 1100 }}>
+            <Box className="min-h-0 flex-1 overflow-auto">
+              <Table sx={{ minWidth: 1220 }}>
                 <TableHead>
                   <TableRow className="bg-slate-50">
                     <TableCell>Korxona</TableCell>
@@ -292,7 +341,7 @@ const PlatformDashboard = () => {
                       </TableCell>
                       <TableCell>
                         <Typography fontWeight={800}>
-                          {company.users_count} / {company.max_users || "∞"}
+                          {company.users_count} / {company.max_users || "Cheksiz"}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                           foydalanuvchi
@@ -314,6 +363,14 @@ const PlatformDashboard = () => {
                       </TableCell>
                       <TableCell align="right">
                         <Box className="flex justify-end gap-2">
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            disabled={managementLoading}
+                            onClick={() => openManagement(company)}
+                          >
+                            Boshqarish
+                          </Button>
                           <Button
                             size="small"
                             variant="outlined"
@@ -349,6 +406,22 @@ const PlatformDashboard = () => {
                             onClick={() => toggle(company)}
                           >
                             {company.status === "active" ? "To'xtatish" : "Faollashtirish"}
+                          </Button>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            color="error"
+                            onClick={() => {
+                              setForm({
+                                company_id: company.id,
+                                company_name: company.name,
+                                slug: company.slug,
+                                confirm_slug: "",
+                              });
+                              setDialog("delete");
+                            }}
+                          >
+                            O'chirish
                           </Button>
                         </Box>
                       </TableCell>
@@ -400,7 +473,7 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans }) => {
     >
       {plans.map((plan) => (
         <MenuItem key={plan.code} value={plan.code}>
-          {plan.name} — {money(plan.monthly_price)}/oy — {plan.max_users} foydalanuvchi
+          {plan.name} - {money(plan.monthly_price)}/oy - {plan.max_users || "Cheksiz"} foydalanuvchi
         </MenuItem>
       ))}
     </TextField>
@@ -408,6 +481,10 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans }) => {
   const title =
     dialog === "company"
       ? "Yangi korxona"
+      : dialog === "management"
+        ? "Korxonani boshqarish"
+      : dialog === "delete"
+        ? "Korxonani butunlay o'chirish"
       : dialog === "plan"
         ? "Obuna rejasini almashtirish"
         : "Obuna to'lovi";
@@ -428,9 +505,40 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans }) => {
               </Typography>
               {field("first_name", "Ism")}
               {field("last_name", "Familiya")}
-              {field("username", "Username")}
+              {field("username", "Foydalanuvchi nomi")}
               {field("password", "Parol", "password")}
               {field("admin_phone", "Telefon")}
+            </>
+          ) : dialog === "management" ? (
+            <>
+              <Typography fontWeight={800}>Korxona ma'lumotlari</Typography>
+              {field("name", "Korxona nomi")}
+              {field("phone", "Korxona telefoni")}
+              <Typography fontWeight={800} className="pt-2">
+                Super administrator
+              </Typography>
+              {field("first_name", "Ism")}
+              {field("last_name", "Familiya")}
+              {field("username", "Foydalanuvchi nomi")}
+              {field("admin_phone", "Telefon")}
+              {field("password", "Yangi parol", "password")}
+              <Typography variant="caption" color="text.secondary">
+                Parolni o'zgartirmasangiz, bu maydonni bo'sh qoldiring. Amaldagi parol ko'rsatilmaydi.
+              </Typography>
+            </>
+          ) : dialog === "delete" ? (
+            <>
+              <Typography color="error" fontWeight={800}>
+                Bu amalni ortga qaytarib bo'lmaydi.
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {form.company_name} korxonasidagi foydalanuvchilar, mahsulotlar, savdolar,
+                ish haqlari va barcha boshqa ma'lumotlar butunlay o'chadi.
+              </Typography>
+              <Typography variant="body2">
+                Tasdiqlash uchun <strong>{form.slug}</strong> kodini kiriting.
+              </Typography>
+              {field("confirm_slug", "Korxona kodi")}
             </>
           ) : dialog === "plan" ? (
             planField
@@ -448,8 +556,13 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={close}>Bekor qilish</Button>
-        <Button variant="contained" onClick={save} disabled={saving}>
-          {saving ? "Saqlanmoqda..." : "Saqlash"}
+        <Button
+          variant="contained"
+          color={dialog === "delete" ? "error" : "primary"}
+          onClick={save}
+          disabled={saving || (dialog === "delete" && form.confirm_slug !== form.slug)}
+        >
+          {saving ? "Bajarilmoqda..." : dialog === "delete" ? "Butunlay o'chirish" : "Saqlash"}
         </Button>
       </DialogActions>
     </Dialog>

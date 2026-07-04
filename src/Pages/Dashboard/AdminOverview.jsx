@@ -363,7 +363,7 @@ const AdminOverview = ({ user }) => {
       <Box className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <Box>
           <Box className="mb-2 inline-flex rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
-            ZERR CRM • premium dashboard
+            ZERR CRM • kengaytirilgan boshqaruv paneli
           </Box>
           <Typography variant="h4" fontWeight={950} className="text-slate-950">
             Xush kelibsiz, {user?.first_name || "Admin"}! 👋
@@ -637,7 +637,7 @@ const AdminOverview = ({ user }) => {
                       <TableCell>{date(purchase.purchased_at || purchase.created_at)}</TableCell>
                       <TableCell>{money(purchase.total_amount)}</TableCell>
                       <TableCell>
-                        <Chip label={purchase.status || "active"} size="small" color="success" />
+                        <Chip label={purchase.status === "active" ? "Faol" : purchase.status || "Faol"} size="small" color="success" />
                       </TableCell>
                     </TableRow>
                   ))}

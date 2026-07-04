@@ -38,7 +38,9 @@ const Register = () => {
       ? companySlug.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
       : "Korxona CRM";
 
-  const onSubmit = async ({ confirm_password, company_slug, ...values }) => {
+  const onSubmit = async (submittedValues) => {
+    const { company_slug, ...values } = submittedValues;
+    delete values.confirm_password;
     setLoading(true);
 
     try {
@@ -177,15 +179,15 @@ const Register = () => {
                   />
                   <TextField
                     fullWidth
-                    label="Username"
+                    label="Foydalanuvchi nomi"
                     autoComplete="username"
                     error={Boolean(errors.username)}
                     helperText={errors.username?.message}
                     {...register("username", {
-                      required: "Username majburiy",
+                      required: "Foydalanuvchi nomi majburiy",
                       maxLength: {
                         value: 30,
-                        message: "Username 30 belgidan oshmasin",
+                        message: "Foydalanuvchi nomi 30 belgidan oshmasin",
                       },
                     })}
                   />

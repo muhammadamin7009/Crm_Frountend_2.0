@@ -1286,7 +1286,7 @@ const Products = () => {
                     </TableCell>
 
                     <TableCell>
-                      <Stack spacing={0.7} alignItems="flex-start">
+                      <Stack spacing={0.7} sx={{ alignItems: "flex-start" }}>
                         <StatusChip active={product.is_active} />
 
                         <Typography sx={{ fontSize: 12.5, fontWeight: 700, color: "#64748b" }}>

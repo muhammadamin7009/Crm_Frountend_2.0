@@ -288,7 +288,7 @@ const FormDialog = ({
         />
         <TextField
           fullWidth
-          label="Username"
+          label="Foydalanuvchi nomi"
           value={form.username}
           onChange={onFormChange("username")}
         />
@@ -460,6 +460,8 @@ const Users = () => {
     }
   };
 
+  // fetchUsers is intentionally recreated with the active filter values.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const timer = setTimeout(() => fetchUsers(0, pageInfo.limit), 250);
 
@@ -923,7 +925,7 @@ const Users = () => {
                   </>
                 ) : (
                   <>
-                    <TableCell>Username</TableCell>
+                    <TableCell>Foydalanuvchi nomi</TableCell>
                     <TableCell>Telefon</TableCell>
                   </>
                 )}

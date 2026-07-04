@@ -59,7 +59,7 @@ export default function TopBar() {
 
   const fullName = useMemo(() => {
     const name = `${user?.first_name || ""} ${user?.last_name || ""}`.trim();
-    return name || user?.username || "ZERR user";
+    return name || user?.username || "ZERR foydalanuvchisi";
   }, [user]);
 
   const role = roleLabels[user?.role] || user?.role || "Foydalanuvchi";
@@ -162,9 +162,9 @@ export default function TopBar() {
 
       <Stack
         direction="row"
-        alignItems="center"
         spacing={1.7}
         sx={{
+          alignItems: "center",
           px: 1.2,
           py: 1,
           borderRadius: "8px",
@@ -188,9 +188,7 @@ export default function TopBar() {
           <Stack
             direction="row"
             spacing={1}
-            alignItems="center"
-            justifyContent="flex-end"
-            sx={{ mt: 0.7 }}
+            sx={{ mt: 0.7, alignItems: "center", justifyContent: "flex-end" }}
           >
             <Chip
               label={role}
@@ -266,7 +264,7 @@ export default function TopBar() {
               <Typography variant="caption" display="block" className="mt-1 text-slate-500">JPEG, PNG yoki WebP, 5 MB gacha</Typography>
             </Box>
           </Box>
-          {[["first_name", "Ism"], ["last_name", "Familiya"], ["username", "Username"], ["phone", "Telefon"]].map(([field, label]) => (
+          {[["first_name", "Ism"], ["last_name", "Familiya"], ["username", "Foydalanuvchi nomi"], ["phone", "Telefon"]].map(([field, label]) => (
             <TextField key={field} label={label} value={form[field]} onChange={(event) => setForm((current) => ({ ...current, [field]: event.target.value }))} />
           ))}
           <TextField type="password" label="Yangi parol" value={form.password} onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))} helperText="O'zgartirmasangiz bo'sh qoldiring" />
