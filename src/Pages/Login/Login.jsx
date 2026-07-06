@@ -21,6 +21,8 @@ import { getCompanySlug, setCompanySlug } from "../../utils/company";
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [challenge, setChallenge] = useState(null);
+  const [code, setCode] = useState("");
 
   const {
     register,
@@ -54,11 +56,18 @@ const Login = () => {
         {
           username: values.username,
           password: values.password,
+          device_id: localStorage.getItem("device_id") || undefined,
         },
         {
           baseURL: `${String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "")}/api/${companySlug}`,
         },
       );
+
+      if (data.mfa_required) {
+        setChallenge(data);
+        toast.info(`Tasdiqlash kodi ${data.masked_phone} raqamiga yuborildi.`);
+        return;
+      }
 
       setSession({
         token: data.token,
@@ -71,6 +80,27 @@ const Login = () => {
       navigate("/");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Login xato");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verifyCode = async () => {
+    if (!/^\d{6}$/.test(code)) return toast.error("6 xonali kodni kiriting.");
+    setLoading(true);
+    try {
+      const companySlug = setCompanySlug(watch("company_slug"));
+      const { data } = await api.post(
+        "/users/login/verify",
+        { challenge_id: challenge.challenge_id, code },
+        { baseURL: `${String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "")}/api/${companySlug}` },
+      );
+      setSession({ token: data.token, user: data.user });
+      setUser(data.user);
+      toast.success("Tasdiqlandi. Tizimga kirdingiz.");
+      navigate("/");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Tasdiqlash kodi noto'g'ri.");
     } finally {
       setLoading(false);
     }
@@ -156,14 +186,34 @@ const Login = () => {
 
               <Box className="mb-7">
                 <Typography variant="h4" fontWeight={900} className="text-slate-950">
-                  Tizimga kirish
+                  {challenge ? "Kirishni tasdiqlash" : "Tizimga kirish"}
                 </Typography>
                 <Typography className="mt-2 text-slate-500">
-                  Davom etish uchun username va parolingizni kiriting.
+                  {challenge
+                    ? `${challenge.masked_phone} raqamiga yuborilgan 6 xonali kodni kiriting.`
+                    : "Davom etish uchun foydalanuvchi nomi va parolingizni kiriting."}
                 </Typography>
               </Box>
 
-              <form onSubmit={handleSubmit(onSubmit)}>
+              {challenge ? (
+                <Box className="space-y-4">
+                  <TextField
+                    fullWidth
+                    autoFocus
+                    label="Tasdiqlash kodi"
+                    value={code}
+                    onChange={(event) => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
+                    onKeyDown={(event) => event.key === "Enter" && verifyCode()}
+                    inputProps={{ inputMode: "numeric", maxLength: 6 }}
+                  />
+                  <Button fullWidth size="large" variant="contained" disabled={loading || code.length !== 6} onClick={verifyCode}>
+                    {loading ? "Tekshirilmoqda..." : "Tasdiqlash"}
+                  </Button>
+                  <Button fullWidth onClick={() => { setChallenge(null); setCode(""); }}>
+                    Kirish ma'lumotlariga qaytish
+                  </Button>
+                </Box>
+              ) : <form onSubmit={handleSubmit(onSubmit)}>
                 <Box className="space-y-4">
                   <TextField
                     fullWidth
@@ -238,7 +288,7 @@ const Login = () => {
                     {loading ? "Kirilmoqda..." : "Kirish"}
                   </Button>
                 </Box>
-              </form>
+              </form>}
 
               <Box className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Box className="auth-info-card rounded-2xl border p-4">

@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Chip,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -20,7 +21,7 @@ import { useMemo, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../Context/AuthContext";
-import { updateMe, updateUserImage } from "../../api/getUsers";
+import { getMySessions, revokeOtherSessions, revokeSession, updateMe, updateUserImage } from "../../api/getUsers";
 import { clearSession } from "../../utils/auth";
 
 const roleLabels = {
@@ -85,6 +86,8 @@ export default function TopBar() {
   const [saving, setSaving] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
+  const [sessions, setSessions] = useState([]);
+  const [sessionsLoading, setSessionsLoading] = useState(false);
 
   const [form, setForm] = useState({
     first_name: "",
@@ -101,6 +104,18 @@ export default function TopBar() {
 
   const role = roleLabels[user?.role] || user?.role || "Foydalanuvchi";
 
+  const loadSessions = async () => {
+    setSessionsLoading(true);
+    try {
+      const { data } = await getMySessions();
+      setSessions(data.sessions || []);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Qurilmalarni olishda xato.");
+    } finally {
+      setSessionsLoading(false);
+    }
+  };
+
   const openProfile = () => {
     setForm({
       first_name: user?.first_name || "",
@@ -112,6 +127,32 @@ export default function TopBar() {
     setImageFile(null);
     setImagePreview("");
     setProfileOpen(true);
+    loadSessions();
+  };
+
+  const removeSession = async (session) => {
+    try {
+      const { data } = await revokeSession(session.id);
+      if (data.current_session_revoked) {
+        clearSession();
+        navigate("/login", { replace: true });
+        return;
+      }
+      await loadSessions();
+      toast.success("Qurilmadan chiqildi.");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Sessiyani yopishda xato.");
+    }
+  };
+
+  const removeOtherSessions = async () => {
+    try {
+      await revokeOtherSessions();
+      await loadSessions();
+      toast.success("Boshqa barcha qurilmalardan chiqildi.");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Sessiyalarni yopishda xato.");
+    }
   };
 
   const saveProfile = async () => {
@@ -382,7 +423,7 @@ export default function TopBar() {
         </Box>
       </Drawer>
 
-      <Dialog open={profileOpen} onClose={() => setProfileOpen(false)} fullWidth maxWidth="sm">
+      <Dialog open={profileOpen} onClose={() => setProfileOpen(false)} fullWidth maxWidth="md">
         <DialogTitle sx={{ fontWeight: 950 }}>Profilni tahrirlash</DialogTitle>
 
         <DialogContent>
@@ -465,6 +506,42 @@ export default function TopBar() {
               }
               helperText="O'zgartirmasangiz bo'sh qoldiring"
             />
+
+            <Divider />
+            <Box className="flex items-center justify-between gap-3">
+              <Box>
+                <Typography fontWeight={900}>Faol qurilmalar</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Profilingiz ochiq turgan brauzer va qurilmalar
+                </Typography>
+              </Box>
+              <Button size="small" color="error" variant="outlined" onClick={removeOtherSessions} disabled={sessionsLoading || sessions.length < 2}>
+                Boshqalaridan chiqish
+              </Button>
+            </Box>
+            {sessionsLoading ? (
+              <Box className="flex justify-center py-5"><CircularProgress size={24} /></Box>
+            ) : sessions.length ? (
+              <Box className="space-y-2">
+                {sessions.map((session) => (
+                  <Box key={session.id} className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3 sm:flex-row sm:items-center sm:justify-between">
+                    <Box>
+                      <Typography fontWeight={850}>
+                        {session.device_name || "Noma'lum qurilma"} {session.is_current && <Chip size="small" color="success" label="Hozirgi" />}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        IP: {session.ip_address || "-"} • Oxirgi faollik: {new Date(session.last_used_at).toLocaleString("uz-UZ")}
+                      </Typography>
+                    </Box>
+                    <Button size="small" color="error" onClick={() => removeSession(session)}>
+                      Chiqish
+                    </Button>
+                  </Box>
+                ))}
+              </Box>
+            ) : (
+              <Typography variant="body2" color="text.secondary">Faol sessiya topilmadi.</Typography>
+            )}
           </Stack>
         </DialogContent>
 

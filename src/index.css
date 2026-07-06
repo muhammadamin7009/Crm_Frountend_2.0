@@ -330,3 +330,14 @@ textarea,
 .MuiInputBase-input {
   user-select: text;
 }
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}

@@ -11,6 +11,9 @@ export const updateUser = (id, data) => api.patch(`/users/${id}`, data);
 export const updateMe = (data) => api.patch("/users/me", data);
 
 export const getMe = () => api.get("/users/me");
+export const getMySessions = () => api.get("/users/me/sessions");
+export const revokeSession = (id) => api.delete(`/users/me/sessions/${id}`);
+export const revokeOtherSessions = () => api.delete("/users/me/sessions/others");
 
 export const deleteUser = (id) => api.delete(`/users/${id}`);
 

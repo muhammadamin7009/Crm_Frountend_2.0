@@ -18,10 +18,12 @@ import Finance from "../Pages/Finance/Finance";
 import PlatformLogin from "../Pages/Platform/PlatformLogin";
 import PlatformDashboard from "../Pages/Platform/PlatformDashboard";
 import AuditLogs from "../Pages/AuditLog/AuditLogs";
+import LandingPage from "../Pages/LandingPage/LandingPage";
 
 const AppRouter = () => {
   return (
     <Routes>
+      <Route path="/landing" element={<LandingPage />} />
       <Route path="/platform/login" element={<PlatformLogin />} />
       <Route path="/platform" element={<PlatformDashboard />} />
       <Route element={<PublicRoute />}>
