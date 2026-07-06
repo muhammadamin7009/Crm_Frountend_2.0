@@ -8,8 +8,7 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
 import SiteLogo from "../../images/zerr_02_logo.png";
 import DashboardIcon from "../../images/ui-icons/dashboard.svg";
@@ -117,10 +116,7 @@ const getImageUrl = (path) => {
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { user } = useAuth();
-  const [hoveredGroup, setHoveredGroup] = useState(null);
-  const [expandedGroups, setExpandedGroups] = useState({});
 
   const handleLogout = () => {
     clearSession();
@@ -128,15 +124,17 @@ const Sidebar = () => {
   };
 
   const fullName = `${user?.first_name || ""} ${user?.last_name || ""}`.trim();
+
   const isZerrShoes = user?.company_slug === "zerrshoes" || !user?.company_slug;
-  const companyName = user?.company_name || (isZerrShoes ? "ZERR CRM" : "Korxona CRM");
+
+  const companyName = user?.company_name || (isZerrShoes ? "Zerr Collection" : "Korxona CRM");
 
   return (
     <aside className="hidden h-screen w-68 shrink-0 p-3 md:block">
-      <Box className="flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-slate-950 text-white shadow-[0_18px_48px_rgba(15,23,42,0.22)]">
+      <Box className="flex h-full flex-col overflow-hidden rounded-xl bg-[#050817] text-white shadow-[0_18px_45px_rgba(15,23,42,0.22)]">
         <Box className="px-5 pb-5 pt-5">
           <Box className="flex items-center gap-3">
-            <Box className="flex h-12 w-12 items-center justify-center rounded-lg bg-white shadow-lg">
+            <Box className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white shadow-lg">
               {isZerrShoes ? (
                 <img width={34} src={SiteLogo} alt={companyName} />
               ) : (
@@ -147,10 +145,10 @@ const Sidebar = () => {
             </Box>
 
             <Box className="min-w-0">
-              <Typography fontWeight={900} className="truncate text-lg leading-tight text-white">
+              <Typography className="truncate text-base font-black leading-tight text-white">
                 {companyName}
               </Typography>
-              <Typography variant="body2" className="text-slate-400">
+              <Typography variant="body2" className="mt-1 text-slate-400">
                 {user?.plan_name ? `${user.plan_name} reja` : "Korxona boshqaruvi"}
               </Typography>
             </Box>
@@ -169,64 +167,16 @@ const Sidebar = () => {
 
             if (!visibleItems.length) return null;
 
-            const isCollapsible = group.label !== "Asosiy";
-            const hasActiveItem = visibleItems.some((item) =>
-              item.end ? location.pathname === item.path : location.pathname.startsWith(item.path),
-            );
-            const manuallyExpanded = expandedGroups[group.label];
-            const isOpen =
-              !isCollapsible ||
-              (manuallyExpanded !== undefined
-                ? manuallyExpanded
-                : hasActiveItem || hoveredGroup === group.label);
-
             return (
-              <Box
-                key={group.label}
-                className="mb-3"
-                onMouseEnter={() => isCollapsible && setHoveredGroup(group.label)}
-                onMouseLeave={() => isCollapsible && setHoveredGroup(null)}
-              >
-                <Box
-                  component={isCollapsible ? "button" : "div"}
-                  type={isCollapsible ? "button" : undefined}
-                  onClick={() => {
-                    if (!isCollapsible) return;
-                    setExpandedGroups((previous) => ({
-                      ...previous,
-                      [group.label]: previous[group.label] === true ? false : true,
-                    }));
-                  }}
-                  className="mb-1 flex min-h-8 w-full items-center justify-between rounded-md px-2 text-left"
-                  sx={{
-                    cursor: isCollapsible ? "pointer" : "default",
-                    transition: "background-color 180ms ease, color 180ms ease",
-                    "&:hover": isCollapsible
-                      ? { backgroundColor: "rgba(255,255,255,.05)" }
-                      : undefined,
-                  }}
+              <Box key={group.label} className="mb-5">
+                <Typography
+                  variant="caption"
+                  className="mb-2 block px-2 font-black uppercase tracking-[0.08em] text-slate-500"
                 >
-                  <Typography variant="caption" className="font-black uppercase text-slate-500">
-                    {group.label}
-                  </Typography>
-                  {isCollapsible && (
-                    <Typography aria-hidden="true" className="text-slate-600" sx={{ fontSize: 16 }}>
-                      {isOpen ? "−" : "+"}
-                    </Typography>
-                  )}
-                </Box>
-                <List
-                  disablePadding
-                  aria-hidden={!isOpen}
-                  sx={{
-                    maxHeight: isOpen ? `${visibleItems.length * 58}px` : 0,
-                    opacity: isOpen ? 1 : 0,
-                    transform: isOpen ? "translateY(0)" : "translateY(-6px)",
-                    overflow: "hidden",
-                    pointerEvents: isOpen ? "auto" : "none",
-                    transition: "max-height 500ms ease, opacity 180ms ease, transform 220ms ease",
-                  }}
-                >
+                  {group.label}
+                </Typography>
+
+                <List disablePadding>
                   {visibleItems.map((item) => (
                     <ListItemButton
                       key={item.path}
@@ -237,18 +187,22 @@ const Sidebar = () => {
                       sx={{
                         gap: 1.4,
                         px: 1.5,
-                        py: 1.25,
+                        py: 1.35,
+                        minHeight: 52,
                         color: "#cbd5e1",
                         border: "1px solid transparent",
                         borderRadius: "8px",
-                        transition: "all .18s ease",
+                        transition:
+                          "background-color .18s ease, color .18s ease, box-shadow .18s ease, transform .18s ease",
                         "& .menu-icon": {
                           display: "grid",
                           placeItems: "center",
                           width: 30,
                           height: 30,
-                          borderRadius: "6px",
+                          flexShrink: 0,
+                          borderRadius: "7px",
                           backgroundColor: "rgba(255,255,255,.06)",
+                          transition: "background-color .18s ease",
                         },
                         "& .menu-icon img": {
                           width: 17,
@@ -256,19 +210,27 @@ const Sidebar = () => {
                           filter:
                             "brightness(0) saturate(100%) invert(87%) sepia(15%) saturate(764%) hue-rotate(188deg) brightness(104%) contrast(96%)",
                         },
+                        "& .MuiListItemText-root": {
+                          minWidth: 0,
+                        },
                         "& .MuiListItemText-primary": {
                           fontWeight: 800,
                           color: "inherit",
                           fontSize: 14,
+                          lineHeight: "20px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
                         },
                         "&:hover": {
-                          backgroundColor: "rgba(255,255,255,.08)",
+                          backgroundColor: "rgba(255,255,255,.07)",
                           color: "#fff",
+                          transform: "translateX(2px)",
                         },
                         "&.active": {
-                          background: "#8f1d20",
-                          color: "#FFFFFF",
-                          boxShadow: "0 10px 24px rgba(143, 29, 32, 0.28)",
+                          background: "#a32024",
+                          color: "#ffffff",
+                          boxShadow: "0 12px 26px rgba(163, 32, 36, 0.30)",
                         },
                         "&.active .menu-icon": {
                           backgroundColor: "rgba(255,255,255,.18)",
@@ -281,6 +243,7 @@ const Sidebar = () => {
                       <span className="menu-icon">
                         <img src={item.icon} alt="" />
                       </span>
+
                       <ListItemText primary={item.label} />
                     </ListItemButton>
                   ))}
@@ -291,36 +254,46 @@ const Sidebar = () => {
         </Box>
 
         <Box className="px-4 pb-4">
-          <Box className="mb-3 rounded-lg border border-white/10 bg-white/0.06 p-3">
+          <Box className="rounded-xl border border-white/10 bg-white/4 p-3">
             <Box className="mb-3 flex items-center gap-3">
               <Avatar
                 src={getImageUrl(user?.user_image)}
-                sx={{ width: 42, height: 42, bgcolor: "#8f1d20" }}
+                sx={{
+                  width: 42,
+                  height: 42,
+                  bgcolor: "#a32024",
+                  fontWeight: 900,
+                }}
               >
                 {user?.first_name?.[0]?.toUpperCase() || "U"}
               </Avatar>
 
               <Box className="min-w-0 flex-1">
-                <Typography className="truncate text-sm font-black text-white">
+                <Typography className="truncate text-sm font-black leading-tight text-white">
                   {fullName || user?.username || "Foydalanuvchi"}
                 </Typography>
-                <Typography variant="body2" className="truncate text-slate-400">
+                <Typography variant="body2" className="mt-0.5 truncate text-slate-400">
                   {roleNames[user?.role] || user?.role || "Ruxsat turi"}
                 </Typography>
               </Box>
             </Box>
+
             <Divider sx={{ borderColor: "rgba(255,255,255,.09)", mb: 1.5 }} />
+
             <Button
               fullWidth
               variant="outlined"
               sx={{
                 py: 1,
-                color: "#fca5a5",
+                fontWeight: 800,
+                color: "#fecaca",
                 borderColor: "rgba(248,113,113,.35)",
-                backgroundColor: "rgba(248,113,113,.08)",
+                backgroundColor: "rgba(248,113,113,.07)",
+                textTransform: "none",
+                borderRadius: "10px",
                 "&:hover": {
                   borderColor: "rgba(248,113,113,.65)",
-                  backgroundColor: "rgba(248,113,113,.14)",
+                  backgroundColor: "rgba(248,113,113,.13)",
                 },
               }}
               onClick={handleLogout}

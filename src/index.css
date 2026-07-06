@@ -310,3 +310,23 @@ select {
   border-color: rgba(143, 29, 32, 0.18) !important;
   background: rgba(239, 246, 255, 0.95) !important;
 }
+
+html,
+body,
+#root {
+  user-select: none;
+}
+
+button,
+a,
+img,
+svg {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+input,
+textarea,
+.MuiInputBase-input {
+  user-select: text;
+}
