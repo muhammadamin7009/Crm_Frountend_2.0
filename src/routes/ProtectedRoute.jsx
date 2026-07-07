@@ -1,5 +1,6 @@
-import { Navigate, Outlet } from "react-router-dom";
+﻿import { Navigate, Outlet } from "react-router-dom";
 import { getToken, isTokenExpired, clearSession } from "../utils/auth";
+import { hasAnyPermission } from "../utils/permissions";
 
 const getUser = () => {
   try {
@@ -9,7 +10,7 @@ const getUser = () => {
   }
 };
 
-const ProtectedRoute = ({ allowedRoles, allowedFeatures }) => {
+const ProtectedRoute = ({ allowedRoles, allowedFeatures, allowedPermissions }) => {
   const token = getToken();
 
   if (!token || isTokenExpired(token)) {
@@ -21,11 +22,16 @@ const ProtectedRoute = ({ allowedRoles, allowedFeatures }) => {
   if (allowedRoles?.length && !allowedRoles.includes(user?.role)) {
     return <Navigate to="/" replace />;
   }
+
   if (
     user?.plan_code &&
     allowedFeatures?.length &&
     !allowedFeatures.every((feature) => user.plan_features?.includes(feature))
   ) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (allowedPermissions?.length && !hasAnyPermission(user, allowedPermissions)) {
     return <Navigate to="/" replace />;
   }
 

@@ -1,4 +1,4 @@
-import {
+﻿import {
   Avatar,
   Box,
   Button,
@@ -22,6 +22,7 @@ import TrendDownIcon from "../../images/ui-icons/trend-down.svg";
 import FinanceIcon from "../../images/ui-icons/finance.svg";
 import HistoryIcon from "../../images/ui-icons/history.svg";
 import { clearSession } from "../../utils/auth";
+import { hasPermission } from "../../utils/permissions";
 
 const menuGroups = [
   {
@@ -36,14 +37,22 @@ const menuGroups = [
         label: "Foydalanuvchilar",
         path: "/users",
         allowedRoles: ["super_admin", "admin", "worker"],
+        requiredPermission: "users.view",
       },
       {
         icon: BriefcaseIcon,
         label: "Lavozimlar",
         path: "/employees",
         allowedRoles: ["super_admin", "admin"],
+        requiredPermission: "employees.view",
       },
       { icon: BoxIcon, label: "Mahsulotlar", path: "/products" },
+      {
+        icon: HistoryIcon,
+        label: "Ruxsatlar",
+        path: "/permissions",
+        allowedRoles: ["super_admin"],
+      },
     ],
   },
   {
@@ -54,12 +63,14 @@ const menuGroups = [
         label: "Ish hisoboti",
         path: "/worker-outputs",
         allowedRoles: ["super_admin", "admin", "worker"],
+        requiredPermission: "production.view",
       },
       {
         icon: WalletIcon,
         label: "Oyliklar",
         path: "/worker-payments",
         allowedRoles: ["super_admin", "admin"],
+        requiredPermission: "payroll.view",
       },
     ],
   },
@@ -72,6 +83,7 @@ const menuGroups = [
         path: "/client-sales",
         allowedRoles: ["super_admin", "admin"],
         requiredFeature: "client_accounting",
+        requiredPermission: "client_sales.view",
       },
       {
         icon: TrendDownIcon,
@@ -79,6 +91,7 @@ const menuGroups = [
         path: "/material-purchases",
         allowedRoles: ["super_admin", "admin"],
         requiredFeature: "supplier_accounting",
+        requiredPermission: "material_purchases.view",
       },
       {
         icon: FinanceIcon,
@@ -86,6 +99,7 @@ const menuGroups = [
         path: "/finance",
         allowedRoles: ["super_admin", "admin"],
         requiredFeature: "finance",
+        requiredPermission: "finance.view",
       },
       {
         icon: HistoryIcon,
@@ -93,6 +107,7 @@ const menuGroups = [
         path: "/audit-logs",
         allowedRoles: ["super_admin", "admin"],
         requiredFeature: "audit_logs",
+        requiredPermission: "audit_logs.view",
       },
     ],
   },
@@ -162,7 +177,8 @@ const Sidebar = () => {
                 (!item.allowedRoles || item.allowedRoles.includes(user?.role)) &&
                 (!user?.plan_code ||
                   !item.requiredFeature ||
-                  user.plan_features?.includes(item.requiredFeature)),
+                  user.plan_features?.includes(item.requiredFeature)) &&
+                hasPermission(user, item.requiredPermission),
             );
 
             if (!visibleItems.length) return null;
@@ -308,3 +324,8 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
+
+
+
+

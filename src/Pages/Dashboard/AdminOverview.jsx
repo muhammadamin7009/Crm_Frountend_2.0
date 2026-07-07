@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+﻿import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Avatar,
   Box,
@@ -27,6 +27,7 @@ import { getWorkerOutputs, getWorkerOutputsSummary } from "../../api/workerOutpu
 import { getWorkerBalance } from "../../api/workerPayments";
 import { getClientBalance, getClientSales, getClientSalesSummary } from "../../api/clientSales";
 import { getMaterialPurchases, getSupplierBalance } from "../../api/materialPurchases";
+import { hasPermission } from "../../utils/permissions";
 
 const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
 const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
@@ -202,9 +203,15 @@ const SalesChart = ({ sales, purchases, production }) => {
 
 const AdminOverview = ({ user }) => {
   const navigate = useNavigate();
-  const hasClientAccounting = !user?.plan_code || user.plan_features?.includes("client_accounting");
+  const canViewUsers = hasPermission(user, "users.view");
+  const canViewProduction = hasPermission(user, "production.view");
+  const canViewPayroll = hasPermission(user, "payroll.view");
+  const hasClientAccounting =
+    (!user?.plan_code || user.plan_features?.includes("client_accounting")) &&
+    hasPermission(user, "client_sales.view");
   const hasSupplierAccounting =
-    !user?.plan_code || user.plan_features?.includes("supplier_accounting");
+    (!user?.plan_code || user.plan_features?.includes("supplier_accounting")) &&
+    hasPermission(user, "material_purchases.view");
   const [loading, setLoading] = useState(true);
   const [filterForm, setFilterForm] = useState(monthRange);
   const [appliedRange, setAppliedRange] = useState(monthRange);
@@ -251,13 +258,19 @@ const AdminOverview = ({ user }) => {
         supplierMonthRes,
         supplierDebtRes,
       ] = await Promise.all([
-        getUsers({ offset: 0, limit: 1 }),
+        canViewUsers ? getUsers({ offset: 0, limit: 1 }) : Promise.resolve({ data: { pageInfo: {} } }),
         getProducts({ offset: 0, limit: 1 }),
-        getWorkerOutputs({ ...range, offset: 0, limit: 1 }),
-        getWorkerOutputsSummary({ ...range, group_by: "worker" }),
-        getWorkerOutputsSummary({ ...range, group_by: "department" }),
-        getWorkerBalance(range),
-        getWorkerBalance({}),
+        canViewProduction
+          ? getWorkerOutputs({ ...range, offset: 0, limit: 1 })
+          : Promise.resolve({ data: { totals: {} } }),
+        canViewProduction
+          ? getWorkerOutputsSummary({ ...range, group_by: "worker" })
+          : Promise.resolve({ data: { summary: [] } }),
+        canViewProduction
+          ? getWorkerOutputsSummary({ ...range, group_by: "department" })
+          : Promise.resolve({ data: { summary: [] } }),
+        canViewPayroll ? getWorkerBalance(range) : Promise.resolve({ data: { balance: {} } }),
+        canViewPayroll ? getWorkerBalance({}) : Promise.resolve({ data: { balance: {} } }),
         hasClientAccounting
           ? getClientSales({ ...range, offset: 0, limit: 1 })
           : Promise.resolve({ data: { totals: {}, pageInfo: {} } }),
@@ -301,7 +314,14 @@ const AdminOverview = ({ user }) => {
     } finally {
       setLoading(false);
     }
-  }, [appliedRange, hasClientAccounting, hasSupplierAccounting]);
+  }, [
+    appliedRange,
+    canViewUsers,
+    canViewProduction,
+    canViewPayroll,
+    hasClientAccounting,
+    hasSupplierAccounting,
+  ]);
 
   useEffect(() => {
     load();
@@ -356,17 +376,17 @@ const AdminOverview = ({ user }) => {
 
   const showClient = hasClientAccounting && ["all", "clients"].includes(sectionFilter);
   const showSupplier = hasSupplierAccounting && ["all", "suppliers"].includes(sectionFilter);
-  const showWorkers = ["all", "workers"].includes(sectionFilter);
+  const showWorkers = canViewProduction && ["all", "workers"].includes(sectionFilter);
 
   return (
     <Box className="crm-page h-full overflow-auto pr-1">
       <Box className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <Box>
           <Box className="mb-2 inline-flex rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
-            ZERR CRM • kengaytirilgan boshqaruv paneli
+            ZERR CRM вЂў kengaytirilgan boshqaruv paneli
           </Box>
           <Typography variant="h4" fontWeight={950} className="text-slate-950">
-            Xush kelibsiz, {user?.first_name || "Admin"}! 👋
+            Xush kelibsiz, {user?.first_name || "Admin"}! рџ‘‹
           </Typography>
           <Typography variant="body2" className="mt-1 text-slate-500">
             Korxona savdosi, ishlab chiqarish, qarz va oyliklar bo'yicha umumiy nazorat paneli.
@@ -532,7 +552,7 @@ const AdminOverview = ({ user }) => {
             title="So'nggi mijozlar va savdo"
             action={
               <Button size="small" onClick={() => navigate("/client-sales")}>
-                Barchasi →
+                Barchasi в†’
               </Button>
             }
           >
@@ -592,7 +612,7 @@ const AdminOverview = ({ user }) => {
             title="Ishchilar samaradorligi"
             action={
               <Button size="small" onClick={() => navigate("/worker-outputs")}>
-                Barchasi →
+                Barchasi в†’
               </Button>
             }
           >
@@ -614,7 +634,7 @@ const AdminOverview = ({ user }) => {
             title="Oxirgi homashyo xaridlari"
             action={
               <Button size="small" onClick={() => navigate("/material-purchases")}>
-                Barchasi →
+                Barchasi в†’
               </Button>
             }
           >
@@ -687,3 +707,5 @@ const AdminOverview = ({ user }) => {
 };
 
 export default AdminOverview;
+
+

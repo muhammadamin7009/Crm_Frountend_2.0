@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+﻿import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "../Pages/Login/Login";
 import Register from "../Pages/Register/Register";
 import Layout from "../Layouts/Layout";
@@ -19,6 +19,7 @@ import PlatformLogin from "../Pages/Platform/PlatformLogin";
 import PlatformDashboard from "../Pages/Platform/PlatformDashboard";
 import AuditLogs from "../Pages/AuditLog/AuditLogs";
 import LandingPage from "../Pages/LandingPage/LandingPage";
+import Permissions from "../Pages/Permission/Permissions";
 
 const AppRouter = () => {
   return (
@@ -26,6 +27,7 @@ const AppRouter = () => {
       <Route path="/landing" element={<LandingPage />} />
       <Route path="/platform/login" element={<PlatformLogin />} />
       <Route path="/platform" element={<PlatformDashboard />} />
+
       <Route element={<PublicRoute />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -36,50 +38,108 @@ const AppRouter = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<Product />} />
-          <Route element={<ProtectedRoute allowedRoles={["super_admin", "admin", "worker"]} />}>
-            <Route path="/worker-outputs" element={<WorkerOutputs />} />
+
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={["super_admin", "admin", "worker"]}
+                allowedPermissions={["users.view"]}
+              />
+            }
+          >
             <Route path="/users" element={<Users />} />
           </Route>
-          <Route element={<ProtectedRoute allowedRoles={["super_admin", "admin"]} />}>
+
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={["super_admin", "admin", "worker"]}
+                allowedPermissions={["production.view"]}
+              />
+            }
+          >
+            <Route path="/worker-outputs" element={<WorkerOutputs />} />
+          </Route>
+
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={["super_admin", "admin"]}
+                allowedPermissions={["payroll.view"]}
+              />
+            }
+          >
             <Route path="/worker-payments" element={<WorkerPayments />} />
+          </Route>
+
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={["super_admin", "admin"]}
+                allowedPermissions={["employees.view"]}
+              />
+            }
+          >
             <Route path="/employees" element={<Employees />} />
+          </Route>
+
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={["super_admin", "admin"]}
+                allowedPermissions={["users.view"]}
+              />
+            }
+          >
             <Route path="/users/:id" element={<User />} />
           </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={["super_admin"]} />}>
+            <Route path="/permissions" element={<Permissions />} />
+          </Route>
+
           <Route
             element={
               <ProtectedRoute
                 allowedRoles={["super_admin", "admin"]}
                 allowedFeatures={["client_accounting"]}
+                allowedPermissions={["client_sales.view"]}
               />
             }
           >
             <Route path="/client-sales" element={<ClientSales />} />
           </Route>
+
           <Route
             element={
               <ProtectedRoute
                 allowedRoles={["super_admin", "admin"]}
                 allowedFeatures={["supplier_accounting"]}
+                allowedPermissions={["material_purchases.view"]}
               />
             }
           >
             <Route path="/material-purchases" element={<MaterialPurchases />} />
           </Route>
+
           <Route
             element={
               <ProtectedRoute
                 allowedRoles={["super_admin", "admin"]}
                 allowedFeatures={["finance"]}
+                allowedPermissions={["finance.view"]}
               />
             }
           >
             <Route path="/finance" element={<Finance />} />
           </Route>
+
           <Route
             element={
               <ProtectedRoute
                 allowedRoles={["super_admin", "admin"]}
                 allowedFeatures={["audit_logs"]}
+                allowedPermissions={["audit_logs.view"]}
               />
             }
           >

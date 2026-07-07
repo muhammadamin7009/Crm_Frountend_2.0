@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import {
   Avatar,
@@ -24,6 +24,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../Context/AuthContext";
+import { hasPermission } from "../../utils/permissions";
 import CrmPagination from "../../Components/Common/CrmPagination";
 import {
   createUserByAdmin,
@@ -402,7 +403,8 @@ const Users = () => {
     return [];
   }, [currentUser?.role]);
 
-  const canCreateUser = ["super_admin", "admin"].includes(currentUser?.role);
+  const canManageUsers = hasPermission(currentUser, "users.manage");
+  const canCreateUser = ["super_admin", "admin"].includes(currentUser?.role) && canManageUsers;
   const isWorkerView = currentUser?.role === "worker";
   const canOpenUserDetail = ["super_admin", "admin"].includes(currentUser?.role);
   const showingDeleted = deletedFilter === "true";
@@ -413,6 +415,7 @@ const Users = () => {
     if (!currentUser || !user) return false;
     if (user.is_deleted) return currentUser.role === "super_admin";
     if (isCurrentUser(user)) return true;
+    if (!canManageUsers) return false;
     if (currentUser.role === "super_admin") return true;
     if (currentUser.role === "admin") return STAFF_ROLES.includes(user.role);
 
@@ -429,6 +432,7 @@ const Users = () => {
     if (!currentUser || !user) return false;
     if (user.is_deleted) return currentUser.role === "super_admin";
 
+    if (!canManageUsers) return false;
     if (currentUser.role === "super_admin") return user.role !== "super_admin";
     if (currentUser.role === "admin") return STAFF_ROLES.includes(user.role);
 
@@ -696,7 +700,7 @@ const Users = () => {
         >
           <Box>
             <Chip
-              label="ZERR CRM • foydalanuvchilar"
+              label="ZERR CRM вЂў foydalanuvchilar"
               size="small"
               sx={{
                 mb: 1,
@@ -1256,3 +1260,4 @@ const Users = () => {
 };
 
 export default Users;
+
