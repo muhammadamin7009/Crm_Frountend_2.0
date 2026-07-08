@@ -319,7 +319,7 @@ function DashboardMockup() {
         <Stack direction="row" spacing={1.4} alignItems="center">
           <LogoMark size={42} />
           <Box>
-            <Typography sx={{ color: brand.text, fontWeight: 950 }}>Al-amin bosh sahifa</Typography>
+            <Typography sx={{ color: brand.text, fontWeight: 950 }}>Al-amin CRM bosh sahifa</Typography>
             <Typography sx={{ color: brand.muted, fontSize: 12, fontWeight: 700 }}>
               Rahbar uchun asosiy ko'rsatkichlar
             </Typography>
@@ -737,7 +737,7 @@ export default function LandingPage() {
               <LogoMark size={44} />
               <Box>
                 <Typography sx={{ color: brand.text, fontWeight: 950, fontSize: 20 }}>
-                  Al-amin
+                  Al-amin CRM
                 </Typography>
                 <Typography sx={{ color: brand.muted, fontSize: 12, fontWeight: 750 }}>
                   Asoschi MR
@@ -867,7 +867,7 @@ export default function LandingPage() {
                   <LogoMark dark size={58} />
                   <Box>
                     <Typography sx={{ color: "#fff", fontSize: 24, fontWeight: 950 }}>
-                      Al-amin
+                      Al-amin CRM
                     </Typography>
                     <Typography
                       sx={{
@@ -1059,7 +1059,7 @@ export default function LandingPage() {
                     letterSpacing: "-.05em",
                   }}
                 >
-                  Al-amin
+                  Al-amin CRM
                 </Typography>
 
                 <Typography
@@ -1072,12 +1072,12 @@ export default function LandingPage() {
                     fontWeight: 650,
                   }}
                 >
-                  Asosiy signal shu bo'ladi: MR belgisi, Al-amin nomi va poyabzal korxonasining real
+                  Asosiy signal shu bo'ladi: MR belgisi, Al-amin CRM nomi va poyabzal korxonasining real
                   hisob-kitobini boshqaradigan premium tizim.
                 </Typography>
 
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={1.4} sx={{ mt: 3 }}>
-                  {["Al-amin", "Poyabzal tizimi", "Korxona nazorati"].map((item) => (
+                  {["Al-amin CRM", "Poyabzal tizimi", "Korxona nazorati"].map((item) => (
                     <Box
                       key={item}
                       component={motion.div}
@@ -1171,7 +1171,7 @@ export default function LandingPage() {
                     fontWeight: 650,
                   }}
                 >
-                  Al-amin har bir yozuvni bosh sahifa, qarzdorlik, ish haqi va amallar tarixi bilan
+                  Al-amin CRM har bir yozuvni bosh sahifa, qarzdorlik, ish haqi va amallar tarixi bilan
                   bog'laydi.
                 </Typography>
               </Paper>
@@ -1273,7 +1273,7 @@ export default function LandingPage() {
                   letterSpacing: "-.055em",
                 }}
               >
-                Al-amin bilan korxonangiz hisobini tartibga keltiring
+                Al-amin CRM bilan korxonangiz hisobini tartibga keltiring
               </Typography>
 
               <Typography
@@ -1339,7 +1339,7 @@ export default function LandingPage() {
               fontWeight: 750,
             }}
           >
-            2026 Al-amin. Asoschi MR. Poyabzal korxonalari uchun boshqaruv tizimi.
+            2026 Al-amin CRM. Asoschi MR. Poyabzal korxonalari uchun boshqaruv tizimi.
           </Typography>
         </Container>
       </Box>

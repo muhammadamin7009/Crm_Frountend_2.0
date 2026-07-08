@@ -99,7 +99,7 @@ export default function TopBar() {
 
   const fullName = useMemo(() => {
     const name = `${user?.first_name || ""} ${user?.last_name || ""}`.trim();
-    return name || user?.username || "ZERR foydalanuvchisi";
+    return name || user?.username || "Al-amin foydalanuvchisi";
   }, [user]);
 
   const role = roleLabels[user?.role] || user?.role || "Foydalanuvchi";
@@ -254,7 +254,7 @@ export default function TopBar() {
                 fontWeight: 700,
               }}
             >
-              {user?.company_name || "Zerr Collection"} boshqaruv paneli
+              {user?.company_name || "Al-amin Collection"} boshqaruv paneli
             </Typography>
           </Box>
         </Box>
@@ -361,7 +361,7 @@ export default function TopBar() {
       <Drawer open={menuOpen} onClose={() => setMenuOpen(false)}>
         <Box className="flex h-full w-72 flex-col bg-[#050817] p-4 text-white">
           <Typography variant="h6" fontWeight={950} className="px-2 py-3">
-            Zerr Collection
+            Al-amin Collection
           </Typography>
 
           <List className="flex-1">

@@ -534,7 +534,7 @@ const WorkerOutputs = () => {
         >
           <Box>
             <Chip
-              label="ZERR CRM • ish hisoboti"
+              label="Al-amin CRM • ish hisoboti"
               size="small"
               sx={{
                 mb: 1,

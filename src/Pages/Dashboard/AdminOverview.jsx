@@ -169,17 +169,15 @@ const MiniBars = ({
   );
 };
 
-const SalesChart = ({ sales, purchases, production }) => {
-  const values = [sales, purchases, production].map((value) => Number(value || 0));
+const SalesChart = ({ bars }) => {
+  const values = bars.map((bar) => Number(bar.value || 0));
   const max = Math.max(...values, 1);
-  const bars = [
-    { label: "Savdo", value: values[0], color: "#2563eb" },
-    { label: "Xarid", value: values[1], color: "#f59e0b" },
-    { label: "Ishlab chiqarish", value: values[2], color: "#10b981" },
-  ];
 
   return (
-    <Box className="grid h-[250px] grid-cols-3 items-end gap-5 rounded-3xl bg-gradient-to-b from-slate-50 to-white px-6 py-5">
+    <Box
+      className="grid h-[250px] items-end gap-5 rounded-3xl bg-gradient-to-b from-slate-50 to-white px-6 py-5"
+      style={{ gridTemplateColumns: `repeat(${Math.max(bars.length, 1)}, minmax(0, 1fr))` }}
+    >
       {bars.map((bar) => (
         <Box key={bar.label} className="flex h-full flex-col justify-end gap-3 text-center">
           <Box className="flex flex-1 items-end justify-center">
@@ -206,6 +204,7 @@ const AdminOverview = ({ user }) => {
   const canViewUsers = hasPermission(user, "users.view");
   const canViewProduction = hasPermission(user, "production.view");
   const canViewPayroll = hasPermission(user, "payroll.view");
+  const canViewFinance = hasPermission(user, "finance.view");
   const hasClientAccounting =
     (!user?.plan_code || user.plan_features?.includes("client_accounting")) &&
     hasPermission(user, "client_sales.view");
@@ -327,6 +326,19 @@ const AdminOverview = ({ user }) => {
     load();
   }, [load]);
 
+  useEffect(() => {
+    const allowed = [
+      "all",
+      hasClientAccounting && "clients",
+      canViewProduction && "workers",
+      hasSupplierAccounting && "suppliers",
+    ].filter(Boolean);
+
+    if (!allowed.includes(sectionFilter)) {
+      setSectionFilter("all");
+    }
+  }, [canViewProduction, hasClientAccounting, hasSupplierAccounting, sectionFilter]);
+
   const obligations = Number(data.supplierDebt) + Number(data.salaryRemaining);
   const balanceDifference = Number(data.clientDebt) - obligations;
 
@@ -349,14 +361,16 @@ const AdminOverview = ({ user }) => {
             path: "/material-purchases",
             tone: "rose",
           },
-        Number(data.salaryRemaining) > 0 && {
+        canViewPayroll &&
+          Number(data.salaryRemaining) > 0 && {
           label: "Berilmagan ish haqi",
           value: money(data.salaryRemaining),
           helper: "Hodimlarga to'lanishi kerak",
           path: "/worker-payments",
           tone: "amber",
         },
-        Number(data.advances) > 0 && {
+        canViewPayroll &&
+          Number(data.advances) > 0 && {
           label: "Hodimlarning avansi",
           value: money(data.advances),
           helper: "Keyingi hisobda ushlanishi mumkin",
@@ -364,7 +378,7 @@ const AdminOverview = ({ user }) => {
           tone: "violet",
         },
       ].filter(Boolean),
-    [data, hasClientAccounting, hasSupplierAccounting],
+    [canViewPayroll, data, hasClientAccounting, hasSupplierAccounting],
   );
 
   if (loading)
@@ -377,19 +391,34 @@ const AdminOverview = ({ user }) => {
   const showClient = hasClientAccounting && ["all", "clients"].includes(sectionFilter);
   const showSupplier = hasSupplierAccounting && ["all", "suppliers"].includes(sectionFilter);
   const showWorkers = canViewProduction && ["all", "workers"].includes(sectionFilter);
+  const allowedFilters = [
+    ["all", "Hammasi"],
+    hasClientAccounting && ["clients", "Mijozlar"],
+    canViewProduction && ["workers", "Ishchilar"],
+    hasSupplierAccounting && ["suppliers", "Yetkazib beruvchi"],
+  ].filter(Boolean);
+  const chartBars = [
+    hasClientAccounting && { label: "Savdo", value: data.sales, color: "#2563eb" },
+    hasSupplierAccounting && { label: "Xarid", value: data.purchases, color: "#f59e0b" },
+    canViewProduction && {
+      label: "Ishlab chiqarish",
+      value: data.productionAmount,
+      color: "#10b981",
+    },
+  ].filter(Boolean);
 
   return (
     <Box className="crm-page h-full overflow-auto pr-1">
       <Box className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <Box>
           <Box className="mb-2 inline-flex rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
-            ZERR CRM вЂў kengaytirilgan boshqaruv paneli
+            Al-amin CRM - kengaytirilgan boshqaruv paneli
           </Box>
           <Typography variant="h4" fontWeight={950} className="text-slate-950">
-            Xush kelibsiz, {user?.first_name || "Admin"}! рџ‘‹
+            Xush kelibsiz, {user?.first_name || "Admin"}!
           </Typography>
           <Typography variant="body2" className="mt-1 text-slate-500">
-            Korxona savdosi, ishlab chiqarish, qarz va oyliklar bo'yicha umumiy nazorat paneli.
+            Sizga ochilgan bo'limlar bo'yicha tanlangan davr ko'rsatkichlari.
           </Typography>
         </Box>
 
@@ -441,38 +470,42 @@ const AdminOverview = ({ user }) => {
       </Box>
 
       <Box className="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          label="Jami savdo"
-          value={money(data.sales)}
-          helper={`${data.salesCount} ta savdo`}
-          icon={TrendUpIcon}
-          tone="blue"
-          trend="+18.6%"
-        />
-        <StatCard
-          label="Mijozlardan tushum"
-          value={money(data.clientIncome)}
-          helper={`Qarz: ${money(data.clientDebt)}`}
-          icon={CoinsIcon}
-          tone="green"
-          trend="+24.1%"
-        />
-        <StatCard
-          label="Tayyor mahsulot"
-          value={`${number(data.productionQuantity)} ta`}
-          helper={money(data.productionAmount)}
-          icon={BoxIcon}
-          tone="violet"
-          trend="+12.7%"
-        />
-        <StatCard
-          label="Kutilayotgan to'lov"
-          value={money(data.clientDebt)}
-          helper={`Majburiyat: ${money(obligations)}`}
-          icon={AlertIcon}
-          tone="amber"
-          trend="+22.8%"
-        />
+        {hasClientAccounting && (
+          <StatCard
+            label="Jami savdo"
+            value={money(data.sales)}
+            helper={`${data.salesCount} ta savdo, tanlangan davr`}
+            icon={TrendUpIcon}
+            tone="blue"
+          />
+        )}
+        {hasClientAccounting && (
+          <StatCard
+            label="Mijozlardan tushum"
+            value={money(data.clientIncome)}
+            helper={`Mijozlar qarzi: ${money(data.clientDebt)}`}
+            icon={CoinsIcon}
+            tone="green"
+          />
+        )}
+        {canViewProduction && (
+          <StatCard
+            label="Tayyor mahsulot"
+            value={`${number(data.productionQuantity)} ta`}
+            helper={money(data.productionAmount)}
+            icon={BoxIcon}
+            tone="violet"
+          />
+        )}
+        {hasSupplierAccounting && (
+          <StatCard
+            label="Homashyo xaridi"
+            value={money(data.purchases)}
+            helper={`${data.purchasesCount} ta xarid, tanlangan davr`}
+            icon={AlertIcon}
+            tone="amber"
+          />
+        )}
       </Box>
 
       <Box className="mb-5 grid grid-cols-1 gap-4 xl:grid-cols-[1.35fr_.9fr_.9fr]">
@@ -483,24 +516,24 @@ const AdminOverview = ({ user }) => {
           }
         >
           <SalesChart
-            sales={data.sales}
-            purchases={data.purchases}
-            production={data.productionAmount}
+            bars={chartBars}
           />
         </SectionCard>
 
-        <SectionCard title="Bo'limlar kesimi">
-          {departments.length ? (
-            <MiniBars
-              items={departments}
-              valueKey="total_quantity"
-              labelKey="group_name"
-              tone="#8b5cf6"
-            />
-          ) : (
-            <Empty>Bo'limlar bo'yicha ma'lumot yo'q.</Empty>
-          )}
-        </SectionCard>
+        {canViewProduction && (
+          <SectionCard title="Bo'limlar kesimi">
+            {departments.length ? (
+              <MiniBars
+                items={departments}
+                valueKey="total_quantity"
+                labelKey="group_name"
+                tone="#8b5cf6"
+              />
+            ) : (
+              <Empty>Bo'limlar bo'yicha ma'lumot yo'q.</Empty>
+            )}
+          </SectionCard>
+        )}
 
         <SectionCard title="Muhim eslatmalar">
           {attentionItems.length ? (
@@ -530,12 +563,7 @@ const AdminOverview = ({ user }) => {
       </Box>
 
       <Box className="mb-5 flex flex-wrap gap-2">
-        {[
-          ["all", "Hammasi"],
-          ["clients", "Mijozlar"],
-          ["workers", "Ishchilar"],
-          ["suppliers", "Yetkazib beruvchi"],
-        ].map(([value, label]) => (
+        {allowedFilters.map(([value, label]) => (
           <Button
             key={value}
             variant={sectionFilter === value ? "contained" : "outlined"}
@@ -552,7 +580,7 @@ const AdminOverview = ({ user }) => {
             title="So'nggi mijozlar va savdo"
             action={
               <Button size="small" onClick={() => navigate("/client-sales")}>
-                Barchasi в†’
+                Barchasi
               </Button>
             }
           >
@@ -612,7 +640,7 @@ const AdminOverview = ({ user }) => {
             title="Ishchilar samaradorligi"
             action={
               <Button size="small" onClick={() => navigate("/worker-outputs")}>
-                Barchasi в†’
+                Barchasi
               </Button>
             }
           >
@@ -634,7 +662,7 @@ const AdminOverview = ({ user }) => {
             title="Oxirgi homashyo xaridlari"
             action={
               <Button size="small" onClick={() => navigate("/material-purchases")}>
-                Barchasi в†’
+                Barchasi
               </Button>
             }
           >
@@ -669,38 +697,40 @@ const AdminOverview = ({ user }) => {
           </SectionCard>
         )}
 
-        <SectionCard title="Korxona balansi" className="xl:col-span-2">
-          <Box className="grid grid-cols-1 gap-4 md:grid-cols-4">
-            <Box className="rounded-3xl border border-slate-200 bg-blue-50 p-4">
-              <Typography className="font-bold text-slate-500">Foydalanuvchilar</Typography>
-              <Typography variant="h5" fontWeight={950}>
-                {number(data.users)}
-              </Typography>
+        {canViewFinance && (
+          <SectionCard title="Korxona balansi" className="xl:col-span-2">
+            <Box className="grid grid-cols-1 gap-4 md:grid-cols-4">
+              <Box className="rounded-3xl border border-slate-200 bg-blue-50 p-4">
+                <Typography className="font-bold text-slate-500">Foydalanuvchilar</Typography>
+                <Typography variant="h5" fontWeight={950}>
+                  {number(data.users)}
+                </Typography>
+              </Box>
+              <Box className="rounded-3xl border border-slate-200 bg-violet-50 p-4">
+                <Typography className="font-bold text-slate-500">Mahsulotlar</Typography>
+                <Typography variant="h5" fontWeight={950}>
+                  {number(data.products)}
+                </Typography>
+              </Box>
+              <Box className="rounded-3xl border border-slate-200 bg-emerald-50 p-4">
+                <Typography className="font-bold text-slate-500">Olinadigan</Typography>
+                <Typography variant="h5" fontWeight={950}>
+                  {money(data.clientDebt)}
+                </Typography>
+              </Box>
+              <Box className="rounded-3xl border border-slate-200 bg-rose-50 p-4">
+                <Typography className="font-bold text-slate-500">Farq</Typography>
+                <Typography
+                  variant="h5"
+                  fontWeight={950}
+                  className={balanceDifference >= 0 ? "text-emerald-700" : "text-rose-700"}
+                >
+                  {money(balanceDifference)}
+                </Typography>
+              </Box>
             </Box>
-            <Box className="rounded-3xl border border-slate-200 bg-violet-50 p-4">
-              <Typography className="font-bold text-slate-500">Mahsulotlar</Typography>
-              <Typography variant="h5" fontWeight={950}>
-                {number(data.products)}
-              </Typography>
-            </Box>
-            <Box className="rounded-3xl border border-slate-200 bg-emerald-50 p-4">
-              <Typography className="font-bold text-slate-500">Olinadigan</Typography>
-              <Typography variant="h5" fontWeight={950}>
-                {money(data.clientDebt)}
-              </Typography>
-            </Box>
-            <Box className="rounded-3xl border border-slate-200 bg-rose-50 p-4">
-              <Typography className="font-bold text-slate-500">Farq</Typography>
-              <Typography
-                variant="h5"
-                fontWeight={950}
-                className={balanceDifference >= 0 ? "text-emerald-700" : "text-rose-700"}
-              >
-                {money(balanceDifference)}
-              </Typography>
-            </Box>
-          </Box>
-        </SectionCard>
+          </SectionCard>
+        )}
       </Box>
     </Box>
   );

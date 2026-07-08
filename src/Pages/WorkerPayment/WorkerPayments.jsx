@@ -746,7 +746,7 @@ const WorkerPayments = () => {
         >
           <Box>
             <Chip
-              label="ZERR CRM • oyliklar"
+              label="Al-amin CRM • oyliklar"
               size="small"
               sx={{
                 mb: 1,

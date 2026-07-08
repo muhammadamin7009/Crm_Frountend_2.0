@@ -587,7 +587,7 @@ const MaterialPurchases = () => {
         >
           <Box>
             <Chip
-              label="ZERR CRM • homashyo xaridi"
+              label="Al-amin CRM • homashyo xaridi"
               size="small"
               sx={{
                 mb: 1,

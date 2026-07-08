@@ -39,9 +39,9 @@ const Login = () => {
 
   const { setUser } = useAuth();
   const companySlug = watch("company_slug");
-  const isZerrShoes = companySlug === "zerrshoes";
-  const companyTitle = isZerrShoes
-    ? "Zerr Shoes"
+  const isMainCompany = companySlug === "zerrshoes";
+  const companyTitle = isMainCompany
+    ? "Al-amin CRM"
     : companySlug
       ? companySlug.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
       : "Korxona CRM";
@@ -117,7 +117,7 @@ const Login = () => {
             <Box>
               <Box className="mb-10 flex items-center gap-3">
                 <Box className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white">
-                  {isZerrShoes ? (
+                  {isMainCompany ? (
                     <img width={40} src={SiteLogo} alt={companyTitle} />
                   ) : (
                     <Typography fontWeight={900}>{companyTitle[0]}</Typography>
@@ -168,7 +168,7 @@ const Login = () => {
             <Box className="w-full max-w-lg">
               <Box className="mb-8 flex items-center gap-3 lg:hidden">
                 <Box className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50">
-                  {isZerrShoes ? (
+                  {isMainCompany ? (
                     <img width={34} src={SiteLogo} alt={companyTitle} />
                   ) : (
                     <Typography fontWeight={900}>{companyTitle[0]}</Typography>

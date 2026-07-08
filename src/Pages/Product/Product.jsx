@@ -317,7 +317,7 @@ const Product = () => {
         >
           <Box sx={{ minWidth: 0 }}>
             <Chip
-              label="ZERR CRM • mahsulot profili"
+              label="Al-amin CRM • mahsulot profili"
               size="small"
               sx={{
                 mb: 1,

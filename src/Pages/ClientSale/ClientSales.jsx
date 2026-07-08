@@ -276,6 +276,7 @@ const ClientSales = () => {
   const auth = useAuth();
   const currentUser = auth?.user || getLocalUser();
   const canManage = ["super_admin", "admin"].includes(currentUser?.role);
+  const isSuperAdmin = currentUser?.role === "super_admin";
 
   const [sales, setSales] = useState([]);
   const [clients, setClients] = useState([]);
@@ -413,6 +414,16 @@ const ClientSales = () => {
   );
 
   const fetchSummary = useCallback(async () => {
+    if (!isSuperAdmin) {
+      setSummary([]);
+      setBalance({
+        total_amount: 0,
+        paid_amount: 0,
+        debt_amount: 0,
+      });
+      return;
+    }
+
     setSummaryLoading(true);
 
     try {
@@ -443,7 +454,7 @@ const ClientSales = () => {
     } finally {
       setSummaryLoading(false);
     }
-  }, [buildParams, filters.client_id, filters.date_from, filters.date_to, filters.group_by]);
+  }, [buildParams, filters.client_id, filters.date_from, filters.date_to, filters.group_by, isSuperAdmin]);
 
   useEffect(() => {
     fetchDictionaries();
@@ -830,7 +841,7 @@ const ClientSales = () => {
         >
           <Box>
             <Chip
-              label="ZERR CRM • mijoz savdo"
+              label="Al-amin CRM • mijoz savdo"
               size="small"
               sx={{
                 mb: 1,
@@ -878,9 +889,19 @@ const ClientSales = () => {
               width: { xs: "100%", xl: "auto" },
             }}
           >
-            <MiniStat label="Savdo" value={formatMoney(balance.total_amount)} tone="blue" />
-            <MiniStat label="To'langan" value={formatMoney(balance.paid_amount)} tone="green" />
-            <MiniStat label="Qarz" value={formatMoney(balance.debt_amount)} tone="orange" />
+            {isSuperAdmin && (
+              <MiniStat label="Jami savdo" value={formatMoney(balance.total_amount)} tone="blue" />
+            )}
+            {isSuperAdmin && (
+              <MiniStat
+                label="Jami to'langan"
+                value={formatMoney(balance.paid_amount)}
+                tone="green"
+              />
+            )}
+            {isSuperAdmin && (
+              <MiniStat label="Jami qarz" value={formatMoney(balance.debt_amount)} tone="orange" />
+            )}
             <MiniStat label="Yozuvlar" value={pageInfo.total} tone="default" />
           </Box>
         </Box>
@@ -1082,73 +1103,75 @@ const ClientSales = () => {
         </Box>
       </Card>
 
-      <Card sx={{ mb: 1, p: 1.6, flexShrink: 0 }}>
-        {summaryLoading ? (
-          <Box sx={{ minHeight: 92, display: "grid", placeItems: "center" }}>
-            <CircularProgress size={24} />
-          </Box>
-        ) : summary.length ? (
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "repeat(2, 1fr)",
-                xl: "repeat(4, 1fr)",
-              },
-              gap: 1.4,
-            }}
-          >
-            {summary.slice(0, 4).map((item) => (
-              <Box
-                key={String(item.group_id)}
-                sx={{
-                  p: 1.6,
-                  borderRadius: "17px",
-                  background: "#fff",
-                  border: "1px solid rgba(148, 163, 184, 0.22)",
-                  boxShadow: "0 10px 24px rgba(15, 23, 42, 0.04)",
-                }}
-              >
-                <Typography
+      {isSuperAdmin && (
+        <Card sx={{ mb: 1, p: 1.6, flexShrink: 0 }}>
+          {summaryLoading ? (
+            <Box sx={{ minHeight: 92, display: "grid", placeItems: "center" }}>
+              <CircularProgress size={24} />
+            </Box>
+          ) : summary.length ? (
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  xl: "repeat(4, 1fr)",
+                },
+                gap: 1.4,
+              }}
+            >
+              {summary.slice(0, 4).map((item) => (
+                <Box
+                  key={String(item.group_id)}
                   sx={{
-                    fontSize: 13,
-                    fontWeight: 800,
-                    color: "#64748b",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                    p: 1.6,
+                    borderRadius: "17px",
+                    background: "#fff",
+                    border: "1px solid rgba(148, 163, 184, 0.22)",
+                    boxShadow: "0 10px 24px rgba(15, 23, 42, 0.04)",
                   }}
                 >
-                  {item.group_name || "-"}
-                </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: 13,
+                      fontWeight: 800,
+                      color: "#64748b",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {item.group_name || "-"}
+                  </Typography>
 
-                <Typography
-                  sx={{
-                    mt: 0.45,
-                    fontSize: 18,
-                    fontWeight: 950,
-                    color: "#0f172a",
-                    letterSpacing: "-0.04em",
-                  }}
-                >
-                  {formatMoney(item.total_amount)}
-                </Typography>
+                  <Typography
+                    sx={{
+                      mt: 0.45,
+                      fontSize: 18,
+                      fontWeight: 950,
+                      color: "#0f172a",
+                      letterSpacing: "-0.04em",
+                    }}
+                  >
+                    {formatMoney(item.total_amount)}
+                  </Typography>
 
-                <Typography sx={{ mt: 0.45, fontSize: 12.5, fontWeight: 750, color: "#64748b" }}>
-                  Qarz: {formatMoney(item.debt_amount)} / {item.sales_count} savdo
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-        ) : (
-          <Box sx={{ minHeight: 92, display: "grid", placeItems: "center" }}>
-            <Typography sx={{ fontSize: 14, fontWeight: 750, color: "#64748b" }}>
-              Umumiy savdo ma'lumoti topilmadi.
-            </Typography>
-          </Box>
-        )}
-      </Card>
+                  <Typography sx={{ mt: 0.45, fontSize: 12.5, fontWeight: 750, color: "#64748b" }}>
+                    Qarz: {formatMoney(item.debt_amount)} / {item.sales_count} savdo
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            <Box sx={{ minHeight: 92, display: "grid", placeItems: "center" }}>
+              <Typography sx={{ fontSize: 14, fontWeight: 750, color: "#64748b" }}>
+                Umumiy savdo ma'lumoti topilmadi.
+              </Typography>
+            </Box>
+          )}
+        </Card>
+      )}
 
       <Card
         sx={{

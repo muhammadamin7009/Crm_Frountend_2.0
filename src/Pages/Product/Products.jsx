@@ -916,7 +916,7 @@ const Products = () => {
         >
           <Box>
             <Chip
-              label="ZERR CRM • mahsulotlar"
+              label="Al-amin CRM • mahsulotlar"
               size="small"
               sx={{
                 mb: 1,

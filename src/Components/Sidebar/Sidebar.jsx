@@ -140,9 +140,9 @@ const Sidebar = () => {
 
   const fullName = `${user?.first_name || ""} ${user?.last_name || ""}`.trim();
 
-  const isZerrShoes = user?.company_slug === "zerrshoes" || !user?.company_slug;
+  const isMainCompany = user?.company_slug === "zerrshoes" || !user?.company_slug;
 
-  const companyName = user?.company_name || (isZerrShoes ? "Zerr Collection" : "Korxona CRM");
+  const companyName = user?.company_name || (isMainCompany ? "Al-amin CRM" : "Korxona CRM");
 
   return (
     <aside className="hidden h-screen w-68 shrink-0 p-3 md:block">
@@ -150,7 +150,7 @@ const Sidebar = () => {
         <Box className="px-5 pb-5 pt-5">
           <Box className="flex items-center gap-3">
             <Box className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white shadow-lg">
-              {isZerrShoes ? (
+              {isMainCompany ? (
                 <img width={34} src={SiteLogo} alt={companyName} />
               ) : (
                 <Typography fontWeight={900} className="text-slate-950">

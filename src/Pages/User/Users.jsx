@@ -700,7 +700,7 @@ const Users = () => {
         >
           <Box>
             <Chip
-              label="ZERR CRM вЂў foydalanuvchilar"
+              label="Al-amin CRM - foydalanuvchilar"
               size="small"
               sx={{
                 mb: 1,

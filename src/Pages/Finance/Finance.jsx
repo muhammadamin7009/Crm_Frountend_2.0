@@ -557,7 +557,7 @@ const Finance = () => {
         >
           <Box>
             <Chip
-              label="ZERR CRM • moliya"
+              label="Al-amin CRM • moliya"
               size="small"
               sx={{
                 mb: 1,

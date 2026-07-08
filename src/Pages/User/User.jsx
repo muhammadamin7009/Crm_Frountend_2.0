@@ -844,7 +844,7 @@ const User = () => {
 
             <Box sx={{ minWidth: 0 }}>
               <Chip
-                label={`ZERR CRM • ${roleName} profili`}
+                label={`Al-amin CRM • ${roleName} profili`}
                 size="small"
                 sx={{
                   mb: 1.1,

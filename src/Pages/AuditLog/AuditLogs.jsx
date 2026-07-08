@@ -265,7 +265,7 @@ const AuditLogs = () => {
         >
           <Box>
             <Chip
-              label="ZERR CRM • audit logs"
+              label="Al-amin CRM • audit logs"
               size="small"
               sx={{
                 mb: 1,
