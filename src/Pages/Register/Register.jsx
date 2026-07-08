@@ -8,6 +8,69 @@ import SiteLogo from "../../images/zerr_02_logo.png";
 import api from "../../api/axios";
 import { getCompanySlug, setCompanySlug } from "../../utils/company";
 
+const formatNameValue = (value = "") =>
+  String(value)
+    .trim()
+    .replace(/\s+/g, " ")
+    .split(" ")
+    .map((part) => {
+      const lower = part.toLocaleLowerCase("uz-UZ");
+      return lower ? `${lower[0].toLocaleUpperCase("uz-UZ")}${lower.slice(1)}` : "";
+    })
+    .join(" ");
+
+const compactPhoneValue = (value = "") => {
+  const text = String(value).trim();
+  if (!text) return "";
+
+  const digits = text.replace(/\D/g, "");
+  return text.startsWith("+") ? `+${digits}` : digits;
+};
+
+const formatPhoneInput = (value = "") => {
+  const text = String(value).trim();
+  if (!text) return "";
+
+  const digits = text.replace(/\D/g, "");
+  const isUzbekPhone = text.startsWith("+998") || digits.startsWith("998") || text === "+998";
+
+  if (!isUzbekPhone) {
+    return text.startsWith("+") ? `+${digits}` : digits;
+  }
+
+  const local = digits.startsWith("998") ? digits.slice(3) : digits;
+  let formatted = "+998";
+
+  if (local.length > 0) formatted += ` (${local.slice(0, 2)}`;
+  if (local.length >= 2) formatted += ")";
+  if (local.length > 2) formatted += ` ${local.slice(2, 5)}`;
+  if (local.length > 5) formatted += `-${local.slice(5, 7)}`;
+  if (local.length > 7) formatted += `-${local.slice(7, 9)}`;
+  if (local.length > 9) formatted += ` ${local.slice(9)}`;
+
+  return formatted;
+};
+
+const normalizePhoneForSubmit = (value = "") => {
+  const phone = compactPhoneValue(value);
+
+  if (!phone || phone === "+998") return null;
+
+  if (!phone.startsWith("+")) {
+    throw new Error("Telefon raqam + bilan boshlansin. Masalan: +998965001001");
+  }
+
+  if (phone.startsWith("+998") && !/^\+998\d{9}$/.test(phone)) {
+    throw new Error("O'zbekiston raqami +998 dan keyin aynan 9 ta raqam bo'lishi kerak.");
+  }
+
+  if (!/^\+[1-9]\d{7,14}$/.test(phone)) {
+    throw new Error("Telefon raqam xalqaro formatda bo'lishi kerak. Masalan: +998965001001");
+  }
+
+  return phone;
+};
+
 const Register = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -16,13 +79,14 @@ const Register = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
       first_name: "",
       last_name: "",
       username: "",
-      phone: "",
+      phone: "+998",
       password: "",
       confirm_password: "",
       company_slug: getCompanySlug(),
@@ -44,12 +108,15 @@ const Register = () => {
     setLoading(true);
 
     try {
+      const phone = normalizePhoneForSubmit(values.phone);
       const companySlug = setCompanySlug(company_slug);
       await api.post(
         "/users",
         {
           ...values,
-          phone: values.phone || null,
+          first_name: formatNameValue(values.first_name),
+          last_name: formatNameValue(values.last_name),
+          phone,
         },
         {
           baseURL: `${String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "")}/api/${companySlug}`,
@@ -59,7 +126,7 @@ const Register = () => {
       toast.success("Ro'yxatdan o'tdingiz. Endi tizimga kiring.");
       navigate("/login");
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Ro'yxatdan o'tishda xato.");
+      toast.error(error?.response?.data?.message || error?.message || "Ro'yxatdan o'tishda xato.");
     } finally {
       setLoading(false);
     }
@@ -158,6 +225,7 @@ const Register = () => {
                     helperText={errors.first_name?.message}
                     {...register("first_name", {
                       required: "Ism majburiy",
+                      setValueAs: formatNameValue,
                       maxLength: {
                         value: 50,
                         message: "Ism 50 belgidan oshmasin",
@@ -171,6 +239,7 @@ const Register = () => {
                     helperText={errors.last_name?.message}
                     {...register("last_name", {
                       required: "Familiya majburiy",
+                      setValueAs: formatNameValue,
                       maxLength: {
                         value: 50,
                         message: "Familiya 50 belgidan oshmasin",
@@ -194,13 +263,29 @@ const Register = () => {
                   <TextField
                     fullWidth
                     label="Telefon"
-                    placeholder="+998..."
+                    placeholder="+998 (96) 500-10-01"
                     error={Boolean(errors.phone)}
-                    helperText={errors.phone?.message}
+                    helperText={
+                      errors.phone?.message ||
+                      "+998 raqamida 9 ta mahalliy raqam bo'lishi shart."
+                    }
                     {...register("phone", {
                       maxLength: {
                         value: 30,
                         message: "Telefon 30 belgidan oshmasin",
+                      },
+                      validate: (value) => {
+                        try {
+                          normalizePhoneForSubmit(value);
+                          return true;
+                        } catch (error) {
+                          return error.message;
+                        }
+                      },
+                      onChange: (event) => {
+                        setValue("phone", formatPhoneInput(event.target.value), {
+                          shouldValidate: true,
+                        });
                       },
                     })}
                   />

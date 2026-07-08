@@ -72,6 +72,27 @@ const getImageUrl = (path) => {
   return `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
 };
 
+const getRequiredViewPermission = (key) => {
+  if (!key?.endsWith(".manage")) return null;
+  return key.replace(".manage", ".view");
+};
+
+const getManagePermission = (key) => {
+  if (!key?.endsWith(".view")) return null;
+  return key.replace(".view", ".manage");
+};
+
+const normalizePermissions = (permissions = []) => {
+  const current = new Set(permissions);
+
+  [...current].forEach((key) => {
+    const viewKey = getRequiredViewPermission(key);
+    if (viewKey) current.add(viewKey);
+  });
+
+  return [...current];
+};
+
 const Permissions = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -95,7 +116,7 @@ const Permissions = () => {
       setGroups(data.groups || []);
       const firstAdmin = data.admins?.[0];
       setSelectedId(firstAdmin?.id || null);
-      setSelectedPermissions(firstAdmin?.permissions || []);
+      setSelectedPermissions(normalizePermissions(firstAdmin?.permissions || []));
     } catch (error) {
       toast.error(error?.response?.data?.message || "Ruxsatlarni olishda xato.");
     } finally {
@@ -109,13 +130,27 @@ const Permissions = () => {
 
   const selectAdmin = (admin) => {
     setSelectedId(admin.id);
-    setSelectedPermissions(admin.permissions || []);
+    setSelectedPermissions(normalizePermissions(admin.permissions || []));
   };
 
   const togglePermission = (key) => {
-    setSelectedPermissions((prev) =>
-      prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key],
-    );
+    setSelectedPermissions((prev) => {
+      const current = new Set(prev);
+
+      if (current.has(key)) {
+        current.delete(key);
+
+        const manageKey = getManagePermission(key);
+        if (manageKey) current.delete(manageKey);
+      } else {
+        current.add(key);
+
+        const viewKey = getRequiredViewPermission(key);
+        if (viewKey) current.add(viewKey);
+      }
+
+      return [...current];
+    });
   };
 
   const toggleGroup = (group) => {
@@ -128,27 +163,29 @@ const Permissions = () => {
         if (allSelected) current.delete(key);
         else current.add(key);
       });
-      return [...current];
+      return normalizePermissions([...current]);
     });
   };
 
   const applyPreset = (preset) => {
-    setSelectedPermissions(preset.permissions);
+    setSelectedPermissions(normalizePermissions(preset.permissions));
   };
 
   const handleSave = async () => {
     if (!selectedAdmin) return;
     setSaving(true);
     try {
-      const { data } = await updateUserPermissions(selectedAdmin.id, selectedPermissions);
+      const permissions = normalizePermissions(selectedPermissions);
+      const { data } = await updateUserPermissions(selectedAdmin.id, permissions);
       toast.success(data.message || "Ruxsatlar saqlandi.");
       setAdmins((prev) =>
         prev.map((admin) =>
           Number(admin.id) === Number(selectedAdmin.id)
-            ? { ...admin, permissions: data.permissions || selectedPermissions }
+            ? { ...admin, permissions: data.permissions || permissions }
             : admin,
         ),
       );
+      setSelectedPermissions(data.permissions || permissions);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Ruxsatlarni saqlashda xato.");
     } finally {

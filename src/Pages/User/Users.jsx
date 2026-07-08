@@ -86,8 +86,71 @@ const emptyForm = {
   last_name: "",
   username: "",
   password: "",
-  phone: "",
+  phone: "+998",
   role: "customer",
+};
+
+const formatNameValue = (value = "") =>
+  String(value)
+    .trim()
+    .replace(/\s+/g, " ")
+    .split(" ")
+    .map((part) => {
+      const lower = part.toLocaleLowerCase("uz-UZ");
+      return lower ? `${lower[0].toLocaleUpperCase("uz-UZ")}${lower.slice(1)}` : "";
+    })
+    .join(" ");
+
+const compactPhoneValue = (value = "") => {
+  const text = String(value).trim();
+  if (!text) return "";
+
+  const digits = text.replace(/\D/g, "");
+  return text.startsWith("+") ? `+${digits}` : digits;
+};
+
+const formatPhoneInput = (value = "") => {
+  const text = String(value).trim();
+  if (!text) return "";
+
+  const digits = text.replace(/\D/g, "");
+  const isUzbekPhone = text.startsWith("+998") || digits.startsWith("998") || text === "+998";
+
+  if (!isUzbekPhone) {
+    return text.startsWith("+") ? `+${digits}` : digits;
+  }
+
+  const local = digits.startsWith("998") ? digits.slice(3) : digits;
+  let formatted = "+998";
+
+  if (local.length > 0) formatted += ` (${local.slice(0, 2)}`;
+  if (local.length >= 2) formatted += ")";
+  if (local.length > 2) formatted += ` ${local.slice(2, 5)}`;
+  if (local.length > 5) formatted += `-${local.slice(5, 7)}`;
+  if (local.length > 7) formatted += `-${local.slice(7, 9)}`;
+  if (local.length > 9) formatted += ` ${local.slice(9)}`;
+
+  return formatted;
+};
+
+const normalizePhoneForSubmit = (value = "") => {
+  const phone = compactPhoneValue(value);
+
+  if (!phone || phone === "+998") return null;
+
+  if (!phone.startsWith("+")) {
+    throw new Error("Telefon raqam + bilan boshlansin. Masalan: +998965001001");
+  }
+
+  if (phone.startsWith("+998") && !/^\+998\d{9}$/.test(phone)) {
+    throw new Error("O'zbekiston raqami +998 dan keyin aynan 9 ta raqam bo'lishi kerak.");
+  }
+
+  if (!/^\+[1-9]\d{7,14}$/.test(phone)) {
+    throw new Error("Telefon raqam xalqaro formatda bo'lishi kerak. Masalan: +998965001001");
+  }
+
+  return phone;
 };
 
 const getImageUrl = (path) => {
@@ -300,7 +363,14 @@ const FormDialog = ({
           value={form.password}
           onChange={onFormChange("password")}
         />
-        <TextField fullWidth label="Telefon" value={form.phone} onChange={onFormChange("phone")} />
+        <TextField
+          fullWidth
+          label="Telefon"
+          value={form.phone}
+          onChange={onFormChange("phone")}
+          placeholder="+998 (96) 500-10-01"
+          helperText="+998 raqamida 9 ta mahalliy raqam bo'lishi shart. Boshqa davlat uchun + bilan yozing."
+        />
 
         {(!selectedUser || canEditRole) && (
           <TextField
@@ -477,9 +547,12 @@ const Users = () => {
   };
 
   const handleFormChange = (field) => (event) => {
+    const value =
+      field === "phone" ? formatPhoneInput(event.target.value) : event.target.value;
+
     setForm((prev) => ({
       ...prev,
-      [field]: event.target.value,
+      [field]: value,
     }));
   };
 
@@ -512,7 +585,7 @@ const Users = () => {
       last_name: user.last_name || "",
       username: user.username || "",
       password: "",
-      phone: user.phone || "",
+      phone: formatPhoneInput(user.phone || ""),
       role: user.role || "customer",
     });
     setImageFile(null);
@@ -553,11 +626,11 @@ const Users = () => {
 
     try {
       const payload = {
-        first_name: form.first_name,
-        last_name: form.last_name,
+        first_name: formatNameValue(form.first_name),
+        last_name: formatNameValue(form.last_name),
         username: form.username,
         password: form.password,
-        phone: form.phone || null,
+        phone: normalizePhoneForSubmit(form.phone),
         role: form.role,
       };
 
@@ -571,7 +644,7 @@ const Users = () => {
       closeCreateModal();
       fetchUsers(0, pageInfo.limit);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Foydalanuvchi qo'shishda xato.");
+      toast.error(error?.response?.data?.message || error?.message || "Foydalanuvchi qo'shishda xato.");
     } finally {
       setSaving(false);
     }
@@ -584,10 +657,10 @@ const Users = () => {
 
     try {
       const payload = {
-        first_name: form.first_name,
-        last_name: form.last_name,
+        first_name: formatNameValue(form.first_name),
+        last_name: formatNameValue(form.last_name),
         username: form.username,
-        phone: form.phone || null,
+        phone: normalizePhoneForSubmit(form.phone),
       };
 
       if (form.password) payload.password = form.password;
@@ -619,7 +692,7 @@ const Users = () => {
       closeEditModal();
       fetchUsers(pageInfo.offset, pageInfo.limit);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Foydalanuvchini yangilashda xato.");
+      toast.error(error?.response?.data?.message || error?.message || "Foydalanuvchini yangilashda xato.");
     } finally {
       setSaving(false);
     }
@@ -1017,7 +1090,7 @@ const Users = () => {
                           {user.username || "-"}
                         </TableCell>
                         <TableCell sx={{ fontWeight: 800, color: "#334155" }}>
-                          {user.phone || "-"}
+                          {formatPhoneInput(user.phone || "") || "-"}
                         </TableCell>
                       </>
                     )}

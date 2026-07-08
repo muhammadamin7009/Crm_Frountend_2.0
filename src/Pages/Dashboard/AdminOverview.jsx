@@ -201,6 +201,7 @@ const SalesChart = ({ bars }) => {
 
 const AdminOverview = ({ user }) => {
   const navigate = useNavigate();
+  const isSuperAdmin = user?.role === "super_admin";
   const canViewUsers = hasPermission(user, "users.view");
   const canViewProduction = hasPermission(user, "production.view");
   const canViewPayroll = hasPermission(user, "payroll.view");
@@ -273,8 +274,10 @@ const AdminOverview = ({ user }) => {
         hasClientAccounting
           ? getClientSales({ ...range, offset: 0, limit: 1 })
           : Promise.resolve({ data: { totals: {}, pageInfo: {} } }),
-        hasClientAccounting ? getClientBalance({}) : Promise.resolve({ data: { balance: {} } }),
-        hasClientAccounting
+        isSuperAdmin && hasClientAccounting
+          ? getClientBalance({})
+          : Promise.resolve({ data: { balance: {} } }),
+        isSuperAdmin && hasClientAccounting
           ? getClientSalesSummary({ ...range, group_by: "client" })
           : Promise.resolve({ data: { summary: [] } }),
         hasSupplierAccounting
@@ -320,6 +323,7 @@ const AdminOverview = ({ user }) => {
     canViewPayroll,
     hasClientAccounting,
     hasSupplierAccounting,
+    isSuperAdmin,
   ]);
 
   useEffect(() => {
@@ -345,7 +349,8 @@ const AdminOverview = ({ user }) => {
   const attentionItems = useMemo(
     () =>
       [
-        hasClientAccounting &&
+        isSuperAdmin &&
+          hasClientAccounting &&
           Number(data.clientDebt) > 0 && {
             label: "Mijozlardan olinadigan qarz",
             value: money(data.clientDebt),
@@ -378,7 +383,7 @@ const AdminOverview = ({ user }) => {
           tone: "violet",
         },
       ].filter(Boolean),
-    [canViewPayroll, data, hasClientAccounting, hasSupplierAccounting],
+    [canViewPayroll, data, hasClientAccounting, hasSupplierAccounting, isSuperAdmin],
   );
 
   if (loading)
@@ -388,17 +393,17 @@ const AdminOverview = ({ user }) => {
       </Box>
     );
 
-  const showClient = hasClientAccounting && ["all", "clients"].includes(sectionFilter);
+  const showClient = isSuperAdmin && hasClientAccounting && ["all", "clients"].includes(sectionFilter);
   const showSupplier = hasSupplierAccounting && ["all", "suppliers"].includes(sectionFilter);
   const showWorkers = canViewProduction && ["all", "workers"].includes(sectionFilter);
   const allowedFilters = [
     ["all", "Hammasi"],
-    hasClientAccounting && ["clients", "Mijozlar"],
+    isSuperAdmin && hasClientAccounting && ["clients", "Mijozlar"],
     canViewProduction && ["workers", "Ishchilar"],
     hasSupplierAccounting && ["suppliers", "Yetkazib beruvchi"],
   ].filter(Boolean);
   const chartBars = [
-    hasClientAccounting && { label: "Savdo", value: data.sales, color: "#2563eb" },
+    isSuperAdmin && hasClientAccounting && { label: "Savdo", value: data.sales, color: "#2563eb" },
     hasSupplierAccounting && { label: "Xarid", value: data.purchases, color: "#f59e0b" },
     canViewProduction && {
       label: "Ishlab chiqarish",
@@ -470,7 +475,7 @@ const AdminOverview = ({ user }) => {
       </Box>
 
       <Box className="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {hasClientAccounting && (
+        {isSuperAdmin && hasClientAccounting && (
           <StatCard
             label="Jami savdo"
             value={money(data.sales)}
@@ -479,7 +484,7 @@ const AdminOverview = ({ user }) => {
             tone="blue"
           />
         )}
-        {hasClientAccounting && (
+        {isSuperAdmin && hasClientAccounting && (
           <StatCard
             label="Mijozlardan tushum"
             value={money(data.clientIncome)}

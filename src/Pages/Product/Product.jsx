@@ -8,6 +8,10 @@ import {
   Button,
   Chip,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Paper,
   Stack,
   TextField,
@@ -15,9 +19,16 @@ import {
 } from "@mui/material";
 
 import { getProduct, saveProductDepartmentPrices } from "../../api/products";
+import { createDepartment, getDepartments } from "../../api/departments";
 import { useAuth } from "../../Context/AuthContext";
 
 const MANAGER_ROLES = ["super_admin", "admin"];
+
+const emptyDepartmentForm = {
+  name: "",
+  code: "",
+  description: "",
+};
 
 const getLocalUser = () => {
   try {
@@ -49,6 +60,19 @@ const formatDate = (value) => {
   }).format(new Date(value));
 };
 
+const makeDepartmentCode = (value) => {
+  const code = String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 50);
+
+  return code || `bolim_${Date.now()}`;
+};
+
 const normalizeDepartmentPrices = (prices = []) =>
   prices.map((item) => ({
     id: item.id,
@@ -58,6 +82,28 @@ const normalizeDepartmentPrices = (prices = []) =>
     price_per_unit: item.price_per_unit ?? "",
     is_active: item.is_active ?? true,
   }));
+
+const buildDepartmentPriceRows = (departments = [], prices = []) => {
+  const existingPrices = new Map(
+    normalizeDepartmentPrices(prices).map((price) => [Number(price.department_id), price]),
+  );
+
+  const departmentRows = departments.map((department) => {
+    const existing = existingPrices.get(Number(department.id));
+
+    return {
+      id: existing?.id,
+      department_id: department.id,
+      department_name: department.name || existing?.department_name || "Bo'lim",
+      department_code: department.code || existing?.department_code || "",
+      price_per_unit: existing?.price_per_unit ?? "",
+      is_active: existing?.is_active ?? true,
+    };
+  });
+
+  if (departmentRows.length) return departmentRows;
+  return normalizeDepartmentPrices(prices);
+};
 
 const getInitial = (value) =>
   String(value || "Z")
@@ -184,6 +230,9 @@ const Product = () => {
   const [error, setError] = useState("");
   const [priceRows, setPriceRows] = useState([]);
   const [priceSaving, setPriceSaving] = useState(false);
+  const [departmentOpen, setDepartmentOpen] = useState(false);
+  const [departmentSaving, setDepartmentSaving] = useState(false);
+  const [departmentForm, setDepartmentForm] = useState(emptyDepartmentForm);
 
   const images = useMemo(() => product?.images || [], [product?.images]);
 
@@ -199,11 +248,17 @@ const Product = () => {
     setError("");
 
     try {
-      const { data } = await getProduct(id);
+      const [{ data }, departmentsRes] = await Promise.all([
+        getProduct(id),
+        canManagePrices
+          ? getDepartments({ is_active: true, limit: 100, sort_by: "sort_order", sort_order: "asc" })
+          : Promise.resolve({ data: { departments: [] } }),
+      ]);
       const receivedProduct = data?.product || data?.found_product || data;
+      const departments = departmentsRes.data?.departments || [];
 
       setProduct(receivedProduct);
-      setPriceRows(normalizeDepartmentPrices(receivedProduct?.department_prices || []));
+      setPriceRows(buildDepartmentPriceRows(departments, receivedProduct?.department_prices || []));
       setSelectedImage(
         receivedProduct?.images?.find((image) => image.is_primary)?.image_url ||
           receivedProduct?.images?.[0]?.image_url ||
@@ -225,7 +280,7 @@ const Product = () => {
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [canManagePrices, id]);
 
   useEffect(() => {
     fetchProduct();
@@ -239,6 +294,67 @@ const Product = () => {
           : row,
       ),
     );
+  };
+
+  const openDepartmentModal = () => {
+    setDepartmentForm(emptyDepartmentForm);
+    setDepartmentOpen(true);
+  };
+
+  const closeDepartmentModal = () => {
+    if (departmentSaving) return;
+    setDepartmentOpen(false);
+  };
+
+  const handleDepartmentChange = (field) => (event) => {
+    const value = event.target.value;
+
+    setDepartmentForm((prev) => ({
+      ...prev,
+      [field]: value,
+      ...(field === "name" && !prev.code ? { code: makeDepartmentCode(value) } : {}),
+    }));
+  };
+
+  const handleCreateDepartment = async () => {
+    const name = departmentForm.name.trim();
+    const code = makeDepartmentCode(departmentForm.code || departmentForm.name);
+
+    if (!name) {
+      toast.error("Bo'lim nomini kiriting.");
+      return;
+    }
+
+    setDepartmentSaving(true);
+
+    try {
+      const { data } = await createDepartment({
+        name,
+        code,
+        description: departmentForm.description.trim() || null,
+        is_active: true,
+      });
+      const department = data?.new_department || data?.department || data;
+
+      setPriceRows((prev) => [
+        ...prev,
+        {
+          department_id: department.id,
+          department_name: department.name,
+          department_code: department.code,
+          price_per_unit: "",
+          is_active: department.is_active ?? true,
+        },
+      ]);
+
+      toast.success("Bo'lim yaratildi. Endi narx kiriting.");
+      setDepartmentOpen(false);
+      setDepartmentForm(emptyDepartmentForm);
+    } catch (requestError) {
+      toast.error(requestError?.response?.data?.message || "Bo'lim yaratishda xatolik.");
+    } finally {
+      setDepartmentSaving(false);
+    }
   };
 
   const handleSavePrices = async () => {
@@ -628,25 +744,41 @@ const Product = () => {
               </Typography>
             </Box>
 
-            <Button
-              variant="contained"
-              onClick={handleSavePrices}
-              disabled={priceSaving || !priceRows.length}
-              sx={{
-                minWidth: 165,
-                height: 40,
-                borderRadius: "13px",
-                textTransform: "none",
-                fontWeight: 950,
-                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
-                "&:hover": {
-                  background: "linear-gradient(135deg, #7f0101, #991b1b)",
-                },
-              }}
-            >
-              {priceSaving ? "Saqlanmoqda..." : "Narxlarni saqlash"}
-            </Button>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+              <Button
+                variant="outlined"
+                onClick={openDepartmentModal}
+                sx={{
+                  minWidth: 135,
+                  height: 40,
+                  borderRadius: "13px",
+                  textTransform: "none",
+                  fontWeight: 900,
+                }}
+              >
+                Bo'lim qo'shish
+              </Button>
+
+              <Button
+                variant="contained"
+                onClick={handleSavePrices}
+                disabled={priceSaving || !priceRows.length}
+                sx={{
+                  minWidth: 165,
+                  height: 40,
+                  borderRadius: "13px",
+                  textTransform: "none",
+                  fontWeight: 950,
+                  background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                  boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
+                  "&:hover": {
+                    background: "linear-gradient(135deg, #7f0101, #991b1b)",
+                  },
+                }}
+              >
+                {priceSaving ? "Saqlanmoqda..." : "Narxlarni saqlash"}
+              </Button>
+            </Stack>
           </Box>
 
           {priceRows.length ? (
@@ -709,10 +841,70 @@ const Product = () => {
               ))}
             </Box>
           ) : (
-            <Alert severity="info">Bu mahsulot uchun bo'lim narxlari hali topilmadi.</Alert>
+            <Alert
+              severity="info"
+              action={
+                <Button color="info" size="small" onClick={openDepartmentModal}>
+                  Bo'lim qo'shish
+                </Button>
+              }
+            >
+              Narx belgilash uchun avval ishlab chiqarish bo'limlarini yarating.
+            </Alert>
           )}
         </Card>
       )}
+
+      <Dialog open={departmentOpen} onClose={closeDepartmentModal} fullWidth maxWidth="sm">
+        <DialogTitle sx={{ fontWeight: 950 }}>Bo'lim qo'shish</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ pt: 1 }}>
+            <TextField
+              autoFocus
+              required
+              label="Bo'lim nomi"
+              value={departmentForm.name}
+              onChange={handleDepartmentChange("name")}
+              placeholder="Masalan: Tikuv"
+            />
+
+            <TextField
+              required
+              label="Bo'lim kodi"
+              value={departmentForm.code}
+              onChange={handleDepartmentChange("code")}
+              helperText="Faqat lotin harflari, raqam va _ belgisi. Masalan: tikuv"
+            />
+
+            <TextField
+              multiline
+              minRows={3}
+              label="Izoh"
+              value={departmentForm.description}
+              onChange={handleDepartmentChange("description")}
+              placeholder="Ixtiyoriy"
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={closeDepartmentModal} disabled={departmentSaving}>
+            Bekor qilish
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleCreateDepartment}
+            disabled={departmentSaving}
+            sx={{
+              borderRadius: "12px",
+              textTransform: "none",
+              fontWeight: 900,
+              background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+            }}
+          >
+            {departmentSaving ? "Saqlanmoqda..." : "Saqlash"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
