@@ -46,7 +46,12 @@ const menuGroups = [
         allowedRoles: ["super_admin", "admin"],
         requiredPermission: "employees.view",
       },
-      { icon: BoxIcon, label: "Mahsulotlar", path: "/products" },
+      {
+        icon: BoxIcon,
+        label: "Mahsulotlar",
+        path: "/products",
+        requiredPermission: "products.view",
+      },
       {
         icon: HistoryIcon,
         label: "Ruxsatlar",

@@ -141,6 +141,13 @@ const process = [
   "Rahbar bosh sahifada umumiy holatni ko'radi",
 ];
 
+const adPoints = [
+  "Mijozga qancha sotildi, qancha pul tushdi va qancha qarz qoldi",
+  "Ishchi qaysi bo'limda qancha mahsulot qildi va qancha ish haqi oldi",
+  "Homashyo kimdan olindi, qancha to'landi va ta'minotchiga qancha qarz bor",
+  "Adminlar faqat rahbar ruxsat bergan bo'limlarni boshqaradi",
+];
+
 function LogoMark({ dark = false, size = 48 }) {
   return (
     <Box
@@ -769,6 +776,15 @@ export default function LandingPage() {
               >
                 Narxlar
               </Button>
+
+              <Button
+                onClick={() =>
+                  document.getElementById("telegram-ad")?.scrollIntoView({ behavior: "smooth" })
+                }
+                sx={{ color: brand.text, fontWeight: 900, textTransform: "none" }}
+              >
+                Reklama
+              </Button>
             </Stack>
 
             <Stack
@@ -1241,6 +1257,157 @@ export default function LandingPage() {
             {plans.map((plan) => (
               <PlanCard key={plan.name} plan={plan} />
             ))}
+          </Grid>
+        </Container>
+      </Box>
+
+      <Box id="telegram-ad" sx={{ py: { xs: 8, md: 11 }, bgcolor: "#fff" }}>
+        <Container maxWidth="xl">
+          <Grid container spacing={3} alignItems="stretch">
+            <Grid item xs={12} md={5}>
+              <Paper
+                component={motion.div}
+                variants={fadeLeft}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.25 }}
+                elevation={0}
+                sx={{
+                  height: "100%",
+                  p: { xs: 3, md: 4 },
+                  borderRadius: "34px !important",
+                  border: `1px solid ${brand.line}`,
+                  bgcolor: brand.red,
+                  color: "#fff",
+                  boxShadow: "0 28px 80px rgba(151,29,33,.20)",
+                }}
+              >
+                <Typography sx={{ color: "rgba(255,255,255,.72)", fontWeight: 900 }}>
+                  Telegram reklama
+                </Typography>
+
+                <Typography
+                  sx={{
+                    mt: 1,
+                    fontSize: { xs: 32, md: 48 },
+                    lineHeight: { xs: "40px", md: "56px" },
+                    fontWeight: 950,
+                    letterSpacing: "-.045em",
+                  }}
+                >
+                  Poyabzal rahbariga bittada tushadigan taklif
+                </Typography>
+
+                <Typography
+                  sx={{
+                    mt: 2,
+                    color: "rgba(255,255,255,.72)",
+                    lineHeight: "28px",
+                    fontWeight: 650,
+                  }}
+                >
+                  Reklama matni hisob-kitobdagi og'riqni ko'rsatadi: savdo, qarz, ish haqi,
+                  homashyo va admin nazorati bitta joyda.
+                </Typography>
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12} md={7}>
+              <Paper
+                component={motion.div}
+                variants={fadeRight}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.25 }}
+                elevation={0}
+                sx={{
+                  height: "100%",
+                  p: { xs: 3, md: 4 },
+                  borderRadius: "34px !important",
+                  border: `1px solid ${brand.line}`,
+                  bgcolor: "#fff",
+                  boxShadow: "0 22px 70px rgba(15,23,42,.08)",
+                }}
+              >
+                <Typography sx={{ color: brand.red, fontWeight: 950 }}>
+                  Qo'qon charm poyabzal guruhi uchun
+                </Typography>
+
+                <Typography
+                  sx={{
+                    mt: 1.4,
+                    color: brand.text,
+                    fontSize: { xs: 24, md: 32 },
+                    lineHeight: { xs: "32px", md: "42px" },
+                    fontWeight: 950,
+                    letterSpacing: "-.035em",
+                  }}
+                >
+                  Al-amin CRM - poyabzal korxonalarida savdo, ishlab chiqarish, oylik va
+                  qarzdorlikni tartibga soladigan tizim.
+                </Typography>
+
+                <Grid container spacing={1.5} sx={{ mt: 3 }}>
+                  {adPoints.map((item) => (
+                    <Grid item xs={12} sm={6} key={item}>
+                      <Box
+                        component={motion.div}
+                        whileHover={{ y: -4 }}
+                        sx={{
+                          p: 1.7,
+                          minHeight: 92,
+                          borderRadius: "18px",
+                          border: `1px solid ${brand.line}`,
+                          bgcolor: "#f8fafc",
+                          fontWeight: 850,
+                          lineHeight: "24px",
+                        }}
+                      >
+                        {item}
+                      </Box>
+                    </Grid>
+                  ))}
+                </Grid>
+
+                <Stack
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={1.4}
+                  sx={{ mt: 3 }}
+                >
+                  <Button
+                    variant="contained"
+                    onClick={() => navigate("/register")}
+                    sx={{
+                      px: 3.4,
+                      py: 1.4,
+                      borderRadius: "999px",
+                      bgcolor: brand.red,
+                      fontWeight: 950,
+                      textTransform: "none",
+                      "&:hover": { bgcolor: brand.redDark },
+                    }}
+                  >
+                    Korxonani ulash
+                  </Button>
+
+                  <Button
+                    variant="outlined"
+                    onClick={() => navigate("/login")}
+                    sx={{
+                      px: 3.4,
+                      py: 1.4,
+                      borderRadius: "999px",
+                      borderColor: brand.line,
+                      color: brand.text,
+                      fontWeight: 950,
+                      textTransform: "none",
+                    }}
+                  >
+                    Demo ko'rish
+                  </Button>
+                </Stack>
+              </Paper>
+            </Grid>
           </Grid>
         </Container>
       </Box>

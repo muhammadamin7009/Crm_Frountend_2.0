@@ -24,6 +24,7 @@ import {
 
 import { useAuth } from "../../Context/AuthContext";
 import CrmPagination from "../../Components/Common/CrmPagination";
+import { hasPermission } from "../../utils/permissions";
 import { getUsers } from "../../api/getUsers";
 import { getProducts } from "../../api/products";
 import { getDepartments } from "../../api/departments";
@@ -215,7 +216,9 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
 const WorkerOutputs = () => {
   const auth = useAuth();
   const currentUser = auth?.user || getLocalUser();
-  const canManage = ["super_admin", "admin"].includes(currentUser?.role);
+  const canManage =
+    ["super_admin", "admin"].includes(currentUser?.role) &&
+    hasPermission(currentUser, "production.manage");
 
   const [outputs, setOutputs] = useState([]);
   const [pageInfo, setPageInfo] = useState({ total: 0, offset: 0, limit: 10 });

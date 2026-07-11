@@ -24,6 +24,7 @@ import {
 
 import { useAuth } from "../../Context/AuthContext";
 import CrmPagination from "../../Components/Common/CrmPagination";
+import { hasPermission } from "../../utils/permissions";
 import { getUsers } from "../../api/getUsers";
 import {
   createWorkerPayment,
@@ -299,7 +300,9 @@ const BalanceBox = ({ label, value, tone = "default" }) => {
 const WorkerPayments = () => {
   const auth = useAuth();
   const currentUser = auth?.user || getLocalUser();
-  const canManage = ["super_admin", "admin"].includes(currentUser?.role);
+  const canManage =
+    ["super_admin", "admin"].includes(currentUser?.role) &&
+    hasPermission(currentUser, "payroll.manage");
 
   const [payments, setPayments] = useState([]);
   const [workerDues, setWorkerDues] = useState([]);

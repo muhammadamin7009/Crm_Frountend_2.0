@@ -22,6 +22,8 @@ import { getClientPayments } from "../../api/clientPayments";
 import { getWorkerOutputs } from "../../api/workerOutputs";
 import { getWorkerBalance, getWorkerPayments } from "../../api/workerPayments";
 import { getWorkerAdvanceBalance, getWorkerAdvances } from "../../api/workerAdvances";
+import { useAuth } from "../../Context/AuthContext";
+import { hasPermission } from "../../utils/permissions";
 
 const roleNames = {
   super_admin: "Super admin",
@@ -91,6 +93,14 @@ const getInitial = (employee) => {
   const username = employee?.username?.[0];
 
   return (first || username || "Z").toUpperCase();
+};
+
+const getLocalUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem("user") || "null");
+  } catch {
+    return null;
+  }
 };
 
 const Card = ({ children, sx = {} }) => (
@@ -574,6 +584,11 @@ const HistoryTable = ({ title, rows = [], columns = [], empty }) => (
 const User = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const auth = useAuth();
+  const currentUser = auth?.user || getLocalUser();
+  const canViewClientSales = hasPermission(currentUser, "client_sales.view");
+  const canViewProduction = hasPermission(currentUser, "production.view");
+  const canViewPayroll = hasPermission(currentUser, "payroll.view");
 
   const [employee, setEmployee] = useState(null);
   const [details, setDetails] = useState(null);
@@ -591,6 +606,11 @@ const User = () => {
 
     try {
       if (user.role === "client") {
+        if (!canViewClientSales) {
+          setDetails({ type: "client", restricted: true });
+          return;
+        }
+
         const [balanceResult, salesResult, paymentsResult] = await Promise.allSettled([
           getClientBalance({ client_id: user.id }),
           getClientSales({
@@ -623,31 +643,46 @@ const User = () => {
               : [],
         });
       } else {
+        if (!canViewProduction && !canViewPayroll) {
+          setDetails({ type: "worker", restricted: true });
+          return;
+        }
+
         const [balanceResult, advanceBalanceResult, outputsResult, paymentsResult, advancesResult] =
           await Promise.allSettled([
-            getWorkerBalance({ worker_id: user.id }),
-            getWorkerAdvanceBalance({ worker_id: user.id }),
-            getWorkerOutputs({
-              worker_id: user.id,
-              offset: 0,
-              limit: 6,
-              sort_by: "worked_at",
-              sort_order: "desc",
-            }),
-            getWorkerPayments({
-              worker_id: user.id,
-              offset: 0,
-              limit: 6,
-              sort_by: "paid_at",
-              sort_order: "desc",
-            }),
-            getWorkerAdvances({
-              worker_id: user.id,
-              offset: 0,
-              limit: 6,
-              sort_by: "given_at",
-              sort_order: "desc",
-            }),
+            canViewPayroll
+              ? getWorkerBalance({ worker_id: user.id })
+              : Promise.resolve({ data: { balance: {} } }),
+            canViewPayroll
+              ? getWorkerAdvanceBalance({ worker_id: user.id })
+              : Promise.resolve({ data: { balance: {} } }),
+            canViewProduction
+              ? getWorkerOutputs({
+                  worker_id: user.id,
+                  offset: 0,
+                  limit: 6,
+                  sort_by: "worked_at",
+                  sort_order: "desc",
+                })
+              : Promise.resolve({ data: { worker_outputs: [], totals: {} } }),
+            canViewPayroll
+              ? getWorkerPayments({
+                  worker_id: user.id,
+                  offset: 0,
+                  limit: 6,
+                  sort_by: "paid_at",
+                  sort_order: "desc",
+                })
+              : Promise.resolve({ data: { worker_payments: [] } }),
+            canViewPayroll
+              ? getWorkerAdvances({
+                  worker_id: user.id,
+                  offset: 0,
+                  limit: 6,
+                  sort_by: "given_at",
+                  sort_order: "desc",
+                })
+              : Promise.resolve({ data: { worker_advances: [] } }),
           ]);
 
         setDetails({
@@ -677,7 +712,7 @@ const User = () => {
     } finally {
       setDetailsLoading(false);
     }
-  }, []);
+  }, [canViewClientSales, canViewPayroll, canViewProduction]);
 
   const fetchUser = useCallback(async () => {
     setLoading(true);
@@ -1010,7 +1045,19 @@ const User = () => {
         </Box>
       )}
 
-      {!detailsLoading && details?.type === "client" && (
+      {!detailsLoading && details?.type === "client" && details.restricted && (
+        <Card sx={{ p: 3 }}>
+          <Typography sx={{ fontSize: 18, fontWeight: 900, color: "#0f172a" }}>
+            Mijoz hisob-kitoblari yopiq
+          </Typography>
+          <Typography sx={{ mt: 0.7, fontSize: 14, fontWeight: 650, color: "#64748b" }}>
+            Sizda bu mijozning savdo, to'lov va qarzdorlik ma'lumotlarini ko'rish uchun ruxsat
+            yo'q.
+          </Typography>
+        </Card>
+      )}
+
+      {!detailsLoading && details?.type === "client" && !details.restricted && (
         <>
           <Box
             sx={{
@@ -1030,21 +1077,18 @@ const User = () => {
               hint={`${details.salesTotal} ta savdo`}
               tone="blue"
             />
-
             <StatCard
               label="To'langan"
               value={money(clientBalance.paid_amount)}
               hint="Mijozdan kelgan tushum"
               tone="green"
             />
-
             <StatCard
               label="Qolgan qarz"
               value={money(clientBalance.debt_amount)}
               hint="Mijoz zimmasidagi qarz"
               tone={Number(clientBalance.debt_amount) > 0 ? "orange" : "green"}
             />
-
             <StatCard
               label="Hisob holati"
               value={Number(clientBalance.debt_amount) > 0 ? "Qarzdor" : "Yopilgan"}
@@ -1066,7 +1110,7 @@ const User = () => {
           >
             <SectionCard
               title="Mijoz hisobi dinamikasi"
-              subtitle="Savdo, tushum va qarz bo‘yicha kesim"
+              subtitle="Savdo, tushum va qarz bo'yicha kesim"
             >
               <MetricBars
                 items={[
@@ -1092,7 +1136,7 @@ const User = () => {
               />
             </SectionCard>
 
-            <SectionCard title="Mahsulotlar kesimi" subtitle="Mijoz olgan mahsulotlar bo‘yicha">
+            <SectionCard title="Mahsulotlar kesimi" subtitle="Mijoz olgan mahsulotlar bo'yicha">
               <ProgressList items={clientProducts} empty="Mahsulot bo'yicha savdo topilmadi." />
             </SectionCard>
 
@@ -1103,7 +1147,7 @@ const User = () => {
                 label="Oxirgi to'lov"
                 value={
                   details.payments[0]
-                    ? `${money(details.payments[0].amount)} • ${date(details.payments[0].paid_at)}`
+                    ? `${money(details.payments[0].amount)} - ${date(details.payments[0].paid_at)}`
                     : "To'lov yo'q"
                 }
               />
@@ -1155,7 +1199,18 @@ const User = () => {
         </>
       )}
 
-      {!detailsLoading && details?.type === "worker" && (
+      {!detailsLoading && details?.type === "worker" && details.restricted && (
+        <Card sx={{ p: 3 }}>
+          <Typography sx={{ fontSize: 18, fontWeight: 900, color: "#0f172a" }}>
+            Ishchi hisoblari yopiq
+          </Typography>
+          <Typography sx={{ mt: 0.7, fontSize: 14, fontWeight: 650, color: "#64748b" }}>
+            Sizda bu ishchining ish hisoboti yoki oylik ma'lumotlarini ko'rish uchun ruxsat yo'q.
+          </Typography>
+        </Card>
+      )}
+
+      {!detailsLoading && details?.type === "worker" && !details.restricted && (
         <>
           <Box
             sx={{

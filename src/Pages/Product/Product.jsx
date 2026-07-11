@@ -21,6 +21,7 @@ import {
 import { getProduct, saveProductDepartmentPrices } from "../../api/products";
 import { createDepartment, getDepartments } from "../../api/departments";
 import { useAuth } from "../../Context/AuthContext";
+import { hasPermission } from "../../utils/permissions";
 
 const MANAGER_ROLES = ["super_admin", "admin"];
 
@@ -222,7 +223,8 @@ const Product = () => {
 
   const auth = useAuth() || {};
   const currentUser = auth.user || getLocalUser();
-  const canManagePrices = MANAGER_ROLES.includes(currentUser?.role);
+  const canManagePrices =
+    MANAGER_ROLES.includes(currentUser?.role) && hasPermission(currentUser, "products.manage");
 
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");

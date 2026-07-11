@@ -24,6 +24,7 @@ import {
 
 import { useAuth } from "../../Context/AuthContext";
 import CrmPagination from "../../Components/Common/CrmPagination";
+import { hasPermission } from "../../utils/permissions";
 import { getUsers } from "../../api/getUsers";
 import { getProducts } from "../../api/products";
 import {
@@ -275,7 +276,9 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
 const ClientSales = () => {
   const auth = useAuth();
   const currentUser = auth?.user || getLocalUser();
-  const canManage = ["super_admin", "admin"].includes(currentUser?.role);
+  const canManage =
+    ["super_admin", "admin"].includes(currentUser?.role) &&
+    hasPermission(currentUser, "client_sales.manage");
   const isSuperAdmin = currentUser?.role === "super_admin";
 
   const [sales, setSales] = useState([]);

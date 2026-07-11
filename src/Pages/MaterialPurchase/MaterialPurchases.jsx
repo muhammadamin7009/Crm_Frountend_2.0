@@ -29,12 +29,15 @@ import {
   deleteMaterialPurchase,
   deleteSupplier,
   getMaterialPurchases,
+  getRawMaterialStock,
   getRawMaterials,
   getSupplierBalance,
   getSuppliers,
   updateSupplier,
 } from "../../api/materialPurchases";
 import CrmPagination from "../../Components/Common/CrmPagination";
+import { useAuth } from "../../Context/AuthContext";
+import { hasPermission } from "../../utils/permissions";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -61,6 +64,14 @@ const emptyPayment = {
   amount: "",
   paid_at: today(),
   note: "",
+};
+
+const getLocalUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem("user") || "null");
+  } catch {
+    return null;
+  }
 };
 
 const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
@@ -234,9 +245,16 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
 );
 
 const MaterialPurchases = () => {
+  const auth = useAuth();
+  const currentUser = auth?.user || getLocalUser();
+  const canManage =
+    ["super_admin", "admin"].includes(currentUser?.role) &&
+    hasPermission(currentUser, "material_purchases.manage");
+
   const [suppliers, setSuppliers] = useState([]);
   const [materials, setMaterials] = useState([]);
   const [purchases, setPurchases] = useState([]);
+  const [stockRows, setStockRows] = useState([]);
   const [pageInfo, setPageInfo] = useState({ total: 0, offset: 0, limit: 10 });
   const [balance, setBalance] = useState({
     opening_balance: 0,
@@ -332,16 +350,23 @@ const MaterialPurchases = () => {
           if (value !== "") params[key] = value;
         });
 
-        const [purchasesRes, balanceRes] = await Promise.all([
+        const [purchasesRes, balanceRes, stockRes] = await Promise.all([
           getMaterialPurchases(params),
           getSupplierBalance({
             supplier_id: filters.supplier_id || undefined,
             date_from: filters.date_from || undefined,
             date_to: filters.date_to || undefined,
           }),
+          getRawMaterialStock({
+            q: filters.q || undefined,
+            date_from: filters.date_from || undefined,
+            date_to: filters.date_to || undefined,
+            limit: 8,
+          }),
         ]);
 
         setPurchases(purchasesRes.data.material_purchases || []);
+        setStockRows(stockRes.data.stock || []);
         setPageInfo(purchasesRes.data.pageInfo || { total: 0, offset, limit });
         setBalance(
           balanceRes.data || {
@@ -587,7 +612,7 @@ const MaterialPurchases = () => {
         >
           <Box>
             <Chip
-              label="Al-amin CRM • homashyo xaridi"
+              label="Al-amin CRM - homashyo xaridi"
               size="small"
               sx={{
                 mb: 1,
@@ -638,6 +663,79 @@ const MaterialPurchases = () => {
             <MiniStat label="Umumiy qarz" value={money(balance.debt_amount)} tone="red" />
           </Box>
         </Box>
+      </Card>
+
+      <Card sx={{ mb: 1, p: 2, flexShrink: 0 }}>
+        <Box
+          sx={{
+            mb: 1.5,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Typography sx={{ fontSize: 17, fontWeight: 950, color: "#0f172a" }}>
+              Homashyo kirim hisoboti
+            </Typography>
+            <Typography sx={{ mt: 0.35, fontSize: 13, fontWeight: 650, color: "#64748b" }}>
+              Tanlangan davr bo'yicha kelgan homashyo miqdori va summasi.
+            </Typography>
+          </Box>
+
+          <Chip
+            size="small"
+            label={`${stockRows.length} tur`}
+            sx={{
+              height: 26,
+              fontSize: 12,
+              fontWeight: 900,
+              color: "#2563eb",
+              background: "rgba(37, 99, 235, 0.08)",
+              border: "1px solid rgba(37, 99, 235, 0.16)",
+            }}
+          />
+        </Box>
+
+        {stockRows.length ? (
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)", xl: "repeat(4, 1fr)" },
+              gap: 1.2,
+            }}
+          >
+            {stockRows.map((item) => (
+              <Box
+                key={item.id}
+                sx={{
+                  p: 1.5,
+                  borderRadius: "16px",
+                  background: "#fff",
+                  border: "1px solid rgba(148, 163, 184, 0.2)",
+                }}
+              >
+                <Typography sx={{ fontSize: 14, fontWeight: 950, color: "#0f172a" }}>
+                  {item.name}
+                </Typography>
+                <Typography sx={{ mt: 0.45, fontSize: 13, fontWeight: 750, color: "#64748b" }}>
+                  {Number(item.total_quantity || 0).toLocaleString("uz-UZ")} {item.unit}
+                </Typography>
+                <Typography sx={{ mt: 0.35, fontSize: 13, fontWeight: 850, color: "#15803d" }}>
+                  Jami: {money(item.total_amount)}
+                </Typography>
+                <Typography sx={{ mt: 0.25, fontSize: 12, fontWeight: 700, color: "#94a3b8" }}>
+                  O'rtacha: {money(item.average_price)}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        ) : (
+          <Typography sx={{ py: 2, fontSize: 14, fontWeight: 750, color: "#64748b" }}>
+            Tanlangan davr bo'yicha homashyo kirimi topilmadi.
+          </Typography>
+        )}
       </Card>
 
       <Card sx={{ mb: 1, p: 2, flexShrink: 0 }}>
@@ -738,6 +836,7 @@ const MaterialPurchases = () => {
             )}
           </Box>
 
+          {canManage && (
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1.2}>
             <Button
               variant="outlined"
@@ -809,6 +908,7 @@ const MaterialPurchases = () => {
               Xarid qo'shish
             </Button>
           </Stack>
+          )}
         </Box>
       </Card>
 
@@ -848,14 +948,14 @@ const MaterialPurchases = () => {
                 <TableCell>Ta'minotchi va homashyolar</TableCell>
                 <TableCell>Ushbu xarid hisobi</TableCell>
                 <TableCell>Sana va izoh</TableCell>
-                <TableCell align="right">Amal</TableCell>
+                {canManage && <TableCell align="right">Amal</TableCell>}
               </TableRow>
             </TableHead>
 
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={4} align="center" sx={{ py: 7 }}>
+                  <TableCell colSpan={canManage ? 4 : 3} align="center" sx={{ py: 7 }}>
                     <CircularProgress size={30} />
                   </TableCell>
                 </TableRow>
@@ -873,7 +973,7 @@ const MaterialPurchases = () => {
                             key={item.id}
                             sx={{ fontSize: 12.8, fontWeight: 700, color: "#64748b" }}
                           >
-                            {item.material_name}: {Number(item.quantity)} {item.unit} ×{" "}
+                            {item.material_name}: {Number(item.quantity)} {item.unit} x{" "}
                             {money(item.unit_price)}
                           </Typography>
                         ))}
@@ -916,26 +1016,28 @@ const MaterialPurchases = () => {
                       </Typography>
                     </TableCell>
 
-                    <TableCell align="right">
-                      <Button
-                        size="small"
-                        color="error"
-                        variant="outlined"
-                        onClick={async () => {
-                          if (!window.confirm("Xarid o'chirilsinmi?")) return;
-                          await deleteMaterialPurchase(purchase.id);
-                          refresh();
-                        }}
-                        sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
-                      >
-                        O'chirish
-                      </Button>
-                    </TableCell>
+                    {canManage && (
+                      <TableCell align="right">
+                        <Button
+                          size="small"
+                          color="error"
+                          variant="outlined"
+                          onClick={async () => {
+                            if (!window.confirm("Xarid o'chirilsinmi?")) return;
+                            await deleteMaterialPurchase(purchase.id);
+                            refresh();
+                          }}
+                          sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
+                        >
+                          O'chirish
+                        </Button>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} align="center" sx={{ py: 7, fontWeight: 850 }}>
+                  <TableCell colSpan={canManage ? 4 : 3} align="center" sx={{ py: 7, fontWeight: 850 }}>
                     Xaridlar topilmadi
                   </TableCell>
                 </TableRow>

@@ -22,7 +22,9 @@ import {
 } from "@mui/material";
 import { toast } from "react-toastify";
 
+import { useAuth } from "../../Context/AuthContext";
 import { getClientSales } from "../../api/clientSales";
+import { hasPermission } from "../../utils/permissions";
 import {
   closePayrollPeriod,
   createCashTransaction,
@@ -63,6 +65,14 @@ const tabItems = [
   ["returns", "Qaytarishlar"],
   ["profit", "Foyda-zarar"],
 ];
+
+const getLocalUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem("user") || "null");
+  } catch {
+    return null;
+  }
+};
 
 const Card = ({ children, sx = {} }) => (
   <Paper
@@ -319,6 +329,12 @@ const StatCard = ({ label, value, danger }) => (
 );
 
 const Finance = () => {
+  const auth = useAuth();
+  const currentUser = auth?.user || getLocalUser();
+  const canManage =
+    ["super_admin", "admin"].includes(currentUser?.role) &&
+    hasPermission(currentUser, "finance.manage");
+
   const [tab, setTab] = useState("payroll");
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
@@ -415,6 +431,11 @@ const Finance = () => {
   }, [load]);
 
   const open = (name, values) => {
+    if (!canManage) {
+      toast.error("Sizda moliyaviy amallarni bajarish uchun ruxsat yo'q.");
+      return;
+    }
+
     setDialog(name);
     setForm(values || {});
   };
@@ -428,6 +449,11 @@ const Finance = () => {
     setForm((previous) => ({ ...previous, [key]: event.target.value }));
 
   const save = async () => {
+    if (!canManage) {
+      toast.error("Sizda moliyaviy amallarni bajarish uchun ruxsat yo'q.");
+      return;
+    }
+
     setSaving(true);
 
     try {
@@ -498,6 +524,11 @@ const Finance = () => {
   };
 
   const closePeriod = async () => {
+    if (!canManage) {
+      toast.error("Sizda haftalik hisobni yopish uchun ruxsat yo'q.");
+      return;
+    }
+
     try {
       const response = await closePayrollPeriod(detail.payroll_period.id);
       setDetail(response.data);
@@ -698,11 +729,12 @@ const Finance = () => {
                 show={showPeriod}
                 open={open}
                 closePeriod={closePeriod}
+                canManage={canManage}
               />
             )}
-            {tab === "expenses" && <Expenses data={data} open={open} />}
-            {tab === "accounts" && <Accounts data={data} open={open} />}
-            {tab === "returns" && <Returns data={data} open={open} />}
+            {tab === "expenses" && <Expenses data={data} open={open} canManage={canManage} />}
+            {tab === "accounts" && <Accounts data={data} open={open} canManage={canManage} />}
+            {tab === "returns" && <Returns data={data} open={open} canManage={canManage} />}
             {tab === "profit" && <Profit report={data.report} />}
           </>
         )}
@@ -721,9 +753,10 @@ const Finance = () => {
   );
 };
 
-const Payroll = ({ data, detail, show, open, closePeriod }) => (
+const Payroll = ({ data, detail, show, open, closePeriod, canManage }) => (
   <Stack spacing={2.5}>
-    <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+    {canManage && (
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
       <Button
         variant="contained"
         onClick={() =>
@@ -746,7 +779,8 @@ const Payroll = ({ data, detail, show, open, closePeriod }) => (
       >
         Hafta ochish
       </Button>
-    </Box>
+      </Box>
+    )}
 
     <Grid
       heads={["Davr", "To'lov kuni", "Hisoblangan", "Naqd", "Holat"]}
@@ -784,7 +818,7 @@ const Payroll = ({ data, detail, show, open, closePeriod }) => (
             </Typography>
           </Box>
 
-          {detail.payroll_period.status === "open" && (
+          {canManage && detail.payroll_period.status === "open" && (
             <Button
               variant="contained"
               color="success"
@@ -818,7 +852,7 @@ const Payroll = ({ data, detail, show, open, closePeriod }) => (
               money(item.advance_deduction),
               money(item.other_deduction),
               money(item.cash_amount),
-              detail.payroll_period.status === "open" ? (
+              canManage && detail.payroll_period.status === "open" ? (
                 <Button
                   size="small"
                   variant="outlined"
@@ -838,7 +872,7 @@ const Payroll = ({ data, detail, show, open, closePeriod }) => (
   </Stack>
 );
 
-const Expenses = ({ data, open }) => (
+const Expenses = ({ data, open, canManage }) => (
   <Stack spacing={2.5}>
     <Box
       sx={{
@@ -850,44 +884,48 @@ const Expenses = ({ data, open }) => (
     >
       <StatCard label="Davrdagi xarajat" value={money(data.expenseTotal)} danger />
 
-      <Button
-        variant="outlined"
-        onClick={() => open("category", { name: "", description: "" })}
-        sx={{
-          height: 42,
-          borderRadius: "13px",
-          textTransform: "none",
-          fontWeight: 900,
-          color: "#0f172a",
-          borderColor: "rgba(37, 99, 235, 0.22)",
-          background: "#fff",
-        }}
-      >
-        Kategoriya
-      </Button>
+      {canManage && (
+        <>
+          <Button
+            variant="outlined"
+            onClick={() => open("category", { name: "", description: "" })}
+            sx={{
+              height: 42,
+              borderRadius: "13px",
+              textTransform: "none",
+              fontWeight: 900,
+              color: "#0f172a",
+              borderColor: "rgba(37, 99, 235, 0.22)",
+              background: "#fff",
+            }}
+          >
+            Kategoriya
+          </Button>
 
-      <Button
-        variant="contained"
-        onClick={() =>
-          open("expense", {
-            category_id: "",
-            account_id: "",
-            title: "",
-            amount: "",
-            spent_at: today(),
-            note: "",
-          })
-        }
-        sx={{
-          height: 42,
-          borderRadius: "13px",
-          textTransform: "none",
-          fontWeight: 950,
-          background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-        }}
-      >
-        Xarajat qo'shish
-      </Button>
+          <Button
+            variant="contained"
+            onClick={() =>
+              open("expense", {
+                category_id: "",
+                account_id: "",
+                title: "",
+                amount: "",
+                spent_at: today(),
+                note: "",
+              })
+            }
+            sx={{
+              height: 42,
+              borderRadius: "13px",
+              textTransform: "none",
+              fontWeight: 950,
+              background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+            }}
+          >
+            Xarajat qo'shish
+          </Button>
+        </>
+      )}
     </Box>
 
     <Grid
@@ -905,9 +943,10 @@ const Expenses = ({ data, open }) => (
   </Stack>
 );
 
-const Accounts = ({ data, open }) => (
+const Accounts = ({ data, open, canManage }) => (
   <Stack spacing={2.5}>
-    <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1.2, flexWrap: "wrap" }}>
+    {canManage && (
+      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1.2, flexWrap: "wrap" }}>
       <Button
         variant="outlined"
         onClick={() =>
@@ -951,7 +990,8 @@ const Accounts = ({ data, open }) => (
       >
         Kirim-chiqim
       </Button>
-    </Box>
+      </Box>
+    )}
 
     <Box
       sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" }, gap: 1.4 }}
@@ -980,9 +1020,10 @@ const Accounts = ({ data, open }) => (
   </Stack>
 );
 
-const Returns = ({ data, open }) => (
+const Returns = ({ data, open, canManage }) => (
   <Stack spacing={2.5}>
-    <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+    {canManage && (
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
       <Button
         variant="contained"
         onClick={() =>
@@ -1003,7 +1044,8 @@ const Returns = ({ data, open }) => (
       >
         Qaytarish qo'shish
       </Button>
-    </Box>
+      </Box>
+    )}
 
     <Grid
       heads={["Mijoz", "Mahsulot", "Miqdor", "Summa", "Sabab", "Sana"]}

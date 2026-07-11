@@ -27,6 +27,7 @@ import {
 
 import { useAuth } from "../../Context/AuthContext";
 import CrmPagination from "../../Components/Common/CrmPagination";
+import { hasPermission } from "../../utils/permissions";
 import {
   createCategory,
   createProduct,
@@ -210,7 +211,9 @@ const Products = () => {
   const navigate = useNavigate();
   const auth = useAuth();
   const currentUser = auth?.user || getLocalUser();
-  const canManage = ["super_admin", "admin"].includes(currentUser?.role);
+  const canManage =
+    ["super_admin", "admin"].includes(currentUser?.role) &&
+    hasPermission(currentUser, "products.manage");
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);

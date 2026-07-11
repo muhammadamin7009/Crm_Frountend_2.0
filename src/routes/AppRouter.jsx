@@ -36,8 +36,12 @@ const AppRouter = () => {
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/:id" element={<Product />} />
+          <Route
+            element={<ProtectedRoute allowedPermissions={["products.view"]} />}
+          >
+            <Route path="/products" element={<Products />} />
+            <Route path="/products/:id" element={<Product />} />
+          </Route>
 
           <Route
             element={

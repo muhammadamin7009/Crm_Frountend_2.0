@@ -21,8 +21,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useAuth } from "../../Context/AuthContext";
 import { getUsers } from "../../api/getUsers";
 import { getDepartments } from "../../api/departments";
+import { hasPermission } from "../../utils/permissions";
 import {
   createEmployee,
   createEmployeeAgreement,
@@ -59,7 +61,21 @@ const emptyAgreement = {
   note: "",
 };
 
+const getLocalUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem("user") || "null");
+  } catch {
+    return null;
+  }
+};
+
 const Employees = () => {
+  const auth = useAuth();
+  const currentUser = auth?.user || getLocalUser();
+  const canManage =
+    ["super_admin", "admin"].includes(currentUser?.role) &&
+    hasPermission(currentUser, "employees.manage");
+
   const [positions, setPositions] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [users, setUsers] = useState([]);
@@ -109,6 +125,7 @@ const Employees = () => {
     setAgreementForm(emptyAgreement);
   };
   const savePosition = async () => {
+    if (!canManage) return toast.error("Sizda lavozimlarni boshqarish uchun ruxsat yo'q.");
     if (!positionForm.name.trim()) return toast.error("Lavozim nomini kiriting.");
     setSaving(true);
     try {
@@ -126,6 +143,7 @@ const Employees = () => {
     }
   };
   const saveProfile = async () => {
+    if (!canManage) return toast.error("Sizda hodim profilini boshqarish uchun ruxsat yo'q.");
     if (!profileForm.user_id || !profileForm.position_id)
       return toast.error("Hodim va lavozimni tanlang.");
     setSaving(true);
@@ -145,6 +163,7 @@ const Employees = () => {
     }
   };
   const saveAgreement = async () => {
+    if (!canManage) return toast.error("Sizda kelishuvlarni boshqarish uchun ruxsat yo'q.");
     if (!agreementForm.employee_id) return toast.error("Hodimni tanlang.");
     setSaving(true);
     try {
@@ -176,17 +195,19 @@ const Employees = () => {
             Tizim ruxsati, korxona lavozimi va ish haqi kelishuvini boshqarish
           </Typography>
         </Box>
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
-          <Button variant="outlined" onClick={() => setPositionOpen(true)}>
-            Lavozim qo'shish
-          </Button>
-          <Button variant="outlined" onClick={() => setProfileOpen(true)}>
-            Hodim biriktirish
-          </Button>
-          <Button variant="contained" onClick={() => setAgreementOpen(true)}>
-            Kelishuv qo'shish
-          </Button>
-        </Stack>
+        {canManage && (
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+            <Button variant="outlined" onClick={() => setPositionOpen(true)}>
+              Lavozim qo'shish
+            </Button>
+            <Button variant="outlined" onClick={() => setProfileOpen(true)}>
+              Hodim biriktirish
+            </Button>
+            <Button variant="contained" onClick={() => setAgreementOpen(true)}>
+              Kelishuv qo'shish
+            </Button>
+          </Stack>
+        )}
       </Box>
       <Box className="mb-4 grid shrink-0 grid-cols-1 gap-3 sm:grid-cols-3">
         <Paper elevation={0} className="rounded-xl border border-slate-200 p-4">
@@ -233,7 +254,7 @@ const Employees = () => {
                 <TableCell>Hisob turi</TableCell>
                 <TableCell>Kelishuv summasi</TableCell>
                 <TableCell>Davr</TableCell>
-                <TableCell align="right">Amal</TableCell>
+                {canManage && <TableCell align="right">Amal</TableCell>}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -271,26 +292,28 @@ const Employees = () => {
                     <TableCell>
                       {employee.agreement ? periodLabels[employee.agreement.payment_period] : "-"}
                     </TableCell>
-                    <TableCell align="right">
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        onClick={() => {
-                          setAgreementForm({
-                            ...emptyAgreement,
-                            employee_id: employee.id,
-                          });
-                          setAgreementOpen(true);
-                        }}
-                      >
-                        Yangi kelishuv
-                      </Button>
-                    </TableCell>
+                    {canManage && (
+                      <TableCell align="right">
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => {
+                            setAgreementForm({
+                              ...emptyAgreement,
+                              employee_id: employee.id,
+                            });
+                            setAgreementOpen(true);
+                          }}
+                        >
+                          Yangi kelishuv
+                        </Button>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={8} align="center">
+                  <TableCell colSpan={canManage ? 8 : 7} align="center">
                     Hodim profillari hali yaratilmagan
                   </TableCell>
                 </TableRow>

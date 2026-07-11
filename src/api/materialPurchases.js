@@ -6,6 +6,7 @@ export const updateSupplier = (id, data) => api.patch(`/suppliers/${id}`, data);
 export const deleteSupplier = (id) => api.delete(`/suppliers/${id}`);
 
 export const getRawMaterials = (params) => api.get("/raw-materials", { params });
+export const getRawMaterialStock = (params) => api.get("/raw-materials/stock", { params });
 export const createRawMaterial = (data) => api.post("/raw-materials", data);
 export const updateRawMaterial = (id, data) => api.patch(`/raw-materials/${id}`, data);
 export const deleteRawMaterial = (id) => api.delete(`/raw-materials/${id}`);
