@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../Context/AuthContext";
 import { getMySessions, revokeOtherSessions, revokeSession, updateMe, updateUserImage } from "../../api/getUsers";
 import { clearSession } from "../../utils/auth";
+import { hasPermission } from "../../utils/permissions";
 
 const roleLabels = {
   super_admin: "Super Admin",
@@ -34,29 +35,38 @@ const roleLabels = {
 
 const mobileLinks = [
   { label: "Bosh sahifa", path: "/" },
-  { label: "Foydalanuvchilar", path: "/users", roles: ["super_admin", "admin", "worker"] },
-  { label: "Lavozimlar", path: "/employees", roles: ["super_admin", "admin"] },
-  { label: "Mahsulotlar", path: "/products" },
-  { label: "Ish hisoboti", path: "/worker-outputs", roles: ["super_admin", "admin", "worker"] },
-  { label: "Oyliklar", path: "/worker-payments", roles: ["super_admin", "admin"] },
+  { label: "Foydalanuvchilar", path: "/users", roles: ["super_admin", "admin", "worker"], permission: "users.view" },
+  { label: "Lavozimlar", path: "/employees", roles: ["super_admin", "admin"], permission: "employees.view" },
+  { label: "Mahsulotlar", path: "/products", permission: "products.view" },
+  { label: "Ish hisoboti", path: "/worker-outputs", roles: ["super_admin", "admin", "worker"], permission: "production.view" },
+  { label: "Oyliklar", path: "/worker-payments", roles: ["super_admin", "admin"], permission: "payroll.view" },
   {
     label: "Mijoz savdo",
     path: "/client-sales",
     roles: ["super_admin", "admin"],
     feature: "client_accounting",
+    permission: "client_sales.view",
   },
   {
     label: "Homashyo xaridi",
     path: "/material-purchases",
     roles: ["super_admin", "admin"],
     feature: "supplier_accounting",
+    permission: "material_purchases.view",
   },
-  { label: "Moliya", path: "/finance", roles: ["super_admin", "admin"], feature: "finance" },
+  {
+    label: "Ombor",
+    path: "/inventory",
+    roles: ["super_admin", "admin"],
+    permission: "inventory.view",
+  },
+  { label: "Moliya", path: "/finance", roles: ["super_admin", "admin"], feature: "finance", permission: "finance.view" },
   {
     label: "Amallar tarixi",
     path: "/audit-logs",
     roles: ["super_admin", "admin"],
     feature: "audit_logs",
+    permission: "audit_logs.view",
   },
 ];
 
@@ -371,7 +381,8 @@ export default function TopBar() {
                   (!item.roles || item.roles.includes(user?.role)) &&
                   (!item.feature ||
                     !user?.plan_code ||
-                    user?.plan_features?.includes(item.feature)),
+                    user?.plan_features?.includes(item.feature)) &&
+                  hasPermission(user, item.permission),
               )
               .map((item) => (
                 <ListItemButton

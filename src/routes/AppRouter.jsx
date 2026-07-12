@@ -20,6 +20,7 @@ import PlatformDashboard from "../Pages/Platform/PlatformDashboard";
 import AuditLogs from "../Pages/AuditLog/AuditLogs";
 import LandingPage from "../Pages/LandingPage/LandingPage";
 import Permissions from "../Pages/Permission/Permissions";
+import Inventory from "../Pages/Inventory/Inventory";
 
 const AppRouter = () => {
   return (
@@ -124,6 +125,17 @@ const AppRouter = () => {
             }
           >
             <Route path="/material-purchases" element={<MaterialPurchases />} />
+          </Route>
+
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={["super_admin", "admin"]}
+                allowedPermissions={["inventory.view"]}
+              />
+            }
+          >
+            <Route path="/inventory" element={<Inventory />} />
           </Route>
 
           <Route

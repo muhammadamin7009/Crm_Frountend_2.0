@@ -99,6 +99,13 @@ const menuGroups = [
         requiredPermission: "material_purchases.view",
       },
       {
+        icon: BoxIcon,
+        label: "Ombor",
+        path: "/inventory",
+        allowedRoles: ["super_admin", "admin"],
+        requiredPermission: "inventory.view",
+      },
+      {
         icon: FinanceIcon,
         label: "Moliya",
         path: "/finance",
