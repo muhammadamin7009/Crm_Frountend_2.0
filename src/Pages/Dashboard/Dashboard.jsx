@@ -23,6 +23,7 @@ import { getClientBalance, getClientSales, getClientSalesSummary } from "../../a
 import { getMaterialPurchases, getSupplierBalance } from "../../api/materialPurchases";
 import AdminOverview from "./AdminOverview";
 import ClientDashboard from "./ClientDashboard";
+import { hasPermission } from "../../utils/permissions";
 
 const getLocalUser = () => {
   try {
@@ -204,10 +205,7 @@ const WorkerDashboard = ({ user }) => {
           {departmentSummary.length ? (
             <Box className="space-y-3">
               {departmentSummary.map((item) => (
-                <Box
-                  key={String(item.group_id)}
-                  className="auth-info-card rounded-2xl border p-4"
-                >
+                <Box key={String(item.group_id)} className="auth-info-card rounded-2xl border p-4">
                   <Box className="flex items-center justify-between gap-3">
                     <Box>
                       <Typography fontWeight={800}>{item.group_name || "Bo'lim"}</Typography>
@@ -721,12 +719,53 @@ const BusinessDashboard = ({ user }) => (
   </Box>
 );
 
+const NoDashboardPermission = ({ user }) => (
+  <Box className="crm-page h-full overflow-auto pr-1">
+    <Box className="mb-5">
+      <Typography variant="h5" fontWeight={900} className="text-slate-950">
+        Xush kelibsiz, {user?.first_name || "Admin"}!
+      </Typography>
+      <Typography variant="body2" className="mt-1 text-slate-500">
+        Shaxsiy hisobingiz faol. Hozircha sizga boshqaruv bo'limlari ochilmagan.
+      </Typography>
+    </Box>
+
+    <Paper elevation={0} className="crm-card p-6">
+      <Box className="rounded-2xl border border-dashed border-amber-300 bg-amber-50 p-5">
+        <Typography fontWeight={900} className="text-amber-900">
+          Sizda hali hech qanday bo'lim ruxsati yo'q
+        </Typography>
+        <Typography variant="body2" className="mt-2 max-w-2xl text-amber-800">
+          Kerakli bo'limlardan foydalanish uchun korxona super administratoriga murojaat qiling.
+          Ruxsat berilgach, shu sahifada faqat sizga ochilgan ma'lumotlar ko'rinadi.
+        </Typography>
+      </Box>
+
+      <Box className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <StatCard
+          label="Foydalanuvchi"
+          value={
+            `${user?.first_name || ""} ${user?.last_name || ""}`.trim() || user?.username || "-"
+          }
+          helper={user?.username ? `@${user.username}` : "Shaxsiy profil"}
+        />
+        <StatCard label="Ruxsat turi" value="Admin" helper="Korxona administratori" />
+        <StatCard label="Korxona" value={user?.company_name || "Korxona"} helper="Faol hisob" />
+      </Box>
+    </Paper>
+  </Box>
+);
+
 const Dashboard = () => {
   const auth = useAuth();
   const user = auth?.user || getLocalUser();
 
   if (user?.role === "worker") {
     return <WorkerDashboard user={user} />;
+  }
+
+  if (user?.role === "admin" && !hasPermission(user, "dashboard.view")) {
+    return <NoDashboardPermission user={user} />;
   }
 
   if (["super_admin", "admin"].includes(user?.role)) {

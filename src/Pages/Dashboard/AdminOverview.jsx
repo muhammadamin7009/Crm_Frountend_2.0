@@ -203,6 +203,7 @@ const AdminOverview = ({ user }) => {
   const navigate = useNavigate();
   const isSuperAdmin = user?.role === "super_admin";
   const canViewUsers = hasPermission(user, "users.view");
+  const canViewProducts = hasPermission(user, "products.view");
   const canViewProduction = hasPermission(user, "production.view");
   const canViewPayroll = hasPermission(user, "payroll.view");
   const canViewFinance = hasPermission(user, "finance.view");
@@ -258,8 +259,12 @@ const AdminOverview = ({ user }) => {
         supplierMonthRes,
         supplierDebtRes,
       ] = await Promise.all([
-        canViewUsers ? getUsers({ offset: 0, limit: 1 }) : Promise.resolve({ data: { pageInfo: {} } }),
-        getProducts({ offset: 0, limit: 1 }),
+        canViewUsers
+          ? getUsers({ offset: 0, limit: 1 })
+          : Promise.resolve({ data: { pageInfo: {} } }),
+        canViewProducts
+          ? getProducts({ offset: 0, limit: 1 })
+          : Promise.resolve({ data: { pageInfo: {} } }),
         canViewProduction
           ? getWorkerOutputs({ ...range, offset: 0, limit: 1 })
           : Promise.resolve({ data: { totals: {} } }),
@@ -319,6 +324,7 @@ const AdminOverview = ({ user }) => {
   }, [
     appliedRange,
     canViewUsers,
+    canViewProducts,
     canViewProduction,
     canViewPayroll,
     hasClientAccounting,
@@ -368,20 +374,20 @@ const AdminOverview = ({ user }) => {
           },
         canViewPayroll &&
           Number(data.salaryRemaining) > 0 && {
-          label: "Berilmagan ish haqi",
-          value: money(data.salaryRemaining),
-          helper: "Hodimlarga to'lanishi kerak",
-          path: "/worker-payments",
-          tone: "amber",
-        },
+            label: "Berilmagan ish haqi",
+            value: money(data.salaryRemaining),
+            helper: "Hodimlarga to'lanishi kerak",
+            path: "/worker-payments",
+            tone: "amber",
+          },
         canViewPayroll &&
           Number(data.advances) > 0 && {
-          label: "Hodimlarning avansi",
-          value: money(data.advances),
-          helper: "Keyingi hisobda ushlanishi mumkin",
-          path: "/worker-payments",
-          tone: "violet",
-        },
+            label: "Hodimlarning avansi",
+            value: money(data.advances),
+            helper: "Keyingi hisobda ushlanishi mumkin",
+            path: "/worker-payments",
+            tone: "violet",
+          },
       ].filter(Boolean),
     [canViewPayroll, data, hasClientAccounting, hasSupplierAccounting, isSuperAdmin],
   );
@@ -393,7 +399,8 @@ const AdminOverview = ({ user }) => {
       </Box>
     );
 
-  const showClient = isSuperAdmin && hasClientAccounting && ["all", "clients"].includes(sectionFilter);
+  const showClient =
+    isSuperAdmin && hasClientAccounting && ["all", "clients"].includes(sectionFilter);
   const showSupplier = hasSupplierAccounting && ["all", "suppliers"].includes(sectionFilter);
   const showWorkers = canViewProduction && ["all", "workers"].includes(sectionFilter);
   const allowedFilters = [
@@ -514,16 +521,16 @@ const AdminOverview = ({ user }) => {
       </Box>
 
       <Box className="mb-5 grid grid-cols-1 gap-4 xl:grid-cols-[1.35fr_.9fr_.9fr]">
-        <SectionCard
-          title="Savdo dinamikasi"
-          action={
-            <Chip label={`${appliedRange.date_from} / ${appliedRange.date_to}`} size="small" />
-          }
-        >
-          <SalesChart
-            bars={chartBars}
-          />
-        </SectionCard>
+        {chartBars.length > 0 && (
+          <SectionCard
+            title="Faoliyat dinamikasi"
+            action={
+              <Chip label={`${appliedRange.date_from} / ${appliedRange.date_to}`} size="small" />
+            }
+          >
+            <SalesChart bars={chartBars} />
+          </SectionCard>
+        )}
 
         {canViewProduction && (
           <SectionCard title="Bo'limlar kesimi">
@@ -690,7 +697,11 @@ const AdminOverview = ({ user }) => {
                       <TableCell>{date(purchase.purchased_at || purchase.created_at)}</TableCell>
                       <TableCell>{money(purchase.total_amount)}</TableCell>
                       <TableCell>
-                        <Chip label={purchase.status === "active" ? "Faol" : purchase.status || "Faol"} size="small" color="success" />
+                        <Chip
+                          label={purchase.status === "active" ? "Faol" : purchase.status || "Faol"}
+                          size="small"
+                          color="success"
+                        />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -742,5 +753,3 @@ const AdminOverview = ({ user }) => {
 };
 
 export default AdminOverview;
-
-
