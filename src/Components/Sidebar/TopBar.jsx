@@ -21,9 +21,17 @@ import { useMemo, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../Context/AuthContext";
-import { getMySessions, revokeOtherSessions, revokeSession, updateMe, updateUserImage } from "../../api/getUsers";
+import {
+  getMySessions,
+  revokeOtherSessions,
+  revokeSession,
+  updateMe,
+  updateUserImage,
+} from "../../api/getUsers";
 import { clearSession } from "../../utils/auth";
 import { hasPermission } from "../../utils/permissions";
+import { deleteCompanyLogo, updateCompanyLogo } from "../../api/companyBranding";
+import { getCompanyLogoUrl } from "../../utils/company";
 
 const roleLabels = {
   super_admin: "Super Admin",
@@ -35,11 +43,31 @@ const roleLabels = {
 
 const mobileLinks = [
   { label: "Bosh sahifa", path: "/" },
-  { label: "Foydalanuvchilar", path: "/users", roles: ["super_admin", "admin", "worker"], permission: "users.view" },
-  { label: "Lavozimlar", path: "/employees", roles: ["super_admin", "admin"], permission: "employees.view" },
+  {
+    label: "Foydalanuvchilar",
+    path: "/users",
+    roles: ["super_admin", "admin", "worker"],
+    permission: "users.view",
+  },
+  {
+    label: "Lavozimlar",
+    path: "/employees",
+    roles: ["super_admin", "admin"],
+    permission: "employees.view",
+  },
   { label: "Mahsulotlar", path: "/products", permission: "products.view" },
-  { label: "Ish hisoboti", path: "/worker-outputs", roles: ["super_admin", "admin", "worker"], permission: "production.view" },
-  { label: "Oyliklar", path: "/worker-payments", roles: ["super_admin", "admin"], permission: "payroll.view" },
+  {
+    label: "Ish hisoboti",
+    path: "/worker-outputs",
+    roles: ["super_admin", "admin", "worker"],
+    permission: "production.view",
+  },
+  {
+    label: "Oyliklar",
+    path: "/worker-payments",
+    roles: ["super_admin", "admin"],
+    permission: "payroll.view",
+  },
   {
     label: "Mijoz savdo",
     path: "/client-sales",
@@ -60,7 +88,13 @@ const mobileLinks = [
     roles: ["super_admin", "admin"],
     permission: "inventory.view",
   },
-  { label: "Moliya", path: "/finance", roles: ["super_admin", "admin"], feature: "finance", permission: "finance.view" },
+  {
+    label: "Moliya",
+    path: "/finance",
+    roles: ["super_admin", "admin"],
+    feature: "finance",
+    permission: "finance.view",
+  },
   {
     label: "Amallar tarixi",
     path: "/audit-logs",
@@ -98,6 +132,9 @@ export default function TopBar() {
   const [imagePreview, setImagePreview] = useState("");
   const [sessions, setSessions] = useState([]);
   const [sessionsLoading, setSessionsLoading] = useState(false);
+  const [companyLogoFile, setCompanyLogoFile] = useState(null);
+  const [companyLogoPreview, setCompanyLogoPreview] = useState("");
+  const [companyLogoSaving, setCompanyLogoSaving] = useState(false);
 
   const [form, setForm] = useState({
     first_name: "",
@@ -113,6 +150,7 @@ export default function TopBar() {
   }, [user]);
 
   const role = roleLabels[user?.role] || user?.role || "Foydalanuvchi";
+  const companyHeaderLogo = getCompanyLogoUrl(user?.company_logo_url);
 
   const loadSessions = async () => {
     setSessionsLoading(true);
@@ -136,8 +174,48 @@ export default function TopBar() {
     });
     setImageFile(null);
     setImagePreview("");
+    setCompanyLogoFile(null);
+    setCompanyLogoPreview("");
     setProfileOpen(true);
     loadSessions();
+  };
+
+  const patchStoredUser = (patch) => {
+    const nextUser = { ...user, ...patch };
+    localStorage.setItem("user", JSON.stringify(nextUser));
+    setUser(nextUser);
+  };
+
+  const saveCompanyLogo = async () => {
+    if (!companyLogoFile) return toast.error("Avval logo faylini tanlang.");
+    setCompanyLogoSaving(true);
+    try {
+      const { data } = await updateCompanyLogo(companyLogoFile);
+      patchStoredUser({ company_logo_url: data.company?.logo_url || null });
+      setCompanyLogoFile(null);
+      setCompanyLogoPreview("");
+      toast.success("Korxona logosi yangilandi.");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Logoni yuklashda xato.");
+    } finally {
+      setCompanyLogoSaving(false);
+    }
+  };
+
+  const removeCompanyLogo = async () => {
+    if (!window.confirm("Korxona logosini o'chirasizmi?")) return;
+    setCompanyLogoSaving(true);
+    try {
+      await deleteCompanyLogo();
+      patchStoredUser({ company_logo_url: null });
+      setCompanyLogoFile(null);
+      setCompanyLogoPreview("");
+      toast.success("Korxona logosi o'chirildi.");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Logoni o'chirishda xato.");
+    } finally {
+      setCompanyLogoSaving(false);
+    }
   };
 
   const removeSession = async (session) => {
@@ -243,6 +321,24 @@ export default function TopBar() {
           >
             Menu
           </Button>
+
+          {companyHeaderLogo && (
+            <Box
+              component="img"
+              src={companyHeaderLogo}
+              alt={user?.company_name || "Korxona logosi"}
+              sx={{
+                width: 44,
+                height: 44,
+                display: { xs: "none", sm: "block" },
+                objectFit: "contain",
+                borderRadius: "10px",
+                border: "1px solid #e2e8f0",
+                background: "#fff",
+                p: 0.5,
+              }}
+            />
+          )}
 
           <Box className="min-w-0">
             <Typography
@@ -439,6 +535,75 @@ export default function TopBar() {
 
         <DialogContent>
           <Stack spacing={2} className="pt-2">
+            {user?.role === "super_admin" && (
+              <Box className="rounded-xl border border-slate-200 bg-white p-4">
+                <Typography sx={{ fontWeight: 950, color: "#0f172a" }}>Korxona logosi</Typography>
+                <Typography variant="body2" sx={{ mt: 0.5, color: "#64748b" }}>
+                  Logo sidebar va korxona sahifalarida ko'rinadi.
+                </Typography>
+
+                <Box className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <Avatar
+                    variant="rounded"
+                    src={
+                      companyLogoPreview || getCompanyLogoUrl(user?.company_logo_url) || undefined
+                    }
+                    sx={{
+                      width: 76,
+                      height: 76,
+                      bgcolor: "#f8fafc",
+                      color: "#8f1d20",
+                      border: "1px solid #e2e8f0",
+                      fontWeight: 950,
+                      "& img": { objectFit: "contain", p: 0.7 },
+                    }}
+                  >
+                    {user?.company_name?.[0]?.toUpperCase() || "K"}
+                  </Avatar>
+
+                  <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                    <Button component="label" variant="outlined" disabled={companyLogoSaving}>
+                      Logo tanlash
+                      <input
+                        hidden
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        onChange={(event) => {
+                          const file = event.target.files?.[0];
+                          if (!file) return;
+                          if (file.size > 2 * 1024 * 1024) {
+                            toast.error("Logo hajmi 2 MB dan oshmasligi kerak.");
+                            return;
+                          }
+                          setCompanyLogoFile(file);
+                          setCompanyLogoPreview(URL.createObjectURL(file));
+                        }}
+                      />
+                    </Button>
+                    <Button
+                      variant="contained"
+                      disabled={!companyLogoFile || companyLogoSaving}
+                      onClick={saveCompanyLogo}
+                    >
+                      {companyLogoSaving ? "Saqlanmoqda..." : "Logoni saqlash"}
+                    </Button>
+                    {user?.company_logo_url && (
+                      <Button
+                        color="error"
+                        disabled={companyLogoSaving}
+                        onClick={removeCompanyLogo}
+                      >
+                        O'chirish
+                      </Button>
+                    )}
+                  </Stack>
+                </Box>
+                <Typography variant="caption" sx={{ mt: 1.5, display: "block", color: "#94a3b8" }}>
+                  JPEG, PNG yoki WebP, 2 MB gacha.
+                </Typography>
+              </Box>
+            )}
+
             <Box className="flex items-center gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
               <Avatar
                 src={imagePreview || getImageUrl(user?.user_image)}
@@ -526,22 +691,37 @@ export default function TopBar() {
                   Profilingiz ochiq turgan brauzer va qurilmalar
                 </Typography>
               </Box>
-              <Button size="small" color="error" variant="outlined" onClick={removeOtherSessions} disabled={sessionsLoading || sessions.length < 2}>
+              <Button
+                size="small"
+                color="error"
+                variant="outlined"
+                onClick={removeOtherSessions}
+                disabled={sessionsLoading || sessions.length < 2}
+              >
                 Boshqalaridan chiqish
               </Button>
             </Box>
             {sessionsLoading ? (
-              <Box className="flex justify-center py-5"><CircularProgress size={24} /></Box>
+              <Box className="flex justify-center py-5">
+                <CircularProgress size={24} />
+              </Box>
             ) : sessions.length ? (
               <Box className="space-y-2">
                 {sessions.map((session) => (
-                  <Box key={session.id} className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3 sm:flex-row sm:items-center sm:justify-between">
+                  <Box
+                    key={session.id}
+                    className="flex flex-col gap-2 rounded-lg border border-slate-200 p-3 sm:flex-row sm:items-center sm:justify-between"
+                  >
                     <Box>
                       <Typography fontWeight={850}>
-                        {session.device_name || "Noma'lum qurilma"} {session.is_current && <Chip size="small" color="success" label="Hozirgi" />}
+                        {session.device_name || "Noma'lum qurilma"}{" "}
+                        {session.is_current && (
+                          <Chip size="small" color="success" label="Hozirgi" />
+                        )}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        IP: {session.ip_address || "-"} • Oxirgi faollik: {new Date(session.last_used_at).toLocaleString("uz-UZ")}
+                        IP: {session.ip_address || "-"} • Oxirgi faollik:{" "}
+                        {new Date(session.last_used_at).toLocaleString("uz-UZ")}
                       </Typography>
                     </Box>
                     <Button size="small" color="error" onClick={() => removeSession(session)}>
@@ -551,7 +731,9 @@ export default function TopBar() {
                 ))}
               </Box>
             ) : (
-              <Typography variant="body2" color="text.secondary">Faol sessiya topilmadi.</Typography>
+              <Typography variant="body2" color="text.secondary">
+                Faol sessiya topilmadi.
+              </Typography>
             )}
           </Stack>
         </DialogContent>

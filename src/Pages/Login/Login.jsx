@@ -7,7 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -16,13 +16,20 @@ import { setSession } from "../../utils/auth";
 import { useAuth } from "../../Context/AuthContext";
 import SiteLogo from "../../images/zerr_02_logo.png";
 import api from "../../api/axios";
-import { getCompanySlug, setCompanySlug } from "../../utils/company";
+import {
+  getCompanyLogoUrl,
+  getCompanySlug,
+  normalizeCompanySlug,
+  setCompanySlug,
+} from "../../utils/company";
+import { getCompanyBranding } from "../../api/companyBranding";
 
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [challenge, setChallenge] = useState(null);
   const [code, setCode] = useState("");
+  const [branding, setBranding] = useState(null);
 
   const {
     register,
@@ -40,11 +47,31 @@ const Login = () => {
   const { setUser } = useAuth();
   const companySlug = watch("company_slug");
   const isMainCompany = companySlug === "zerrshoes";
-  const companyTitle = isMainCompany
-    ? "Al-amin CRM"
-    : companySlug
-      ? companySlug.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
-      : "Korxona CRM";
+  const companyTitle =
+    branding?.name ||
+    (isMainCompany
+      ? "Al-amin CRM"
+      : companySlug
+        ? companySlug.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
+        : "Korxona CRM");
+  const companyLogo = getCompanyLogoUrl(branding?.logo_url) || (isMainCompany ? SiteLogo : "");
+
+  useEffect(() => {
+    const slug = normalizeCompanySlug(companySlug);
+    if (!slug) {
+      setBranding(null);
+      return undefined;
+    }
+    const timeout = setTimeout(async () => {
+      try {
+        const { data } = await getCompanyBranding(slug);
+        setBranding(data.company || null);
+      } catch {
+        setBranding(null);
+      }
+    }, 350);
+    return () => clearTimeout(timeout);
+  }, [companySlug]);
 
   const onSubmit = async (values) => {
     setLoading(true);
@@ -93,7 +120,9 @@ const Login = () => {
       const { data } = await api.post(
         "/users/login/verify",
         { challenge_id: challenge.challenge_id, code },
-        { baseURL: `${String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "")}/api/${companySlug}` },
+        {
+          baseURL: `${String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "")}/api/${companySlug}`,
+        },
       );
       setSession({ token: data.token, user: data.user });
       setUser(data.user);
@@ -117,8 +146,14 @@ const Login = () => {
             <Box>
               <Box className="mb-10 flex items-center gap-3">
                 <Box className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white">
-                  {isMainCompany ? (
-                    <img width={40} src={SiteLogo} alt={companyTitle} />
+                  {companyLogo ? (
+                    <img
+                      width={40}
+                      height={40}
+                      className="h-10 w-10 object-contain"
+                      src={companyLogo}
+                      alt={companyTitle}
+                    />
                   ) : (
                     <Typography fontWeight={900}>{companyTitle[0]}</Typography>
                   )}
@@ -168,8 +203,14 @@ const Login = () => {
             <Box className="w-full max-w-lg">
               <Box className="mb-8 flex items-center gap-3 lg:hidden">
                 <Box className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50">
-                  {isMainCompany ? (
-                    <img width={34} src={SiteLogo} alt={companyTitle} />
+                  {companyLogo ? (
+                    <img
+                      width={34}
+                      height={34}
+                      className="h-8.5 w-8.5 object-contain"
+                      src={companyLogo}
+                      alt={companyTitle}
+                    />
                   ) : (
                     <Typography fontWeight={900}>{companyTitle[0]}</Typography>
                   )}
@@ -206,89 +247,103 @@ const Login = () => {
                     onKeyDown={(event) => event.key === "Enter" && verifyCode()}
                     inputProps={{ inputMode: "numeric", maxLength: 6 }}
                   />
-                  <Button fullWidth size="large" variant="contained" disabled={loading || code.length !== 6} onClick={verifyCode}>
+                  <Button
+                    fullWidth
+                    size="large"
+                    variant="contained"
+                    disabled={loading || code.length !== 6}
+                    onClick={verifyCode}
+                  >
                     {loading ? "Tekshirilmoqda..." : "Tasdiqlash"}
                   </Button>
-                  <Button fullWidth onClick={() => { setChallenge(null); setCode(""); }}>
+                  <Button
+                    fullWidth
+                    onClick={() => {
+                      setChallenge(null);
+                      setCode("");
+                    }}
+                  >
                     Kirish ma'lumotlariga qaytish
                   </Button>
                 </Box>
-              ) : <form onSubmit={handleSubmit(onSubmit)}>
-                <Box className="space-y-4">
-                  <TextField
-                    fullWidth
-                    label="Korxona kodi"
-                    autoComplete="organization"
-                    error={Boolean(errors.company_slug)}
-                    helperText={errors.company_slug?.message}
-                    {...register("company_slug", {
-                      required: "Korxona kodi majburiy",
-                      pattern: {
-                        value: /^[a-z0-9-]+$/,
-                        message: "Faqat kichik harf, raqam va chiziqcha",
-                      },
-                    })}
-                  />
-                  <TextField
-                    fullWidth
-                    label="Foydalanuvchi nomi"
-                    autoComplete="username"
-                    error={Boolean(errors.username)}
-                    helperText={errors.username?.message}
-                    {...register("username", {
-                      required: "Foydalanuvchi nomi majburiy",
-                    })}
-                    sx={{ marginBottom: "12px", marginTop: "12px" }}
-                  />
-
-                  <TextField
-                    fullWidth
-                    type="password"
-                    label="Parol"
-                    autoComplete="current-password"
-                    error={Boolean(errors.password)}
-                    helperText={errors.password?.message}
-                    {...register("password", {
-                      required: "Parol majburiy",
-                    })}
-                  />
-
-                  <Box className="flex items-center justify-between gap-3">
-                    <FormControlLabel
-                      control={<Checkbox size="small" />}
-                      label={
-                        <Typography variant="body2" className="text-slate-600">
-                          Eslab qolish
-                        </Typography>
-                      }
+              ) : (
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <Box className="space-y-4">
+                    <TextField
+                      fullWidth
+                      label="Korxona kodi"
+                      autoComplete="organization"
+                      error={Boolean(errors.company_slug)}
+                      helperText={errors.company_slug?.message}
+                      {...register("company_slug", {
+                        required: "Korxona kodi majburiy",
+                        pattern: {
+                          value: /^[a-z0-9-]+$/,
+                          message: "Faqat kichik harf, raqam va chiziqcha",
+                        },
+                      })}
                     />
-                    <Typography variant="body2" className="text-slate-500">
-                      Xavfsiz kirish
-                    </Typography>
-                  </Box>
+                    <TextField
+                      fullWidth
+                      label="Foydalanuvchi nomi"
+                      autoComplete="username"
+                      error={Boolean(errors.username)}
+                      helperText={errors.username?.message}
+                      {...register("username", {
+                        required: "Foydalanuvchi nomi majburiy",
+                      })}
+                      sx={{ marginBottom: "12px", marginTop: "12px" }}
+                    />
 
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    size="large"
-                    disabled={loading}
-                    sx={{
-                      py: 1.25,
-                      borderRadius: 2,
-                      backgroundColor: "#7F1D1D",
-                      boxShadow: "none",
-                      fontWeight: 800,
-                      "&:hover": {
-                        backgroundColor: "#991B1B",
+                    <TextField
+                      fullWidth
+                      type="password"
+                      label="Parol"
+                      autoComplete="current-password"
+                      error={Boolean(errors.password)}
+                      helperText={errors.password?.message}
+                      {...register("password", {
+                        required: "Parol majburiy",
+                      })}
+                    />
+
+                    <Box className="flex items-center justify-between gap-3">
+                      <FormControlLabel
+                        control={<Checkbox size="small" />}
+                        label={
+                          <Typography variant="body2" className="text-slate-600">
+                            Eslab qolish
+                          </Typography>
+                        }
+                      />
+                      <Typography variant="body2" className="text-slate-500">
+                        Xavfsiz kirish
+                      </Typography>
+                    </Box>
+
+                    <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      size="large"
+                      disabled={loading}
+                      sx={{
+                        py: 1.25,
+                        borderRadius: 2,
+                        backgroundColor: "#7F1D1D",
                         boxShadow: "none",
-                      },
-                    }}
-                  >
-                    {loading ? "Kirilmoqda..." : "Kirish"}
-                  </Button>
-                </Box>
-              </form>}
+                        fontWeight: 800,
+                        "&:hover": {
+                          backgroundColor: "#991B1B",
+                          boxShadow: "none",
+                        },
+                      }}
+                    >
+                      {loading ? "Kirilmoqda..." : "Kirish"}
+                    </Button>
+                  </Box>
+                </form>
+              )}
 
               <Box className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Box className="auth-info-card rounded-2xl border p-4">

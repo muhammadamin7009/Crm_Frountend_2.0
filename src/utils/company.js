@@ -14,3 +14,10 @@ export const setCompanySlug = (slug) => {
   if (normalized) localStorage.setItem("company_slug", normalized);
   return normalized;
 };
+
+export const getCompanyLogoUrl = (logoUrl) => {
+  if (!logoUrl) return "";
+  if (/^https?:\/\//i.test(logoUrl)) return logoUrl;
+  const apiBase = String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+  return `${apiBase}${logoUrl.startsWith("/") ? logoUrl : `/${logoUrl}`}`;
+};

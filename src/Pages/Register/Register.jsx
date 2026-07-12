@@ -1,12 +1,18 @@
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import SiteLogo from "../../images/zerr_02_logo.png";
 import api from "../../api/axios";
-import { getCompanySlug, setCompanySlug } from "../../utils/company";
+import {
+  getCompanyLogoUrl,
+  getCompanySlug,
+  normalizeCompanySlug,
+  setCompanySlug,
+} from "../../utils/company";
+import { getCompanyBranding } from "../../api/companyBranding";
 
 const formatNameValue = (value = "") =>
   String(value)
@@ -74,6 +80,7 @@ const normalizePhoneForSubmit = (value = "") => {
 const Register = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [branding, setBranding] = useState(null);
 
   const {
     register,
@@ -96,11 +103,31 @@ const Register = () => {
   const password = watch("password");
   const companySlug = watch("company_slug");
   const isMainCompany = companySlug === "zerrshoes";
-  const companyTitle = isMainCompany
-    ? "Al-amin CRM"
-    : companySlug
-      ? companySlug.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
-      : "Korxona CRM";
+  const companyTitle =
+    branding?.name ||
+    (isMainCompany
+      ? "Al-amin CRM"
+      : companySlug
+        ? companySlug.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
+        : "Korxona CRM");
+  const companyLogo = getCompanyLogoUrl(branding?.logo_url) || (isMainCompany ? SiteLogo : "");
+
+  useEffect(() => {
+    const slug = normalizeCompanySlug(companySlug);
+    if (!slug) {
+      setBranding(null);
+      return undefined;
+    }
+    const timeout = setTimeout(async () => {
+      try {
+        const { data } = await getCompanyBranding(slug);
+        setBranding(data.company || null);
+      } catch {
+        setBranding(null);
+      }
+    }, 350);
+    return () => clearTimeout(timeout);
+  }, [companySlug]);
 
   const onSubmit = async (submittedValues) => {
     const { company_slug, ...values } = submittedValues;
@@ -143,8 +170,14 @@ const Register = () => {
             <Box>
               <Box className="mb-10 flex items-center gap-3">
                 <Box className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white">
-                  {isMainCompany ? (
-                    <img width={40} src={SiteLogo} alt={companyTitle} />
+                  {companyLogo ? (
+                    <img
+                      width={40}
+                      height={40}
+                      className="h-10 w-10 object-contain"
+                      src={companyLogo}
+                      alt={companyTitle}
+                    />
                   ) : (
                     <Typography fontWeight={900}>{companyTitle[0]}</Typography>
                   )}
@@ -178,8 +211,14 @@ const Register = () => {
             <Box className="w-full max-w-lg">
               <Box className="mb-8 flex items-center gap-3 lg:hidden">
                 <Box className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50">
-                  {isMainCompany ? (
-                    <img width={34} src={SiteLogo} alt={companyTitle} />
+                  {companyLogo ? (
+                    <img
+                      width={34}
+                      height={34}
+                      className="h-8.5 w-8.5 object-contain"
+                      src={companyLogo}
+                      alt={companyTitle}
+                    />
                   ) : (
                     <Typography fontWeight={900}>{companyTitle[0]}</Typography>
                   )}
@@ -266,8 +305,7 @@ const Register = () => {
                     placeholder="+998 (96) 500-10-01"
                     error={Boolean(errors.phone)}
                     helperText={
-                      errors.phone?.message ||
-                      "+998 raqamida 9 ta mahalliy raqam bo'lishi shart."
+                      errors.phone?.message || "+998 raqamida 9 ta mahalliy raqam bo'lishi shart."
                     }
                     {...register("phone", {
                       maxLength: {
