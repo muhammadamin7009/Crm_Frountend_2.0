@@ -108,6 +108,13 @@ const menuGroups = [
       },
       {
         icon: FinanceIcon,
+        label: "Xarajatlar",
+        path: "/expenses",
+        allowedRoles: ["super_admin", "admin"],
+        requiredPermission: "finance.view",
+      },
+      {
+        icon: FinanceIcon,
         label: "Moliya",
         path: "/finance",
         allowedRoles: ["super_admin", "admin"],

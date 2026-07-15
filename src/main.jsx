@@ -9,12 +9,15 @@ import { BrowserRouter as Router } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import { AuthProvider } from "./Context/AuthContext.jsx";
+import ErrorBoundary from "./Components/ErrorBoundary/ErrorBoundary.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-    <AuthProvider>
-      <App />
-      <ToastContainer theme="colored" />
-    </AuthProvider>
-  </Router>,
+  <ErrorBoundary>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <AuthProvider>
+        <App />
+        <ToastContainer theme="colored" />
+      </AuthProvider>
+    </Router>
+  </ErrorBoundary>,
 );

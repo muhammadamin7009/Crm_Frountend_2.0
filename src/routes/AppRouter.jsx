@@ -21,6 +21,7 @@ import AuditLogs from "../Pages/AuditLog/AuditLogs";
 import LandingPage from "../Pages/LandingPage/LandingPage";
 import Permissions from "../Pages/Permission/Permissions";
 import Inventory from "../Pages/Inventory/Inventory";
+import Expenses from "../Pages/Expense/Expenses";
 
 const AppRouter = () => {
   return (
@@ -136,6 +137,17 @@ const AppRouter = () => {
             }
           >
             <Route path="/inventory" element={<Inventory />} />
+          </Route>
+
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={["super_admin", "admin"]}
+                allowedPermissions={["finance.view"]}
+              />
+            }
+          >
+            <Route path="/expenses" element={<Expenses />} />
           </Route>
 
           <Route

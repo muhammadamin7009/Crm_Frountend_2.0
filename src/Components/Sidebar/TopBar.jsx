@@ -89,6 +89,12 @@ const mobileLinks = [
     permission: "inventory.view",
   },
   {
+    label: "Xarajatlar",
+    path: "/expenses",
+    roles: ["super_admin", "admin"],
+    permission: "finance.view",
+  },
+  {
     label: "Moliya",
     path: "/finance",
     roles: ["super_admin", "admin"],
