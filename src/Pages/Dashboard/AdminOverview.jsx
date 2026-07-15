@@ -28,6 +28,7 @@ import { getWorkerBalance } from "../../api/workerPayments";
 import { getClientBalance, getClientSales, getClientSalesSummary } from "../../api/clientSales";
 import { getMaterialPurchases, getSupplierBalance } from "../../api/materialPurchases";
 import { hasPermission } from "../../utils/permissions";
+import { getInventorySummary } from "../../api/inventory";
 
 const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
 const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
@@ -207,6 +208,7 @@ const AdminOverview = ({ user }) => {
   const canViewProduction = hasPermission(user, "production.view");
   const canViewPayroll = hasPermission(user, "payroll.view");
   const canViewFinance = hasPermission(user, "finance.view");
+  const canViewInventory = hasPermission(user, "inventory.view");
   const hasClientAccounting =
     (!user?.plan_code || user.plan_features?.includes("client_accounting")) &&
     hasPermission(user, "client_sales.view");
@@ -239,6 +241,16 @@ const AdminOverview = ({ user }) => {
   const [workers, setWorkers] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [purchases, setPurchases] = useState([]);
+  const [inventory, setInventory] = useState({
+    summary: {
+      warehouses_count: 0,
+      stock_lines: 0,
+      total_quantity: 0,
+      low_stock_lines: 0,
+      empty_warehouses: 0,
+    },
+    warehouses: [],
+  });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -258,6 +270,7 @@ const AdminOverview = ({ user }) => {
         purchasesRes,
         supplierMonthRes,
         supplierDebtRes,
+        inventoryRes,
       ] = await Promise.all([
         canViewUsers
           ? getUsers({ offset: 0, limit: 1 })
@@ -290,6 +303,9 @@ const AdminOverview = ({ user }) => {
           : Promise.resolve({ data: { material_purchases: [], pageInfo: {} } }),
         hasSupplierAccounting ? getSupplierBalance(range) : Promise.resolve({ data: {} }),
         hasSupplierAccounting ? getSupplierBalance({}) : Promise.resolve({ data: {} }),
+        canViewInventory
+          ? getInventorySummary()
+          : Promise.resolve({ data: { summary: {}, warehouses: [] } }),
       ]);
 
       const departmentSummary = departmentRes.data.summary || [];
@@ -316,6 +332,10 @@ const AdminOverview = ({ user }) => {
       setWorkers(workerRes.data.summary || []);
       setDepartments(departmentSummary);
       setPurchases(purchasesRes.data.material_purchases || []);
+      setInventory({
+        summary: inventoryRes.data.summary || {},
+        warehouses: inventoryRes.data.warehouses || [],
+      });
     } catch (error) {
       toast.error(error?.response?.data?.message || "Bosh sahifa ma'lumotlarini olishda xato.");
     } finally {
@@ -327,6 +347,7 @@ const AdminOverview = ({ user }) => {
     canViewProducts,
     canViewProduction,
     canViewPayroll,
+    canViewInventory,
     hasClientAccounting,
     hasSupplierAccounting,
     isSuperAdmin,
@@ -388,8 +409,24 @@ const AdminOverview = ({ user }) => {
             path: "/worker-payments",
             tone: "violet",
           },
+        canViewInventory &&
+          Number(inventory.summary.low_stock_lines) > 0 && {
+            label: "Omborda kam qolgan mahsulotlar",
+            value: `${number(inventory.summary.low_stock_lines)} ta`,
+            helper: "Minimal qoldiq chegarasiga yetgan pozitsiyalar",
+            path: "/inventory",
+            tone: "rose",
+          },
       ].filter(Boolean),
-    [canViewPayroll, data, hasClientAccounting, hasSupplierAccounting, isSuperAdmin],
+    [
+      canViewInventory,
+      canViewPayroll,
+      data,
+      hasClientAccounting,
+      hasSupplierAccounting,
+      inventory,
+      isSuperAdmin,
+    ],
   );
 
   if (loading)
@@ -503,7 +540,7 @@ const AdminOverview = ({ user }) => {
         {canViewProduction && (
           <StatCard
             label="Tayyor mahsulot"
-            value={`${number(data.productionQuantity)} ta`}
+            value={`${number(data.productionQuantity)} par`}
             helper={money(data.productionAmount)}
             icon={BoxIcon}
             tone="violet"
@@ -518,7 +555,81 @@ const AdminOverview = ({ user }) => {
             tone="amber"
           />
         )}
+        {canViewInventory && (
+          <StatCard
+            label="Omborlardagi jami qoldiq"
+            value={`${number(inventory.summary.total_quantity)} birlik`}
+            helper={`${number(inventory.summary.warehouses_count)} ta faol ombor`}
+            icon={BoxIcon}
+            tone="green"
+          />
+        )}
       </Box>
+
+      {canViewInventory && (
+        <SectionCard
+          title="Omborlar holati"
+          className="mb-5"
+          action={
+            <Button size="small" onClick={() => navigate("/inventory")}>
+              Omborlarga o'tish
+            </Button>
+          }
+        >
+          {inventory.warehouses.length ? (
+            <Box className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {inventory.warehouses.map((warehouse) => {
+                const hasWarning = Number(warehouse.low_stock_lines) > 0;
+                return (
+                  <Box
+                    key={warehouse.id}
+                    onClick={() => navigate(`/inventory/warehouses/${warehouse.id}`)}
+                    className="cursor-pointer rounded-3xl border border-slate-200 bg-slate-50/80 p-4 transition hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50/70"
+                  >
+                    <Box className="mb-4 flex items-start justify-between gap-3">
+                      <Box className="min-w-0">
+                        <Typography className="truncate font-black text-slate-900">
+                          {warehouse.name}
+                        </Typography>
+                        <Typography variant="body2" className="text-slate-500">
+                          {warehouse.location || warehouse.code}
+                        </Typography>
+                      </Box>
+                      <Chip
+                        size="small"
+                        color={hasWarning ? "warning" : "success"}
+                        label={hasWarning ? `${warehouse.low_stock_lines} ta kam` : "Me'yorda"}
+                      />
+                    </Box>
+                    <Box className="grid grid-cols-3 gap-2">
+                      <Box>
+                        <Typography variant="caption" className="text-slate-500">
+                          Pozitsiya
+                        </Typography>
+                        <Typography fontWeight={950}>{number(warehouse.stock_lines)}</Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" className="text-slate-500">
+                          Jami
+                        </Typography>
+                        <Typography fontWeight={950}>{number(warehouse.total_quantity)}</Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" className="text-slate-500">
+                          Tugagan
+                        </Typography>
+                        <Typography fontWeight={950}>{number(warehouse.empty_lines)}</Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                );
+              })}
+            </Box>
+          ) : (
+            <Empty>Faol ombor topilmadi.</Empty>
+          )}
+        </SectionCard>
+      )}
 
       <Box className="mb-5 grid grid-cols-1 gap-4 xl:grid-cols-[1.35fr_.9fr_.9fr]">
         {chartBars.length > 0 && (

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
+  Autocomplete,
   Avatar,
   Box,
   Button,
@@ -16,12 +17,14 @@ import {
   Paper,
   Stack,
   Switch,
+  Tab,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
   TextField,
+  Tabs,
   Typography,
 } from "@mui/material";
 
@@ -33,23 +36,25 @@ import {
   createProduct,
   deleteCategory,
   deleteProduct,
+  deleteProductOption,
   deleteProductImage,
   getCategories,
   getProduct,
+  getProductOptions,
   getProducts,
   setPrimaryProductImage,
   updateCategory,
   updateProduct,
+  updateProductOption,
   uploadProductImage,
 } from "../../api/products";
 
 const emptyProductForm = {
-  category_id: "",
+  category_name: "",
   name: "",
   model: "",
-  sku: "",
   color: "",
-  unit: "dona",
+  unit: "par",
   description: "",
   purchase_price: "",
   sale_price: "",
@@ -217,6 +222,7 @@ const Products = () => {
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [productOptions, setProductOptions] = useState({ models: [], colors: [] });
   const [pageInfo, setPageInfo] = useState({ total: 0, offset: 0, limit: 10 });
   const [loading, setLoading] = useState(false);
 
@@ -248,6 +254,9 @@ const Products = () => {
   const [categoryForm, setCategoryForm] = useState(emptyCategoryForm);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categorySaving, setCategorySaving] = useState(false);
+  const [settingsTab, setSettingsTab] = useState(0);
+  const [optionEdit, setOptionEdit] = useState({ type: "", currentValue: "", value: "" });
+  const [optionSaving, setOptionSaving] = useState(false);
 
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
 
@@ -268,6 +277,18 @@ const Products = () => {
       setCategories(data.categories || []);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Kategoriyalarni olishda xato.");
+    }
+  }, []);
+
+  const fetchProductOptions = useCallback(async () => {
+    try {
+      const { data } = await getProductOptions();
+      setProductOptions({
+        models: data.models || [],
+        colors: data.colors || [],
+      });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Model va ranglarni olishda xato.");
     }
   }, []);
 
@@ -318,7 +339,8 @@ const Products = () => {
 
   useEffect(() => {
     fetchCategories();
-  }, [fetchCategories]);
+    fetchProductOptions();
+  }, [fetchCategories, fetchProductOptions]);
 
   useEffect(() => {
     const timer = setTimeout(() => fetchProducts(0, pageInfo.limit), 250);
@@ -364,12 +386,11 @@ const Products = () => {
   };
 
   const buildProductPayload = () => ({
-    category_id: productForm.category_id ? Number(productForm.category_id) : null,
+    category_name: productForm.category_name.trim() || null,
     name: productForm.name.trim(),
     model: productForm.model.trim() || null,
-    sku: productForm.sku.trim(),
     color: productForm.color.trim() || null,
-    unit: productForm.unit.trim() || "dona",
+    unit: "par",
     description: productForm.description.trim() || null,
     purchase_price: Number(productForm.purchase_price || 0),
     sale_price: Number(productForm.sale_price),
@@ -379,11 +400,6 @@ const Products = () => {
   const validateProduct = () => {
     if (!productForm.name.trim()) {
       toast.error("Mahsulot nomini kiriting.");
-      return false;
-    }
-
-    if (!productForm.sku.trim()) {
-      toast.error("SKU kiriting.");
       return false;
     }
 
@@ -405,12 +421,11 @@ const Products = () => {
   const openEditModal = (product) => {
     setSelectedProduct(product);
     setProductForm({
-      category_id: product.category_id || "",
+      category_name: product.category_name || "",
       name: product.name || "",
       model: product.model || "",
-      sku: product.sku || "",
       color: product.color || "",
-      unit: product.unit || "dona",
+      unit: "par",
       description: product.description || "",
       purchase_price: product.purchase_price ?? "",
       sale_price: product.sale_price ?? "",
@@ -447,6 +462,8 @@ const Products = () => {
 
       toast.success("Mahsulot qo'shildi.");
       closeProductModals();
+      fetchCategories();
+      fetchProductOptions();
       fetchProducts(0, pageInfo.limit);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Mahsulot qo'shishda xato.");
@@ -465,6 +482,8 @@ const Products = () => {
 
       toast.success("Mahsulot yangilandi.");
       closeProductModals();
+      fetchCategories();
+      fetchProductOptions();
       fetchProducts(pageInfo.offset, pageInfo.limit);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Mahsulotni yangilashda xato.");
@@ -601,6 +620,53 @@ const Products = () => {
       fetchCategories();
     } catch (error) {
       toast.error(error?.response?.data?.message || "Kategoriyani o'chirishda xato.");
+    }
+  };
+
+  const startOptionEdit = (type, value) => {
+    setOptionEdit({ type, currentValue: value, value });
+  };
+
+  const resetOptionEdit = () => {
+    setOptionEdit({ type: "", currentValue: "", value: "" });
+  };
+
+  const handleSaveOption = async () => {
+    const value = optionEdit.value.trim();
+    if (!value) {
+      toast.error("Yangi nomni kiriting.");
+      return;
+    }
+
+    setOptionSaving(true);
+    try {
+      await updateProductOption(optionEdit.type, optionEdit.currentValue, value);
+      toast.success(optionEdit.type === "model" ? "Model yangilandi." : "Rang yangilandi.");
+      resetOptionEdit();
+      fetchProductOptions();
+      fetchProducts(pageInfo.offset, pageInfo.limit);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Qiymatni yangilashda xato.");
+    } finally {
+      setOptionSaving(false);
+    }
+  };
+
+  const handleDeleteOption = async (type, value) => {
+    const label = type === "model" ? "model" : "rang";
+    if (!window.confirm(`“${value}” ${label}ini mahsulotlardan olib tashlaysizmi?`)) return;
+
+    setOptionSaving(true);
+    try {
+      await deleteProductOption(type, value);
+      toast.success(type === "model" ? "Model o'chirildi." : "Rang o'chirildi.");
+      resetOptionEdit();
+      fetchProductOptions();
+      fetchProducts(pageInfo.offset, pageInfo.limit);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Qiymatni o'chirishda xato.");
+    } finally {
+      setOptionSaving(false);
     }
   };
 
@@ -793,22 +859,130 @@ const Products = () => {
     </Box>
   );
 
+  const renderProductOptionSettings = (type) => {
+    const values = type === "model" ? productOptions.models : productOptions.colors;
+    const title = type === "model" ? "Modellar" : "Ranglar";
+
+    return (
+      <Box>
+        <Typography sx={{ mb: 0.5, fontSize: 17, fontWeight: 950, color: "#0f172a" }}>
+          {title}
+        </Typography>
+        <Typography sx={{ mb: 2, fontSize: 13, fontWeight: 700, color: "#64748b" }}>
+          Yangi qiymat mahsulot qo'shish oynasida yozilganda avtomatik ro'yxatga tushadi.
+        </Typography>
+
+        <Stack spacing={1}>
+          {values.length ? (
+            values.map((value) => {
+              const editing = optionEdit.type === type && optionEdit.currentValue === value;
+              return (
+                <Box
+                  key={value}
+                  sx={{
+                    p: 1.2,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    borderRadius: "13px",
+                    border: "1px solid rgba(148, 163, 184, 0.2)",
+                    background: "#f8fafc",
+                  }}
+                >
+                  {editing ? (
+                    <TextField
+                      autoFocus
+                      size="small"
+                      fullWidth
+                      value={optionEdit.value}
+                      onChange={(event) =>
+                        setOptionEdit((previous) => ({ ...previous, value: event.target.value }))
+                      }
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") handleSaveOption();
+                      }}
+                    />
+                  ) : (
+                    <Typography sx={{ flex: 1, fontWeight: 850, color: "#334155" }}>
+                      {value}
+                    </Typography>
+                  )}
+
+                  {editing ? (
+                    <>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        disabled={optionSaving}
+                        onClick={handleSaveOption}
+                        sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
+                      >
+                        Saqlash
+                      </Button>
+                      <Button
+                        size="small"
+                        onClick={resetOptionEdit}
+                        sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 850 }}
+                      >
+                        Bekor
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => startOptionEdit(type, value)}
+                        sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
+                      >
+                        O'zgartirish
+                      </Button>
+                      <Button
+                        size="small"
+                        color="error"
+                        variant="outlined"
+                        disabled={optionSaving}
+                        onClick={() => handleDeleteOption(type, value)}
+                        sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
+                      >
+                        O'chirish
+                      </Button>
+                    </>
+                  )}
+                </Box>
+              );
+            })
+          ) : (
+            <Typography sx={{ py: 5, textAlign: "center", color: "#64748b", fontWeight: 800 }}>
+              Hozircha {type === "model" ? "model" : "rang"} yo'q
+            </Typography>
+          )}
+        </Stack>
+      </Box>
+    );
+  };
+
   const renderProductFields = () => (
     <Stack spacing={2.1} sx={{ pt: 0.5 }}>
-      <TextField
-        select
+      <Autocomplete
+        freeSolo
         fullWidth
-        label="Kategoriya"
-        value={productForm.category_id}
-        onChange={handleProductChange("category_id")}
-      >
-        <MenuItem value="">Kategoriyasiz</MenuItem>
-        {activeCategories.map((category) => (
-          <MenuItem key={category.id} value={category.id}>
-            {category.name}
-          </MenuItem>
-        ))}
-      </TextField>
+        options={activeCategories.map((category) => category.name)}
+        value={productForm.category_name}
+        onChange={(_event, value) =>
+          setProductForm((previous) => ({ ...previous, category_name: value || "" }))
+        }
+        onInputChange={(_event, value) =>
+          setProductForm((previous) => ({ ...previous, category_name: value }))
+        }
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Kategoriya"
+            helperText="Ro'yxatdan tanlang yoki yangi kategoriya nomini yozing"
+          />
+        )}
+      />
 
       <Box
         sx={{
@@ -824,22 +998,38 @@ const Products = () => {
           onChange={handleProductChange("name")}
         />
 
-        <TextField
-          required
-          label="SKU"
-          value={productForm.sku}
-          onChange={handleProductChange("sku")}
-        />
-
-        <TextField
-          label="Model"
+        <Autocomplete
+          freeSolo
+          options={productOptions.models}
           value={productForm.model}
-          onChange={handleProductChange("model")}
+          onChange={(_event, value) =>
+            setProductForm((previous) => ({ ...previous, model: value || "" }))
+          }
+          onInputChange={(_event, value) =>
+            setProductForm((previous) => ({ ...previous, model: value }))
+          }
+          renderInput={(params) => <TextField {...params} label="Model" />}
         />
 
-        <TextField label="Rang" value={productForm.color} onChange={handleProductChange("color")} />
+        <Autocomplete
+          freeSolo
+          options={productOptions.colors}
+          value={productForm.color}
+          onChange={(_event, value) =>
+            setProductForm((previous) => ({ ...previous, color: value || "" }))
+          }
+          onInputChange={(_event, value) =>
+            setProductForm((previous) => ({ ...previous, color: value }))
+          }
+          renderInput={(params) => <TextField {...params} label="Rang" />}
+        />
 
-        <TextField label="Birlik" value={productForm.unit} onChange={handleProductChange("unit")} />
+        <TextField
+          label="Hisob birligi"
+          value="par"
+          disabled
+          helperText="Tayyor mahsulot omborda par hisobida yuritiladi."
+        />
 
         <TextField
           type="number"
@@ -858,6 +1048,19 @@ const Products = () => {
           slotProps={{ htmlInput: { min: 0 } }}
         />
       </Box>
+
+      <Button
+        variant="outlined"
+        onClick={() => setCategoryOpen(true)}
+        sx={{
+          alignSelf: "flex-start",
+          borderRadius: "11px",
+          textTransform: "none",
+          fontWeight: 900,
+        }}
+      >
+        Kategoriya, model va ranglarni boshqarish
+      </Button>
 
       <TextField
         fullWidth
@@ -1051,23 +1254,6 @@ const Products = () => {
             {canManage && (
               <Stack direction={{ xs: "column", sm: "row" }} spacing={1.4}>
                 <Button
-                  variant="outlined"
-                  onClick={() => setCategoryOpen(true)}
-                  sx={{
-                    minWidth: 150,
-                    height: 42,
-                    borderRadius: "13px",
-                    textTransform: "none",
-                    fontWeight: 900,
-                    color: "#0f172a",
-                    borderColor: "rgba(37, 99, 235, 0.22)",
-                    background: "#fff",
-                  }}
-                >
-                  Kategoriyalar
-                </Button>
-
-                <Button
                   variant="contained"
                   onClick={openCreateModal}
                   sx={{
@@ -1251,7 +1437,7 @@ const Products = () => {
                               color: "#64748b",
                             }}
                           >
-                            {product.color || "Rang ko'rsatilmagan"} · {product.unit || "dona"}
+                            {product.color || "Rang ko'rsatilmagan"} · {product.unit || "par"}
                           </Typography>
                         </Box>
                       </Box>
@@ -1479,8 +1665,9 @@ const Products = () => {
         onClose={() => {
           setCategoryOpen(false);
           resetCategoryForm();
+          resetOptionEdit();
         }}
-        title="Kategoriyalar"
+        title="Mahsulot sozlamalari"
         actions={
           <>
             {selectedCategory && (
@@ -1496,6 +1683,7 @@ const Products = () => {
               onClick={() => {
                 setCategoryOpen(false);
                 resetCategoryForm();
+                resetOptionEdit();
               }}
               sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
             >
@@ -1504,172 +1692,194 @@ const Products = () => {
           </>
         }
       >
-        <Box
-          sx={{
-            mb: 2,
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", sm: "1fr 1.5fr auto" },
-            gap: 1.4,
+        <Tabs
+          value={settingsTab}
+          onChange={(_event, value) => {
+            setSettingsTab(value);
+            resetCategoryForm();
+            resetOptionEdit();
           }}
+          variant="fullWidth"
+          sx={{ mb: 2.5, borderBottom: "1px solid rgba(148, 163, 184, 0.2)" }}
         >
-          <TextField
-            size="small"
-            label="Kategoriya nomi"
-            value={categoryForm.name}
-            onChange={(event) =>
-              setCategoryForm((previous) => ({
-                ...previous,
-                name: event.target.value,
-              }))
-            }
-          />
+          <Tab label="Kategoriyalar" sx={{ textTransform: "none", fontWeight: 900 }} />
+          <Tab label="Modellar" sx={{ textTransform: "none", fontWeight: 900 }} />
+          <Tab label="Ranglar" sx={{ textTransform: "none", fontWeight: 900 }} />
+        </Tabs>
 
-          <TextField
-            size="small"
-            label="Tavsif"
-            value={categoryForm.description}
-            onChange={(event) =>
-              setCategoryForm((previous) => ({
-                ...previous,
-                description: event.target.value,
-              }))
-            }
-          />
-
-          <Button
-            variant="contained"
-            onClick={handleSaveCategory}
-            disabled={categorySaving}
-            sx={{
-              height: 40,
-              borderRadius: "12px",
-              textTransform: "none",
-              fontWeight: 900,
-              background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-            }}
-          >
-            {selectedCategory ? "Saqlash" : "Qo'shish"}
-          </Button>
-        </Box>
-
-        <Box
-          sx={{
-            mb: 2,
-            px: 1.2,
-            py: 0.7,
-            borderRadius: "14px",
-            background: "#f8fafc",
-            border: "1px solid rgba(148, 163, 184, 0.18)",
-          }}
-        >
-          <FormControlLabel
-            control={
-              <Switch
-                checked={categoryForm.is_active}
+        {settingsTab === 0 && (
+          <>
+            <Box
+              sx={{
+                mb: 2,
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", sm: "1fr 1.5fr auto" },
+                gap: 1.4,
+              }}
+            >
+              <TextField
+                size="small"
+                label="Kategoriya nomi"
+                value={categoryForm.name}
                 onChange={(event) =>
                   setCategoryForm((previous) => ({
                     ...previous,
-                    is_active: event.target.checked,
+                    name: event.target.value,
                   }))
                 }
               />
-            }
-            label="Faol kategoriya"
-          />
-        </Box>
 
-        <Card sx={{ boxShadow: "none" }}>
-          <Box sx={{ overflowX: "auto" }}>
-            <Table
-              size="small"
+              <TextField
+                size="small"
+                label="Tavsif"
+                value={categoryForm.description}
+                onChange={(event) =>
+                  setCategoryForm((previous) => ({
+                    ...previous,
+                    description: event.target.value,
+                  }))
+                }
+              />
+
+              <Button
+                variant="contained"
+                onClick={handleSaveCategory}
+                disabled={categorySaving}
+                sx={{
+                  height: 40,
+                  borderRadius: "12px",
+                  textTransform: "none",
+                  fontWeight: 900,
+                  background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                }}
+              >
+                {selectedCategory ? "Saqlash" : "Qo'shish"}
+              </Button>
+            </Box>
+
+            <Box
               sx={{
-                minWidth: 680,
-                "& th": {
-                  py: 1.5,
-                  fontSize: 12,
-                  fontWeight: 950,
-                  color: "#64748b",
-                  textTransform: "uppercase",
-                  background: "#f8fafc",
-                },
-                "& td": {
-                  py: 1.4,
-                  borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
-                },
+                mb: 2,
+                px: 1.2,
+                py: 0.7,
+                borderRadius: "14px",
+                background: "#f8fafc",
+                border: "1px solid rgba(148, 163, 184, 0.18)",
               }}
             >
-              <TableHead>
-                <TableRow>
-                  <TableCell>Nomi</TableCell>
-                  <TableCell>Tavsif</TableCell>
-                  <TableCell>Holati</TableCell>
-                  <TableCell align="right">Amallar</TableCell>
-                </TableRow>
-              </TableHead>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={categoryForm.is_active}
+                    onChange={(event) =>
+                      setCategoryForm((previous) => ({
+                        ...previous,
+                        is_active: event.target.checked,
+                      }))
+                    }
+                  />
+                }
+                label="Faol kategoriya"
+              />
+            </Box>
 
-              <TableBody>
-                {categories.length ? (
-                  categories.map((category) => (
-                    <TableRow key={category.id} hover>
-                      <TableCell sx={{ fontWeight: 900, color: "#0f172a" }}>
-                        {category.name}
-                      </TableCell>
-
-                      <TableCell sx={{ fontWeight: 700, color: "#64748b" }}>
-                        {category.description || "-"}
-                      </TableCell>
-
-                      <TableCell>
-                        <StatusChip active={category.is_active} />
-                      </TableCell>
-
-                      <TableCell align="right">
-                        <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            onClick={() => startCategoryEdit(category)}
-                            sx={{
-                              borderRadius: "10px",
-                              textTransform: "none",
-                              fontWeight: 900,
-                            }}
-                          >
-                            O'zgartirish
-                          </Button>
-
-                          <Button
-                            size="small"
-                            color="error"
-                            variant="outlined"
-                            onClick={() => handleDeleteCategory(category)}
-                            sx={{
-                              borderRadius: "10px",
-                              textTransform: "none",
-                              fontWeight: 900,
-                            }}
-                          >
-                            O'chirish
-                          </Button>
-                        </Stack>
-                      </TableCell>
+            <Card sx={{ boxShadow: "none" }}>
+              <Box sx={{ overflowX: "auto" }}>
+                <Table
+                  size="small"
+                  sx={{
+                    minWidth: 680,
+                    "& th": {
+                      py: 1.5,
+                      fontSize: 12,
+                      fontWeight: 950,
+                      color: "#64748b",
+                      textTransform: "uppercase",
+                      background: "#f8fafc",
+                    },
+                    "& td": {
+                      py: 1.4,
+                      borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+                    },
+                  }}
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Nomi</TableCell>
+                      <TableCell>Tavsif</TableCell>
+                      <TableCell>Holati</TableCell>
+                      <TableCell align="right">Amallar</TableCell>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={4}
-                      align="center"
-                      sx={{ py: 6, color: "#64748b", fontWeight: 850 }}
-                    >
-                      Kategoriyalar topilmadi
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </Box>
-        </Card>
+                  </TableHead>
+
+                  <TableBody>
+                    {categories.length ? (
+                      categories.map((category) => (
+                        <TableRow key={category.id} hover>
+                          <TableCell sx={{ fontWeight: 900, color: "#0f172a" }}>
+                            {category.name}
+                          </TableCell>
+
+                          <TableCell sx={{ fontWeight: 700, color: "#64748b" }}>
+                            {category.description || "-"}
+                          </TableCell>
+
+                          <TableCell>
+                            <StatusChip active={category.is_active} />
+                          </TableCell>
+
+                          <TableCell align="right">
+                            <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                onClick={() => startCategoryEdit(category)}
+                                sx={{
+                                  borderRadius: "10px",
+                                  textTransform: "none",
+                                  fontWeight: 900,
+                                }}
+                              >
+                                O'zgartirish
+                              </Button>
+
+                              <Button
+                                size="small"
+                                color="error"
+                                variant="outlined"
+                                onClick={() => handleDeleteCategory(category)}
+                                sx={{
+                                  borderRadius: "10px",
+                                  textTransform: "none",
+                                  fontWeight: 900,
+                                }}
+                              >
+                                O'chirish
+                              </Button>
+                            </Stack>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={4}
+                          align="center"
+                          sx={{ py: 6, color: "#64748b", fontWeight: 850 }}
+                        >
+                          Kategoriyalar topilmadi
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </Box>
+            </Card>
+          </>
+        )}
+
+        {settingsTab === 1 && renderProductOptionSettings("model")}
+        {settingsTab === 2 && renderProductOptionSettings("color")}
       </PremiumDialog>
     </Box>
   );

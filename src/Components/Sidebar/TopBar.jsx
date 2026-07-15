@@ -17,7 +17,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../Context/AuthContext";
@@ -32,6 +32,7 @@ import { clearSession } from "../../utils/auth";
 import { hasPermission } from "../../utils/permissions";
 import { deleteCompanyLogo, updateCompanyLogo } from "../../api/companyBranding";
 import { getCompanyLogoUrl } from "../../utils/company";
+import { getWarehouses } from "../../api/inventory";
 
 const roleLabels = {
   super_admin: "Super Admin",
@@ -81,12 +82,6 @@ const mobileLinks = [
     roles: ["super_admin", "admin"],
     feature: "supplier_accounting",
     permission: "material_purchases.view",
-  },
-  {
-    label: "Ombor",
-    path: "/inventory",
-    roles: ["super_admin", "admin"],
-    permission: "inventory.view",
   },
   {
     label: "Xarajatlar",
@@ -141,6 +136,58 @@ export default function TopBar() {
   const [companyLogoFile, setCompanyLogoFile] = useState(null);
   const [companyLogoPreview, setCompanyLogoPreview] = useState("");
   const [companyLogoSaving, setCompanyLogoSaving] = useState(false);
+  const [warehouses, setWarehouses] = useState([]);
+
+  const loadWarehouses = useCallback(async () => {
+    if (
+      !["super_admin", "admin", "worker"].includes(user?.role) ||
+      !hasPermission(user, "inventory.view")
+    ) {
+      setWarehouses([]);
+      return;
+    }
+    try {
+      const { data } = await getWarehouses();
+      setWarehouses((data.warehouses || []).filter((warehouse) => warehouse.is_active !== false));
+    } catch {
+      setWarehouses([]);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    loadWarehouses();
+    window.addEventListener("warehouses-updated", loadWarehouses);
+    return () => window.removeEventListener("warehouses-updated", loadWarehouses);
+  }, [loadWarehouses]);
+
+  const resolvedMobileLinks = useMemo(() => {
+    const canManageWarehouses =
+      hasPermission(user, "inventory.warehouses") || hasPermission(user, "inventory.manage");
+    const inventoryLinks = [
+      canManageWarehouses && {
+        label: "Omborlar boshqaruvi",
+        path: "/inventory/warehouses",
+        roles: ["super_admin", "admin", "worker"],
+        permission: "inventory.warehouses",
+      },
+      ...warehouses.map((warehouse) => ({
+        label: warehouse.name,
+        path: `/inventory/warehouses/${warehouse.id}`,
+        roles: ["super_admin", "admin", "worker"],
+        permission: "inventory.view",
+      })),
+      {
+        label: "Inventarizatsiya",
+        path: "/inventory/counts",
+        roles: ["super_admin", "admin", "worker"],
+        permission: "inventory.view",
+      },
+    ].filter(Boolean);
+
+    return mobileLinks.flatMap((item) =>
+      item.path === "/expenses" ? [...inventoryLinks, item] : [item],
+    );
+  }, [user, warehouses]);
 
   const [form, setForm] = useState({
     first_name: "",
@@ -477,7 +524,7 @@ export default function TopBar() {
           </Typography>
 
           <List className="flex-1">
-            {mobileLinks
+            {resolvedMobileLinks
               .filter(
                 (item) =>
                   (!item.roles || item.roles.includes(user?.role)) &&

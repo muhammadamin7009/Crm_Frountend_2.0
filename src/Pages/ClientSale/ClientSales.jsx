@@ -36,9 +36,11 @@ import {
   updateClientSale,
 } from "../../api/clientSales";
 import { createClientPayment } from "../../api/clientPayments";
+import { getInventoryStock, getWarehouses } from "../../api/inventory";
 
 const emptyForm = {
   client_id: "",
+  warehouse_id: "",
   product_id: "",
   quantity: "",
   unit_price: "",
@@ -284,6 +286,8 @@ const ClientSales = () => {
   const [sales, setSales] = useState([]);
   const [clients, setClients] = useState([]);
   const [products, setProducts] = useState([]);
+  const [warehouses, setWarehouses] = useState([]);
+  const [inventoryStock, setInventoryStock] = useState([]);
   const [summary, setSummary] = useState([]);
   const [balance, setBalance] = useState({
     total_amount: 0,
@@ -334,6 +338,59 @@ const ClientSales = () => {
     [form.product_id, products],
   );
 
+  const activeWarehouses = useMemo(
+    () => warehouses.filter((warehouse) => warehouse.is_active !== false),
+    [warehouses],
+  );
+
+  const stockByProduct = useMemo(() => {
+    const result = new Map();
+    for (const row of inventoryStock) {
+      if (row.item_type !== "product") continue;
+      result.set(`${Number(row.warehouse_id)}:${Number(row.item_id)}`, Number(row.quantity || 0));
+    }
+    return result;
+  }, [inventoryStock]);
+
+  const getAvailableStock = useCallback(
+    (productId, warehouseId = form.warehouse_id) =>
+      stockByProduct.get(`${Number(warehouseId)}:${Number(productId)}`) || 0,
+    [form.warehouse_id, stockByProduct],
+  );
+
+  const requestedByProduct = useMemo(() => {
+    const requested = new Map();
+    for (const item of form.items) {
+      if (!item.product_id) continue;
+      const productId = Number(item.product_id);
+      requested.set(productId, (requested.get(productId) || 0) + Number(item.quantity || 0));
+    }
+    return requested;
+  }, [form.items]);
+
+  const selectedSaleAvailableStock = useMemo(() => {
+    if (!selectedSale?.inventory_tracked_at || !form.product_id) return 0;
+    const currentStock = getAvailableStock(form.product_id);
+    const restoresOriginalStock =
+      Number(selectedSale.product_id) === Number(form.product_id) &&
+      Number(selectedSale.warehouse_id) === Number(form.warehouse_id);
+    return currentStock + (restoresOriginalStock ? Number(selectedSale.quantity || 0) : 0);
+  }, [form.product_id, form.warehouse_id, getAvailableStock, selectedSale]);
+
+  const selectedSaleQuantityExceeded = Boolean(
+    selectedSale?.inventory_tracked_at &&
+    form.product_id &&
+    Number(form.quantity || 0) > selectedSaleAvailableStock,
+  );
+
+  const bulkSaleQuantityExceeded = useMemo(
+    () =>
+      [...requestedByProduct.entries()].some(
+        ([productId, requestedQuantity]) => requestedQuantity > getAvailableStock(productId),
+      ),
+    [getAvailableStock, requestedByProduct],
+  );
+
   const preview = useMemo(() => {
     const total = selectedSale
       ? Number(form.quantity || 0) * Number(form.unit_price || 0)
@@ -354,7 +411,7 @@ const ClientSales = () => {
 
   const fetchDictionaries = useCallback(async () => {
     try {
-      const [usersRes, productsRes] = await Promise.all([
+      const [usersRes, productsRes, warehousesRes, stockRes] = await Promise.all([
         getUsers({
           offset: 0,
           limit: 100,
@@ -368,12 +425,16 @@ const ClientSales = () => {
           sort_by: "name",
           sort_order: "asc",
         }),
+        getWarehouses(),
+        getInventoryStock({ item_type: "product", limit: 200 }),
       ]);
 
       setClients(
         (usersRes.data.users || usersRes.data.list || []).filter((user) => user.role === "client"),
       );
       setProducts(productsRes.data.products || []);
+      setWarehouses(warehousesRes.data.warehouses || []);
+      setInventoryStock(stockRes.data.stock || []);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Mijoz va mahsulotlarni olishda xato.");
     }
@@ -457,7 +518,14 @@ const ClientSales = () => {
     } finally {
       setSummaryLoading(false);
     }
-  }, [buildParams, filters.client_id, filters.date_from, filters.date_to, filters.group_by, isSuperAdmin]);
+  }, [
+    buildParams,
+    filters.client_id,
+    filters.date_from,
+    filters.date_to,
+    filters.group_by,
+    isSuperAdmin,
+  ]);
 
   useEffect(() => {
     fetchDictionaries();
@@ -540,11 +608,14 @@ const ClientSales = () => {
 
   const openCreateModal = () => {
     const product = products.find((item) => Number(item.id) === Number(filters.product_id));
+    const defaultWarehouse =
+      activeWarehouses.find((warehouse) => warehouse.is_default) || activeWarehouses[0];
 
     setSelectedSale(null);
     setForm({
       ...emptyForm,
       client_id: filters.client_id || "",
+      warehouse_id: defaultWarehouse?.id || "",
       items: [
         {
           product_id: filters.product_id || "",
@@ -560,6 +631,7 @@ const ClientSales = () => {
     setSelectedSale(sale);
     setForm({
       client_id: sale.client_id || "",
+      warehouse_id: sale.warehouse_id || "",
       product_id: sale.product_id || "",
       quantity: sale.quantity ?? "",
       unit_price: sale.unit_price ?? "",
@@ -679,9 +751,20 @@ const ClientSales = () => {
       return false;
     }
 
+    if (!selectedSale && !form.warehouse_id) {
+      toast.error("Mahsulot sotiladigan omborni tanlang.");
+      return false;
+    }
+
     if (selectedSale) {
       if (!form.product_id || !form.quantity || Number(form.quantity) <= 0) {
         toast.error("Mahsulot va miqdorni to'g'ri kiriting.");
+        return false;
+      }
+      if (selectedSaleQuantityExceeded) {
+        toast.error(
+          `Omborda faqat ${formatNumber(selectedSaleAvailableStock)} par mahsulot mavjud.`,
+        );
         return false;
       }
     } else if (
@@ -708,11 +791,30 @@ const ClientSales = () => {
       return false;
     }
 
+    if (!selectedSale) {
+      const requested = new Map();
+      for (const item of form.items) {
+        const productId = Number(item.product_id);
+        requested.set(productId, (requested.get(productId) || 0) + Number(item.quantity || 0));
+      }
+      for (const [productId, requestedQuantity] of requested) {
+        const available = getAvailableStock(productId);
+        if (requestedQuantity > available) {
+          const product = products.find((item) => Number(item.id) === productId);
+          toast.error(
+            `${product?.name || "Mahsulot"} omborda yetarli emas. Mavjud: ${formatNumber(available)}`,
+          );
+          return false;
+        }
+      }
+    }
+
     return true;
   };
 
   const buildPayload = () => ({
     client_id: Number(form.client_id),
+    ...(form.warehouse_id ? { warehouse_id: Number(form.warehouse_id) } : {}),
     product_id: Number(form.product_id),
     quantity: Number(form.quantity),
     unit_price: Number(form.unit_price),
@@ -723,6 +825,7 @@ const ClientSales = () => {
 
   const buildBulkPayload = () => ({
     client_id: Number(form.client_id),
+    warehouse_id: Number(form.warehouse_id),
     paid_amount: Number(form.paid_amount || 0),
     sold_at: form.sold_at || undefined,
     note: form.note.trim() || null,
@@ -749,6 +852,7 @@ const ClientSales = () => {
 
       closeModals();
       refreshPage();
+      fetchDictionaries();
     } catch (error) {
       toast.error(error?.response?.data?.message || "Savdoni saqlashda xato.");
     } finally {
@@ -1281,9 +1385,16 @@ const ClientSales = () => {
                       </Typography>
 
                       <Typography
+                        sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 750, color: "#2563eb" }}
+                      >
+                        {sale.warehouse_name || "Tarixiy savdo (omborsiz)"}
+                      </Typography>
+
+                      <Typography
                         sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 700, color: "#64748b" }}
                       >
-                        {formatNumber(sale.quantity)} dona × {formatMoney(sale.unit_price)}
+                        {formatNumber(sale.quantity)} {sale.product_unit || "par"} ×{" "}
+                        {formatMoney(sale.unit_price)}
                       </Typography>
                     </TableCell>
 
@@ -1434,7 +1545,11 @@ const ClientSales = () => {
             <Button
               variant="contained"
               onClick={handleSave}
-              disabled={saving}
+              disabled={
+                saving ||
+                selectedSaleQuantityExceeded ||
+                (!selectedSale && bulkSaleQuantityExceeded)
+              }
               sx={{
                 minWidth: 120,
                 borderRadius: "12px",
@@ -1471,6 +1586,24 @@ const ClientSales = () => {
               ))}
             </TextField>
 
+            {(!selectedSale || selectedSale.inventory_tracked_at) && (
+              <TextField
+                select
+                required
+                label="Mahsulot chiqadigan ombor"
+                value={form.warehouse_id}
+                onChange={handleFormChange("warehouse_id")}
+                helperText="Qoldiq shu ombordan avtomatik kamayadi"
+              >
+                {activeWarehouses.map((warehouse) => (
+                  <MenuItem key={warehouse.id} value={warehouse.id}>
+                    {warehouse.name}
+                    {warehouse.is_default ? " (asosiy)" : ""}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+
             {selectedSale && (
               <>
                 <TextField
@@ -1482,7 +1615,8 @@ const ClientSales = () => {
                 >
                   {products.map((product) => (
                     <MenuItem key={product.id} value={product.id}>
-                      {product.name} - {formatMoney(product.sale_price)}
+                      {product.name} - {formatMoney(product.sale_price)} | Omborda:{" "}
+                      {formatNumber(getAvailableStock(product.id))}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -1493,6 +1627,14 @@ const ClientSales = () => {
                   label="Miqdor"
                   value={form.quantity}
                   onChange={handleFormChange("quantity")}
+                  error={selectedSaleQuantityExceeded}
+                  helperText={
+                    form.product_id
+                      ? selectedSaleQuantityExceeded
+                        ? `Omborda faqat ${formatNumber(selectedSaleAvailableStock)} par mavjud`
+                        : `Omborda: ${formatNumber(selectedSaleAvailableStock)} par`
+                      : "Avval mahsulotni tanlang"
+                  }
                   slotProps={{ htmlInput: { min: 0, step: 1 } }}
                 />
 
@@ -1587,8 +1729,13 @@ const ClientSales = () => {
                       }
                     >
                       {products.map((product) => (
-                        <MenuItem key={product.id} value={product.id}>
-                          {product.name} - {formatMoney(product.sale_price)}
+                        <MenuItem
+                          key={product.id}
+                          value={product.id}
+                          disabled={!form.warehouse_id || getAvailableStock(product.id) <= 0}
+                        >
+                          {product.name} - {formatMoney(product.sale_price)} | Omborda:{" "}
+                          {formatNumber(getAvailableStock(product.id))}
                         </MenuItem>
                       ))}
                     </TextField>
@@ -1599,6 +1746,19 @@ const ClientSales = () => {
                       value={item.quantity}
                       onChange={(event) =>
                         handleSaleItemChange(index, "quantity", event.target.value)
+                      }
+                      error={
+                        Boolean(item.product_id) &&
+                        Number(requestedByProduct.get(Number(item.product_id)) || 0) >
+                          getAvailableStock(item.product_id)
+                      }
+                      helperText={
+                        item.product_id
+                          ? Number(requestedByProduct.get(Number(item.product_id)) || 0) >
+                            getAvailableStock(item.product_id)
+                            ? `Omborda faqat ${formatNumber(getAvailableStock(item.product_id))} par mavjud`
+                            : `Omborda: ${formatNumber(getAvailableStock(item.product_id))} par`
+                          : "Avval mahsulotni tanlang"
                       }
                       slotProps={{ htmlInput: { min: 0, step: 1 } }}
                     />
@@ -1629,6 +1789,23 @@ const ClientSales = () => {
                   </Box>
                 ))}
               </Stack>
+            </Box>
+          )}
+
+          {selectedSale && !selectedSale.inventory_tracked_at && (
+            <Box
+              sx={{
+                p: 1.6,
+                borderRadius: "14px",
+                color: "#92400e",
+                background: "rgba(245, 158, 11, 0.1)",
+                border: "1px solid rgba(245, 158, 11, 0.25)",
+                fontSize: 13,
+                fontWeight: 750,
+              }}
+            >
+              Bu eski savdo ombor hisobi yoqilishidan oldin yaratilgan. Uni tahrirlash qoldiqni
+              o'zgartirmaydi.
             </Box>
           )}
 

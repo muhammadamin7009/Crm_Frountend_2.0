@@ -38,9 +38,7 @@ const AppRouter = () => {
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route path="/" element={<Dashboard />} />
-          <Route
-            element={<ProtectedRoute allowedPermissions={["products.view"]} />}
-          >
+          <Route element={<ProtectedRoute allowedPermissions={["products.view"]} />}>
             <Route path="/products" element={<Products />} />
             <Route path="/products/:id" element={<Product />} />
           </Route>
@@ -131,12 +129,24 @@ const AppRouter = () => {
           <Route
             element={
               <ProtectedRoute
-                allowedRoles={["super_admin", "admin"]}
+                allowedRoles={["super_admin", "admin", "worker"]}
                 allowedPermissions={["inventory.view"]}
               />
             }
           >
             <Route path="/inventory" element={<Inventory />} />
+            <Route path="/inventory/warehouses/:warehouseId" element={<Inventory />} />
+            <Route path="/inventory/counts" element={<Inventory />} />
+          </Route>
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={["super_admin", "admin", "worker"]}
+                allowedPermissions={["inventory.warehouses", "inventory.manage"]}
+              />
+            }
+          >
+            <Route path="/inventory/warehouses" element={<Inventory />} />
           </Route>
 
           <Route

@@ -17,7 +17,14 @@ import { getPermissionSettings, updateUserPermissions } from "../../api/permissi
 
 const presets = [
   {
+    label: "Omborchi",
+    roles: ["worker"],
+    description: "Ombor qoldig'i, kirim-chiqim va inventarizatsiya bilan ishlaydi.",
+    permissions: ["inventory.view", "inventory.movements", "inventory.count"],
+  },
+  {
     label: "Ishlab chiqarish admini",
+    roles: ["admin"],
     description: "Hodim, mahsulot va ish hisobotlarini yuritadi. Moliyaviy sirlar yopiq qoladi.",
     permissions: [
       "dashboard.view",
@@ -30,25 +37,19 @@ const presets = [
   },
   {
     label: "Savdo admini",
+    roles: ["admin"],
     description: "Mijoz savdosi va mijoz to'lovlarini yuritadi.",
-    permissions: [
-      "dashboard.view",
-      "products.view",
-      "client_sales.view",
-      "client_sales.manage",
-    ],
+    permissions: ["dashboard.view", "products.view", "client_sales.view", "client_sales.manage"],
   },
   {
     label: "Homashyo admini",
+    roles: ["admin"],
     description: "Ta'minotchi, homashyo xaridi va to'lovlarini yuritadi.",
-    permissions: [
-      "dashboard.view",
-      "material_purchases.view",
-      "material_purchases.manage",
-    ],
+    permissions: ["dashboard.view", "material_purchases.view", "material_purchases.manage"],
   },
   {
     label: "Hisobchi",
+    roles: ["admin"],
     description: "Oylik, kassa, xarajat va moliyaviy hisobotlarni ko'radi va yuritadi.",
     permissions: [
       "dashboard.view",
@@ -88,6 +89,9 @@ const normalizePermissions = (permissions = []) => {
   [...current].forEach((key) => {
     const viewKey = getRequiredViewPermission(key);
     if (viewKey) current.add(viewKey);
+    if (key.startsWith("inventory.") && key !== "inventory.view") {
+      current.add("inventory.view");
+    }
   });
 
   return [...current];
@@ -107,14 +111,29 @@ const Permissions = () => {
   );
 
   const selectedSet = useMemo(() => new Set(selectedPermissions), [selectedPermissions]);
+  const visibleGroups = useMemo(() => {
+    if (selectedAdmin?.role !== "worker") return groups;
+    return groups
+      .filter((group) => group.group === "Ombor")
+      .map((group) => ({
+        ...group,
+        permissions: group.permissions.filter(
+          (permission) => permission.key !== "inventory.manage",
+        ),
+      }));
+  }, [groups, selectedAdmin]);
+  const visiblePresets = useMemo(
+    () => presets.filter((preset) => preset.roles.includes(selectedAdmin?.role)),
+    [selectedAdmin],
+  );
 
   const fetchSettings = async () => {
     setLoading(true);
     try {
       const { data } = await getPermissionSettings();
-      setAdmins(data.admins || []);
+      setAdmins(data.users || data.admins || []);
       setGroups(data.groups || []);
-      const firstAdmin = data.admins?.[0];
+      const firstAdmin = (data.users || data.admins)?.[0];
       setSelectedId(firstAdmin?.id || null);
       setSelectedPermissions(normalizePermissions(firstAdmin?.permissions || []));
     } catch (error) {
@@ -142,6 +161,11 @@ const Permissions = () => {
 
         const manageKey = getManagePermission(key);
         if (manageKey) current.delete(manageKey);
+        if (key === "inventory.view") {
+          [...current]
+            .filter((permission) => permission.startsWith("inventory."))
+            .forEach((permission) => current.delete(permission));
+        }
       } else {
         current.add(key);
 
@@ -209,11 +233,11 @@ const Permissions = () => {
             Ruxsatlar va nazorat
           </Typography>
           <Typography variant="body2" className="mt-1 text-slate-500">
-            Admin qaysi bo'limga kirishi va qaysi amalni bajarishini super admin belgilaydi.
+            Admin bo'limlari va omborchi hodimning amallarini super admin belgilaydi.
           </Typography>
         </Box>
         <Chip
-          label={`${admins.length} ta admin`}
+          label={`${admins.length} ta boshqariladigan foydalanuvchi`}
           sx={{ bgcolor: "#fff", border: "1px solid #e6edf7", fontWeight: 900 }}
         />
       </Box>
@@ -221,7 +245,7 @@ const Permissions = () => {
       <Box className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-hidden lg:grid-cols-[330px_1fr]">
         <Paper elevation={0} className="crm-card min-h-0 overflow-hidden p-3">
           <Typography fontWeight={950} className="px-2 pb-3 text-slate-950">
-            Adminlar
+            Admin va omborchilar
           </Typography>
           <Box className="max-h-full space-y-2 overflow-auto pr-1">
             {admins.length ? (
@@ -243,7 +267,10 @@ const Permissions = () => {
                       textAlign: "left",
                     }}
                   >
-                    <Avatar src={getImageUrl(admin.user_image)} sx={{ width: 42, height: 42, bgcolor: "#8f1d20" }}>
+                    <Avatar
+                      src={getImageUrl(admin.user_image)}
+                      sx={{ width: 42, height: 42, bgcolor: "#8f1d20" }}
+                    >
                       {admin.first_name?.[0]?.toUpperCase() || "A"}
                     </Avatar>
                     <Box className="min-w-0 flex-1">
@@ -251,6 +278,7 @@ const Permissions = () => {
                         {getFullName(admin) || admin.username}
                       </Typography>
                       <Typography variant="body2" className="truncate text-slate-500">
+                        {admin.role === "worker" ? "Ishchi" : "Admin"} •{" "}
                         {admin.permissions?.length || 0} ta ruxsat
                       </Typography>
                     </Box>
@@ -278,7 +306,11 @@ const Permissions = () => {
                   </Typography>
                 </Box>
                 <Stack direction="row" spacing={1}>
-                  <Button variant="outlined" onClick={() => setSelectedPermissions([])} disabled={saving}>
+                  <Button
+                    variant="outlined"
+                    onClick={() => setSelectedPermissions([])}
+                    disabled={saving}
+                  >
                     Hammasini o'chirish
                   </Button>
                   <Button variant="contained" onClick={handleSave} disabled={saving}>
@@ -288,12 +320,17 @@ const Permissions = () => {
               </Box>
 
               <Box className="mb-4 grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
-                {presets.map((preset) => (
+                {visiblePresets.map((preset) => (
                   <Button
                     key={preset.label}
                     variant="outlined"
                     onClick={() => applyPreset(preset)}
-                    sx={{ justifyContent: "flex-start", p: 1.4, textAlign: "left", alignItems: "flex-start" }}
+                    sx={{
+                      justifyContent: "flex-start",
+                      p: 1.4,
+                      textAlign: "left",
+                      alignItems: "flex-start",
+                    }}
                   >
                     <Box>
                       <Typography fontWeight={950}>{preset.label}</Typography>
@@ -309,13 +346,17 @@ const Permissions = () => {
 
               <Box className="min-h-0 flex-1 overflow-auto pr-1 pt-4">
                 <Box className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-                  {groups.map((group) => {
+                  {visibleGroups.map((group) => {
                     const keys = group.permissions.map((permission) => permission.key);
                     const checkedCount = keys.filter((key) => selectedSet.has(key)).length;
                     const allSelected = checkedCount === keys.length;
 
                     return (
-                      <Paper key={group.group} elevation={0} className="border border-slate-200 p-4">
+                      <Paper
+                        key={group.group}
+                        elevation={0}
+                        className="border border-slate-200 p-4"
+                      >
                         <Box className="mb-2 flex items-center justify-between gap-3">
                           <Box>
                             <Typography fontWeight={950}>{group.group}</Typography>
@@ -323,7 +364,11 @@ const Permissions = () => {
                               {checkedCount} / {keys.length} ruxsat yoqilgan
                             </Typography>
                           </Box>
-                          <Button size="small" variant="outlined" onClick={() => toggleGroup(group)}>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() => toggleGroup(group)}
+                          >
                             {allSelected ? "O'chirish" : "Hammasi"}
                           </Button>
                         </Box>
@@ -362,7 +407,9 @@ const Permissions = () => {
             </Box>
           ) : (
             <Box className="flex h-full items-center justify-center">
-              <Typography className="text-slate-500">Ruxsat berish uchun admin tanlang.</Typography>
+              <Typography className="text-slate-500">
+                Ruxsat berish uchun foydalanuvchini tanlang.
+              </Typography>
             </Box>
           )}
         </Paper>

@@ -3,6 +3,8 @@ import api from "./axios";
 export const getProducts = (params) => api.get("/products", { params });
 
 export const getProduct = (id) => api.get(`/products/${id}`);
+export const getProductRecipe = (id) => api.get(`/products/${id}/recipe`);
+export const saveProductRecipe = (id, data) => api.put(`/products/${id}/recipe`, data);
 
 export const getProductDepartmentPrices = (id) => api.get(`/products/${id}/department-prices`);
 
@@ -17,6 +19,17 @@ export const createProduct = (data) => api.post("/products", data);
 export const updateProduct = (id, data) => api.patch(`/products/${id}`, data);
 
 export const deleteProduct = (id) => api.delete(`/products/${id}`);
+
+export const getProductOptions = () => api.get("/product-options");
+
+export const updateProductOption = (type, currentValue, newValue) =>
+  api.patch(`/product-options/${type}`, {
+    current_value: currentValue,
+    new_value: newValue,
+  });
+
+export const deleteProductOption = (type, value) =>
+  api.delete(`/product-options/${type}`, { data: { value } });
 
 export const uploadProductImage = (id, file) => {
   const formData = new FormData();

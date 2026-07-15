@@ -9,6 +9,7 @@
   Typography,
 } from "@mui/material";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../Context/AuthContext";
 import SiteLogo from "../../images/zerr_02_logo.png";
 import DashboardIcon from "../../images/ui-icons/dashboard.svg";
@@ -24,6 +25,7 @@ import HistoryIcon from "../../images/ui-icons/history.svg";
 import { clearSession } from "../../utils/auth";
 import { hasPermission } from "../../utils/permissions";
 import { getCompanyLogoUrl } from "../../utils/company";
+import { getWarehouses } from "../../api/inventory";
 
 const menuGroups = [
   {
@@ -100,13 +102,6 @@ const menuGroups = [
         requiredPermission: "material_purchases.view",
       },
       {
-        icon: BoxIcon,
-        label: "Ombor",
-        path: "/inventory",
-        allowedRoles: ["super_admin", "admin"],
-        requiredPermission: "inventory.view",
-      },
-      {
         icon: FinanceIcon,
         label: "Xarajatlar",
         path: "/expenses",
@@ -152,6 +147,80 @@ const getImageUrl = (path) => {
 const Sidebar = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [warehouses, setWarehouses] = useState([]);
+
+  const loadWarehouses = useCallback(async () => {
+    if (
+      !["super_admin", "admin", "worker"].includes(user?.role) ||
+      !hasPermission(user, "inventory.view")
+    ) {
+      setWarehouses([]);
+      return;
+    }
+    try {
+      const { data } = await getWarehouses();
+      setWarehouses((data.warehouses || []).filter((warehouse) => warehouse.is_active !== false));
+    } catch {
+      setWarehouses([]);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    loadWarehouses();
+    window.addEventListener("warehouses-updated", loadWarehouses);
+    return () => window.removeEventListener("warehouses-updated", loadWarehouses);
+  }, [loadWarehouses]);
+
+  const resolvedMenuGroups = useMemo(() => {
+    const canManageWarehouses =
+      hasPermission(user, "inventory.warehouses") || hasPermission(user, "inventory.manage");
+    const inventoryGroup = {
+      label: "Omborlar",
+      items: [
+        canManageWarehouses && {
+          icon: BoxIcon,
+          label: "Omborlar boshqaruvi",
+          path: "/inventory/warehouses",
+          end: true,
+          allowedRoles: ["super_admin", "admin", "worker"],
+          requiredPermission: "inventory.warehouses",
+        },
+        ...warehouses.map((warehouse) => ({
+          icon: BoxIcon,
+          label: warehouse.name,
+          path: `/inventory/warehouses/${warehouse.id}`,
+          end: true,
+          allowedRoles: ["super_admin", "admin", "worker"],
+          requiredPermission: "inventory.view",
+        })),
+        {
+          icon: HistoryIcon,
+          label: "Inventarizatsiya",
+          path: "/inventory/counts",
+          allowedRoles: ["super_admin", "admin", "worker"],
+          requiredPermission: "inventory.view",
+        },
+      ].filter(Boolean),
+    };
+
+    const itemByPath = new Map(
+      menuGroups.flatMap((group) => group.items).map((item) => [item.path, item]),
+    );
+    const group = (label, paths) => ({
+      label,
+      items: paths.map((path) => itemByPath.get(path)).filter(Boolean),
+    });
+
+    return [
+      group("Asosiy", ["/"]),
+      group("Savdo", ["/client-sales"]),
+      group("Ishlab chiqarish", ["/products", "/worker-outputs"]),
+      inventoryGroup,
+      group("Xodimlar", ["/users", "/employees", "/worker-payments"]),
+      group("Hisob-kitob", ["/material-purchases", "/expenses", "/finance"]),
+      group("Tizim", ["/permissions", "/audit-logs"]),
+    ];
+  }, [user, warehouses]);
 
   const handleLogout = () => {
     clearSession();
@@ -198,7 +267,7 @@ const Sidebar = () => {
         </Box>
 
         <Box className="min-h-0 flex-1 overflow-y-auto px-4 pb-3">
-          {menuGroups.map((group) => {
+          {resolvedMenuGroups.map((group) => {
             const visibleItems = group.items.filter(
               (item) =>
                 (!item.allowedRoles || item.allowedRoles.includes(user?.role)) &&

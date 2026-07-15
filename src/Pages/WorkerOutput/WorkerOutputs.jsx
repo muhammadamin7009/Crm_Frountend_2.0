@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import {
+  Alert,
   Avatar,
   Box,
   Button,
@@ -61,6 +62,21 @@ const formatMoney = (value) => {
 
 const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
+const formatProductName = (product) => [product?.name, product?.color].filter(Boolean).join(" — ");
+
+const ProductOptionLabel = ({ product }) => (
+  <Box sx={{ minWidth: 0, py: 0.25 }}>
+    <Typography sx={{ fontSize: 14, fontWeight: 850, color: "#0f172a" }} noWrap>
+      {formatProductName(product)}
+    </Typography>
+    {product.sku && (
+      <Typography sx={{ mt: 0.15, fontSize: 11.5, fontWeight: 650, color: "#94a3b8" }} noWrap>
+        SKU: {product.sku}
+      </Typography>
+    )}
+  </Box>
+);
+
 const formatDate = (value) => {
   if (!value) return "-";
 
@@ -83,8 +99,7 @@ const Card = ({ children, sx = {} }) => (
     sx={{
       borderRadius: "20px",
       border: "1px solid rgba(148, 163, 184, 0.22)",
-      background:
-        "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
+      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
       boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
       overflow: "hidden",
       ...sx,
@@ -132,9 +147,7 @@ const MiniStat = ({ label, value, tone = "default" }) => {
         boxShadow: "0 10px 26px rgba(15, 23, 42, 0.05)",
       }}
     >
-      <Typography sx={{ fontSize: 12, fontWeight: 800, color: "#64748b" }}>
-        {label}
-      </Typography>
+      <Typography sx={{ fontSize: 12, fontWeight: 800, color: "#64748b" }}>{label}</Typography>
 
       <Typography
         sx={{
@@ -259,6 +272,24 @@ const WorkerOutputs = () => {
   const selectedDepartment = useMemo(
     () => departments.find((department) => Number(department.id) === Number(form.department_id)),
     [departments, form.department_id],
+  );
+
+  const selectedProductCompletesStock = Boolean(
+    selectedProduct?.has_recipe &&
+    selectedProduct?.completion_department_id &&
+    Number(selectedProduct.completion_department_id) === Number(form.department_id),
+  );
+
+  const batchProductsCompletingStock = useMemo(
+    () =>
+      batchItems
+        .map((item) => products.find((product) => Number(product.id) === Number(item.product_id)))
+        .filter(
+          (product) =>
+            product?.has_recipe &&
+            Number(product.completion_department_id) === Number(form.department_id),
+        ),
+    [batchItems, form.department_id, products],
   );
 
   const fetchSelectData = useCallback(async () => {
@@ -704,11 +735,19 @@ const WorkerOutputs = () => {
                 label="Mahsulot"
                 value={filters.product_id}
                 onChange={handleFilterChange("product_id")}
+                SelectProps={{
+                  renderValue: (value) =>
+                    value
+                      ? formatProductName(
+                          products.find((product) => Number(product.id) === Number(value)),
+                        )
+                      : "Barchasi",
+                }}
               >
                 <MenuItem value="">Barchasi</MenuItem>
                 {products.map((product) => (
                   <MenuItem key={product.id} value={product.id}>
-                    {product.name}
+                    <ProductOptionLabel product={product} />
                   </MenuItem>
                 ))}
               </TextField>
@@ -876,7 +915,8 @@ const WorkerOutputs = () => {
                           color: "#64748b",
                         }}
                       >
-                        {formatNumber(output.quantity)} dona × {formatMoney(output.price_per_unit)}
+                        {formatNumber(output.quantity)} {output.product_unit || "par"} ×{" "}
+                        {formatMoney(output.price_per_unit)}
                       </Typography>
                     </TableCell>
 
@@ -1033,6 +1073,15 @@ const WorkerOutputs = () => {
             />
           </Box>
 
+          {(selectedOutput
+            ? selectedProductCompletesStock
+            : batchProductsCompletingStock.length > 0) && (
+            <Alert severity="success" sx={{ borderRadius: "14px" }}>
+              Bu yakuniy ishlab chiqarish bosqichi. Saqlanganda tayyor mahsulot omboriga par
+              qo'shiladi va retsept bo'yicha homashyolar avtomatik kamayadi.
+            </Alert>
+          )}
+
           {selectedOutput ? (
             <>
               <Box
@@ -1048,10 +1097,16 @@ const WorkerOutputs = () => {
                   label="Mahsulot"
                   value={form.product_id}
                   onChange={handleFormChange("product_id")}
+                  SelectProps={{
+                    renderValue: (value) =>
+                      formatProductName(
+                        products.find((product) => Number(product.id) === Number(value)),
+                      ),
+                  }}
                 >
                   {products.map((product) => (
                     <MenuItem key={product.id} value={product.id}>
-                      {product.name}
+                      <ProductOptionLabel product={product} />
                     </MenuItem>
                   ))}
                 </TextField>
@@ -1059,7 +1114,7 @@ const WorkerOutputs = () => {
                 <TextField
                   required
                   type="number"
-                  label="Miqdor"
+                  label="Miqdor (par)"
                   value={form.quantity}
                   onChange={handleFormChange("quantity")}
                   slotProps={{ htmlInput: { min: 0, step: 1 } }}
@@ -1146,6 +1201,12 @@ const WorkerOutputs = () => {
                       label="Mahsulot"
                       value={item.product_id}
                       onChange={changeBatchItem(index, "product_id")}
+                      SelectProps={{
+                        renderValue: (value) =>
+                          formatProductName(
+                            products.find((product) => Number(product.id) === Number(value)),
+                          ),
+                      }}
                     >
                       {products.map((product) => (
                         <MenuItem
@@ -1156,7 +1217,7 @@ const WorkerOutputs = () => {
                               rowIndex !== index && Number(row.product_id) === Number(product.id),
                           )}
                         >
-                          {product.name}
+                          <ProductOptionLabel product={product} />
                         </MenuItem>
                       ))}
                     </TextField>
@@ -1164,7 +1225,7 @@ const WorkerOutputs = () => {
                     <TextField
                       required
                       type="number"
-                      label="Miqdor"
+                      label="Miqdor (par)"
                       value={item.quantity}
                       onChange={changeBatchItem(index, "quantity")}
                       slotProps={{ htmlInput: { min: 0, step: 1 } }}

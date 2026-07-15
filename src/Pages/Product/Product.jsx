@@ -12,13 +12,19 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  MenuItem,
   Paper,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 
-import { getProduct, saveProductDepartmentPrices } from "../../api/products";
+import {
+  getProduct,
+  getProductRecipe,
+  saveProductDepartmentPrices,
+  saveProductRecipe,
+} from "../../api/products";
 import { createDepartment, getDepartments } from "../../api/departments";
 import { useAuth } from "../../Context/AuthContext";
 import { hasPermission } from "../../utils/permissions";
@@ -235,6 +241,10 @@ const Product = () => {
   const [departmentOpen, setDepartmentOpen] = useState(false);
   const [departmentSaving, setDepartmentSaving] = useState(false);
   const [departmentForm, setDepartmentForm] = useState(emptyDepartmentForm);
+  const [completionDepartmentId, setCompletionDepartmentId] = useState("");
+  const [recipeRows, setRecipeRows] = useState([]);
+  const [rawMaterials, setRawMaterials] = useState([]);
+  const [recipeSaving, setRecipeSaving] = useState(false);
 
   const images = useMemo(() => product?.images || [], [product?.images]);
 
@@ -250,11 +260,19 @@ const Product = () => {
     setError("");
 
     try {
-      const [{ data }, departmentsRes] = await Promise.all([
+      const [{ data }, departmentsRes, recipeRes] = await Promise.all([
         getProduct(id),
         canManagePrices
-          ? getDepartments({ is_active: true, limit: 100, sort_by: "sort_order", sort_order: "asc" })
+          ? getDepartments({
+              is_active: true,
+              limit: 100,
+              sort_by: "sort_order",
+              sort_order: "asc",
+            })
           : Promise.resolve({ data: { departments: [] } }),
+        canManagePrices
+          ? getProductRecipe(id)
+          : Promise.resolve({ data: { recipe: { materials: [] }, raw_materials: [] } }),
       ]);
       const receivedProduct = data?.product || data?.found_product || data;
       const departments = departmentsRes.data?.departments || [];
@@ -266,6 +284,15 @@ const Product = () => {
           receivedProduct?.images?.[0]?.image_url ||
           "",
       );
+      setCompletionDepartmentId(recipeRes.data?.recipe?.completion_department_id || "");
+      setRecipeRows(
+        (recipeRes.data?.recipe?.materials || []).map((material) => ({
+          row_id: material.id || `${material.raw_material_id}-${Date.now()}`,
+          raw_material_id: material.raw_material_id,
+          quantity_per_pair: material.quantity_per_pair,
+        })),
+      );
+      setRawMaterials(recipeRes.data?.raw_materials || []);
     } catch (requestError) {
       const status = requestError?.response?.status;
 
@@ -387,6 +414,70 @@ const Product = () => {
     }
   };
 
+  const addRecipeRow = () => {
+    setRecipeRows((current) => [
+      ...current,
+      { row_id: `${Date.now()}-${Math.random()}`, raw_material_id: "", quantity_per_pair: "" },
+    ]);
+  };
+
+  const updateRecipeRow = (rowId, field, value) => {
+    setRecipeRows((current) =>
+      current.map((row) => (row.row_id === rowId ? { ...row, [field]: value } : row)),
+    );
+  };
+
+  const removeRecipeRow = (rowId) => {
+    setRecipeRows((current) => current.filter((row) => row.row_id !== rowId));
+  };
+
+  const handleSaveRecipe = async () => {
+    const validRows = recipeRows.filter(
+      (row) => row.raw_material_id && Number(row.quantity_per_pair) > 0,
+    );
+    if (completionDepartmentId && validRows.length !== recipeRows.length) {
+      toast.error("Har bir homashyo va 1 par uchun sarf miqdorini to'g'ri kiriting.");
+      return;
+    }
+    if (completionDepartmentId && !validRows.length) {
+      toast.error("Kamida bitta homashyo qo'shing.");
+      return;
+    }
+    if (!completionDepartmentId && recipeRows.length) {
+      toast.error("Yakunlovchi bo'limni tanlang yoki retsept qatorlarini o'chiring.");
+      return;
+    }
+    const ids = validRows.map((row) => Number(row.raw_material_id));
+    if (new Set(ids).size !== ids.length) {
+      toast.error("Bitta homashyoni retseptga ikki marta qo'shib bo'lmaydi.");
+      return;
+    }
+
+    setRecipeSaving(true);
+    try {
+      const { data } = await saveProductRecipe(product.id, {
+        completion_department_id: completionDepartmentId ? Number(completionDepartmentId) : null,
+        items: validRows.map((row) => ({
+          raw_material_id: Number(row.raw_material_id),
+          quantity_per_pair: Number(row.quantity_per_pair),
+        })),
+      });
+      setCompletionDepartmentId(data.recipe?.completion_department_id || "");
+      setRecipeRows(
+        (data.recipe?.materials || []).map((material) => ({
+          row_id: material.id,
+          raw_material_id: material.raw_material_id,
+          quantity_per_pair: material.quantity_per_pair,
+        })),
+      );
+      toast.success("Mahsulot retsepti saqlandi.");
+    } catch (requestError) {
+      toast.error(requestError?.response?.data?.message || "Retseptni saqlashda xatolik.");
+    } finally {
+      setRecipeSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <Box sx={{ minHeight: 380, display: "grid", placeItems: "center" }}>
@@ -469,7 +560,7 @@ const Product = () => {
                 color: "#64748b",
               }}
             >
-              {product.category_name || "Kategoriyasiz"} / {product.unit || "dona"}
+              {product.category_name || "Kategoriyasiz"} / {product.unit || "par"}
             </Typography>
           </Box>
 
@@ -852,6 +943,162 @@ const Product = () => {
               }
             >
               Narx belgilash uchun avval ishlab chiqarish bo'limlarini yarating.
+            </Alert>
+          )}
+        </Card>
+      )}
+
+      {canManagePrices && (
+        <Card sx={{ mt: 2.5, p: { xs: 2, md: 2.5 } }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: { xs: "flex-start", md: "center" },
+              justifyContent: "space-between",
+              flexDirection: { xs: "column", md: "row" },
+              gap: 1.5,
+              mb: 2,
+            }}
+          >
+            <Box>
+              <Typography sx={{ fontSize: 18, fontWeight: 950, color: "#0f172a" }}>
+                Ishlab chiqarish retsepti
+              </Typography>
+              <Typography sx={{ mt: 0.5, fontSize: 13.5, fontWeight: 650, color: "#64748b" }}>
+                1 par mahsulot uchun ketadigan homashyolarni va yakunlovchi bo'limni belgilang.
+              </Typography>
+            </Box>
+
+            <Button
+              variant="contained"
+              onClick={handleSaveRecipe}
+              disabled={recipeSaving}
+              sx={{
+                minWidth: 160,
+                height: 40,
+                borderRadius: "13px",
+                textTransform: "none",
+                fontWeight: 950,
+                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
+                "&:hover": { background: "linear-gradient(135deg, #7f0101, #991b1b)" },
+              }}
+            >
+              {recipeSaving ? "Saqlanmoqda..." : "Retseptni saqlash"}
+            </Button>
+          </Box>
+
+          <Alert severity="info" sx={{ mb: 2, borderRadius: "14px" }}>
+            Ishchi tanlangan yakunlovchi bo'limda ish topshirganda tayyor mahsulot omboriga par
+            qo'shiladi va retseptdagi homashyolar avtomatik kamayadi. Boshqa bo'limlardagi ishlar
+            ombor qoldig'ini o'zgartirmaydi.
+          </Alert>
+
+          <TextField
+            select
+            fullWidth
+            label="Yakunlovchi bo'lim"
+            value={completionDepartmentId}
+            onChange={(event) => setCompletionDepartmentId(event.target.value)}
+            helperText="Mahsulot to'liq tayyor bo'lib omborga topshiriladigan bo'lim."
+            sx={{ mb: 2 }}
+          >
+            <MenuItem value="">Avtomatik ombor hisobi o'chirilgan</MenuItem>
+            {priceRows.map((row) => (
+              <MenuItem key={row.department_id} value={row.department_id}>
+                {row.department_name}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <Stack spacing={1.3}>
+            {recipeRows.map((row, index) => {
+              const selectedMaterial = rawMaterials.find(
+                (material) => Number(material.id) === Number(row.raw_material_id),
+              );
+
+              return (
+                <Box
+                  key={row.row_id}
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", md: "minmax(220px, 1fr) 220px auto" },
+                    gap: 1.2,
+                    p: 1.5,
+                    borderRadius: "16px",
+                    border: "1px solid rgba(148, 163, 184, 0.22)",
+                    background: "#fff",
+                  }}
+                >
+                  <TextField
+                    select
+                    size="small"
+                    label={`Homashyo ${index + 1}`}
+                    value={row.raw_material_id}
+                    onChange={(event) =>
+                      updateRecipeRow(row.row_id, "raw_material_id", event.target.value)
+                    }
+                  >
+                    <MenuItem value="">Tanlang</MenuItem>
+                    {rawMaterials.map((material) => {
+                      const selectedElsewhere = recipeRows.some(
+                        (other) =>
+                          other.row_id !== row.row_id &&
+                          Number(other.raw_material_id) === Number(material.id),
+                      );
+                      return (
+                        <MenuItem
+                          key={material.id}
+                          value={material.id}
+                          disabled={selectedElsewhere}
+                        >
+                          {material.name} ({material.unit || "birlik"})
+                        </MenuItem>
+                      );
+                    })}
+                  </TextField>
+
+                  <TextField
+                    size="small"
+                    type="number"
+                    label={`1 par uchun (${selectedMaterial?.unit || "miqdor"})`}
+                    value={row.quantity_per_pair}
+                    onChange={(event) =>
+                      updateRecipeRow(row.row_id, "quantity_per_pair", event.target.value)
+                    }
+                    inputProps={{ min: 0.001, step: 0.001 }}
+                  />
+
+                  <Button
+                    color="error"
+                    variant="outlined"
+                    onClick={() => removeRecipeRow(row.row_id)}
+                    sx={{
+                      minWidth: 96,
+                      borderRadius: "11px",
+                      textTransform: "none",
+                      fontWeight: 850,
+                    }}
+                  >
+                    O'chirish
+                  </Button>
+                </Box>
+              );
+            })}
+          </Stack>
+
+          <Button
+            variant="outlined"
+            onClick={addRecipeRow}
+            disabled={!rawMaterials.length || recipeRows.length >= rawMaterials.length}
+            sx={{ mt: 1.5, borderRadius: "12px", textTransform: "none", fontWeight: 900 }}
+          >
+            Homashyo qo'shish
+          </Button>
+
+          {!rawMaterials.length && (
+            <Alert severity="warning" sx={{ mt: 1.5, borderRadius: "14px" }}>
+              Retsept tuzish uchun avval homashyo yarating.
             </Alert>
           )}
         </Card>

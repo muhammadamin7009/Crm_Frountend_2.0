@@ -43,6 +43,9 @@ const entityNames = {
   employees: "Hodim profili",
   "payroll-periods": "Haftalik hisob",
   expenses: "Xarajat",
+  warehouses: "Ombor",
+  inventory: "Ombor harakati",
+  permissions: "Ruxsat",
 };
 
 const actionStyles = {
@@ -265,7 +268,7 @@ const AuditLogs = () => {
         >
           <Box>
             <Chip
-              label="Al-amin CRM • audit logs"
+              label="Al-amin CRM • amallar nazorati"
               size="small"
               sx={{
                 mb: 1,

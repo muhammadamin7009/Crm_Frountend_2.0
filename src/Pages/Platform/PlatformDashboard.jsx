@@ -35,6 +35,57 @@ import {
 const today = () => new Date().toISOString().slice(0, 10);
 const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
 const date = (value) => (value ? new Date(value).toLocaleDateString("uz-UZ") : "-");
+const dateParts = (value) => {
+  const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+  const [year, month, day] = match.slice(1).map(Number);
+  const utc = new Date(Date.UTC(year, month - 1, day));
+  if (
+    utc.getUTCFullYear() !== year ||
+    utc.getUTCMonth() !== month - 1 ||
+    utc.getUTCDate() !== day
+  )
+    return null;
+  return { year, month, day, utc };
+};
+const normalizedBillingDay = ({ year, month, day }) => {
+  const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  return day === lastDay ? 30 : Math.min(day, 30);
+};
+const paymentCalculation = (form) => {
+  const from = dateParts(form.period_from);
+  const to = dateParts(form.period_to);
+  const monthlyPrice = Number(form.monthly_price || 0);
+  if (!from || !to || to.utc < from.utc || monthlyPrice < 0)
+    return { valid: false, billingDays: 0, grossAmount: 0, discountAmount: 0, amount: 0 };
+  const billingDays =
+    (to.year - from.year) * 360 +
+    (to.month - from.month) * 30 +
+    normalizedBillingDay(to) -
+    normalizedBillingDay(from) +
+    1;
+  const grossAmount = Math.round((monthlyPrice * billingDays) / 30);
+  const discountValue = Number(form.discount_value || 0);
+  const discountAmount = Math.round(
+    form.discount_type === "fixed"
+      ? discountValue
+      : form.discount_type === "percent"
+        ? (grossAmount * discountValue) / 100
+        : 0,
+  );
+  const valid =
+    billingDays > 0 &&
+    discountValue >= 0 &&
+    discountAmount <= grossAmount &&
+    !(form.discount_type === "percent" && discountValue > 100);
+  return {
+    valid,
+    billingDays,
+    grossAmount,
+    discountAmount,
+    amount: valid ? Math.max(grossAmount - discountAmount, 0) : 0,
+  };
+};
 const emptyCompany = {
   name: "",
   slug: "",
@@ -142,12 +193,25 @@ const PlatformDashboard = () => {
         });
       }
       if (dialog === "payment") {
+        const calculation = paymentCalculation(form);
+        if (!calculation.valid) {
+          toast.error("To'lov davri yoki chegirma noto'g'ri.");
+          setSaving(false);
+          return;
+        }
+        if (calculation.discountAmount > 0 && !String(form.discount_reason || "").trim()) {
+          toast.error("Chegirma sababini kiriting.");
+          setSaving(false);
+          return;
+        }
         await createSubscriptionPayment({
           company_id: form.company_id,
-          amount: Number(form.amount),
           paid_at: form.paid_at,
-          period_from: form.period_from || null,
-          period_to: form.period_to || null,
+          period_from: form.period_from,
+          period_to: form.period_to,
+          discount_type: form.discount_type || "none",
+          discount_value: Number(form.discount_value || 0),
+          discount_reason: form.discount_reason?.trim() || null,
           note: form.note || null,
         });
       }
@@ -413,10 +477,15 @@ const PlatformDashboard = () => {
                               setForm({
                                 company_id: company.id,
                                 company_name: company.name,
-                                amount: company.monthly_price || "",
+                                plan_code: company.plan_code,
+                                plan_name: company.plan_name,
+                                monthly_price: company.monthly_price || 0,
                                 paid_at: today(),
                                 period_from: "",
                                 period_to: "",
+                                discount_type: "none",
+                                discount_value: 0,
+                                discount_reason: "",
                                 note: "",
                               });
                               setDialog("payment");
@@ -481,6 +550,10 @@ const PlatformDashboard = () => {
 
 const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthenticator }) => {
   if (!dialog) return null;
+  const calculation = paymentCalculation(form);
+  const discountNeedsReason =
+    dialog === "payment" && calculation.discountAmount > 0 && !form.discount_reason?.trim();
+  const paymentInvalid = dialog === "payment" && (!calculation.valid || discountNeedsReason);
   const field = (key, label, type = "text") => (
     <TextField
       type={type}
@@ -587,10 +660,71 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
           ) : (
             <>
               {form.company_name && <Typography fontWeight={800}>{form.company_name}</Typography>}
-              {field("amount", "Summa", "number")}
+              <Typography variant="body2" color="text.secondary">
+                {form.plan_name || form.plan_code} tarifi - {money(form.monthly_price)}/30 kun
+              </Typography>
               {field("paid_at", "To'lov sanasi", "date")}
               {field("period_from", "Qaysi sanadan", "date")}
               {field("period_to", "Qaysi sanagacha", "date")}
+              <TextField
+                select
+                label="Chegirma turi"
+                value={form.discount_type || "none"}
+                onChange={(event) =>
+                  setForm({
+                    ...form,
+                    discount_type: event.target.value,
+                    discount_value: 0,
+                    discount_reason: "",
+                  })
+                }
+              >
+                <MenuItem value="none">Chegirmasiz</MenuItem>
+                <MenuItem value="fixed">Qat'iy summa</MenuItem>
+                <MenuItem value="percent">Foiz</MenuItem>
+              </TextField>
+              {form.discount_type !== "none" && (
+                <>
+                  <TextField
+                    type="number"
+                    label={form.discount_type === "percent" ? "Chegirma foizi" : "Chegirma summasi"}
+                    value={form.discount_value ?? 0}
+                    onChange={(event) => setForm({ ...form, discount_value: event.target.value })}
+                    error={!calculation.valid && Boolean(form.period_from && form.period_to)}
+                    inputProps={{ min: 0, max: form.discount_type === "percent" ? 100 : undefined }}
+                  />
+                  <TextField
+                    label="Chegirma sababi"
+                    value={form.discount_reason || ""}
+                    onChange={(event) => setForm({ ...form, discount_reason: event.target.value })}
+                    required={calculation.discountAmount > 0}
+                    error={discountNeedsReason}
+                    helperText={discountNeedsReason ? "Chegirma sababini yozing" : " "}
+                  />
+                </>
+              )}
+              <Box className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <Box className="flex justify-between gap-3">
+                  <Typography color="text.secondary">Hisoblangan kun</Typography>
+                  <Typography fontWeight={800}>{calculation.billingDays || 0} kun</Typography>
+                </Box>
+                <Box className="mt-2 flex justify-between gap-3">
+                  <Typography color="text.secondary">Asosiy summa</Typography>
+                  <Typography fontWeight={800}>{money(calculation.grossAmount)}</Typography>
+                </Box>
+                <Box className="mt-2 flex justify-between gap-3">
+                  <Typography color="text.secondary">Chegirma</Typography>
+                  <Typography fontWeight={800} color="error.main">
+                    - {money(calculation.discountAmount)}
+                  </Typography>
+                </Box>
+                <Box className="mt-3 flex justify-between gap-3 border-t border-slate-200 pt-3">
+                  <Typography fontWeight={900}>Yakuniy to'lov</Typography>
+                  <Typography fontWeight={900} color="success.main">
+                    {money(calculation.amount)}
+                  </Typography>
+                </Box>
+              </Box>
               {field("note", "Izoh")}
             </>
           )}
@@ -602,7 +736,11 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
           variant="contained"
           color={dialog === "delete" ? "error" : "primary"}
           onClick={save}
-          disabled={saving || (dialog === "delete" && form.confirm_slug !== form.slug)}
+          disabled={
+            saving ||
+            paymentInvalid ||
+            (dialog === "delete" && form.confirm_slug !== form.slug)
+          }
         >
           {saving ? "Bajarilmoqda..." : dialog === "delete" ? "Butunlay o'chirish" : "Saqlash"}
         </Button>
