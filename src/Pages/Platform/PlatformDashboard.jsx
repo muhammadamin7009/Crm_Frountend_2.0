@@ -27,6 +27,7 @@ import {
   getCompanies,
   getCompanyManagement,
   getSubscriptionPlans,
+  resetCompanyAuthenticator,
   updateCompany,
   updateCompanyManagement,
 } from "../../api/platform";
@@ -209,6 +210,7 @@ const PlatformDashboard = () => {
         last_name: data.super_admin?.last_name || "",
         username: data.super_admin?.username || "",
         admin_phone: data.super_admin?.phone || "",
+        totp_enabled: Boolean(data.super_admin?.totp_enabled),
         password: "",
       });
       setDialog("management");
@@ -216,6 +218,26 @@ const PlatformDashboard = () => {
       toast.error(error?.response?.data?.message || "Boshqaruv ma'lumotlarini olishda xato.");
     } finally {
       setManagementLoading(false);
+    }
+  };
+
+  const resetAuthenticator = async () => {
+    if (
+      !window.confirm(
+        "Super administrator Authenticator sozlamasi va faol sessiyalari o'chiriladi. Davom etilsinmi?",
+      )
+    )
+      return;
+
+    setSaving(true);
+    try {
+      const { data } = await resetCompanyAuthenticator(form.company_id);
+      setForm((current) => ({ ...current, totp_enabled: false }));
+      toast.success(data.message);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Authenticator sozlamasini tiklashda xato.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -448,12 +470,13 @@ const PlatformDashboard = () => {
         save={save}
         saving={saving}
         plans={plans}
+        resetAuthenticator={resetAuthenticator}
       />
     </Box>
   );
 };
 
-const Entry = ({ dialog, form, setForm, close, save, saving, plans }) => {
+const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthenticator }) => {
   if (!dialog) return null;
   const field = (key, label, type = "text") => (
     <TextField
@@ -483,11 +506,11 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans }) => {
       ? "Yangi korxona"
       : dialog === "management"
         ? "Korxonani boshqarish"
-      : dialog === "delete"
-        ? "Korxonani butunlay o'chirish"
-      : dialog === "plan"
-        ? "Obuna rejasini almashtirish"
-        : "Obuna to'lovi";
+        : dialog === "delete"
+          ? "Korxonani butunlay o'chirish"
+          : dialog === "plan"
+            ? "Obuna rejasini almashtirish"
+            : "Obuna to'lovi";
   return (
     <Dialog open fullWidth maxWidth="sm" onClose={close}>
       <DialogTitle fontWeight={900}>{title}</DialogTitle>
@@ -523,8 +546,23 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans }) => {
               {field("admin_phone", "Telefon")}
               {field("password", "Yangi parol", "password")}
               <Typography variant="caption" color="text.secondary">
-                Parolni o'zgartirmasangiz, bu maydonni bo'sh qoldiring. Amaldagi parol ko'rsatilmaydi.
+                Parolni o'zgartirmasangiz, bu maydonni bo'sh qoldiring. Amaldagi parol
+                ko'rsatilmaydi.
               </Typography>
+              <Box className="rounded-xl border border-slate-200 p-3">
+                <Typography fontWeight={800}>Google Authenticator</Typography>
+                <Typography variant="body2" color="text.secondary" className="mb-2">
+                  Holati: {form.totp_enabled ? "Ulangan" : "Hali ulanmagan"}
+                </Typography>
+                <Button
+                  color="warning"
+                  variant="outlined"
+                  disabled={saving || !form.totp_enabled}
+                  onClick={resetAuthenticator}
+                >
+                  Authenticator'ni qayta sozlash
+                </Button>
+              </Box>
             </>
           ) : dialog === "delete" ? (
             <>
@@ -532,8 +570,8 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans }) => {
                 Bu amalni ortga qaytarib bo'lmaydi.
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {form.company_name} korxonasidagi foydalanuvchilar, mahsulotlar, savdolar,
-                ish haqlari va barcha boshqa ma'lumotlar butunlay o'chadi.
+                {form.company_name} korxonasidagi foydalanuvchilar, mahsulotlar, savdolar, ish
+                haqlari va barcha boshqa ma'lumotlar butunlay o'chadi.
               </Typography>
               <Typography variant="body2">
                 Tasdiqlash uchun <strong>{form.slug}</strong> kodini kiriting.

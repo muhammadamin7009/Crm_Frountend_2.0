@@ -18,6 +18,8 @@ export const updateCompany = (id, data) => platformApi.patch(`/companies/${id}`,
 export const getCompanyManagement = (id) => platformApi.get(`/companies/${id}/management`);
 export const updateCompanyManagement = (id, data) =>
   platformApi.patch(`/companies/${id}/management`, data);
+export const resetCompanyAuthenticator = (id) =>
+  platformApi.delete(`/companies/${id}/management/authenticator`);
 export const deleteCompany = (id, confirmSlug) =>
   platformApi.delete(`/companies/${id}`, { data: { confirm_slug: confirmSlug } });
 export const getSubscriptionPayments = (params) => platformApi.get("/payments", { params });

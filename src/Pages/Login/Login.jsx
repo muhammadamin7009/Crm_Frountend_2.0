@@ -29,6 +29,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [challenge, setChallenge] = useState(null);
   const [code, setCode] = useState("");
+  const [setupResult, setSetupResult] = useState(null);
   const [branding, setBranding] = useState(null);
 
   const {
@@ -73,6 +74,13 @@ const Login = () => {
     return () => clearTimeout(timeout);
   }, [companySlug]);
 
+  const finishLogin = (data) => {
+    setSession({ token: data.token, user: data.user });
+    setUser(data.user);
+    toast.success("Muvaffaqiyatli tizimga kirdingiz");
+    navigate("/");
+  };
+
   const onSubmit = async (values) => {
     setLoading(true);
 
@@ -92,19 +100,15 @@ const Login = () => {
 
       if (data.mfa_required) {
         setChallenge(data);
-        toast.info(`Tasdiqlash kodi ${data.masked_phone} raqamiga yuborildi.`);
+        toast.info(
+          data.setup_required
+            ? "Google Authenticator'ni bir marta sozlang."
+            : "Google Authenticator kodini kiriting.",
+        );
         return;
       }
 
-      setSession({
-        token: data.token,
-        user: data.user,
-      });
-
-      setUser(data.user);
-
-      toast.success("Muvaffaqiyatli tizimga kirdingiz");
-      navigate("/");
+      finishLogin(data);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Login xato");
     } finally {
@@ -113,21 +117,29 @@ const Login = () => {
   };
 
   const verifyCode = async () => {
-    if (!/^\d{6}$/.test(code)) return toast.error("6 xonali kodni kiriting.");
+    const normalizedCode = code.trim().toUpperCase();
+    const validCode =
+      /^\d{6}$/.test(normalizedCode) ||
+      (!challenge.setup_required && /^[A-Z2-9]{4}-[A-Z2-9]{4}$/.test(normalizedCode));
+    if (!validCode) return toast.error("6 xonali kod yoki tiklash kodini kiriting.");
     setLoading(true);
     try {
       const companySlug = setCompanySlug(watch("company_slug"));
       const { data } = await api.post(
         "/users/login/verify",
-        { challenge_id: challenge.challenge_id, code },
+        { challenge_id: challenge.challenge_id, code: normalizedCode },
         {
           baseURL: `${String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "")}/api/${companySlug}`,
         },
       );
-      setSession({ token: data.token, user: data.user });
-      setUser(data.user);
-      toast.success("Tasdiqlandi. Tizimga kirdingiz.");
-      navigate("/");
+      if (data.recovery_codes?.length) {
+        setSetupResult(data);
+        setChallenge(null);
+        setCode("");
+        toast.success("Google Authenticator muvaffaqiyatli ulandi.");
+        return;
+      }
+      finishLogin(data);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Tasdiqlash kodi noto'g'ri.");
     } finally {
@@ -227,31 +239,129 @@ const Login = () => {
 
               <Box className="mb-7">
                 <Typography variant="h4" fontWeight={900} className="text-slate-950">
-                  {challenge ? "Kirishni tasdiqlash" : "Tizimga kirish"}
+                  {setupResult
+                    ? "Tiklash kodlarini saqlang"
+                    : challenge?.setup_required
+                      ? "Authenticator'ni sozlash"
+                      : challenge
+                        ? "Kirishni tasdiqlash"
+                        : "Tizimga kirish"}
                 </Typography>
                 <Typography className="mt-2 text-slate-500">
-                  {challenge
-                    ? `${challenge.masked_phone} raqamiga yuborilgan 6 xonali kodni kiriting.`
-                    : "Davom etish uchun foydalanuvchi nomi va parolingizni kiriting."}
+                  {setupResult
+                    ? "Bu kodlar telefon yo'qolsa hisobga kirish uchun kerak. Ular boshqa ko'rsatilmaydi."
+                    : challenge?.setup_required
+                      ? "QR-kodni Google Authenticator bilan skanerlang va ilovadagi 6 xonali kodni kiriting."
+                      : challenge
+                        ? "Google Authenticator'dagi 6 xonali kodni kiriting."
+                        : "Davom etish uchun foydalanuvchi nomi va parolingizni kiriting."}
                 </Typography>
               </Box>
 
-              {challenge ? (
+              {setupResult ? (
                 <Box className="space-y-4">
+                  <Box className="grid grid-cols-2 gap-2 rounded-2xl border border-amber-200 bg-amber-50 p-4 sm:grid-cols-4">
+                    {setupResult.recovery_codes.map((recoveryCode) => (
+                      <Typography
+                        key={recoveryCode}
+                        component="code"
+                        className="rounded-lg bg-white px-2 py-2 text-center font-bold text-slate-900"
+                      >
+                        {recoveryCode}
+                      </Typography>
+                    ))}
+                  </Box>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(setupResult.recovery_codes.join("\n"));
+                        toast.success("Tiklash kodlari nusxalandi.");
+                      } catch {
+                        toast.error("Kodlarni nusxalab bo'lmadi. Ularni qo'lda saqlang.");
+                      }
+                    }}
+                  >
+                    Kodlarni nusxalash
+                  </Button>
+                  <Button
+                    fullWidth
+                    size="large"
+                    variant="contained"
+                    onClick={() => finishLogin(setupResult)}
+                  >
+                    Saqladim, tizimga kirish
+                  </Button>
+                </Box>
+              ) : challenge ? (
+                <Box className="space-y-4">
+                  {challenge.setup_required && (
+                    <Box className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center">
+                      <img
+                        src={challenge.qr_code_data_url}
+                        alt="Google Authenticator QR-kodi"
+                        className="mx-auto h-56 w-56 max-w-full rounded-xl bg-white p-2"
+                      />
+                      <Typography variant="body2" className="text-slate-600">
+                        QR-kod skanerlanmasa, ilovada &quot;Sozlash kalitini kiriting&quot;ni tanlab
+                        quyidagi kalitni kiriting:
+                      </Typography>
+                      <Typography
+                        component="code"
+                        className="block break-all rounded-lg bg-white px-3 py-2 font-bold tracking-wider text-slate-900"
+                      >
+                        {challenge.manual_key}
+                      </Typography>
+                      <Button
+                        size="small"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(challenge.manual_key);
+                            toast.success("Sozlash kaliti nusxalandi.");
+                          } catch {
+                            toast.error("Kalitni nusxalab bo'lmadi. Uni qo'lda kiriting.");
+                          }
+                        }}
+                      >
+                        Kalitni nusxalash
+                      </Button>
+                    </Box>
+                  )}
                   <TextField
                     fullWidth
                     autoFocus
-                    label="Tasdiqlash kodi"
+                    label={
+                      challenge.setup_required
+                        ? "Authenticator kodi"
+                        : "Authenticator yoki tiklash kodi"
+                    }
                     value={code}
-                    onChange={(event) => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
+                    onChange={(event) => {
+                      const value = challenge.setup_required
+                        ? event.target.value.replace(/\D/g, "").slice(0, 6)
+                        : event.target.value
+                            .toUpperCase()
+                            .replace(/[^A-Z0-9-]/g, "")
+                            .slice(0, 9);
+                      setCode(value);
+                    }}
                     onKeyDown={(event) => event.key === "Enter" && verifyCode()}
-                    inputProps={{ inputMode: "numeric", maxLength: 6 }}
+                    inputProps={{
+                      inputMode: challenge.setup_required ? "numeric" : "text",
+                      maxLength: challenge.setup_required ? 6 : 9,
+                    }}
                   />
                   <Button
                     fullWidth
                     size="large"
                     variant="contained"
-                    disabled={loading || code.length !== 6}
+                    disabled={
+                      loading ||
+                      !(challenge.setup_required
+                        ? /^\d{6}$/.test(code)
+                        : /^\d{6}$/.test(code) || /^[A-Z2-9]{4}-[A-Z2-9]{4}$/.test(code))
+                    }
                     onClick={verifyCode}
                   >
                     {loading ? "Tekshirilmoqda..." : "Tasdiqlash"}
