@@ -127,10 +127,10 @@ const modules = [
 ];
 
 const plans = [
-  { name: "Boshlang'ich", price: "299,000", users: "15 foydalanuvchi" },
-  { name: "Kengaytirilgan", price: "399,000", users: "30 foydalanuvchi", featured: true },
-  { name: "Korxona", price: "499,000", users: "60 foydalanuvchi" },
-  { name: "Maxsus", price: "Kelishiladi", users: "100+ foydalanuvchi" },
+  { name: "Plus", price: "299,000", workers: 15, clients: 20, admins: 2 },
+  { name: "Pro", price: "399,000", workers: 30, clients: 40, admins: 4, featured: true },
+  { name: "Business", price: "499,000", workers: 60, clients: 80, admins: 10 },
+  { name: "Enterprise", price: "699,000", workers: 100, clients: 150, admins: 20 },
 ];
 
 const process = [
@@ -326,7 +326,9 @@ function DashboardMockup() {
         <Stack direction="row" spacing={1.4} alignItems="center">
           <LogoMark size={42} />
           <Box>
-            <Typography sx={{ color: brand.text, fontWeight: 950 }}>Al-amin CRM bosh sahifa</Typography>
+            <Typography sx={{ color: brand.text, fontWeight: 950 }}>
+              Al-amin CRM bosh sahifa
+            </Typography>
             <Typography sx={{ color: brand.muted, fontSize: 12, fontWeight: 700 }}>
               Rahbar uchun asosiy ko'rsatkichlar
             </Typography>
@@ -685,7 +687,11 @@ function PlanCard({ plan }) {
 
         <Divider sx={{ my: 2.2 }} />
 
-        <Typography sx={{ fontWeight: 900 }}>{plan.users}</Typography>
+        <Stack spacing={0.7}>
+          <Typography sx={{ fontWeight: 900 }}>{plan.workers} ta ishchi</Typography>
+          <Typography sx={{ fontWeight: 900 }}>{plan.clients} ta mijoz</Typography>
+          <Typography sx={{ fontWeight: 900 }}>{plan.admins} ta admin</Typography>
+        </Stack>
 
         <Typography
           sx={{
@@ -1088,8 +1094,8 @@ export default function LandingPage() {
                     fontWeight: 650,
                   }}
                 >
-                  Asosiy signal shu bo'ladi: MR belgisi, Al-amin CRM nomi va poyabzal korxonasining real
-                  hisob-kitobini boshqaradigan premium tizim.
+                  Asosiy signal shu bo'ladi: MR belgisi, Al-amin CRM nomi va poyabzal korxonasining
+                  real hisob-kitobini boshqaradigan premium tizim.
                 </Typography>
 
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={1.4} sx={{ mt: 3 }}>
@@ -1187,8 +1193,8 @@ export default function LandingPage() {
                     fontWeight: 650,
                   }}
                 >
-                  Al-amin CRM har bir yozuvni bosh sahifa, qarzdorlik, ish haqi va amallar tarixi bilan
-                  bog'laydi.
+                  Al-amin CRM har bir yozuvni bosh sahifa, qarzdorlik, ish haqi va amallar tarixi
+                  bilan bog'laydi.
                 </Typography>
               </Paper>
             </Grid>
@@ -1249,7 +1255,7 @@ export default function LandingPage() {
           <SectionTitle
             label="Obuna rejalari"
             title="Korxona hajmiga qarab tanlanadi"
-            text="Katta korxonalar uchun 100+ foydalanuvchili alohida taklif qilinadi."
+            text="Har bir reja ishchi, mijoz va adminlar uchun alohida limit beradi. Korxona egasi — super admin limitga kirmaydi."
             center
           />
 
@@ -1306,8 +1312,8 @@ export default function LandingPage() {
                     fontWeight: 650,
                   }}
                 >
-                  Reklama matni hisob-kitobdagi og'riqni ko'rsatadi: savdo, qarz, ish haqi,
-                  homashyo va admin nazorati bitta joyda.
+                  Reklama matni hisob-kitobdagi og'riqni ko'rsatadi: savdo, qarz, ish haqi, homashyo
+                  va admin nazorati bitta joyda.
                 </Typography>
               </Paper>
             </Grid>
@@ -1369,11 +1375,7 @@ export default function LandingPage() {
                   ))}
                 </Grid>
 
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={1.4}
-                  sx={{ mt: 3 }}
-                >
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.4} sx={{ mt: 3 }}>
                   <Button
                     variant="contained"
                     onClick={() => navigate("/register")}
@@ -1457,7 +1459,7 @@ export default function LandingPage() {
               </Typography>
 
               <Stack
-                direction={{ xs: "column" , sm: "row" }}
+                direction={{ xs: "column", sm: "row" }}
                 spacing={1.4}
                 justifyContent="center"
                 sx={{ mt: 4 }}

@@ -362,11 +362,14 @@ const PlatformDashboard = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography fontWeight={800}>
-                          {company.users_count} / {company.max_users || "Cheksiz"}
+                        <Typography variant="body2" color="text.secondary">
+                          Ishchi: <strong>{company.workers_count}</strong> / {company.max_workers}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          foydalanuvchi
+                          Mijoz: <strong>{company.clients_count}</strong> / {company.max_clients}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Admin: <strong>{company.admins_count}</strong> / {company.max_admins}
                         </Typography>
                       </TableCell>
                       <TableCell>{date(company.ends_at)}</TableCell>
@@ -496,7 +499,8 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
     >
       {plans.map((plan) => (
         <MenuItem key={plan.code} value={plan.code}>
-          {plan.name} - {money(plan.monthly_price)}/oy - {plan.max_users || "Cheksiz"} foydalanuvchi
+          {plan.name} - {money(plan.monthly_price)}/oy - {plan.max_workers} ishchi,{" "}
+          {plan.max_clients} mijoz, {plan.max_admins} admin
         </MenuItem>
       ))}
     </TextField>
