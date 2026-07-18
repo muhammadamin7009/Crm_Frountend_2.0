@@ -122,6 +122,50 @@ const getInitials = (user) => {
   return user?.username?.slice(0, 2)?.toUpperCase() || "ZR";
 };
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+const utcDateOnly = (value) => {
+  if (!value) return null;
+  const match = String(value).slice(0, 10).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+  const [year, month, day] = match.slice(1).map(Number);
+  return Date.UTC(year, month - 1, day);
+};
+
+const getSubscriptionNotice = (user, now) => {
+  if (!["super_admin", "admin"].includes(user?.role) || !user?.subscription_ends_at)
+    return null;
+
+  const endsAt = utcDateOnly(user.subscription_ends_at);
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  if (endsAt === null) return null;
+
+  const remainingDays = Math.round((endsAt - today) / DAY_MS);
+  const graceDays = Number(user.subscription_grace_days || 7);
+
+  if (remainingDays >= 0 && remainingDays <= 7) {
+    return {
+      tone: "warning",
+      message:
+        remainingDays === 0
+          ? "Obunangiz bugun tugaydi. To'lovni yangilang."
+          : `Obunangiz tugashiga ${remainingDays} kun qoldi. To'lovni yangilang.`,
+    };
+  }
+
+  if (remainingDays < 0 && remainingDays >= -graceDays) {
+    const graceRemaining = graceDays + remainingDays;
+    return {
+      tone: "expired",
+      message:
+        graceRemaining === 0
+          ? "Obuna muddati tugadi. Imtiyoz davri bugun tugaydi."
+          : `Obuna muddati tugadi. Korxona to'xtatilishiga ${graceRemaining} kun qoldi.`,
+    };
+  }
+
+  return null;
+};
+
 export default function TopBar() {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
@@ -137,6 +181,18 @@ export default function TopBar() {
   const [companyLogoPreview, setCompanyLogoPreview] = useState("");
   const [companyLogoSaving, setCompanyLogoSaving] = useState(false);
   const [warehouses, setWarehouses] = useState([]);
+  const [subscriptionNow, setSubscriptionNow] = useState(() => new Date());
+
+  useEffect(() => {
+    if (!["super_admin", "admin"].includes(user?.role)) return undefined;
+    const timer = window.setInterval(() => setSubscriptionNow(new Date()), 60 * 60 * 1000);
+    return () => window.clearInterval(timer);
+  }, [user?.role]);
+
+  const subscriptionNotice = useMemo(
+    () => getSubscriptionNotice(user, subscriptionNow),
+    [user, subscriptionNow],
+  );
 
   const loadWarehouses = useCallback(async () => {
     if (
@@ -346,6 +402,7 @@ export default function TopBar() {
           px: { xs: 2, md: 3 },
           py: 1.5,
           display: "flex",
+          flexWrap: { xs: "wrap", md: "nowrap" },
           alignItems: "center",
           justifyContent: "space-between",
           gap: 2,
@@ -417,6 +474,38 @@ export default function TopBar() {
             </Typography>
           </Box>
         </Box>
+
+        {subscriptionNotice && (
+          <Box
+            role="status"
+            sx={{
+              order: { xs: 3, md: 0 },
+              width: { xs: "100%", md: "auto" },
+              flex: { md: "1 1 360px" },
+              maxWidth: { md: 560 },
+              px: 2,
+              py: 1.1,
+              borderRadius: "12px",
+              border: "1px solid",
+              borderColor:
+                subscriptionNotice.tone === "expired" ? "rgba(220,38,38,.28)" : "rgba(217,119,6,.30)",
+              backgroundColor:
+                subscriptionNotice.tone === "expired" ? "rgba(254,226,226,.88)" : "rgba(254,243,199,.90)",
+            }}
+          >
+            <Typography
+              sx={{
+                color: subscriptionNotice.tone === "expired" ? "#b91c1c" : "#92400e",
+                fontSize: { xs: 12.5, sm: 13.5 },
+                fontWeight: 900,
+                textAlign: "center",
+                lineHeight: 1.35,
+              }}
+            >
+              {subscriptionNotice.message}
+            </Typography>
+          </Box>
+        )}
 
         <Button
           onClick={openProfile}
