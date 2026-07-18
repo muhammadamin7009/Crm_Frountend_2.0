@@ -60,17 +60,30 @@ const formatMoney = (value) => {
   return `${new Intl.NumberFormat("uz-UZ").format(Number(value))} so'm`;
 };
 
-const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
+const formatNumber = (value) =>
+  new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
-const formatProductName = (product) => [product?.name, product?.color].filter(Boolean).join(" — ");
+const formatProductName = (product) =>
+  [product?.name, product?.color].filter(Boolean).join(" — ");
 
 const ProductOptionLabel = ({ product }) => (
   <Box sx={{ minWidth: 0, py: 0.25 }}>
-    <Typography sx={{ fontSize: 14, fontWeight: 850, color: "#0f172a" }} noWrap>
+    <Typography
+      sx={{ fontSize: 14, fontWeight: 850, color: "var(--aa-text)" }}
+      noWrap
+    >
       {formatProductName(product)}
     </Typography>
     {product.sku && (
-      <Typography sx={{ mt: 0.15, fontSize: 11.5, fontWeight: 650, color: "#94a3b8" }} noWrap>
+      <Typography
+        sx={{
+          mt: 0.15,
+          fontSize: 11.5,
+          fontWeight: 650,
+          color: "var(--aa-text-tertiary)",
+        }}
+        noWrap
+      >
         SKU: {product.sku}
       </Typography>
     )}
@@ -97,10 +110,10 @@ const Card = ({ children, sx = {} }) => (
   <Paper
     elevation={0}
     sx={{
-      borderRadius: "20px",
-      border: "1px solid rgba(148, 163, 184, 0.22)",
-      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
-      boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+      borderRadius: "var(--aa-radius-xl)",
+      border: "1px solid var(--aa-border)",
+      background: "var(--aa-surface)",
+      boxShadow: "var(--aa-shadow-xs)",
       overflow: "hidden",
       ...sx,
     }}
@@ -112,24 +125,24 @@ const Card = ({ children, sx = {} }) => (
 const MiniStat = ({ label, value, tone = "default" }) => {
   const tones = {
     default: {
-      color: "#0f172a",
-      bg: "#ffffff",
-      border: "rgba(148, 163, 184, 0.24)",
+      color: "var(--aa-text)",
+      bg: "var(--aa-surface-solid)",
+      border: "var(--aa-border)",
     },
     blue: {
-      color: "#2563eb",
-      bg: "rgba(37, 99, 235, 0.08)",
-      border: "rgba(37, 99, 235, 0.18)",
+      color: "var(--aa-info)",
+      bg: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
+      border: "color-mix(in srgb, var(--aa-info) 18%, transparent)",
     },
     green: {
-      color: "#15803d",
-      bg: "rgba(34, 197, 94, 0.1)",
-      border: "rgba(34, 197, 94, 0.22)",
+      color: "var(--aa-success)",
+      bg: "color-mix(in srgb, var(--aa-success) 9%, transparent)",
+      border: "color-mix(in srgb, var(--aa-success) 20%, transparent)",
     },
     red: {
-      color: "#8b0101",
-      bg: "rgba(139, 1, 1, 0.08)",
-      border: "rgba(139, 1, 1, 0.18)",
+      color: "var(--aa-brand-700)",
+      bg: "var(--aa-brand-50)",
+      border: "var(--aa-brand-100)",
     },
   };
 
@@ -141,13 +154,21 @@ const MiniStat = ({ label, value, tone = "default" }) => {
         minWidth: 120,
         px: 2,
         py: 1.4,
-        borderRadius: "16px",
+        borderRadius: "var(--aa-radius-lg)",
         background: current.bg,
         border: `1px solid ${current.border}`,
-        boxShadow: "0 10px 26px rgba(15, 23, 42, 0.05)",
+        boxShadow: "var(--aa-shadow-xs)",
       }}
     >
-      <Typography sx={{ fontSize: 12, fontWeight: 800, color: "#64748b" }}>{label}</Typography>
+      <Typography
+        sx={{
+          fontSize: 12,
+          fontWeight: 800,
+          color: "var(--aa-text-secondary)",
+        }}
+      >
+        {label}
+      </Typography>
 
       <Typography
         sx={{
@@ -173,14 +194,21 @@ const DepartmentChip = ({ label }) => (
       px: 0.35,
       fontSize: 12,
       fontWeight: 900,
-      color: "#2563eb",
-      background: "rgba(37, 99, 235, 0.08)",
-      border: "1px solid rgba(37, 99, 235, 0.16)",
+      color: "var(--aa-info)",
+      background: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
+      border: "1px solid color-mix(in srgb, var(--aa-info) 16%, transparent)",
     }}
   />
 );
 
-const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md" }) => (
+const PremiumDialog = ({
+  open,
+  onClose,
+  title,
+  children,
+  actions,
+  maxWidth = "md",
+}) => (
   <Dialog
     open={open}
     onClose={onClose}
@@ -188,9 +216,10 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
     maxWidth={maxWidth}
     PaperProps={{
       sx: {
-        borderRadius: "22px",
-        border: "1px solid rgba(148, 163, 184, 0.22)",
-        boxShadow: "0 30px 80px rgba(15, 23, 42, 0.22)",
+        borderRadius: "var(--aa-radius-xl)",
+        border: "1px solid var(--aa-border)",
+        boxShadow: "var(--aa-shadow-lg)",
+        backgroundImage: "none",
         overflow: "hidden",
       },
     }}
@@ -201,9 +230,9 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
         py: 2.2,
         fontSize: 22,
         fontWeight: 950,
-        color: "#0f172a",
-        borderBottom: "1px solid rgba(148, 163, 184, 0.18)",
-        background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+        color: "var(--aa-text)",
+        borderBottom: "1px solid var(--aa-border)",
+        background: "var(--aa-surface)",
       }}
     >
       {title}
@@ -216,8 +245,8 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
         sx={{
           px: 3,
           py: 2,
-          borderTop: "1px solid rgba(148, 163, 184, 0.18)",
-          background: "rgba(248, 250, 252, 0.72)",
+          borderTop: "1px solid var(--aa-border)",
+          background: "var(--aa-surface-muted)",
         }}
       >
         {actions}
@@ -265,29 +294,41 @@ const WorkerOutputs = () => {
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
 
   const selectedProduct = useMemo(
-    () => products.find((product) => Number(product.id) === Number(form.product_id)),
+    () =>
+      products.find(
+        (product) => Number(product.id) === Number(form.product_id),
+      ),
     [form.product_id, products],
   );
 
   const selectedDepartment = useMemo(
-    () => departments.find((department) => Number(department.id) === Number(form.department_id)),
+    () =>
+      departments.find(
+        (department) => Number(department.id) === Number(form.department_id),
+      ),
     [departments, form.department_id],
   );
 
   const selectedProductCompletesStock = Boolean(
     selectedProduct?.has_recipe &&
     selectedProduct?.completion_department_id &&
-    Number(selectedProduct.completion_department_id) === Number(form.department_id),
+    Number(selectedProduct.completion_department_id) ===
+      Number(form.department_id),
   );
 
   const batchProductsCompletingStock = useMemo(
     () =>
       batchItems
-        .map((item) => products.find((product) => Number(product.id) === Number(item.product_id)))
+        .map((item) =>
+          products.find(
+            (product) => Number(product.id) === Number(item.product_id),
+          ),
+        )
         .filter(
           (product) =>
             product?.has_recipe &&
-            Number(product.completion_department_id) === Number(form.department_id),
+            Number(product.completion_department_id) ===
+              Number(form.department_id),
         ),
     [batchItems, form.department_id, products],
   );
@@ -318,12 +359,16 @@ const WorkerOutputs = () => {
       ]);
 
       setWorkers(
-        (usersRes.data.users || usersRes.data.list || []).filter((user) => user.role === "worker"),
+        (usersRes.data.users || usersRes.data.list || []).filter(
+          (user) => user.role === "worker",
+        ),
       );
       setProducts(productsRes.data.products || []);
       setDepartments(departmentsRes.data.departments || []);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Tanlov ma'lumotlarini olishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Tanlov ma'lumotlarini olishda xato.",
+      );
     }
   }, []);
 
@@ -336,7 +381,14 @@ const WorkerOutputs = () => {
         sort_order: filters.sort_order,
       };
 
-      for (const key of ["q", "worker_id", "product_id", "department_id", "date_from", "date_to"]) {
+      for (const key of [
+        "q",
+        "worker_id",
+        "product_id",
+        "department_id",
+        "date_from",
+        "date_to",
+      ]) {
         if (filters[key] !== "") params[key] = filters[key];
       }
 
@@ -356,7 +408,9 @@ const WorkerOutputs = () => {
         setTotals(data.totals || { total_quantity: 0, total_amount: 0 });
         setPageInfo(data.pageInfo || { total: 0, offset, limit });
       } catch (error) {
-        toast.error(error?.response?.data?.message || "Ish yozuvlarini olishda xato.");
+        toast.error(
+          error?.response?.data?.message || "Ish yozuvlarini olishda xato.",
+        );
       } finally {
         setLoading(false);
       }
@@ -402,7 +456,9 @@ const WorkerOutputs = () => {
       product_id: output.product_id || "",
       department_id: output.department_id || "",
       quantity: output.quantity ?? "",
-      worked_at: output.worked_at ? String(output.worked_at).slice(0, 10) : emptyForm.worked_at,
+      worked_at: output.worked_at
+        ? String(output.worked_at).slice(0, 10)
+        : emptyForm.worked_at,
       note: output.note || "",
     });
     setModalOpen(true);
@@ -420,7 +476,9 @@ const WorkerOutputs = () => {
     const value = event.target.value;
 
     setBatchItems((previous) =>
-      previous.map((item, itemIndex) => (itemIndex === index ? { ...item, [field]: value } : item)),
+      previous.map((item, itemIndex) =>
+        itemIndex === index ? { ...item, [field]: value } : item,
+      ),
     );
   };
 
@@ -429,7 +487,9 @@ const WorkerOutputs = () => {
   };
 
   const removeBatchItem = (index) => {
-    setBatchItems((previous) => previous.filter((_, itemIndex) => itemIndex !== index));
+    setBatchItems((previous) =>
+      previous.filter((_, itemIndex) => itemIndex !== index),
+    );
   };
 
   const validateForm = () => {
@@ -454,7 +514,11 @@ const WorkerOutputs = () => {
         return false;
       }
     } else {
-      if (batchItems.some((item) => !item.product_id || Number(item.quantity) <= 0)) {
+      if (
+        batchItems.some(
+          (item) => !item.product_id || Number(item.quantity) <= 0,
+        )
+      ) {
         toast.error("Har bir qatorda mahsulot va miqdorni to'g'ri kiriting.");
         return false;
       }
@@ -462,7 +526,9 @@ const WorkerOutputs = () => {
       const productIds = batchItems.map((item) => String(item.product_id));
 
       if (new Set(productIds).size !== productIds.length) {
-        toast.error("Bir mahsulotni ikki marta tanlamang, miqdorini bitta qatorda jamlang.");
+        toast.error(
+          "Bir mahsulotni ikki marta tanlamang, miqdorini bitta qatorda jamlang.",
+        );
         return false;
       }
     }
@@ -505,7 +571,9 @@ const WorkerOutputs = () => {
       closeModals();
       refreshPage();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Ish yozuvini saqlashda xato.");
+      toast.error(
+        error?.response?.data?.message || "Ish yozuvini saqlashda xato.",
+      );
     } finally {
       setSaving(false);
     }
@@ -522,7 +590,9 @@ const WorkerOutputs = () => {
       closeModals();
       refreshPage();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Ish yozuvini o'chirishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Ish yozuvini o'chirishda xato.",
+      );
     } finally {
       setDeleting(false);
     }
@@ -554,6 +624,11 @@ const WorkerOutputs = () => {
         display: "flex",
         flexDirection: "column",
         pb: 2,
+        color: "var(--aa-text)",
+        "& .MuiOutlinedInput-root": {
+          borderRadius: "var(--aa-radius-md)",
+          backgroundColor: "var(--aa-surface-solid)",
+        },
       }}
     >
       <Card sx={{ mb: 2.5, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
@@ -575,9 +650,10 @@ const WorkerOutputs = () => {
                 height: 25,
                 fontSize: 12,
                 fontWeight: 950,
-                color: "#2563eb",
-                background: "rgba(37, 99, 235, 0.08)",
-                border: "1px solid rgba(37, 99, 235, 0.16)",
+                color: "var(--aa-brand-700)",
+                background: "var(--aa-brand-50)",
+                border: "1px solid var(--aa-brand-100)",
+                borderRadius: "var(--aa-radius-pill)",
               }}
             />
 
@@ -585,7 +661,7 @@ const WorkerOutputs = () => {
               sx={{
                 fontSize: { xs: 27, md: 33 },
                 fontWeight: 950,
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 letterSpacing: "-0.055em",
                 lineHeight: 1.05,
               }}
@@ -598,7 +674,7 @@ const WorkerOutputs = () => {
                 mt: 0.7,
                 fontSize: 14,
                 fontWeight: 650,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
               }}
             >
               Ishchilar bajargan mahsulot ishlari va oylik hisob-kitobi.
@@ -608,14 +684,25 @@ const WorkerOutputs = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(3, auto)" },
+              gridTemplateColumns: {
+                xs: "repeat(2, 1fr)",
+                sm: "repeat(3, auto)",
+              },
               gap: 1.4,
               width: { xs: "100%", md: "auto" },
             }}
           >
             <MiniStat label="Yozuvlar" value={pageInfo.total} tone="blue" />
-            <MiniStat label="Miqdor" value={formatNumber(totals.total_quantity)} tone="green" />
-            <MiniStat label="Summa" value={formatMoney(totals.total_amount)} tone="red" />
+            <MiniStat
+              label="Miqdor"
+              value={formatNumber(totals.total_quantity)}
+              tone="green"
+            />
+            <MiniStat
+              label="Summa"
+              value={formatMoney(totals.total_amount)}
+              tone="red"
+            />
           </Box>
         </Box>
       </Card>
@@ -634,7 +721,11 @@ const WorkerOutputs = () => {
             <Box
               sx={{
                 display: "grid",
-                gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" },
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  lg: "repeat(4, 1fr)",
+                },
                 gap: 1.4,
                 flex: 1,
               }}
@@ -669,12 +760,12 @@ const WorkerOutputs = () => {
                 onClick={() => setFiltersOpen((open) => !open)}
                 sx={{
                   height: 42,
-                  borderRadius: "13px",
+                  borderRadius: "var(--aa-radius-md)",
                   textTransform: "none",
                   fontWeight: 900,
-                  color: "#0f172a",
-                  borderColor: "rgba(37, 99, 235, 0.22)",
-                  background: "#fff",
+                  color: "var(--aa-text)",
+                  borderColor: "var(--aa-border-strong)",
+                  background: "var(--aa-surface-solid)",
                 }}
               >
                 {filtersOpen ? "Filtrlarni yopish" : "Batafsil filtrlar"}
@@ -685,12 +776,12 @@ const WorkerOutputs = () => {
                 onClick={resetFilters}
                 sx={{
                   height: 42,
-                  borderRadius: "13px",
+                  borderRadius: "var(--aa-radius-md)",
                   textTransform: "none",
                   fontWeight: 900,
-                  color: "#0f172a",
-                  borderColor: "rgba(37, 99, 235, 0.22)",
-                  background: "#fff",
+                  color: "var(--aa-text)",
+                  borderColor: "var(--aa-border-strong)",
+                  background: "var(--aa-surface-solid)",
                 }}
               >
                 Tozalash
@@ -704,13 +795,13 @@ const WorkerOutputs = () => {
                 sx={{
                   minWidth: 210,
                   height: 42,
-                  borderRadius: "13px",
+                  borderRadius: "var(--aa-radius-md)",
                   textTransform: "none",
                   fontWeight: 950,
-                  background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                  boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
+                  background: "var(--aa-brand-700)",
+                  boxShadow: "var(--aa-shadow-sm)",
                   "&:hover": {
-                    background: "linear-gradient(135deg, #7f0101, #991b1b)",
+                    background: "var(--aa-brand-800)",
                   },
                 }}
               >
@@ -724,9 +815,13 @@ const WorkerOutputs = () => {
               sx={{
                 pt: 1.6,
                 display: "grid",
-                gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" },
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  lg: "repeat(4, 1fr)",
+                },
                 gap: 1.4,
-                borderTop: "1px solid rgba(148, 163, 184, 0.18)",
+                borderTop: "1px solid var(--aa-border)",
               }}
             >
               <TextField
@@ -739,7 +834,9 @@ const WorkerOutputs = () => {
                   renderValue: (value) =>
                     value
                       ? formatProductName(
-                          products.find((product) => Number(product.id) === Number(value)),
+                          products.find(
+                            (product) => Number(product.id) === Number(value),
+                          ),
                         )
                       : "Barchasi",
                 }}
@@ -805,18 +902,18 @@ const WorkerOutputs = () => {
                 py: 1.7,
                 fontSize: 12,
                 fontWeight: 950,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 textTransform: "uppercase",
                 letterSpacing: "0.03em",
-                background: "rgba(248, 250, 252, 0.95)",
-                borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
+                background: "var(--aa-surface-muted)",
+                borderBottom: "1px solid var(--aa-border)",
               },
               "& td": {
                 py: 1.55,
-                borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+                borderBottom: "1px solid var(--aa-border)",
               },
               "& tbody tr:hover": {
-                background: "rgba(37, 99, 235, 0.035)",
+                background: "var(--aa-surface-hover)",
               },
             }}
           >
@@ -833,7 +930,11 @@ const WorkerOutputs = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={canManage ? 5 : 4} align="center" sx={{ py: 7 }}>
+                  <TableCell
+                    colSpan={canManage ? 5 : 4}
+                    align="center"
+                    sx={{ py: 7 }}
+                  >
                     <CircularProgress size={30} />
                   </TableCell>
                 </TableRow>
@@ -841,16 +942,18 @@ const WorkerOutputs = () => {
                 outputs.map((output) => (
                   <TableRow key={output.id} hover>
                     <TableCell>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.6 }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1.6 }}
+                      >
                         <Avatar
                           sx={{
                             width: 48,
                             height: 48,
-                            bgcolor: "#8b0101",
-                            color: "#fff",
+                            bgcolor: "var(--aa-brand-50)",
+                            color: "var(--aa-brand-700)",
                             fontWeight: 950,
-                            border: "3px solid #fff",
-                            boxShadow: "0 10px 24px rgba(139, 1, 1, 0.14)",
+                            border: "3px solid var(--aa-surface-solid)",
+                            boxShadow: "var(--aa-shadow-sm)",
                           }}
                         >
                           {getInitial(output.worker_name)}
@@ -861,7 +964,7 @@ const WorkerOutputs = () => {
                             sx={{
                               fontSize: 14.5,
                               fontWeight: 900,
-                              color: "#0f172a",
+                              color: "var(--aa-text)",
                               lineHeight: 1.15,
                             }}
                           >
@@ -873,7 +976,7 @@ const WorkerOutputs = () => {
                               mt: 0.35,
                               fontSize: 12.5,
                               fontWeight: 700,
-                              color: "#64748b",
+                              color: "var(--aa-text-secondary)",
                             }}
                           >
                             @{output.worker_username || "worker"}
@@ -883,7 +986,13 @@ const WorkerOutputs = () => {
                     </TableCell>
 
                     <TableCell>
-                      <Typography sx={{ fontSize: 14.5, fontWeight: 900, color: "#0f172a" }}>
+                      <Typography
+                        sx={{
+                          fontSize: 14.5,
+                          fontWeight: 900,
+                          color: "var(--aa-text)",
+                        }}
+                      >
                         {output.product_name || "-"}
                       </Typography>
 
@@ -893,7 +1002,7 @@ const WorkerOutputs = () => {
                           mb: 0.7,
                           fontSize: 12.5,
                           fontWeight: 700,
-                          color: "#64748b",
+                          color: "var(--aa-text-secondary)",
                         }}
                       >
                         {output.product_sku || output.product_model || "-"}
@@ -903,7 +1012,13 @@ const WorkerOutputs = () => {
                     </TableCell>
 
                     <TableCell>
-                      <Typography sx={{ fontSize: 14.5, fontWeight: 950, color: "#0f172a" }}>
+                      <Typography
+                        sx={{
+                          fontSize: 14.5,
+                          fontWeight: 950,
+                          color: "var(--aa-text)",
+                        }}
+                      >
                         {formatMoney(output.total_amount)}
                       </Typography>
 
@@ -912,15 +1027,21 @@ const WorkerOutputs = () => {
                           mt: 0.35,
                           fontSize: 12.5,
                           fontWeight: 700,
-                          color: "#64748b",
+                          color: "var(--aa-text-secondary)",
                         }}
                       >
-                        {formatNumber(output.quantity)} {output.product_unit || "par"} ×{" "}
+                        {formatNumber(output.quantity)}{" "}
+                        {output.product_unit || "par"} ×{" "}
                         {formatMoney(output.price_per_unit)}
                       </Typography>
                     </TableCell>
 
-                    <TableCell sx={{ fontWeight: 800, color: "#334155" }}>
+                    <TableCell
+                      sx={{
+                        fontWeight: 800,
+                        color: "var(--aa-text-secondary)",
+                      }}
+                    >
                       {formatDate(output.worked_at)}
                     </TableCell>
 
@@ -971,7 +1092,11 @@ const WorkerOutputs = () => {
                   <TableCell
                     colSpan={canManage ? 5 : 4}
                     align="center"
-                    sx={{ py: 7, color: "#64748b", fontWeight: 850 }}
+                    sx={{
+                      py: 7,
+                      color: "var(--aa-text-secondary)",
+                      fontWeight: 850,
+                    }}
                   >
                     Ish yozuvlari topilmadi
                   </TableCell>
@@ -983,15 +1108,17 @@ const WorkerOutputs = () => {
 
         <Box
           sx={{
-            borderTop: "1px solid rgba(148, 163, 184, 0.18)",
-            background: "rgba(248, 250, 252, 0.65)",
+            borderTop: "1px solid var(--aa-border)",
+            background: "var(--aa-surface-muted)",
           }}
         >
           <CrmPagination
             total={pageInfo.total}
             page={page}
             limit={pageInfo.limit}
-            onPageChange={(nextPage) => fetchOutputs(nextPage * pageInfo.limit, pageInfo.limit)}
+            onPageChange={(nextPage) =>
+              fetchOutputs(nextPage * pageInfo.limit, pageInfo.limit)
+            }
             onLimitChange={(limit) => fetchOutputs(0, limit)}
           />
         </Box>
@@ -1000,12 +1127,18 @@ const WorkerOutputs = () => {
       <PremiumDialog
         open={modalOpen}
         onClose={closeModals}
-        title={selectedOutput ? "Ish yozuvini tahrirlash" : "Ish yozuvi qo'shish"}
+        title={
+          selectedOutput ? "Ish yozuvini tahrirlash" : "Ish yozuvi qo'shish"
+        }
         actions={
           <>
             <Button
               onClick={closeModals}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 850,
+              }}
             >
               Bekor qilish
             </Button>
@@ -1019,8 +1152,9 @@ const WorkerOutputs = () => {
                 borderRadius: "12px",
                 textTransform: "none",
                 fontWeight: 900,
-                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                boxShadow: "0 12px 25px rgba(139, 1, 1, 0.2)",
+                background: "var(--aa-brand-700)",
+                boxShadow: "var(--aa-shadow-sm)",
+                "&:hover": { background: "var(--aa-brand-800)" },
               }}
             >
               {saving ? "Saqlanmoqda..." : "Saqlash"}
@@ -1077,8 +1211,9 @@ const WorkerOutputs = () => {
             ? selectedProductCompletesStock
             : batchProductsCompletingStock.length > 0) && (
             <Alert severity="success" sx={{ borderRadius: "14px" }}>
-              Bu yakuniy ishlab chiqarish bosqichi. Saqlanganda tayyor mahsulot omboriga par
-              qo'shiladi va retsept bo'yicha homashyolar avtomatik kamayadi.
+              Bu yakuniy ishlab chiqarish bosqichi. Saqlanganda tayyor mahsulot
+              omboriga par qo'shiladi va retsept bo'yicha homashyolar avtomatik
+              kamayadi.
             </Alert>
           )}
 
@@ -1100,7 +1235,9 @@ const WorkerOutputs = () => {
                   SelectProps={{
                     renderValue: (value) =>
                       formatProductName(
-                        products.find((product) => Number(product.id) === Number(value)),
+                        products.find(
+                          (product) => Number(product.id) === Number(value),
+                        ),
                       ),
                   }}
                 >
@@ -1125,15 +1262,28 @@ const WorkerOutputs = () => {
                 sx={{
                   p: 2,
                   borderRadius: "18px",
-                  background: "#f8fafc",
-                  border: "1px solid rgba(148, 163, 184, 0.2)",
+                  background: "var(--aa-surface-muted)",
+                  border: "1px solid var(--aa-border)",
                 }}
               >
-                <Typography sx={{ fontSize: 13, fontWeight: 800, color: "#64748b" }}>
+                <Typography
+                  sx={{
+                    fontSize: 13,
+                    fontWeight: 800,
+                    color: "var(--aa-text-secondary)",
+                  }}
+                >
                   Tanlangan
                 </Typography>
 
-                <Typography sx={{ mt: 0.6, fontSize: 15, fontWeight: 950, color: "#0f172a" }}>
+                <Typography
+                  sx={{
+                    mt: 0.6,
+                    fontSize: 15,
+                    fontWeight: 950,
+                    color: "var(--aa-text)",
+                  }}
+                >
                   {selectedProduct?.name || "Mahsulot tanlanmagan"} /{" "}
                   {selectedDepartment?.name || "Bo'lim tanlanmagan"}
                 </Typography>
@@ -1144,8 +1294,8 @@ const WorkerOutputs = () => {
               sx={{
                 p: 2,
                 borderRadius: "18px",
-                background: "linear-gradient(135deg, #ffffff, #f8fafc)",
-                border: "1px solid rgba(148, 163, 184, 0.22)",
+                background: "var(--aa-surface)",
+                border: "1px solid var(--aa-border)",
               }}
             >
               <Box
@@ -1159,11 +1309,24 @@ const WorkerOutputs = () => {
                 }}
               >
                 <Box>
-                  <Typography sx={{ fontSize: 16, fontWeight: 950, color: "#0f172a" }}>
+                  <Typography
+                    sx={{
+                      fontSize: 16,
+                      fontWeight: 950,
+                      color: "var(--aa-text)",
+                    }}
+                  >
                     Mahsulot va miqdorlar
                   </Typography>
 
-                  <Typography sx={{ mt: 0.4, fontSize: 13, fontWeight: 650, color: "#64748b" }}>
+                  <Typography
+                    sx={{
+                      mt: 0.4,
+                      fontSize: 13,
+                      fontWeight: 650,
+                      color: "var(--aa-text-secondary)",
+                    }}
+                  >
                     Narx va summa backendda avtomatik hisoblanadi.
                   </Typography>
                 </Box>
@@ -1191,8 +1354,8 @@ const WorkerOutputs = () => {
                       gap: 1.3,
                       p: 1.4,
                       borderRadius: "16px",
-                      background: "#ffffff",
-                      border: "1px solid rgba(148, 163, 184, 0.2)",
+                      background: "var(--aa-surface-solid)",
+                      border: "1px solid var(--aa-border)",
                     }}
                   >
                     <TextField
@@ -1204,7 +1367,9 @@ const WorkerOutputs = () => {
                       SelectProps={{
                         renderValue: (value) =>
                           formatProductName(
-                            products.find((product) => Number(product.id) === Number(value)),
+                            products.find(
+                              (product) => Number(product.id) === Number(value),
+                            ),
                           ),
                       }}
                     >
@@ -1214,7 +1379,8 @@ const WorkerOutputs = () => {
                           value={product.id}
                           disabled={batchItems.some(
                             (row, rowIndex) =>
-                              rowIndex !== index && Number(row.product_id) === Number(product.id),
+                              rowIndex !== index &&
+                              Number(row.product_id) === Number(product.id),
                           )}
                         >
                           <ProductOptionLabel product={product} />
@@ -1235,7 +1401,11 @@ const WorkerOutputs = () => {
                       color="error"
                       onClick={() => removeBatchItem(index)}
                       disabled={batchItems.length === 1}
-                      sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+                      sx={{
+                        borderRadius: "12px",
+                        textTransform: "none",
+                        fontWeight: 850,
+                      }}
                     >
                       Olib tashlash
                     </Button>
@@ -1265,7 +1435,11 @@ const WorkerOutputs = () => {
           <>
             <Button
               onClick={closeModals}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 850,
+              }}
             >
               Bekor qilish
             </Button>
@@ -1275,14 +1449,18 @@ const WorkerOutputs = () => {
               variant="contained"
               onClick={handleDelete}
               disabled={deleting}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 900 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 900,
+              }}
             >
               {deleting ? "O'chirilmoqda..." : "O'chirish"}
             </Button>
           </>
         }
       >
-        <Typography sx={{ color: "#334155", fontWeight: 700 }}>
+        <Typography sx={{ color: "var(--aa-text-secondary)", fontWeight: 700 }}>
           {selectedOutput?.worker_name} yozuvini o'chirmoqchimisiz?
         </Typography>
       </PremiumDialog>

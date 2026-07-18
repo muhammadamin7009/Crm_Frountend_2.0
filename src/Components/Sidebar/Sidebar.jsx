@@ -1,13 +1,4 @@
-﻿import {
-  Avatar,
-  Box,
-  Button,
-  Divider,
-  List,
-  ListItemButton,
-  ListItemText,
-  Typography,
-} from "@mui/material";
+﻿import { Avatar, Box, Button, List, ListItemButton, ListItemText, Typography } from "@mui/material";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../Context/AuthContext";
@@ -40,6 +31,13 @@ const menuGroups = [
         label: "Foydalanuvchilar",
         path: "/users",
         allowedRoles: ["super_admin", "admin", "worker"],
+        requiredPermission: "users.view",
+      },
+      {
+        icon: UsersIcon,
+        label: "Mijozlar",
+        path: "/clients",
+        allowedRoles: ["super_admin", "admin"],
         requiredPermission: "users.view",
       },
       {
@@ -213,7 +211,7 @@ const Sidebar = () => {
 
     return [
       group("Asosiy", ["/"]),
-      group("Savdo", ["/client-sales"]),
+      group("Savdo", ["/clients", "/client-sales"]),
       group("Ishlab chiqarish", ["/products", "/worker-outputs"]),
       inventoryGroup,
       group("Xodimlar", ["/users", "/employees", "/worker-payments"]),
@@ -235,38 +233,41 @@ const Sidebar = () => {
   const companyLogo = getCompanyLogoUrl(user?.company_logo_url);
 
   return (
-    <aside className="hidden h-screen w-68 shrink-0 p-3 md:block">
-      <Box className="flex h-full flex-col overflow-hidden rounded-xl bg-[#050817] text-white shadow-[0_18px_45px_rgba(15,23,42,0.22)]">
-        <Box className="px-5 pb-5 pt-5">
+    <aside className="hidden h-screen w-[252px] shrink-0 border-r border-[var(--aa-border)] bg-white/90 md:block">
+      <Box className="flex h-full flex-col overflow-hidden bg-white/82 backdrop-blur-2xl">
+        <Box className="px-5 pb-4 pt-5">
           <Box className="flex items-center gap-3">
-            <Box className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white shadow-lg">
+            <Box className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] border border-[var(--aa-border)] bg-white shadow-[var(--aa-shadow-xs)]">
               {companyLogo || isMainCompany ? (
                 <img
                   width={34}
                   height={34}
-                  className="h-8.5 w-8.5 object-contain"
+                  className="h-8 w-8 object-contain"
                   src={companyLogo || SiteLogo}
                   alt={companyName}
                 />
               ) : (
-                <Typography fontWeight={900} className="text-slate-950">
+                <Typography fontWeight={900} className="text-[var(--aa-brand-800)]">
                   {companyName[0]?.toUpperCase() || "K"}
                 </Typography>
               )}
             </Box>
 
             <Box className="min-w-0">
-              <Typography className="truncate text-base font-black leading-tight text-white">
+              <Typography className="truncate text-[15px] font-black leading-tight text-[var(--aa-text)]">
                 {companyName}
               </Typography>
-              <Typography variant="body2" className="mt-1 text-slate-400">
+              <Typography
+                variant="body2"
+                className="mt-1 text-xs font-semibold text-[var(--aa-text-tertiary)]"
+              >
                 {user?.plan_name ? `${user.plan_name} reja` : "Korxona boshqaruvi"}
               </Typography>
             </Box>
           </Box>
         </Box>
 
-        <Box className="min-h-0 flex-1 overflow-y-auto px-4 pb-3">
+        <Box className="min-h-0 flex-1 overflow-y-auto px-3 pb-3">
           {resolvedMenuGroups.map((group) => {
             const visibleItems = group.items.filter(
               (item) =>
@@ -280,10 +281,10 @@ const Sidebar = () => {
             if (!visibleItems.length) return null;
 
             return (
-              <Box key={group.label} className="mb-5">
+              <Box key={group.label} className="mb-4">
                 <Typography
                   variant="caption"
-                  className="mb-2 block px-2 font-black uppercase tracking-[0.08em] text-slate-500"
+                  className="mb-1.5 block px-3 text-[10px] font-black uppercase tracking-[0.12em] text-[var(--aa-text-tertiary)]"
                 >
                   {group.label}
                 </Typography>
@@ -295,60 +296,62 @@ const Sidebar = () => {
                       component={NavLink}
                       to={item.path}
                       end={item.end}
-                      className="mb-1.5"
+                      className="mb-1"
                       sx={{
-                        gap: 1.4,
-                        px: 1.5,
-                        py: 1.35,
-                        minHeight: 52,
-                        color: "#cbd5e1",
+                        gap: 1.25,
+                        px: 1.4,
+                        py: 1.05,
+                        minHeight: 44,
+                        color: "var(--aa-text-secondary)",
                         border: "1px solid transparent",
-                        borderRadius: "8px",
+                        borderRadius: "12px",
                         transition:
                           "background-color .18s ease, color .18s ease, box-shadow .18s ease, transform .18s ease",
                         "& .menu-icon": {
                           display: "grid",
                           placeItems: "center",
-                          width: 30,
-                          height: 30,
+                          width: 28,
+                          height: 28,
                           flexShrink: 0,
-                          borderRadius: "7px",
-                          backgroundColor: "rgba(255,255,255,.06)",
+                          borderRadius: "9px",
+                          backgroundColor: "transparent",
                           transition: "background-color .18s ease",
                         },
                         "& .menu-icon img": {
-                          width: 17,
-                          height: 17,
+                          width: 16,
+                          height: 16,
                           filter:
-                            "brightness(0) saturate(100%) invert(87%) sepia(15%) saturate(764%) hue-rotate(188deg) brightness(104%) contrast(96%)",
+                            "brightness(0) saturate(100%) invert(38%) sepia(7%) saturate(694%) hue-rotate(202deg) brightness(92%) contrast(88%)",
                         },
                         "& .MuiListItemText-root": {
                           minWidth: 0,
                         },
                         "& .MuiListItemText-primary": {
-                          fontWeight: 800,
+                          fontWeight: 750,
                           color: "inherit",
-                          fontSize: 14,
+                          fontSize: 13.5,
                           lineHeight: "20px",
                           whiteSpace: "nowrap",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                         },
                         "&:hover": {
-                          backgroundColor: "rgba(255,255,255,.07)",
-                          color: "#fff",
+                          backgroundColor: "var(--aa-surface-hover)",
+                          color: "var(--aa-text)",
                           transform: "translateX(2px)",
                         },
                         "&.active": {
-                          background: "#a32024",
-                          color: "#ffffff",
-                          boxShadow: "0 12px 26px rgba(163, 32, 36, 0.30)",
+                          background: "var(--aa-brand-50)",
+                          color: "var(--aa-brand-800)",
+                          borderColor: "rgba(143,29,32,.10)",
+                          boxShadow: "inset 3px 0 0 var(--aa-brand-800)",
                         },
                         "&.active .menu-icon": {
-                          backgroundColor: "rgba(255,255,255,.18)",
+                          backgroundColor: "var(--aa-brand-100)",
                         },
                         "&.active .menu-icon img": {
-                          filter: "brightness(0) invert(1)",
+                          filter:
+                            "brightness(0) saturate(100%) invert(15%) sepia(64%) saturate(2255%) hue-rotate(340deg) brightness(86%) contrast(92%)",
                         },
                       }}
                     >
@@ -365,15 +368,15 @@ const Sidebar = () => {
           })}
         </Box>
 
-        <Box className="px-4 pb-4">
-          <Box className="rounded-xl border border-white/10 bg-white/4 p-3">
-            <Box className="mb-3 flex items-center gap-3">
+        <Box className="px-3 pb-3">
+          <Box className="rounded-[16px] border border-[var(--aa-border)] bg-white p-3 shadow-[var(--aa-shadow-xs)]">
+            <Box className="flex items-center gap-3">
               <Avatar
                 src={getImageUrl(user?.user_image)}
                 sx={{
-                  width: 42,
-                  height: 42,
-                  bgcolor: "#a32024",
+                  width: 38,
+                  height: 38,
+                  bgcolor: "var(--aa-brand-800)",
                   fontWeight: 900,
                 }}
               >
@@ -381,31 +384,32 @@ const Sidebar = () => {
               </Avatar>
 
               <Box className="min-w-0 flex-1">
-                <Typography className="truncate text-sm font-black leading-tight text-white">
+                <Typography className="truncate text-sm font-black leading-tight text-[var(--aa-text)]">
                   {fullName || user?.username || "Foydalanuvchi"}
                 </Typography>
-                <Typography variant="body2" className="mt-0.5 truncate text-slate-400">
+                <Typography
+                  variant="body2"
+                  className="mt-0.5 truncate text-xs text-[var(--aa-text-tertiary)]"
+                >
                   {roleNames[user?.role] || user?.role || "Ruxsat turi"}
                 </Typography>
               </Box>
             </Box>
 
-            <Divider sx={{ borderColor: "rgba(255,255,255,.09)", mb: 1.5 }} />
-
             <Button
               fullWidth
-              variant="outlined"
+              variant="text"
               sx={{
-                py: 1,
+                mt: 1,
+                minHeight: 34,
+                py: 0.5,
                 fontWeight: 800,
-                color: "#fecaca",
-                borderColor: "rgba(248,113,113,.35)",
-                backgroundColor: "rgba(248,113,113,.07)",
+                color: "var(--aa-danger) !important",
+                backgroundColor: "rgba(217,48,37,.05)",
                 textTransform: "none",
-                borderRadius: "10px",
+                borderRadius: "10px !important",
                 "&:hover": {
-                  borderColor: "rgba(248,113,113,.65)",
-                  backgroundColor: "rgba(248,113,113,.13)",
+                  backgroundColor: "rgba(217,48,37,.09) !important",
                 },
               }}
               onClick={handleLogout}

@@ -93,10 +93,10 @@ const Card = ({ children, sx = {} }) => (
   <Paper
     elevation={0}
     sx={{
-      borderRadius: "20px",
-      border: "1px solid rgba(148, 163, 184, 0.22)",
-      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
-      boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+      borderRadius: "var(--aa-radius-xl)",
+      border: "1px solid var(--aa-border)",
+      background: "var(--aa-surface)",
+      boxShadow: "var(--aa-shadow-sm)",
       overflow: "hidden",
       ...sx,
     }}
@@ -108,14 +108,14 @@ const Card = ({ children, sx = {} }) => (
 const MiniStat = ({ label, value, tone = "default", helper }) => {
   const tones = {
     default: {
-      color: "#0f172a",
-      bg: "#ffffff",
-      border: "rgba(148, 163, 184, 0.24)",
+      color: "var(--aa-text)",
+      bg: "var(--aa-surface-solid)",
+      border: "var(--aa-border)",
     },
     blue: {
-      color: "#2563eb",
-      bg: "rgba(37, 99, 235, 0.08)",
-      border: "rgba(37, 99, 235, 0.18)",
+      color: "var(--aa-info)",
+      bg: "rgba(24, 119, 210, 0.07)",
+      border: "rgba(24, 119, 210, 0.16)",
     },
     green: {
       color: "#15803d",
@@ -123,9 +123,9 @@ const MiniStat = ({ label, value, tone = "default", helper }) => {
       border: "rgba(34, 197, 94, 0.22)",
     },
     red: {
-      color: "#8b0101",
-      bg: "rgba(139, 1, 1, 0.08)",
-      border: "rgba(139, 1, 1, 0.18)",
+      color: "var(--aa-brand-800)",
+      bg: "var(--aa-brand-50)",
+      border: "var(--aa-brand-100)",
     },
     orange: {
       color: "#92400e",
@@ -142,19 +142,21 @@ const MiniStat = ({ label, value, tone = "default", helper }) => {
         minWidth: 122,
         px: 2,
         py: 1.35,
-        borderRadius: "16px",
+        borderRadius: "var(--aa-radius-lg)",
         background: current.bg,
         border: `1px solid ${current.border}`,
-        boxShadow: "0 10px 26px rgba(15, 23, 42, 0.05)",
+        boxShadow: "var(--aa-shadow-xs)",
       }}
     >
-      <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+      <Typography sx={{ fontSize: 11.5, fontWeight: 800, color: "var(--aa-text-tertiary)" }}>
+        {label}
+      </Typography>
 
       <Typography
         sx={{
           mt: 0.35,
           fontSize: 18,
-          fontWeight: 950,
+          fontWeight: 850,
           color: current.color,
           letterSpacing: "-0.04em",
           whiteSpace: "nowrap",
@@ -164,7 +166,9 @@ const MiniStat = ({ label, value, tone = "default", helper }) => {
       </Typography>
 
       {helper && (
-        <Typography sx={{ mt: 0.35, fontSize: 12, fontWeight: 700, color: "#64748b" }}>
+        <Typography
+          sx={{ mt: 0.35, fontSize: 12, fontWeight: 700, color: "var(--aa-text-tertiary)" }}
+        >
           {helper}
         </Typography>
       )}
@@ -174,29 +178,31 @@ const MiniStat = ({ label, value, tone = "default", helper }) => {
 
 const BalanceBox = ({ label, value, tone = "default" }) => {
   const colors = {
-    default: "#0f172a",
-    blue: "#2563eb",
-    green: "#15803d",
-    red: "#8b0101",
-    orange: "#92400e",
+    default: "var(--aa-text)",
+    blue: "var(--aa-info)",
+    green: "var(--aa-success)",
+    red: "var(--aa-brand-800)",
+    orange: "var(--aa-warning)",
   };
 
   return (
     <Box
       sx={{
         p: 1.5,
-        borderRadius: "15px",
+        borderRadius: "var(--aa-radius-lg)",
         background: "#fff",
-        border: "1px solid rgba(148, 163, 184, 0.2)",
+        border: "1px solid var(--aa-border)",
       }}
     >
-      <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+      <Typography sx={{ fontSize: 12, fontWeight: 800, color: "var(--aa-text-tertiary)" }}>
+        {label}
+      </Typography>
 
       <Typography
         sx={{
           mt: 0.45,
           fontSize: 15,
-          fontWeight: 950,
+          fontWeight: 850,
           color: colors[tone] || colors.default,
           letterSpacing: "-0.035em",
         }}
@@ -218,8 +224,8 @@ const DebtChip = ({ debt }) => {
         height: 26,
         px: 0.35,
         fontSize: 12,
-        fontWeight: 900,
-        color: hasDebt ? "#92400e" : "#15803d",
+        fontWeight: 850,
+        color: hasDebt ? "var(--aa-warning)" : "var(--aa-success)",
         background: hasDebt ? "rgba(245, 158, 11, 0.12)" : "rgba(34, 197, 94, 0.12)",
         border: hasDebt
           ? "1px solid rgba(245, 158, 11, 0.24)"
@@ -237,9 +243,9 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
     maxWidth={maxWidth}
     PaperProps={{
       sx: {
-        borderRadius: "22px",
-        border: "1px solid rgba(148, 163, 184, 0.22)",
-        boxShadow: "0 30px 80px rgba(15, 23, 42, 0.22)",
+        borderRadius: "var(--aa-radius-xl)",
+        border: "1px solid var(--aa-border)",
+        boxShadow: "var(--aa-shadow-lg)",
         overflow: "hidden",
       },
     }}
@@ -249,10 +255,10 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
         px: 3,
         py: 2.2,
         fontSize: 22,
-        fontWeight: 950,
-        color: "#0f172a",
-        borderBottom: "1px solid rgba(148, 163, 184, 0.18)",
-        background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+        fontWeight: 850,
+        color: "var(--aa-text)",
+        borderBottom: "1px solid var(--aa-border)",
+        background: "var(--aa-surface-solid)",
       }}
     >
       {title}
@@ -265,8 +271,8 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
         sx={{
           px: 3,
           py: 2,
-          borderTop: "1px solid rgba(148, 163, 184, 0.18)",
-          background: "rgba(248, 250, 252, 0.72)",
+          borderTop: "1px solid var(--aa-border)",
+          background: "var(--aa-surface-muted)",
         }}
       >
         {actions}
@@ -933,10 +939,10 @@ const ClientSales = () => {
         minHeight: 0,
         display: "flex",
         flexDirection: "column",
-        pb: 2,
+        pb: 2.5,
       }}
     >
-      <Card sx={{ mb: 0.5, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
+      <Card sx={{ mb: 2, px: { xs: 2, md: 2.6 }, py: 2.35, flexShrink: 0 }}>
         <Box
           sx={{
             display: "flex",
@@ -953,21 +959,21 @@ const ClientSales = () => {
               sx={{
                 mb: 1,
                 height: 25,
-                fontSize: 12,
-                fontWeight: 950,
-                color: "#2563eb",
-                background: "rgba(37, 99, 235, 0.08)",
-                border: "1px solid rgba(37, 99, 235, 0.16)",
+                fontSize: 11,
+                fontWeight: 850,
+                color: "var(--aa-brand-700)",
+                background: "var(--aa-brand-50)",
+                border: "1px solid var(--aa-brand-100)",
               }}
             />
 
             <Typography
               sx={{
-                fontSize: { xs: 27, md: 33 },
-                fontWeight: 950,
-                color: "#0f172a",
-                letterSpacing: "-0.055em",
-                lineHeight: 1.05,
+                fontSize: { xs: 26, md: 32 },
+                fontWeight: 850,
+                color: "var(--aa-text)",
+                letterSpacing: "-0.04em",
+                lineHeight: 1.08,
               }}
             >
               Mijoz savdo
@@ -977,8 +983,8 @@ const ClientSales = () => {
               sx={{
                 mt: 0.7,
                 fontSize: 14,
-                fontWeight: 650,
-                color: "#64748b",
+                fontWeight: 500,
+                color: "var(--aa-text-secondary)",
               }}
             >
               Mijozlarga berilgan mahsulotlar, to'lovlar va qarzdorlik nazorati.
@@ -1014,7 +1020,7 @@ const ClientSales = () => {
         </Box>
       </Card>
 
-      <Card sx={{ mb: 1, p: 2, flexShrink: 0 }}>
+      <Card sx={{ mb: 2, p: { xs: 1.5, md: 2 }, flexShrink: 0 }}>
         <Box
           sx={{
             display: "flex",
@@ -1038,7 +1044,7 @@ const ClientSales = () => {
           >
             <TextField
               size="small"
-              label="Qidirish"
+              label="Savdo yoki mijozni qidirish"
               value={filters.q}
               onChange={handleFilterChange("q")}
               onKeyDown={(event) => {
@@ -1066,12 +1072,16 @@ const ClientSales = () => {
               onClick={() => setFiltersOpen((open) => !open)}
               sx={{
                 height: 42,
-                borderRadius: "13px",
+                borderRadius: "var(--aa-radius-md)",
                 textTransform: "none",
-                fontWeight: 900,
-                color: "#0f172a",
-                borderColor: "rgba(37, 99, 235, 0.22)",
+                fontWeight: 800,
+                color: "var(--aa-text-secondary)",
+                borderColor: "var(--aa-border-strong)",
                 background: "#fff",
+                "&:hover": {
+                  borderColor: "var(--aa-brand-300)",
+                  background: "var(--aa-brand-50)",
+                },
               }}
             >
               {filtersOpen ? "Filtrlarni yopish" : "Batafsil filtrlar"}
@@ -1082,12 +1092,16 @@ const ClientSales = () => {
               onClick={resetFilters}
               sx={{
                 height: 42,
-                borderRadius: "13px",
+                borderRadius: "var(--aa-radius-md)",
                 textTransform: "none",
-                fontWeight: 900,
-                color: "#0f172a",
-                borderColor: "rgba(37, 99, 235, 0.22)",
+                fontWeight: 800,
+                color: "var(--aa-text-secondary)",
+                borderColor: "var(--aa-border-strong)",
                 background: "#fff",
+                "&:hover": {
+                  borderColor: "var(--aa-brand-300)",
+                  background: "var(--aa-brand-50)",
+                },
               }}
             >
               Tozalash
@@ -1176,12 +1190,16 @@ const ClientSales = () => {
                 sx={{
                   minWidth: 145,
                   height: 42,
-                  borderRadius: "13px",
+                  borderRadius: "var(--aa-radius-md)",
                   textTransform: "none",
-                  fontWeight: 900,
-                  color: "#0f172a",
-                  borderColor: "rgba(37, 99, 235, 0.22)",
+                  fontWeight: 800,
+                  color: "var(--aa-text-secondary)",
+                  borderColor: "var(--aa-border-strong)",
                   background: "#fff",
+                  "&:hover": {
+                    borderColor: "var(--aa-brand-300)",
+                    background: "var(--aa-brand-50)",
+                  },
                 }}
               >
                 Kirim qo'shish
@@ -1193,13 +1211,13 @@ const ClientSales = () => {
                 sx={{
                   minWidth: 150,
                   height: 42,
-                  borderRadius: "13px",
+                  borderRadius: "var(--aa-radius-md)",
                   textTransform: "none",
-                  fontWeight: 950,
-                  background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                  boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
+                  fontWeight: 850,
+                  background: "var(--aa-brand-800)",
+                  boxShadow: "0 10px 24px rgba(143, 29, 32, 0.16)",
                   "&:hover": {
-                    background: "linear-gradient(135deg, #7f0101, #991b1b)",
+                    background: "var(--aa-brand-700)",
                   },
                 }}
               >
@@ -1211,7 +1229,7 @@ const ClientSales = () => {
       </Card>
 
       {isSuperAdmin && (
-        <Card sx={{ mb: 1, p: 1.6, flexShrink: 0 }}>
+        <Card sx={{ mb: 2, p: 1.6, flexShrink: 0 }}>
           {summaryLoading ? (
             <Box sx={{ minHeight: 92, display: "grid", placeItems: "center" }}>
               <CircularProgress size={24} />
@@ -1233,17 +1251,17 @@ const ClientSales = () => {
                   key={String(item.group_id)}
                   sx={{
                     p: 1.6,
-                    borderRadius: "17px",
+                    borderRadius: "var(--aa-radius-lg)",
                     background: "#fff",
-                    border: "1px solid rgba(148, 163, 184, 0.22)",
-                    boxShadow: "0 10px 24px rgba(15, 23, 42, 0.04)",
+                    border: "1px solid var(--aa-border)",
+                    boxShadow: "var(--aa-shadow-xs)",
                   }}
                 >
                   <Typography
                     sx={{
                       fontSize: 13,
                       fontWeight: 800,
-                      color: "#64748b",
+                      color: "var(--aa-text-secondary)",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
@@ -1256,15 +1274,22 @@ const ClientSales = () => {
                     sx={{
                       mt: 0.45,
                       fontSize: 18,
-                      fontWeight: 950,
-                      color: "#0f172a",
+                      fontWeight: 850,
+                      color: "var(--aa-text)",
                       letterSpacing: "-0.04em",
                     }}
                   >
                     {formatMoney(item.total_amount)}
                   </Typography>
 
-                  <Typography sx={{ mt: 0.45, fontSize: 12.5, fontWeight: 750, color: "#64748b" }}>
+                  <Typography
+                    sx={{
+                      mt: 0.45,
+                      fontSize: 12.5,
+                      fontWeight: 750,
+                      color: "var(--aa-text-tertiary)",
+                    }}
+                  >
                     Qarz: {formatMoney(item.debt_amount)} / {item.sales_count} savdo
                   </Typography>
                 </Box>
@@ -1272,7 +1297,9 @@ const ClientSales = () => {
             </Box>
           ) : (
             <Box sx={{ minHeight: 92, display: "grid", placeItems: "center" }}>
-              <Typography sx={{ fontSize: 14, fontWeight: 750, color: "#64748b" }}>
+              <Typography
+                sx={{ fontSize: 14, fontWeight: 750, color: "var(--aa-text-tertiary)" }}
+              >
                 Umumiy savdo ma'lumoti topilmadi.
               </Typography>
             </Box>
@@ -1294,20 +1321,20 @@ const ClientSales = () => {
               minWidth: canManage ? 1050 : 900,
               "& th": {
                 py: 1.7,
-                fontSize: 12,
-                fontWeight: 950,
-                color: "#64748b",
+                fontSize: 11.5,
+                fontWeight: 850,
+                color: "var(--aa-text-tertiary)",
                 textTransform: "uppercase",
-                letterSpacing: "0.03em",
-                background: "rgba(248, 250, 252, 0.95)",
-                borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
+                letterSpacing: "0.045em",
+                background: "var(--aa-surface-muted)",
+                borderBottom: "1px solid var(--aa-border)",
               },
               "& td": {
                 py: 1.55,
-                borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+                borderBottom: "1px solid var(--aa-border)",
               },
               "& tbody tr:hover": {
-                background: "rgba(37, 99, 235, 0.035)",
+                background: "var(--aa-surface-hover)",
               },
             }}
           >
@@ -1337,11 +1364,11 @@ const ClientSales = () => {
                           sx={{
                             width: 48,
                             height: 48,
-                            bgcolor: "#8b0101",
+                            bgcolor: "var(--aa-brand-800)",
                             color: "#fff",
-                            fontWeight: 950,
+                            fontWeight: 850,
                             border: "3px solid #fff",
-                            boxShadow: "0 10px 24px rgba(139, 1, 1, 0.14)",
+                            boxShadow: "0 8px 20px rgba(143, 29, 32, 0.14)",
                           }}
                         >
                           {getInitial(sale.client_name)}
@@ -1351,8 +1378,8 @@ const ClientSales = () => {
                           <Typography
                             sx={{
                               fontSize: 14.5,
-                              fontWeight: 900,
-                              color: "#0f172a",
+                              fontWeight: 850,
+                              color: "var(--aa-text)",
                               lineHeight: 1.15,
                             }}
                           >
@@ -1364,7 +1391,7 @@ const ClientSales = () => {
                               mt: 0.35,
                               fontSize: 12.5,
                               fontWeight: 700,
-                              color: "#64748b",
+                              color: "var(--aa-text-tertiary)",
                             }}
                           >
                             @{sale.client_username || "client"}
@@ -1374,24 +1401,36 @@ const ClientSales = () => {
                     </TableCell>
 
                     <TableCell>
-                      <Typography sx={{ fontSize: 14.5, fontWeight: 900, color: "#0f172a" }}>
+                      <Typography
+                        sx={{ fontSize: 14.5, fontWeight: 850, color: "var(--aa-text)" }}
+                      >
                         {sale.product_name || "-"}
                       </Typography>
 
                       <Typography
-                        sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 700, color: "#64748b" }}
+                        sx={{
+                          mt: 0.35,
+                          fontSize: 12.5,
+                          fontWeight: 700,
+                          color: "var(--aa-text-tertiary)",
+                        }}
                       >
                         {sale.product_sku || "-"}
                       </Typography>
 
                       <Typography
-                        sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 750, color: "#2563eb" }}
+                        sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 750, color: "var(--aa-info)" }}
                       >
                         {sale.warehouse_name || "Tarixiy savdo (omborsiz)"}
                       </Typography>
 
                       <Typography
-                        sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 700, color: "#64748b" }}
+                        sx={{
+                          mt: 0.35,
+                          fontSize: 12.5,
+                          fontWeight: 700,
+                          color: "var(--aa-text-tertiary)",
+                        }}
                       >
                         {formatNumber(sale.quantity)} {sale.product_unit || "par"} ×{" "}
                         {formatMoney(sale.unit_price)}
@@ -1399,7 +1438,9 @@ const ClientSales = () => {
                     </TableCell>
 
                     <TableCell>
-                      <Typography sx={{ fontSize: 14.5, fontWeight: 950, color: "#0f172a" }}>
+                      <Typography
+                        sx={{ fontSize: 14.5, fontWeight: 850, color: "var(--aa-text)" }}
+                      >
                         Jami: {formatMoney(sale.total_amount)}
                       </Typography>
 
@@ -1411,7 +1452,12 @@ const ClientSales = () => {
 
                       {Number(sale.extra_paid_amount || 0) > 0 && (
                         <Typography
-                          sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 700, color: "#64748b" }}
+                          sx={{
+                            mt: 0.35,
+                            fontSize: 12.5,
+                            fontWeight: 700,
+                            color: "var(--aa-text-tertiary)",
+                          }}
                         >
                           Keyingi: {formatMoney(sale.extra_paid_amount)}
                         </Typography>
@@ -1433,7 +1479,7 @@ const ClientSales = () => {
                           maxWidth: 220,
                           fontSize: 12.5,
                           fontWeight: 700,
-                          color: "#64748b",
+                          color: "var(--aa-text-secondary)",
                         }}
                       >
                         {sale.note || "Izoh yo'q"}
@@ -1502,7 +1548,7 @@ const ClientSales = () => {
                   <TableCell
                     colSpan={canManage ? 5 : 4}
                     align="center"
-                    sx={{ py: 7, color: "#64748b", fontWeight: 850 }}
+                    sx={{ py: 7, color: "var(--aa-text-tertiary)", fontWeight: 850 }}
                   >
                     Savdo yozuvlari topilmadi
                   </TableCell>
@@ -1514,8 +1560,8 @@ const ClientSales = () => {
 
         <Box
           sx={{
-            borderTop: "1px solid rgba(148, 163, 184, 0.18)",
-            background: "rgba(248, 250, 252, 0.65)",
+            borderTop: "1px solid var(--aa-border)",
+            background: "var(--aa-surface-muted)",
           }}
         >
           <CrmPagination
@@ -1554,9 +1600,10 @@ const ClientSales = () => {
                 minWidth: 120,
                 borderRadius: "12px",
                 textTransform: "none",
-                fontWeight: 900,
-                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                boxShadow: "0 12px 25px rgba(139, 1, 1, 0.2)",
+                fontWeight: 850,
+                background: "var(--aa-brand-800)",
+                boxShadow: "0 10px 24px rgba(143, 29, 32, 0.16)",
+                "&:hover": { background: "var(--aa-brand-700)" },
               }}
             >
               {saving ? "Saqlanmoqda..." : "Saqlash"}

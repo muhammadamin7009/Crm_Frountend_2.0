@@ -92,7 +92,10 @@ const normalizeDepartmentPrices = (prices = []) =>
 
 const buildDepartmentPriceRows = (departments = [], prices = []) => {
   const existingPrices = new Map(
-    normalizeDepartmentPrices(prices).map((price) => [Number(price.department_id), price]),
+    normalizeDepartmentPrices(prices).map((price) => [
+      Number(price.department_id),
+      price,
+    ]),
   );
 
   const departmentRows = departments.map((department) => {
@@ -122,10 +125,10 @@ const Card = ({ children, sx = {} }) => (
   <Paper
     elevation={0}
     sx={{
-      borderRadius: "20px",
-      border: "1px solid rgba(148, 163, 184, 0.22)",
-      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
-      boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+      borderRadius: "var(--aa-radius-xl)",
+      border: "1px solid var(--aa-border)",
+      background: "var(--aa-surface)",
+      boxShadow: "var(--aa-shadow-sm)",
       overflow: "hidden",
       ...sx,
     }}
@@ -138,20 +141,24 @@ const InfoItem = ({ label, value }) => (
   <Box
     sx={{
       p: 1.7,
-      borderRadius: "16px",
-      background: "#ffffff",
-      border: "1px solid rgba(148, 163, 184, 0.22)",
-      boxShadow: "0 10px 24px rgba(15, 23, 42, 0.04)",
+      borderRadius: "var(--aa-radius-lg)",
+      background: "var(--aa-surface-solid)",
+      border: "1px solid var(--aa-border)",
+      boxShadow: "var(--aa-shadow-xs)",
     }}
   >
-    <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+    <Typography
+      sx={{ fontSize: 12, fontWeight: 850, color: "var(--aa-text-secondary)" }}
+    >
+      {label}
+    </Typography>
 
     <Typography
       sx={{
         mt: 0.6,
         fontSize: 15,
         fontWeight: 900,
-        color: "#0f172a",
+        color: "var(--aa-text)",
         wordBreak: "break-word",
       }}
     >
@@ -190,7 +197,15 @@ const PriceCard = ({ label, value, tone = "blue" }) => {
         border: `1px solid ${current.border}`,
       }}
     >
-      <Typography sx={{ fontSize: 13, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+      <Typography
+        sx={{
+          fontSize: 13,
+          fontWeight: 850,
+          color: "var(--aa-text-secondary)",
+        }}
+      >
+        {label}
+      </Typography>
 
       <Typography
         sx={{
@@ -216,9 +231,11 @@ const StatusChip = ({ active }) => (
       px: 0.4,
       fontSize: 12,
       fontWeight: 950,
-      color: active ? "#15803d" : "#64748b",
-      background: active ? "rgba(34, 197, 94, 0.12)" : "#f1f5f9",
-      border: active ? "1px solid rgba(34, 197, 94, 0.24)" : "1px solid rgba(148, 163, 184, 0.24)",
+      color: active ? "var(--aa-success)" : "var(--aa-text-secondary)",
+      background: active ? "rgba(22, 137, 74, 0.1)" : "var(--aa-surface-muted)",
+      border: active
+        ? "1px solid rgba(22, 137, 74, 0.2)"
+        : "1px solid var(--aa-border)",
     }}
   />
 );
@@ -230,7 +247,8 @@ const Product = () => {
   const auth = useAuth() || {};
   const currentUser = auth.user || getLocalUser();
   const canManagePrices =
-    MANAGER_ROLES.includes(currentUser?.role) && hasPermission(currentUser, "products.manage");
+    MANAGER_ROLES.includes(currentUser?.role) &&
+    hasPermission(currentUser, "products.manage");
 
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
@@ -272,19 +290,28 @@ const Product = () => {
           : Promise.resolve({ data: { departments: [] } }),
         canManagePrices
           ? getProductRecipe(id)
-          : Promise.resolve({ data: { recipe: { materials: [] }, raw_materials: [] } }),
+          : Promise.resolve({
+              data: { recipe: { materials: [] }, raw_materials: [] },
+            }),
       ]);
       const receivedProduct = data?.product || data?.found_product || data;
       const departments = departmentsRes.data?.departments || [];
 
       setProduct(receivedProduct);
-      setPriceRows(buildDepartmentPriceRows(departments, receivedProduct?.department_prices || []));
+      setPriceRows(
+        buildDepartmentPriceRows(
+          departments,
+          receivedProduct?.department_prices || [],
+        ),
+      );
       setSelectedImage(
         receivedProduct?.images?.find((image) => image.is_primary)?.image_url ||
           receivedProduct?.images?.[0]?.image_url ||
           "",
       );
-      setCompletionDepartmentId(recipeRes.data?.recipe?.completion_department_id || "");
+      setCompletionDepartmentId(
+        recipeRes.data?.recipe?.completion_department_id || "",
+      );
       setRecipeRows(
         (recipeRes.data?.recipe?.materials || []).map((material) => ({
           row_id: material.id || `${material.raw_material_id}-${Date.now()}`,
@@ -341,7 +368,9 @@ const Product = () => {
     setDepartmentForm((prev) => ({
       ...prev,
       [field]: value,
-      ...(field === "name" && !prev.code ? { code: makeDepartmentCode(value) } : {}),
+      ...(field === "name" && !prev.code
+        ? { code: makeDepartmentCode(value) }
+        : {}),
     }));
   };
 
@@ -380,7 +409,9 @@ const Product = () => {
       setDepartmentOpen(false);
       setDepartmentForm(emptyDepartmentForm);
     } catch (requestError) {
-      toast.error(requestError?.response?.data?.message || "Bo'lim yaratishda xatolik.");
+      toast.error(
+        requestError?.response?.data?.message || "Bo'lim yaratishda xatolik.",
+      );
     } finally {
       setDepartmentSaving(false);
     }
@@ -408,7 +439,10 @@ const Product = () => {
 
       toast.success("Bo'lim narxlari saqlandi.");
     } catch (requestError) {
-      toast.error(requestError?.response?.data?.message || "Bo'lim narxlarini saqlashda xatolik.");
+      toast.error(
+        requestError?.response?.data?.message ||
+          "Bo'lim narxlarini saqlashda xatolik.",
+      );
     } finally {
       setPriceSaving(false);
     }
@@ -417,13 +451,19 @@ const Product = () => {
   const addRecipeRow = () => {
     setRecipeRows((current) => [
       ...current,
-      { row_id: `${Date.now()}-${Math.random()}`, raw_material_id: "", quantity_per_pair: "" },
+      {
+        row_id: `${Date.now()}-${Math.random()}`,
+        raw_material_id: "",
+        quantity_per_pair: "",
+      },
     ]);
   };
 
   const updateRecipeRow = (rowId, field, value) => {
     setRecipeRows((current) =>
-      current.map((row) => (row.row_id === rowId ? { ...row, [field]: value } : row)),
+      current.map((row) =>
+        row.row_id === rowId ? { ...row, [field]: value } : row,
+      ),
     );
   };
 
@@ -436,7 +476,9 @@ const Product = () => {
       (row) => row.raw_material_id && Number(row.quantity_per_pair) > 0,
     );
     if (completionDepartmentId && validRows.length !== recipeRows.length) {
-      toast.error("Har bir homashyo va 1 par uchun sarf miqdorini to'g'ri kiriting.");
+      toast.error(
+        "Har bir homashyo va 1 par uchun sarf miqdorini to'g'ri kiriting.",
+      );
       return;
     }
     if (completionDepartmentId && !validRows.length) {
@@ -444,7 +486,9 @@ const Product = () => {
       return;
     }
     if (!completionDepartmentId && recipeRows.length) {
-      toast.error("Yakunlovchi bo'limni tanlang yoki retsept qatorlarini o'chiring.");
+      toast.error(
+        "Yakunlovchi bo'limni tanlang yoki retsept qatorlarini o'chiring.",
+      );
       return;
     }
     const ids = validRows.map((row) => Number(row.raw_material_id));
@@ -456,7 +500,9 @@ const Product = () => {
     setRecipeSaving(true);
     try {
       const { data } = await saveProductRecipe(product.id, {
-        completion_department_id: completionDepartmentId ? Number(completionDepartmentId) : null,
+        completion_department_id: completionDepartmentId
+          ? Number(completionDepartmentId)
+          : null,
         items: validRows.map((row) => ({
           raw_material_id: Number(row.raw_material_id),
           quantity_per_pair: Number(row.quantity_per_pair),
@@ -472,7 +518,9 @@ const Product = () => {
       );
       toast.success("Mahsulot retsepti saqlandi.");
     } catch (requestError) {
-      toast.error(requestError?.response?.data?.message || "Retseptni saqlashda xatolik.");
+      toast.error(
+        requestError?.response?.data?.message || "Retseptni saqlashda xatolik.",
+      );
     } finally {
       setRecipeSaving(false);
     }
@@ -493,7 +541,12 @@ const Product = () => {
 
         <Button
           variant="outlined"
-          sx={{ mt: 2, borderRadius: "12px", fontWeight: 900, textTransform: "none" }}
+          sx={{
+            mt: 2,
+            borderRadius: "12px",
+            fontWeight: 900,
+            textTransform: "none",
+          }}
           onClick={() => navigate("/products")}
         >
           Mahsulotlarga qaytish
@@ -533,9 +586,9 @@ const Product = () => {
                 height: 25,
                 fontSize: 12,
                 fontWeight: 950,
-                color: "#2563eb",
-                background: "rgba(37, 99, 235, 0.08)",
-                border: "1px solid rgba(37, 99, 235, 0.16)",
+                color: "var(--aa-brand-800)",
+                background: "var(--aa-brand-50)",
+                border: "1px solid var(--aa-brand-200)",
               }}
             />
 
@@ -543,7 +596,7 @@ const Product = () => {
               sx={{
                 fontSize: { xs: 25, md: 32 },
                 fontWeight: 950,
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 letterSpacing: "-0.055em",
                 lineHeight: 1.08,
                 wordBreak: "break-word",
@@ -557,10 +610,11 @@ const Product = () => {
                 mt: 0.7,
                 fontSize: 14,
                 fontWeight: 700,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
               }}
             >
-              {product.category_name || "Kategoriyasiz"} / {product.unit || "par"}
+              {product.category_name || "Kategoriyasiz"} /{" "}
+              {product.unit || "par"}
             </Typography>
           </Box>
 
@@ -571,15 +625,15 @@ const Product = () => {
               minWidth: 105,
               height: 40,
               borderRadius: "13px",
-              borderColor: "rgba(37, 99, 235, 0.22)",
-              color: "#0f172a",
+              borderColor: "var(--aa-border-strong)",
+              color: "var(--aa-text)",
               fontWeight: 900,
               textTransform: "none",
-              background: "#fff",
+              background: "var(--aa-surface)",
               flexShrink: 0,
               "&:hover": {
-                borderColor: "#2563eb",
-                background: "rgba(37, 99, 235, 0.04)",
+                borderColor: "var(--aa-brand-800)",
+                background: "var(--aa-brand-50)",
               },
             }}
           >
@@ -603,10 +657,9 @@ const Product = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 overflow: "hidden",
-                borderRadius: "20px",
-                border: "1px solid rgba(148, 163, 184, 0.22)",
-                background:
-                  "linear-gradient(135deg, rgba(248,250,252,0.95), rgba(241,245,249,0.85))",
+                borderRadius: "var(--aa-radius-xl)",
+                border: "1px solid var(--aa-border)",
+                background: "var(--aa-surface-muted)",
               }}
             >
               {activeImage ? (
@@ -629,9 +682,9 @@ const Product = () => {
                     borderRadius: "26px",
                     fontSize: 44,
                     fontWeight: 950,
-                    bgcolor: "#8b0101",
+                    bgcolor: "var(--aa-brand-800)",
                     color: "#fff",
-                    boxShadow: "0 18px 38px rgba(139, 1, 1, 0.18)",
+                    boxShadow: "var(--aa-shadow-md)",
                   }}
                 >
                   {getInitial(product.name)}
@@ -663,8 +716,10 @@ const Product = () => {
                         overflow: "hidden",
                         borderRadius: "14px",
                         borderWidth: selected ? 2 : 1,
-                        borderColor: selected ? "#2563eb" : "rgba(148, 163, 184, 0.28)",
-                        boxShadow: selected ? "0 10px 22px rgba(37, 99, 235, 0.16)" : "none",
+                        borderColor: selected
+                          ? "var(--aa-brand-800)"
+                          : "var(--aa-border)",
+                        boxShadow: selected ? "var(--aa-shadow-sm)" : "none",
                       }}
                     >
                       <img
@@ -687,12 +742,18 @@ const Product = () => {
                   mt: 1.3,
                   p: 1.6,
                   borderRadius: "16px",
-                  background: "#f8fafc",
-                  border: "1px dashed rgba(148, 163, 184, 0.42)",
+                  background: "var(--aa-surface-muted)",
+                  border: "1px dashed var(--aa-border-strong)",
                   textAlign: "center",
                 }}
               >
-                <Typography sx={{ fontSize: 13.5, fontWeight: 750, color: "#64748b" }}>
+                <Typography
+                  sx={{
+                    fontSize: 13.5,
+                    fontWeight: 750,
+                    color: "var(--aa-text-secondary)",
+                  }}
+                >
                   Mahsulot rasmi yuklanmagan.
                 </Typography>
               </Box>
@@ -720,9 +781,9 @@ const Product = () => {
                     px: 0.4,
                     fontSize: 12,
                     fontWeight: 900,
-                    color: "#334155",
-                    background: "#f1f5f9",
-                    border: "1px solid rgba(148, 163, 184, 0.24)",
+                    color: "var(--aa-text)",
+                    background: "var(--aa-surface-muted)",
+                    border: "1px solid var(--aa-border)",
                   }}
                 />
               )}
@@ -736,9 +797,9 @@ const Product = () => {
                     px: 0.4,
                     fontSize: 12,
                     fontWeight: 900,
-                    color: "#334155",
-                    background: "#f1f5f9",
-                    border: "1px solid rgba(148, 163, 184, 0.24)",
+                    color: "var(--aa-text)",
+                    background: "var(--aa-surface-muted)",
+                    border: "1px solid var(--aa-border)",
                   }}
                 />
               )}
@@ -763,7 +824,11 @@ const Product = () => {
                 />
               )}
 
-              <PriceCard label="Sotuv narxi" value={formatMoney(product.sale_price)} tone="green" />
+              <PriceCard
+                label="Sotuv narxi"
+                value={formatMoney(product.sale_price)}
+                tone="green"
+              />
             </Box>
 
             <Box
@@ -781,8 +846,14 @@ const Product = () => {
               <InfoItem label="Rang" value={product.color} />
               <InfoItem label="Kategoriya" value={product.category_name} />
               <InfoItem label="Birlik" value={product.unit} />
-              <InfoItem label="Yaratilgan vaqt" value={formatDate(product.created_at)} />
-              <InfoItem label="Yangilangan vaqt" value={formatDate(product.updated_at)} />
+              <InfoItem
+                label="Yaratilgan vaqt"
+                value={formatDate(product.created_at)}
+              />
+              <InfoItem
+                label="Yangilangan vaqt"
+                value={formatDate(product.updated_at)}
+              />
             </Box>
 
             <Box
@@ -790,11 +861,13 @@ const Product = () => {
                 mt: 1.8,
                 p: 2,
                 borderRadius: "18px",
-                background: "#f8fafc",
-                border: "1px solid rgba(148, 163, 184, 0.18)",
+                background: "var(--aa-surface-muted)",
+                border: "1px solid var(--aa-border)",
               }}
             >
-              <Typography sx={{ fontSize: 14, fontWeight: 900, color: "#0f172a" }}>
+              <Typography
+                sx={{ fontSize: 14, fontWeight: 900, color: "var(--aa-text)" }}
+              >
                 Tavsif
               </Typography>
 
@@ -803,7 +876,7 @@ const Product = () => {
                   mt: 0.7,
                   fontSize: 14,
                   fontWeight: 650,
-                  color: "#334155",
+                  color: "var(--aa-text-secondary)",
                   lineHeight: 1.6,
                   wordBreak: "break-word",
                 }}
@@ -828,11 +901,20 @@ const Product = () => {
             }}
           >
             <Box>
-              <Typography sx={{ fontSize: 18, fontWeight: 950, color: "#0f172a" }}>
+              <Typography
+                sx={{ fontSize: 18, fontWeight: 950, color: "var(--aa-text)" }}
+              >
                 Bo'lim narxlari
               </Typography>
 
-              <Typography sx={{ mt: 0.5, fontSize: 13.5, fontWeight: 650, color: "#64748b" }}>
+              <Typography
+                sx={{
+                  mt: 0.5,
+                  fontSize: 13.5,
+                  fontWeight: 650,
+                  color: "var(--aa-text-secondary)",
+                }}
+              >
                 Har bir bo'lim uchun bitta mahsulotga to'lanadigan ish haqi.
               </Typography>
             </Box>
@@ -862,10 +944,12 @@ const Product = () => {
                   borderRadius: "13px",
                   textTransform: "none",
                   fontWeight: 950,
-                  background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                  boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
+                  background:
+                    "linear-gradient(135deg, var(--aa-brand-800), var(--aa-brand-600))",
+                  boxShadow: "var(--aa-shadow-sm)",
                   "&:hover": {
-                    background: "linear-gradient(135deg, #7f0101, #991b1b)",
+                    background:
+                      "linear-gradient(135deg, var(--aa-brand-900), var(--aa-brand-700))",
                   },
                 }}
               >
@@ -891,10 +975,10 @@ const Product = () => {
                   key={row.department_id}
                   sx={{
                     p: 1.6,
-                    borderRadius: "18px",
-                    background: "#ffffff",
-                    border: "1px solid rgba(148, 163, 184, 0.22)",
-                    boxShadow: "0 10px 24px rgba(15, 23, 42, 0.04)",
+                    borderRadius: "var(--aa-radius-lg)",
+                    background: "var(--aa-surface-solid)",
+                    border: "1px solid var(--aa-border)",
+                    boxShadow: "var(--aa-shadow-xs)",
                   }}
                 >
                   <Stack spacing={1.4}>
@@ -907,12 +991,23 @@ const Product = () => {
                       }}
                     >
                       <Box>
-                        <Typography sx={{ fontSize: 15, fontWeight: 950, color: "#0f172a" }}>
+                        <Typography
+                          sx={{
+                            fontSize: 15,
+                            fontWeight: 950,
+                            color: "var(--aa-text)",
+                          }}
+                        >
                           {row.department_name}
                         </Typography>
 
                         <Typography
-                          sx={{ mt: 0.3, fontSize: 13, fontWeight: 650, color: "#64748b" }}
+                          sx={{
+                            mt: 0.3,
+                            fontSize: 13,
+                            fontWeight: 650,
+                            color: "var(--aa-text-secondary)",
+                          }}
                         >
                           {row.department_code || "Kod kiritilmagan"}
                         </Typography>
@@ -926,7 +1021,9 @@ const Product = () => {
                       type="number"
                       size="small"
                       value={row.price_per_unit}
-                      onChange={(event) => handlePriceChange(row.department_id, event.target.value)}
+                      onChange={(event) =>
+                        handlePriceChange(row.department_id, event.target.value)
+                      }
                       InputProps={{ inputProps: { min: 0, step: 100 } }}
                     />
                   </Stack>
@@ -961,11 +1058,21 @@ const Product = () => {
             }}
           >
             <Box>
-              <Typography sx={{ fontSize: 18, fontWeight: 950, color: "#0f172a" }}>
+              <Typography
+                sx={{ fontSize: 18, fontWeight: 950, color: "var(--aa-text)" }}
+              >
                 Ishlab chiqarish retsepti
               </Typography>
-              <Typography sx={{ mt: 0.5, fontSize: 13.5, fontWeight: 650, color: "#64748b" }}>
-                1 par mahsulot uchun ketadigan homashyolarni va yakunlovchi bo'limni belgilang.
+              <Typography
+                sx={{
+                  mt: 0.5,
+                  fontSize: 13.5,
+                  fontWeight: 650,
+                  color: "var(--aa-text-secondary)",
+                }}
+              >
+                1 par mahsulot uchun ketadigan homashyolarni va yakunlovchi
+                bo'limni belgilang.
               </Typography>
             </Box>
 
@@ -979,9 +1086,13 @@ const Product = () => {
                 borderRadius: "13px",
                 textTransform: "none",
                 fontWeight: 950,
-                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
-                "&:hover": { background: "linear-gradient(135deg, #7f0101, #991b1b)" },
+                background:
+                  "linear-gradient(135deg, var(--aa-brand-800), var(--aa-brand-600))",
+                boxShadow: "var(--aa-shadow-sm)",
+                "&:hover": {
+                  background:
+                    "linear-gradient(135deg, var(--aa-brand-900), var(--aa-brand-700))",
+                },
               }}
             >
               {recipeSaving ? "Saqlanmoqda..." : "Retseptni saqlash"}
@@ -989,9 +1100,10 @@ const Product = () => {
           </Box>
 
           <Alert severity="info" sx={{ mb: 2, borderRadius: "14px" }}>
-            Ishchi tanlangan yakunlovchi bo'limda ish topshirganda tayyor mahsulot omboriga par
-            qo'shiladi va retseptdagi homashyolar avtomatik kamayadi. Boshqa bo'limlardagi ishlar
-            ombor qoldig'ini o'zgartirmaydi.
+            Ishchi tanlangan yakunlovchi bo'limda ish topshirganda tayyor
+            mahsulot omboriga par qo'shiladi va retseptdagi homashyolar
+            avtomatik kamayadi. Boshqa bo'limlardagi ishlar ombor qoldig'ini
+            o'zgartirmaydi.
           </Alert>
 
           <TextField
@@ -1014,7 +1126,8 @@ const Product = () => {
           <Stack spacing={1.3}>
             {recipeRows.map((row, index) => {
               const selectedMaterial = rawMaterials.find(
-                (material) => Number(material.id) === Number(row.raw_material_id),
+                (material) =>
+                  Number(material.id) === Number(row.raw_material_id),
               );
 
               return (
@@ -1022,12 +1135,15 @@ const Product = () => {
                   key={row.row_id}
                   sx={{
                     display: "grid",
-                    gridTemplateColumns: { xs: "1fr", md: "minmax(220px, 1fr) 220px auto" },
+                    gridTemplateColumns: {
+                      xs: "1fr",
+                      md: "minmax(220px, 1fr) 220px auto",
+                    },
                     gap: 1.2,
                     p: 1.5,
-                    borderRadius: "16px",
-                    border: "1px solid rgba(148, 163, 184, 0.22)",
-                    background: "#fff",
+                    borderRadius: "var(--aa-radius-lg)",
+                    border: "1px solid var(--aa-border)",
+                    background: "var(--aa-surface-solid)",
                   }}
                 >
                   <TextField
@@ -1036,7 +1152,11 @@ const Product = () => {
                     label={`Homashyo ${index + 1}`}
                     value={row.raw_material_id}
                     onChange={(event) =>
-                      updateRecipeRow(row.row_id, "raw_material_id", event.target.value)
+                      updateRecipeRow(
+                        row.row_id,
+                        "raw_material_id",
+                        event.target.value,
+                      )
                     }
                   >
                     <MenuItem value="">Tanlang</MenuItem>
@@ -1064,7 +1184,11 @@ const Product = () => {
                     label={`1 par uchun (${selectedMaterial?.unit || "miqdor"})`}
                     value={row.quantity_per_pair}
                     onChange={(event) =>
-                      updateRecipeRow(row.row_id, "quantity_per_pair", event.target.value)
+                      updateRecipeRow(
+                        row.row_id,
+                        "quantity_per_pair",
+                        event.target.value,
+                      )
                     }
                     inputProps={{ min: 0.001, step: 0.001 }}
                   />
@@ -1090,8 +1214,15 @@ const Product = () => {
           <Button
             variant="outlined"
             onClick={addRecipeRow}
-            disabled={!rawMaterials.length || recipeRows.length >= rawMaterials.length}
-            sx={{ mt: 1.5, borderRadius: "12px", textTransform: "none", fontWeight: 900 }}
+            disabled={
+              !rawMaterials.length || recipeRows.length >= rawMaterials.length
+            }
+            sx={{
+              mt: 1.5,
+              borderRadius: "12px",
+              textTransform: "none",
+              fontWeight: 900,
+            }}
           >
             Homashyo qo'shish
           </Button>
@@ -1104,9 +1235,32 @@ const Product = () => {
         </Card>
       )}
 
-      <Dialog open={departmentOpen} onClose={closeDepartmentModal} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 950 }}>Bo'lim qo'shish</DialogTitle>
-        <DialogContent>
+      <Dialog
+        open={departmentOpen}
+        onClose={closeDepartmentModal}
+        fullWidth
+        maxWidth="sm"
+        PaperProps={{
+          sx: {
+            borderRadius: "var(--aa-radius-xl)",
+            border: "1px solid var(--aa-border)",
+            boxShadow: "var(--aa-shadow-lg)",
+            overflow: "hidden",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            px: 3,
+            py: 2.2,
+            fontWeight: 950,
+            color: "var(--aa-text)",
+            borderBottom: "1px solid var(--aa-border)",
+          }}
+        >
+          Bo'lim qo'shish
+        </DialogTitle>
+        <DialogContent sx={{ px: 3, py: 2.5 }}>
           <Stack spacing={2} sx={{ pt: 1 }}>
             <TextField
               autoFocus
@@ -1135,7 +1289,14 @@ const Product = () => {
             />
           </Stack>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
+        <DialogActions
+          sx={{
+            px: 3,
+            py: 2,
+            borderTop: "1px solid var(--aa-border)",
+            background: "var(--aa-surface-muted)",
+          }}
+        >
           <Button onClick={closeDepartmentModal} disabled={departmentSaving}>
             Bekor qilish
           </Button>
@@ -1147,7 +1308,8 @@ const Product = () => {
               borderRadius: "12px",
               textTransform: "none",
               fontWeight: 900,
-              background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+              background:
+                "linear-gradient(135deg, var(--aa-brand-800), var(--aa-brand-600))",
             }}
           >
             {departmentSaving ? "Saqlanmoqda..." : "Saqlash"}

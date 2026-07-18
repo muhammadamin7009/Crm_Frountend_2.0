@@ -581,7 +581,7 @@ const HistoryTable = ({ title, rows = [], columns = [], empty }) => (
   </Card>
 );
 
-const User = () => {
+const User = ({ backTo = "/users" }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const auth = useAuth();
@@ -806,7 +806,7 @@ const User = () => {
         <Button
           variant="outlined"
           sx={{ mt: 2, borderRadius: "12px", fontWeight: 850 }}
-          onClick={() => navigate("/users")}
+          onClick={() => navigate(backTo)}
         >
           Foydalanuvchilarga qaytish
         </Button>
@@ -1011,7 +1011,7 @@ const User = () => {
 
             <Button
               variant="outlined"
-              onClick={() => navigate("/users")}
+              onClick={() => navigate(backTo)}
               sx={{
                 minWidth: 110,
                 height: 42,

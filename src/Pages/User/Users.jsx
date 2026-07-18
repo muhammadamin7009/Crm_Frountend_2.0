@@ -1,4 +1,5 @@
 ﻿import { useEffect, useMemo, useState } from "react";
+import { useCallback } from "react";
 import { toast } from "react-toastify";
 import {
   Avatar,
@@ -26,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
 import { hasPermission } from "../../utils/permissions";
 import CrmPagination from "../../Components/Common/CrmPagination";
+import { getClientBalance } from "../../api/clientSales";
 import {
   createUserByAdmin,
   createUserByStaff,
@@ -38,7 +40,8 @@ import {
 } from "../../api/getUsers";
 
 const STAFF_ROLES = ["client", "customer", "worker"];
-const SUPER_ADMIN_CREATE_ROLES = ["admin", ...STAFF_ROLES];
+const CLIENT_ROLES = ["client", "customer"];
+const INTERNAL_CREATE_ROLES = ["admin", "worker"];
 
 const roleNames = {
   super_admin: "Super admin",
@@ -88,6 +91,8 @@ const emptyForm = {
   password: "",
   phone: "+998",
   role: "customer",
+  client_debt_amount: "0",
+  client_debt_original: "0",
 };
 
 const formatNameValue = (value = "") =>
@@ -97,7 +102,9 @@ const formatNameValue = (value = "") =>
     .split(" ")
     .map((part) => {
       const lower = part.toLocaleLowerCase("uz-UZ");
-      return lower ? `${lower[0].toLocaleUpperCase("uz-UZ")}${lower.slice(1)}` : "";
+      return lower
+        ? `${lower[0].toLocaleUpperCase("uz-UZ")}${lower.slice(1)}`
+        : "";
     })
     .join(" ");
 
@@ -114,7 +121,8 @@ const formatPhoneInput = (value = "") => {
   if (!text) return "";
 
   const digits = text.replace(/\D/g, "");
-  const isUzbekPhone = text.startsWith("+998") || digits.startsWith("998") || text === "+998";
+  const isUzbekPhone =
+    text.startsWith("+998") || digits.startsWith("998") || text === "+998";
 
   if (!isUzbekPhone) {
     return text.startsWith("+") ? `+${digits}` : digits;
@@ -143,11 +151,15 @@ const normalizePhoneForSubmit = (value = "") => {
   }
 
   if (phone.startsWith("+998") && !/^\+998\d{9}$/.test(phone)) {
-    throw new Error("O'zbekiston raqami +998 dan keyin aynan 9 ta raqam bo'lishi kerak.");
+    throw new Error(
+      "O'zbekiston raqami +998 dan keyin aynan 9 ta raqam bo'lishi kerak.",
+    );
   }
 
   if (!/^\+[1-9]\d{7,14}$/.test(phone)) {
-    throw new Error("Telefon raqam xalqaro formatda bo'lishi kerak. Masalan: +998965001001");
+    throw new Error(
+      "Telefon raqam xalqaro formatda bo'lishi kerak. Masalan: +998965001001",
+    );
   }
 
   return phone;
@@ -191,10 +203,10 @@ const Card = ({ children, sx = {} }) => (
   <Paper
     elevation={0}
     sx={{
-      borderRadius: "20px",
-      border: "1px solid rgba(148, 163, 184, 0.22)",
-      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
-      boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+      borderRadius: "var(--aa-radius-xl)",
+      border: "1px solid var(--aa-border)",
+      background: "var(--aa-surface)",
+      boxShadow: "var(--aa-shadow-sm)",
       overflow: "hidden",
       ...sx,
     }}
@@ -206,22 +218,26 @@ const Card = ({ children, sx = {} }) => (
 const MiniStat = ({ label, value }) => (
   <Box
     sx={{
-      minWidth: 105,
-      px: 2,
-      py: 1.4,
-      borderRadius: "16px",
-      background: "#ffffff",
-      border: "1px solid rgba(148, 163, 184, 0.24)",
-      boxShadow: "0 10px 26px rgba(15, 23, 42, 0.05)",
+      minWidth: 118,
+      px: 1.8,
+      py: 1.35,
+      borderRadius: "var(--aa-radius-lg)",
+      background: "var(--aa-surface-solid)",
+      border: "1px solid var(--aa-border)",
+      boxShadow: "var(--aa-shadow-xs)",
     }}
   >
-    <Typography sx={{ fontSize: 12, fontWeight: 800, color: "#64748b" }}>{label}</Typography>
+    <Typography
+      sx={{ fontSize: 11.5, fontWeight: 800, color: "var(--aa-text-tertiary)" }}
+    >
+      {label}
+    </Typography>
     <Typography
       sx={{
         mt: 0.3,
         fontSize: 20,
-        fontWeight: 900,
-        color: "#0f172a",
+        fontWeight: 850,
+        color: "var(--aa-text)",
         letterSpacing: "-0.04em",
       }}
     >
@@ -260,6 +276,8 @@ const FormDialog = ({
   imageFileAllowed,
   roleOptions,
   canEditRole,
+  clientDebtEnabled,
+  debtLoading,
   onClose,
   onSave,
   onFormChange,
@@ -279,7 +297,9 @@ const FormDialog = ({
       },
     }}
   >
-    <DialogTitle sx={{ pb: 1, fontSize: 22, fontWeight: 950, color: "#0f172a" }}>
+    <DialogTitle
+      sx={{ pb: 1, fontSize: 22, fontWeight: 950, color: "#0f172a" }}
+    >
       {title}
     </DialogTitle>
 
@@ -314,7 +334,9 @@ const FormDialog = ({
               <Typography sx={{ fontWeight: 900, color: "#0f172a" }}>
                 {form.first_name || "Foydalanuvchi"} {form.last_name}
               </Typography>
-              <Typography sx={{ fontSize: 13, fontWeight: 650, color: "#64748b" }}>
+              <Typography
+                sx={{ fontSize: 13, fontWeight: 650, color: "#64748b" }}
+              >
                 Profil ma'lumotlarini yangilash
               </Typography>
 
@@ -331,7 +353,12 @@ const FormDialog = ({
                   }}
                 >
                   Rasm tanlash
-                  <input hidden type="file" accept="image/*" onChange={onImageChange} />
+                  <input
+                    hidden
+                    type="file"
+                    accept="image/*"
+                    onChange={onImageChange}
+                  />
                 </Button>
               )}
             </Box>
@@ -387,6 +414,25 @@ const FormDialog = ({
             ))}
           </TextField>
         )}
+
+        {clientDebtEnabled && form.role === "client" && (
+          <TextField
+            fullWidth
+            type="number"
+            label={selectedUser ? "Joriy qarzdorlik" : "Boshlang'ich qarz"}
+            value={form.client_debt_amount}
+            onChange={onFormChange("client_debt_amount")}
+            disabled={debtLoading}
+            inputProps={{ min: 0, step: 1000 }}
+            helperText={
+              debtLoading
+                ? "Qarzdorlik hisoblanmoqda..."
+                : selectedUser
+                  ? "Mijozning joriy qarzini kiriting. Farq hisob-kitobga tuzatish sifatida qo'shiladi."
+                  : "Mijoz oldindan qarzdor bo'lsa summani kiriting, aks holda 0 qoldiring."
+            }
+          />
+        )}
       </Stack>
     </DialogContent>
 
@@ -406,7 +452,7 @@ const FormDialog = ({
       <Button
         variant="contained"
         onClick={onSave}
-        disabled={saving}
+        disabled={saving || debtLoading}
         sx={{
           minWidth: 120,
           borderRadius: "12px",
@@ -425,7 +471,7 @@ const FormDialog = ({
   </Dialog>
 );
 
-const Users = () => {
+const Users = ({ directory = "staff" }) => {
   const auth = useAuth();
   const currentUser = auth?.user || getLocalUser();
   const setCurrentUser = auth?.setUser;
@@ -458,25 +504,34 @@ const Users = () => {
 
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [debtLoading, setDebtLoading] = useState(false);
 
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
+  const isClientView = directory === "clients";
+  const canManageClientDebt =
+    isClientView && hasPermission(currentUser, "client_sales.manage");
 
   const createRoleOptions = useMemo(() => {
-    if (currentUser?.role === "super_admin") return SUPER_ADMIN_CREATE_ROLES;
-    if (currentUser?.role === "admin") return STAFF_ROLES;
+    if (isClientView) return CLIENT_ROLES;
+    if (currentUser?.role === "super_admin") return INTERNAL_CREATE_ROLES;
+    if (currentUser?.role === "admin") return ["worker"];
     return [];
-  }, [currentUser?.role]);
+  }, [currentUser?.role, isClientView]);
 
   const editRoleOptions = useMemo(() => {
-    if (currentUser?.role === "super_admin") return SUPER_ADMIN_CREATE_ROLES;
-    if (currentUser?.role === "admin") return STAFF_ROLES;
+    if (isClientView) return CLIENT_ROLES;
+    if (currentUser?.role === "super_admin") return INTERNAL_CREATE_ROLES;
+    if (currentUser?.role === "admin") return ["worker"];
     return [];
-  }, [currentUser?.role]);
+  }, [currentUser?.role, isClientView]);
 
   const canManageUsers = hasPermission(currentUser, "users.manage");
-  const canCreateUser = ["super_admin", "admin"].includes(currentUser?.role) && canManageUsers;
+  const canCreateUser =
+    ["super_admin", "admin"].includes(currentUser?.role) && canManageUsers;
   const isWorkerView = currentUser?.role === "worker";
-  const canOpenUserDetail = ["super_admin", "admin"].includes(currentUser?.role);
+  const canOpenUserDetail = ["super_admin", "admin"].includes(
+    currentUser?.role,
+  );
   const showingDeleted = deletedFilter === "true";
 
   const isCurrentUser = (user) => Number(currentUser?.id) === Number(user?.id);
@@ -509,38 +564,52 @@ const Users = () => {
     return false;
   };
 
-  const fetchUsers = async (offset = 0, limit = pageInfo.limit) => {
-    setLoading(true);
+  const fetchUsers = useCallback(
+    async (offset = 0, limit = pageInfo.limit) => {
+      setLoading(true);
 
-    try {
-      const res = await getUsers({
-        q: query,
-        role: roleFilter || undefined,
-        is_deleted: currentUser?.role === "super_admin" ? showingDeleted : false,
-        offset,
-        limit,
-        sort_by: sortBy,
-        sort_order: sortOrder,
-      });
+      try {
+        const res = await getUsers({
+          q: query,
+          scope: directory,
+          role: roleFilter || undefined,
+          is_deleted:
+            currentUser?.role === "super_admin" ? showingDeleted : false,
+          offset,
+          limit,
+          sort_by: sortBy,
+          sort_order: sortOrder,
+        });
 
-      const data = res.data || res;
+        const data = res.data || res;
 
-      setUsers(data.users || []);
-      setPageInfo(data.pageInfo || { total: 0, offset, limit });
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Foydalanuvchilarni olishda xato.");
-    } finally {
-      setLoading(false);
-    }
-  };
+        setUsers(data.users || []);
+        setPageInfo(data.pageInfo || { total: 0, offset, limit });
+      } catch (error) {
+        toast.error(
+          error?.response?.data?.message || "Foydalanuvchilarni olishda xato.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [
+      currentUser?.role,
+      directory,
+      pageInfo.limit,
+      query,
+      roleFilter,
+      showingDeleted,
+      sortBy,
+      sortOrder,
+    ],
+  );
 
-  // fetchUsers is intentionally recreated with the active filter values.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const timer = setTimeout(() => fetchUsers(0, pageInfo.limit), 250);
 
     return () => clearTimeout(timer);
-  }, [query, sortBy, sortOrder, roleFilter, deletedFilter, pageInfo.limit]);
+  }, [fetchUsers, pageInfo.limit]);
 
   const handleSearch = () => {
     fetchUsers(0, pageInfo.limit);
@@ -548,7 +617,9 @@ const Users = () => {
 
   const handleFormChange = (field) => (event) => {
     const value =
-      field === "phone" ? formatPhoneInput(event.target.value) : event.target.value;
+      field === "phone"
+        ? formatPhoneInput(event.target.value)
+        : event.target.value;
 
     setForm((prev) => ({
       ...prev,
@@ -587,10 +658,37 @@ const Users = () => {
       password: "",
       phone: formatPhoneInput(user.phone || ""),
       role: user.role || "customer",
+      client_debt_amount: "0",
+      client_debt_original: "0",
     });
     setImageFile(null);
     setImagePreview(user.user_image || "");
     setEditOpen(true);
+
+    if (canManageClientDebt && user.role === "client") {
+      setDebtLoading(true);
+      getClientBalance({ client_id: user.id })
+        .then((response) => {
+          const balance = response.data?.balance || {};
+          const debtAmount = String(
+            Math.max(0, Number(balance.debt_amount || 0)),
+          );
+          setForm((current) => ({
+            ...current,
+            client_debt_amount: debtAmount,
+            client_debt_original: debtAmount,
+          }));
+        })
+        .catch((error) => {
+          toast.error(
+            error?.response?.data?.message ||
+              "Mijoz qarzdorligini olishda xato.",
+          );
+          setEditOpen(false);
+          setSelectedUser(null);
+        })
+        .finally(() => setDebtLoading(false));
+    }
   };
 
   const closeEditModal = () => {
@@ -599,6 +697,7 @@ const Users = () => {
     setForm(emptyForm);
     setImageFile(null);
     setImagePreview("");
+    setDebtLoading(false);
   };
 
   const openDeleteModal = (user) => {
@@ -634,6 +733,10 @@ const Users = () => {
         role: form.role,
       };
 
+      if (canManageClientDebt && form.role === "client") {
+        payload.client_debt_amount = Number(form.client_debt_amount || 0);
+      }
+
       if (currentUser?.role === "super_admin") {
         await createUserByAdmin(payload);
       } else {
@@ -644,7 +747,11 @@ const Users = () => {
       closeCreateModal();
       fetchUsers(0, pageInfo.limit);
     } catch (error) {
-      toast.error(error?.response?.data?.message || error?.message || "Foydalanuvchi qo'shishda xato.");
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Foydalanuvchi qo'shishda xato.",
+      );
     } finally {
       setSaving(false);
     }
@@ -665,15 +772,27 @@ const Users = () => {
 
       if (form.password) payload.password = form.password;
       if (canEditRole(selectedUser)) payload.role = form.role;
+      if (
+        canManageClientDebt &&
+        form.role === "client" &&
+        Number(form.client_debt_amount || 0) !==
+          Number(form.client_debt_original || 0)
+      ) {
+        payload.client_debt_amount = Number(form.client_debt_amount || 0);
+      }
 
       const res = await updateUser(selectedUser.id, payload);
-      const updatedUser = res.data?.user || res.data?.updated_user || res.data || {};
+      const updatedUser =
+        res.data?.user || res.data?.updated_user || res.data || {};
       let updatedImageUser = null;
 
       if (imageFile && isCurrentUser(selectedUser)) {
         const imageRes = await updateUserImage(imageFile);
         updatedImageUser =
-          imageRes.data?.user || imageRes.data?.updated_user || imageRes.data?.updatedUser || null;
+          imageRes.data?.user ||
+          imageRes.data?.updated_user ||
+          imageRes.data?.updatedUser ||
+          null;
       }
 
       if (isCurrentUser(selectedUser)) {
@@ -692,7 +811,11 @@ const Users = () => {
       closeEditModal();
       fetchUsers(pageInfo.offset, pageInfo.limit);
     } catch (error) {
-      toast.error(error?.response?.data?.message || error?.message || "Foydalanuvchini yangilashda xato.");
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Foydalanuvchini yangilashda xato.",
+      );
     } finally {
       setSaving(false);
     }
@@ -706,11 +829,13 @@ const Users = () => {
     try {
       await deleteUser(selectedUser.id);
 
-      toast.success("Hodim o'chirildi.");
+      toast.success(isClientView ? "Mijoz o'chirildi." : "Hodim o'chirildi.");
       closeDeleteModal();
       fetchUsers(pageInfo.offset, pageInfo.limit);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Foydalanuvchini o'chirishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Foydalanuvchini o'chirishda xato.",
+      );
     } finally {
       setDeleting(false);
     }
@@ -724,7 +849,9 @@ const Users = () => {
     try {
       if (deletedAction === "restore") {
         await restoreUser(selectedUser.id);
-        toast.success("Hodim qayta tiklandi.");
+        toast.success(
+          isClientView ? "Mijoz qayta tiklandi." : "Hodim qayta tiklandi.",
+        );
       } else {
         await permanentlyDeleteUser(selectedUser.id);
         toast.success("Hodim butkul o'chirildi.");
@@ -733,7 +860,10 @@ const Users = () => {
       closeDeletedAction();
       fetchUsers(0, pageInfo.limit);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Amalni bajarishda xatolik yuz berdi.");
+      toast.error(
+        error?.response?.data?.message ||
+          "Amalni bajarishda xatolik yuz berdi.",
+      );
     } finally {
       setDeleting(false);
     }
@@ -758,10 +888,10 @@ const Users = () => {
         minHeight: 0,
         display: "flex",
         flexDirection: "column",
-        pb: 2,
+        pb: 2.5,
       }}
     >
-      <Card sx={{ mb: 2.5, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
+      <Card sx={{ mb: 2, px: { xs: 2, md: 2.6 }, py: 2.35, flexShrink: 0 }}>
         <Box
           sx={{
             display: "flex",
@@ -773,49 +903,58 @@ const Users = () => {
         >
           <Box>
             <Chip
-              label="Al-amin CRM - foydalanuvchilar"
+              label={
+                isClientView
+                  ? "Al-amin CRM - mijozlar"
+                  : "Al-amin CRM - foydalanuvchilar"
+              }
               size="small"
               sx={{
                 mb: 1,
                 height: 25,
-                fontSize: 12,
-                fontWeight: 950,
-                color: "#2563eb",
-                background: "rgba(37, 99, 235, 0.08)",
-                border: "1px solid rgba(37, 99, 235, 0.16)",
+                fontSize: 11,
+                fontWeight: 850,
+                color: "var(--aa-brand-700)",
+                background: "var(--aa-brand-50)",
+                border: "1px solid var(--aa-brand-100)",
               }}
             />
 
             <Typography
               sx={{
-                fontSize: { xs: 27, md: 33 },
-                fontWeight: 950,
-                color: "#0f172a",
-                letterSpacing: "-0.055em",
-                lineHeight: 1.05,
+                fontSize: { xs: 26, md: 32 },
+                fontWeight: 850,
+                color: "var(--aa-text)",
+                letterSpacing: "-0.04em",
+                lineHeight: 1.08,
               }}
             >
-              Foydalanuvchilar
+              {isClientView ? "Mijozlar" : "Foydalanuvchilar"}
             </Typography>
 
             <Typography
               sx={{
                 mt: 0.7,
                 fontSize: 14,
-                fontWeight: 650,
-                color: "#64748b",
+                fontWeight: 500,
+                color: "var(--aa-text-secondary)",
               }}
             >
-              {isWorkerView
-                ? "Korxonadagi hamkasblar, lavozim va bo'lim ma'lumotlari."
-                : "Korxona hodimlari, ruxsatlari va tizimdagi ma'lumotlari."}
+              {isClientView
+                ? "Korxona mijozlari va ularning tizimdagi aloqa ma'lumotlari."
+                : isWorkerView
+                  ? "Korxonadagi hamkasblar, lavozim va bo'lim ma'lumotlari."
+                  : "Korxona hodimlari, ruxsatlari va tizimdagi ma'lumotlari."}
             </Typography>
           </Box>
 
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(3, auto)" },
+              gridTemplateColumns: {
+                xs: "repeat(2, 1fr)",
+                sm: "repeat(3, auto)",
+              },
               gap: 1.4,
               width: { xs: "100%", md: "auto" },
             }}
@@ -823,14 +962,16 @@ const Users = () => {
             <MiniStat label="Jami" value={pageInfo.total} />
             <MiniStat label="Sahifada" value={users.length} />
             <MiniStat
-              label="Ruxsat turi"
-              value={currentUser?.role === "super_admin" ? "Barcha" : "Cheklangan"}
+              label={isClientView ? "Mijoz turi" : "Ruxsat turi"}
+              value={
+                currentUser?.role === "super_admin" ? "Barcha" : "Cheklangan"
+              }
             />
           </Box>
         </Box>
       </Card>
 
-      <Card sx={{ mb: 2.5, p: 2, flexShrink: 0 }}>
+      <Card sx={{ mb: 2, p: { xs: 1.5, md: 2 }, flexShrink: 0 }}>
         <Box
           sx={{
             display: "flex",
@@ -846,7 +987,10 @@ const Users = () => {
               gridTemplateColumns: {
                 xs: "1fr",
                 sm: "repeat(2, 1fr)",
-                lg: currentUser?.role === "super_admin" ? "repeat(5, 1fr)" : "repeat(4, 1fr)",
+                lg:
+                  currentUser?.role === "super_admin"
+                    ? "repeat(5, 1fr)"
+                    : "repeat(4, 1fr)",
               },
               gap: 1.4,
               flex: 1,
@@ -854,7 +998,9 @@ const Users = () => {
           >
             <TextField
               size="small"
-              label="Qidirish"
+              label={
+                isClientView ? "Mijozni qidirish" : "Foydalanuvchini qidirish"
+              }
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => {
@@ -865,16 +1011,22 @@ const Users = () => {
             <TextField
               select
               size="small"
-              label="Ruxsat turi"
+              label={isClientView ? "Mijoz turi" : "Ruxsat turi"}
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
             >
               <MenuItem value="">Barchasi</MenuItem>
-              <MenuItem value="super_admin">Super admin</MenuItem>
-              <MenuItem value="admin">Admin</MenuItem>
-              {!isWorkerView && <MenuItem value="client">Mijoz</MenuItem>}
-              {!isWorkerView && <MenuItem value="customer">Xaridor</MenuItem>}
-              <MenuItem value="worker">Ishchi</MenuItem>
+              {isClientView
+                ? CLIENT_ROLES.map((role) => (
+                    <MenuItem key={role} value={role}>
+                      {roleNames[role]}
+                    </MenuItem>
+                  ))
+                : ["super_admin", "admin", "worker"].map((role) => (
+                    <MenuItem key={role} value={role}>
+                      {roleNames[role]}
+                    </MenuItem>
+                  ))}
             </TextField>
 
             {currentUser?.role === "super_admin" && (
@@ -885,8 +1037,14 @@ const Users = () => {
                 value={deletedFilter}
                 onChange={(e) => setDeletedFilter(e.target.value)}
               >
-                <MenuItem value="false">Faol hodimlar</MenuItem>
-                <MenuItem value="true">O'chirilgan hodimlar</MenuItem>
+                <MenuItem value="false">
+                  {isClientView ? "Faol mijozlar" : "Faol hodimlar"}
+                </MenuItem>
+                <MenuItem value="true">
+                  {isClientView
+                    ? "O'chirilgan mijozlar"
+                    : "O'chirilgan hodimlar"}
+                </MenuItem>
               </TextField>
             )}
 
@@ -926,12 +1084,16 @@ const Users = () => {
               sx={{
                 minWidth: 135,
                 height: 42,
-                borderRadius: "13px",
+                borderRadius: "var(--aa-radius-md)",
                 textTransform: "none",
-                fontWeight: 900,
-                color: "#0f172a",
-                borderColor: "rgba(37, 99, 235, 0.2)",
+                fontWeight: 800,
+                color: "var(--aa-text-secondary)",
+                borderColor: "var(--aa-border-strong)",
                 background: "#fff",
+                "&:hover": {
+                  borderColor: "var(--aa-brand-300)",
+                  background: "var(--aa-brand-50)",
+                },
               }}
             >
               Tozalash
@@ -944,17 +1106,17 @@ const Users = () => {
                 sx={{
                   minWidth: 215,
                   height: 42,
-                  borderRadius: "13px",
+                  borderRadius: "var(--aa-radius-md)",
                   textTransform: "none",
-                  fontWeight: 950,
-                  background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                  boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
+                  fontWeight: 850,
+                  background: "var(--aa-brand-800)",
+                  boxShadow: "0 10px 24px rgba(143, 29, 32, 0.16)",
                   "&:hover": {
-                    background: "linear-gradient(135deg, #7f0101, #991b1b)",
+                    background: "var(--aa-brand-700)",
                   },
                 }}
               >
-                Foydalanuvchi qo'shish
+                {isClientView ? "Mijoz qo'shish" : "Foydalanuvchi qo'shish"}
               </Button>
             )}
           </Box>
@@ -975,20 +1137,22 @@ const Users = () => {
               minWidth: isWorkerView ? 720 : 980,
               "& th": {
                 py: 1.7,
-                fontSize: 12,
-                fontWeight: 950,
-                color: "#64748b",
+                fontSize: 11.5,
+                fontWeight: 850,
+                color: "var(--aa-text-tertiary)",
                 textTransform: "uppercase",
-                letterSpacing: "0.03em",
-                background: "rgba(248, 250, 252, 0.95)",
-                borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
+                letterSpacing: "0.045em",
+                background: "var(--aa-surface-muted)",
+                borderBottom: "1px solid var(--aa-border)",
               },
               "& td": {
                 py: 1.55,
-                borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+                borderBottom: "1px solid var(--aa-border)",
               },
               "& tbody tr:hover": {
-                background: canOpenUserDetail ? "rgba(37, 99, 235, 0.035)" : "inherit",
+                background: canOpenUserDetail
+                  ? "var(--aa-surface-hover)"
+                  : "inherit",
               },
             }}
           >
@@ -1015,7 +1179,11 @@ const Users = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={isWorkerView ? 4 : 6} align="center" sx={{ py: 7 }}>
+                  <TableCell
+                    colSpan={isWorkerView ? 4 : 6}
+                    align="center"
+                    sx={{ py: 7 }}
+                  >
                     <CircularProgress size={30} />
                   </TableCell>
                 </TableRow>
@@ -1025,25 +1193,35 @@ const Users = () => {
                     key={user.id}
                     hover
                     onClick={() => {
-                      if (canOpenUserDetail && !user.is_deleted) navigate(`/users/${user.id}`);
+                      if (canOpenUserDetail && !user.is_deleted)
+                        navigate(
+                          isClientView
+                            ? `/clients/${user.id}`
+                            : `/users/${user.id}`,
+                        );
                     }}
                     sx={{
-                      cursor: canOpenUserDetail && !user.is_deleted ? "pointer" : "default",
+                      cursor:
+                        canOpenUserDetail && !user.is_deleted
+                          ? "pointer"
+                          : "default",
                       opacity: user.is_deleted ? 0.65 : 1,
                     }}
                   >
                     <TableCell>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.6 }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1.6 }}
+                      >
                         <Avatar
                           src={getImageUrl(user.user_image)}
                           sx={{
                             width: 48,
                             height: 48,
-                            bgcolor: "#8b0101",
+                            bgcolor: "var(--aa-brand-800)",
                             color: "#fff",
-                            fontWeight: 950,
+                            fontWeight: 850,
                             border: "3px solid #fff",
-                            boxShadow: "0 10px 24px rgba(139, 1, 1, 0.14)",
+                            boxShadow: "0 8px 20px rgba(143, 29, 32, 0.14)",
                           }}
                         >
                           {getInitial(user)}
@@ -1053,8 +1231,8 @@ const Users = () => {
                           <Typography
                             sx={{
                               fontSize: 14.5,
-                              fontWeight: 900,
-                              color: "#0f172a",
+                              fontWeight: 850,
+                              color: "var(--aa-text)",
                               lineHeight: 1.15,
                             }}
                           >
@@ -1066,7 +1244,9 @@ const Users = () => {
                               mt: 0.35,
                               fontSize: 12.5,
                               fontWeight: 700,
-                              color: user.is_deleted ? "#dc2626" : "#64748b",
+                              color: user.is_deleted
+                                ? "var(--aa-danger)"
+                                : "var(--aa-text-tertiary)",
                             }}
                           >
                             {user.is_deleted ? "O'chirilgan" : `ID: ${user.id}`}
@@ -1113,7 +1293,8 @@ const Users = () => {
                           useFlexGap
                           sx={{ flexWrap: "wrap", justifyContent: "flex-end" }}
                         >
-                          {user.is_deleted && currentUser?.role === "super_admin" ? (
+                          {user.is_deleted &&
+                          currentUser?.role === "super_admin" ? (
                             <>
                               <Button
                                 size="small"
@@ -1206,7 +1387,9 @@ const Users = () => {
                       fontWeight: 850,
                     }}
                   >
-                    Foydalanuvchilar topilmadi
+                    {isClientView
+                      ? "Mijozlar topilmadi"
+                      : "Foydalanuvchilar topilmadi"}
                   </TableCell>
                 </TableRow>
               )}
@@ -1216,8 +1399,8 @@ const Users = () => {
 
         <Box
           sx={{
-            borderTop: "1px solid rgba(148, 163, 184, 0.18)",
-            background: "rgba(248, 250, 252, 0.65)",
+            borderTop: "1px solid var(--aa-border)",
+            background: "var(--aa-surface-muted)",
           }}
         >
           <CrmPagination
@@ -1232,10 +1415,12 @@ const Users = () => {
 
       <FormDialog
         open={createOpen}
-        title="Foydalanuvchi qo'shish"
+        title={isClientView ? "Mijoz qo'shish" : "Foydalanuvchi qo'shish"}
         form={form}
         saving={saving}
         roleOptions={createRoleOptions}
+        clientDebtEnabled={canManageClientDebt}
+        debtLoading={debtLoading}
         onClose={closeCreateModal}
         onSave={handleCreateUser}
         onFormChange={handleFormChange}
@@ -1244,13 +1429,17 @@ const Users = () => {
 
       <FormDialog
         open={editOpen}
-        title="Foydalanuvchini tahrirlash"
+        title={
+          isClientView ? "Mijozni tahrirlash" : "Foydalanuvchini tahrirlash"
+        }
         form={form}
         selectedUser={selectedUser}
         saving={saving}
         imagePreview={imagePreview}
         imageFileAllowed={selectedUser && isCurrentUser(selectedUser)}
         roleOptions={editRoleOptions}
+        clientDebtEnabled={canManageClientDebt}
+        debtLoading={debtLoading}
         canEditRole={selectedUser && canEditRole(selectedUser)}
         onClose={closeEditModal}
         onSave={handleUpdateUser}
@@ -1270,17 +1459,25 @@ const Users = () => {
           },
         }}
       >
-        <DialogTitle sx={{ fontWeight: 950 }}>Foydalanuvchini o'chirish</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 950 }}>
+          {isClientView ? "Mijozni o'chirish" : "Foydalanuvchini o'chirish"}
+        </DialogTitle>
 
         <DialogContent>
           <Typography sx={{ color: "#334155", fontWeight: 650 }}>
-            {selectedUser?.first_name} {selectedUser?.last_name} ni o'chirmoqchimisiz?
+            {selectedUser?.first_name} {selectedUser?.last_name} ni
+            o'chirmoqchimisiz?
           </Typography>
         </DialogContent>
 
         <DialogActions sx={{ px: 3, pb: 2.5 }}>
           <Button onClick={closeDeleteModal}>Bekor qilish</Button>
-          <Button color="error" variant="contained" onClick={handleDeleteUser} disabled={deleting}>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={handleDeleteUser}
+            disabled={deleting}
+          >
             {deleting ? "O'chirilmoqda..." : "O'chirish"}
           </Button>
         </DialogActions>
@@ -1333,4 +1530,3 @@ const Users = () => {
 };
 
 export default Users;
-

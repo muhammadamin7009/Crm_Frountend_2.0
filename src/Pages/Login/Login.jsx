@@ -23,6 +23,7 @@ import {
   setCompanySlug,
 } from "../../utils/company";
 import { getCompanyBranding } from "../../api/companyBranding";
+import AuthBrandPanel from "../../Components/Auth/AuthBrandPanel";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -149,12 +150,14 @@ const Login = () => {
 
   return (
     <Box className="auth-page min-h-screen px-4 py-6 sm:px-6 lg:px-8">
-      <Box className="mx-auto flex min-h-[calc(100vh-48px)] max-w-6xl items-center">
+      <Box className="mx-auto flex min-h-[calc(100vh-48px)] max-w-370 items-center">
         <Paper
           elevation={0}
-          className="auth-shell grid w-full overflow-hidden lg:grid-cols-[1fr_1fr]"
+          className="auth-shell grid w-full overflow-hidden lg:grid-cols-[1fr_1.05fr]"
         >
-          <Box className="auth-hero hidden min-h-175 flex-col justify-between p-10 text-white lg:flex">
+          <AuthBrandPanel />
+
+          <Box className="hidden">
             <Box>
               <Box className="mb-10 flex items-center gap-3">
                 <Box className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white">
@@ -211,7 +214,7 @@ const Login = () => {
             </Box>
           </Box>
 
-          <Box className="auth-form-panel flex min-h-175 items-center justify-center p-6 sm:p-10">
+          <Box className="auth-form-panel flex min-h-180 items-center justify-center p-6 sm:p-10 lg:p-14">
             <Box className="w-full max-w-lg">
               <Box className="mb-8 flex items-center gap-3 lg:hidden">
                 <Box className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50">
@@ -245,7 +248,7 @@ const Login = () => {
                       ? "Authenticator'ni sozlash"
                       : challenge
                         ? "Kirishni tasdiqlash"
-                        : "Tizimga kirish"}
+                        : "Xush kelibsiz! 👋"}
                 </Typography>
                 <Typography className="mt-2 text-slate-500">
                   {setupResult
@@ -289,6 +292,7 @@ const Login = () => {
                     fullWidth
                     size="large"
                     variant="contained"
+                    className="auth-primary-button"
                     onClick={() => finishLogin(setupResult)}
                   >
                     Saqladim, tizimga kirish
@@ -356,6 +360,7 @@ const Login = () => {
                     fullWidth
                     size="large"
                     variant="contained"
+                    className="auth-primary-button"
                     disabled={
                       loading ||
                       !(challenge.setup_required
@@ -436,18 +441,8 @@ const Login = () => {
                       fullWidth
                       variant="contained"
                       size="large"
+                      className="auth-primary-button"
                       disabled={loading}
-                      sx={{
-                        py: 1.25,
-                        borderRadius: 2,
-                        backgroundColor: "#7F1D1D",
-                        boxShadow: "none",
-                        fontWeight: 800,
-                        "&:hover": {
-                          backgroundColor: "#991B1B",
-                          boxShadow: "none",
-                        },
-                      }}
                     >
                       {loading ? "Kirilmoqda..." : "Kirish"}
                     </Button>
@@ -455,7 +450,7 @@ const Login = () => {
                 </form>
               )}
 
-              <Box className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Box className="hidden">
                 <Box className="auth-info-card rounded-2xl border p-4">
                   <Typography variant="body2" className="font-semibold text-slate-900">
                     Yordam kerakmi?
@@ -483,6 +478,17 @@ const Login = () => {
                   </Link>
                 </Box>
               </Box>
+
+              {!challenge && !setupResult && (
+                <Box className="mt-8 text-center">
+                  <Typography component="span" className="text-sm font-medium text-slate-500">
+                    Hisobingiz yo'qmi?{" "}
+                  </Typography>
+                  <Link className="text-sm font-black text-red-800 hover:text-red-700" to="/register">
+                    Ro'yxatdan o'tish
+                  </Link>
+                </Box>
+              )}
             </Box>
           </Box>
         </Paper>

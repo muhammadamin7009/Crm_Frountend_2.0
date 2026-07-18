@@ -13,6 +13,8 @@ import {
   List,
   ListItemButton,
   ListItemText,
+  Menu,
+  MenuItem,
   Stack,
   TextField,
   Typography,
@@ -48,6 +50,12 @@ const mobileLinks = [
     label: "Foydalanuvchilar",
     path: "/users",
     roles: ["super_admin", "admin", "worker"],
+    permission: "users.view",
+  },
+  {
+    label: "Mijozlar",
+    path: "/clients",
+    roles: ["super_admin", "admin"],
     permission: "users.view",
   },
   {
@@ -105,6 +113,53 @@ const mobileLinks = [
   },
 ];
 
+const quickActionItems = [
+  {
+    label: "Yangi mijoz",
+    description: "Mijozlar ro'yxatiga o'tish",
+    path: "/clients",
+    roles: ["super_admin", "admin"],
+    permission: "users.manage",
+  },
+  {
+    label: "Yangi savdo",
+    description: "Mijoz savdosini kiritish",
+    path: "/client-sales",
+    roles: ["super_admin", "admin"],
+    feature: "client_accounting",
+    permission: "client_sales.manage",
+  },
+  {
+    label: "Mahsulot qo'shish",
+    description: "Mahsulotlar katalogiga o'tish",
+    path: "/products",
+    roles: ["super_admin", "admin"],
+    permission: "products.manage",
+  },
+  {
+    label: "Ishlab chiqarish",
+    description: "Yangi ish yozuvini kiritish",
+    path: "/worker-outputs",
+    roles: ["super_admin", "admin", "worker"],
+    permission: "production.manage",
+  },
+  {
+    label: "Xarajat kiritish",
+    description: "Mayda va umumiy xarajatlar",
+    path: "/expenses",
+    roles: ["super_admin", "admin"],
+    permission: "finance.manage",
+  },
+  {
+    label: "Homashyo xaridi",
+    description: "Yangi xaridni kiritish",
+    path: "/material-purchases",
+    roles: ["super_admin", "admin"],
+    feature: "supplier_accounting",
+    permission: "material_purchases.manage",
+  },
+];
+
 const getImageUrl = (path) => {
   if (!path) return undefined;
   if (path.startsWith("http")) return path;
@@ -122,18 +177,27 @@ const getInitials = (user) => {
   return user?.username?.slice(0, 2)?.toUpperCase() || "ZR";
 };
 
+const headerDate = () =>
+  new Intl.DateTimeFormat("uz-UZ", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date());
+
 const DAY_MS = 24 * 60 * 60 * 1000;
 const utcDateOnly = (value) => {
   if (!value) return null;
-  const match = String(value).slice(0, 10).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const match = String(value)
+    .slice(0, 10)
+    .match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!match) return null;
   const [year, month, day] = match.slice(1).map(Number);
   return Date.UTC(year, month - 1, day);
 };
 
 const getSubscriptionNotice = (user, now) => {
-  if (!["super_admin", "admin"].includes(user?.role) || !user?.subscription_ends_at)
-    return null;
+  if (!["super_admin", "admin"].includes(user?.role) || !user?.subscription_ends_at) return null;
 
   const endsAt = utcDateOnly(user.subscription_ends_at);
   const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
@@ -182,6 +246,7 @@ export default function TopBar() {
   const [companyLogoSaving, setCompanyLogoSaving] = useState(false);
   const [warehouses, setWarehouses] = useState([]);
   const [subscriptionNow, setSubscriptionNow] = useState(() => new Date());
+  const [quickActionsAnchor, setQuickActionsAnchor] = useState(null);
 
   useEffect(() => {
     if (!["super_admin", "admin"].includes(user?.role)) return undefined;
@@ -244,6 +309,22 @@ export default function TopBar() {
       item.path === "/expenses" ? [...inventoryLinks, item] : [item],
     );
   }, [user, warehouses]);
+
+  const availableQuickActions = useMemo(
+    () =>
+      quickActionItems.filter(
+        (item) =>
+          (!item.roles || item.roles.includes(user?.role)) &&
+          (!item.feature || !user?.plan_code || user?.plan_features?.includes(item.feature)) &&
+          hasPermission(user, item.permission),
+      ),
+    [user],
+  );
+
+  const openQuickAction = (path) => {
+    setQuickActionsAnchor(null);
+    navigate(path);
+  };
 
   const [form, setForm] = useState({
     first_name: "",
@@ -398,19 +479,15 @@ export default function TopBar() {
       <Box
         sx={{
           width: "100%",
-          minHeight: 80,
-          px: { xs: 2, md: 3 },
-          py: 1.5,
+          minHeight: 94,
+          px: { xs: 2, md: 3.5 },
+          py: { xs: 1.5, md: 2 },
           display: "flex",
           flexWrap: { xs: "wrap", md: "nowrap" },
           alignItems: "center",
           justifyContent: "space-between",
-          gap: 2,
-          borderRadius: "0 0 14px 14px",
-          background: "rgba(255,255,255,0.94)",
-          border: "1px solid rgba(15, 23, 42, 0.06)",
-          boxShadow: "0 10px 28px rgba(15, 23, 42, 0.05)",
-          backdropFilter: "blur(14px)",
+          gap: { xs: 1.5, md: 2.5 },
+          background: "transparent",
         }}
       >
         <Box className="flex min-w-0 items-center gap-3">
@@ -459,7 +536,7 @@ export default function TopBar() {
                 lineHeight: 1.1,
               }}
             >
-              Xush kelibsiz, {user?.first_name || fullName}
+              Xush kelibsiz, {user?.first_name || fullName}! <span aria-hidden="true">👋</span>
             </Typography>
 
             <Typography
@@ -470,7 +547,7 @@ export default function TopBar() {
                 fontWeight: 700,
               }}
             >
-              {user?.company_name || "Al-amin Collection"} boshqaruv paneli
+              {headerDate()}
             </Typography>
           </Box>
         </Box>
@@ -488,9 +565,13 @@ export default function TopBar() {
               borderRadius: "12px",
               border: "1px solid",
               borderColor:
-                subscriptionNotice.tone === "expired" ? "rgba(220,38,38,.28)" : "rgba(217,119,6,.30)",
+                subscriptionNotice.tone === "expired"
+                  ? "rgba(220,38,38,.28)"
+                  : "rgba(217,119,6,.30)",
               backgroundColor:
-                subscriptionNotice.tone === "expired" ? "rgba(254,226,226,.88)" : "rgba(254,243,199,.90)",
+                subscriptionNotice.tone === "expired"
+                  ? "rgba(254,226,226,.88)"
+                  : "rgba(254,243,199,.90)",
             }}
           >
             <Typography
@@ -506,6 +587,73 @@ export default function TopBar() {
             </Typography>
           </Box>
         )}
+
+        <Box
+          sx={{
+            order: { xs: 4, md: 0 },
+            width: { xs: "100%", sm: "auto" },
+            ml: { md: "auto" },
+            display: "flex",
+            justifyContent: { xs: "stretch", sm: "flex-end" },
+          }}
+        >
+          <Button
+            variant="contained"
+            disabled={!availableQuickActions.length}
+            onClick={(event) => setQuickActionsAnchor(event.currentTarget)}
+            aria-haspopup="menu"
+            aria-expanded={Boolean(quickActionsAnchor)}
+            sx={{
+              width: { xs: "100%", sm: "auto" },
+              minWidth: { sm: 154 },
+              height: 44,
+              px: 2.2,
+              borderRadius: "14px",
+              bgcolor: "var(--aa-brand-800)",
+              boxShadow: "0 8px 20px rgba(139,1,1,.16)",
+              fontSize: 14,
+              fontWeight: 900,
+              textTransform: "none",
+              "&:hover": { bgcolor: "var(--aa-brand-700)" },
+            }}
+          >
+            + Tezkor amal
+          </Button>
+
+          <Menu
+            anchorEl={quickActionsAnchor}
+            open={Boolean(quickActionsAnchor)}
+            onClose={() => setQuickActionsAnchor(null)}
+            slotProps={{
+              paper: {
+                sx: {
+                  mt: 1,
+                  minWidth: 260,
+                  borderRadius: "14px",
+                  border: "1px solid var(--aa-border)",
+                  boxShadow: "var(--aa-shadow-lg)",
+                },
+              },
+            }}
+          >
+            {availableQuickActions.map((item) => (
+              <MenuItem
+                key={item.path}
+                onClick={() => openQuickAction(item.path)}
+                sx={{ px: 2, py: 1.15, borderRadius: "9px", mx: 0.7 }}
+              >
+                <Box>
+                  <Typography sx={{ color: "var(--aa-text)", fontSize: 14, fontWeight: 900 }}>
+                    {item.label}
+                  </Typography>
+                  <Typography sx={{ mt: 0.2, color: "var(--aa-text-muted)", fontSize: 12 }}>
+                    {item.description}
+                  </Typography>
+                </Box>
+              </MenuItem>
+            ))}
+          </Menu>
+        </Box>
 
         <Button
           onClick={openProfile}
@@ -523,16 +671,16 @@ export default function TopBar() {
             spacing={1.4}
             sx={{
               alignItems: "center",
-              px: { xs: 0.6, sm: 1 },
+              px: { xs: 0.4, sm: 0.7 },
               py: 0.8,
               borderRadius: "14px",
               transition: "background-color .18s ease",
               "&:hover": {
-                backgroundColor: "rgba(139,1,1,.04)",
+                backgroundColor: "var(--aa-surface-hover)",
               },
             }}
           >
-            <Box sx={{ display: { xs: "none", sm: "block" }, textAlign: "right" }}>
+            <Box sx={{ display: "none", textAlign: "right" }}>
               <Typography
                 sx={{
                   maxWidth: 190,
@@ -591,13 +739,13 @@ export default function TopBar() {
             <Avatar
               src={imagePreview || getImageUrl(user?.user_image)}
               sx={{
-                width: 48,
-                height: 48,
+                width: 44,
+                height: 44,
                 fontSize: 16,
                 fontWeight: 950,
                 color: "#fff",
                 bgcolor: "#9f1d21",
-                boxShadow: "0 10px 22px rgba(139, 1, 1, 0.20)",
+                boxShadow: "0 7px 18px rgba(139, 1, 1, 0.16)",
               }}
             >
               {getInitials(user)}
@@ -607,9 +755,9 @@ export default function TopBar() {
       </Box>
 
       <Drawer open={menuOpen} onClose={() => setMenuOpen(false)}>
-        <Box className="flex h-full w-72 flex-col bg-[#050817] p-4 text-white">
-          <Typography variant="h6" fontWeight={950} className="px-2 py-3">
-            Al-amin Collection
+        <Box className="flex h-full w-72 flex-col bg-white p-4 text-[var(--aa-text)]">
+          <Typography variant="h6" fontWeight={950} className="px-2 py-3 text-[var(--aa-text)]">
+            {user?.company_name || "Al-Amin CRM"}
           </Typography>
 
           <List className="flex-1">
@@ -631,13 +779,13 @@ export default function TopBar() {
                   sx={{
                     mb: 0.6,
                     borderRadius: "10px",
-                    color: "#cbd5e1",
+                    color: "var(--aa-text-secondary)",
                     "&.active": {
-                      bgcolor: "#a32024",
-                      color: "#fff",
+                      bgcolor: "var(--aa-brand-50)",
+                      color: "var(--aa-brand-800)",
                     },
                     "&:hover": {
-                      bgcolor: "rgba(255,255,255,.08)",
+                      bgcolor: "var(--aa-surface-hover)",
                     },
                   }}
                 >
@@ -659,9 +807,9 @@ export default function TopBar() {
               navigate("/login", { replace: true });
             }}
             sx={{
-              color: "#fecaca",
-              borderColor: "rgba(248,113,113,.35)",
-              backgroundColor: "rgba(248,113,113,.07)",
+              color: "var(--aa-danger)",
+              borderColor: "rgba(217,48,37,.22)",
+              backgroundColor: "rgba(217,48,37,.05)",
               textTransform: "none",
               fontWeight: 900,
               borderRadius: "10px",

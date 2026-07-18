@@ -89,16 +89,99 @@ const movementLabels = {
 
 const itemTypeLabel = (type) => (type === "product" ? "Mahsulot" : "Homashyo");
 const warehouseTypeLabel = (type) =>
-  type === "product" ? "Tayyor mahsulot" : type === "raw_material" ? "Homashyo" : "Aralash";
+  type === "product"
+    ? "Tayyor mahsulot"
+    : type === "raw_material"
+      ? "Homashyo"
+      : "Aralash";
 const quantity = (value) =>
   Number(value || 0).toLocaleString("uz-UZ", { maximumFractionDigits: 3 });
-const errorMessage = (error, fallback) => error?.response?.data?.message || fallback;
+const errorMessage = (error, fallback) =>
+  error?.response?.data?.message || fallback;
 
-const MetricCard = ({ label, value, hint, tone = "#8f1d20" }) => (
-  <Card className="crm-soft-card" sx={{ p: 2.2, minHeight: 124 }}>
-    <Typography sx={{ color: "#64748b", fontSize: 13, fontWeight: 850 }}>{label}</Typography>
-    <Typography sx={{ mt: 1, color: tone, fontSize: 28, fontWeight: 950 }}>{value}</Typography>
-    <Typography sx={{ mt: 0.6, color: "#94a3b8", fontSize: 12, fontWeight: 700 }}>
+const surfaceCardSx = {
+  borderRadius: "var(--aa-radius-xl)",
+  border: "1px solid var(--aa-border)",
+  background: "var(--aa-surface)",
+  boxShadow: "var(--aa-shadow-sm)",
+};
+
+const tableSx = {
+  "& th": {
+    py: 1.55,
+    color: "var(--aa-text-secondary)",
+    fontSize: 12,
+    fontWeight: 950,
+    textTransform: "uppercase",
+    letterSpacing: "0.03em",
+    background: "var(--aa-surface-muted)",
+    borderBottom: "1px solid var(--aa-border)",
+  },
+  "& td": {
+    py: 1.45,
+    color: "var(--aa-text)",
+    borderBottom: "1px solid var(--aa-border)",
+  },
+  "& tbody tr:hover": {
+    background: "var(--aa-surface-hover)",
+  },
+};
+
+const dialogPaperSx = {
+  borderRadius: "var(--aa-radius-xl)",
+  border: "1px solid var(--aa-border)",
+  boxShadow: "var(--aa-shadow-lg)",
+  overflow: "hidden",
+};
+
+const dialogTitleSx = {
+  px: 3,
+  py: 2.2,
+  color: "var(--aa-text)",
+  fontWeight: 950,
+  borderBottom: "1px solid var(--aa-border)",
+};
+
+const dialogContentSx = { px: 3, py: 2.5 };
+const dialogActionsSx = {
+  px: 3,
+  py: 2,
+  borderTop: "1px solid var(--aa-border)",
+  background: "var(--aa-surface-muted)",
+};
+
+const primaryButtonSx = {
+  minHeight: 40,
+  borderRadius: "var(--aa-radius-md)",
+  textTransform: "none",
+  fontWeight: 900,
+  background:
+    "linear-gradient(135deg, var(--aa-brand-800), var(--aa-brand-600))",
+  boxShadow: "var(--aa-shadow-sm)",
+  "&:hover": {
+    background:
+      "linear-gradient(135deg, var(--aa-brand-900), var(--aa-brand-700))",
+  },
+};
+
+const MetricCard = ({ label, value, hint, tone = "var(--aa-brand-800)" }) => (
+  <Card sx={{ ...surfaceCardSx, p: 2.2, minHeight: 124 }}>
+    <Typography
+      sx={{ color: "var(--aa-text-secondary)", fontSize: 13, fontWeight: 850 }}
+    >
+      {label}
+    </Typography>
+    <Typography sx={{ mt: 1, color: tone, fontSize: 28, fontWeight: 950 }}>
+      {value}
+    </Typography>
+    <Typography
+      sx={{
+        mt: 0.6,
+        color: "var(--aa-text-tertiary)",
+        fontSize: 12,
+        fontWeight: 700,
+      }}
+    >
       {hint}
     </Typography>
   </Card>
@@ -112,10 +195,13 @@ const Inventory = () => {
   const isCountsPage = location.pathname === "/inventory/counts";
   const isManagementPage = location.pathname === "/inventory/warehouses";
   const canManageAll = hasPermission(user, "inventory.manage");
-  const canManageMovements = canManageAll || hasPermission(user, "inventory.movements");
-  const canManageWarehouses = canManageAll || hasPermission(user, "inventory.warehouses");
+  const canManageMovements =
+    canManageAll || hasPermission(user, "inventory.movements");
+  const canManageWarehouses =
+    canManageAll || hasPermission(user, "inventory.warehouses");
   const canCount = canManageAll || hasPermission(user, "inventory.count");
-  const canReceive = canManageMovements || hasPermission(user, "production.manage");
+  const canReceive =
+    canManageMovements || hasPermission(user, "production.manage");
   const [tab, setTab] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -130,6 +216,8 @@ const Inventory = () => {
   const [receiptOpen, setReceiptOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
   const [warehouseOpen, setWarehouseOpen] = useState(false);
+  const [warehouseDeleteOpen, setWarehouseDeleteOpen] = useState(false);
+  const [warehousePendingDelete, setWarehousePendingDelete] = useState(null);
   const [thresholdOpen, setThresholdOpen] = useState(false);
   const [movementForm, setMovementForm] = useState(emptyMovement);
   const [receiptForm, setReceiptForm] = useState(emptyReceipt);
@@ -142,7 +230,9 @@ const Inventory = () => {
   const [countDetailOpen, setCountDetailOpen] = useState(false);
   const [countWarehouse, setCountWarehouse] = useState(null);
   const [countRows, setCountRows] = useState([]);
-  const [countedAt, setCountedAt] = useState(new Date().toISOString().slice(0, 10));
+  const [countedAt, setCountedAt] = useState(
+    new Date().toISOString().slice(0, 10),
+  );
   const [countNote, setCountNote] = useState("");
   const [countDetail, setCountDetail] = useState(null);
   const [countWarehouseChoice, setCountWarehouseChoice] = useState("");
@@ -150,16 +240,21 @@ const Inventory = () => {
   const load = useCallback(async (quiet = false) => {
     if (!quiet) setLoading(true);
     try {
-      const [warehouseRes, stockRes, movementRes, itemRes, countRes] = await Promise.all([
-        getWarehouses(),
-        getInventoryStock({ limit: 200 }),
-        getInventoryMovements({ limit: 150 }),
-        getInventoryItems({ limit: 300 }),
-        getInventoryCounts({ limit: 100 }),
-      ]);
+      const [warehouseRes, stockRes, movementRes, itemRes, countRes] =
+        await Promise.all([
+          getWarehouses(),
+          getInventoryStock({ limit: 200 }),
+          getInventoryMovements({ limit: 150 }),
+          getInventoryItems({ limit: 300 }),
+          getInventoryCounts({ limit: 100 }),
+        ]);
       setWarehouses(warehouseRes.data.warehouses || []);
       setStock(stockRes.data.stock || []);
-      setMovements(movementRes.data.inventory_movements || movementRes.data.movements || []);
+      setMovements(
+        movementRes.data.inventory_movements ||
+          movementRes.data.movements ||
+          [],
+      );
       setItems(itemRes.data.items || []);
       setCounts(countRes.data.inventory_counts || []);
     } catch (error) {
@@ -180,7 +275,9 @@ const Inventory = () => {
 
   const selectedWarehouse = useMemo(
     () =>
-      activeWarehouses.find((warehouse) => Number(warehouse.id) === Number(warehouseId)) || null,
+      activeWarehouses.find(
+        (warehouse) => Number(warehouse.id) === Number(warehouseId),
+      ) || null,
     [activeWarehouses, warehouseId],
   );
 
@@ -197,7 +294,13 @@ const Inventory = () => {
           : "/inventory/counts";
       navigate(target, { replace: true });
     }
-  }, [activeWarehouses, canManageWarehouses, loading, location.pathname, navigate]);
+  }, [
+    activeWarehouses,
+    canManageWarehouses,
+    loading,
+    location.pathname,
+    navigate,
+  ]);
 
   useEffect(() => {
     if (!loading && warehouseId && !selectedWarehouse) {
@@ -210,7 +313,8 @@ const Inventory = () => {
     () =>
       stock.filter(
         (row) =>
-          (!warehouseFilter || Number(row.warehouse_id) === Number(warehouseFilter)) &&
+          (!warehouseFilter ||
+            Number(row.warehouse_id) === Number(warehouseFilter)) &&
           (!filterText ||
             `${row.item_name || ""} ${row.warehouse_name || ""} ${itemTypeLabel(row.item_type)}`
               .toLocaleLowerCase("uz-UZ")
@@ -223,7 +327,8 @@ const Inventory = () => {
     () =>
       movements.filter(
         (row) =>
-          (!warehouseFilter || Number(row.warehouse_id) === Number(warehouseFilter)) &&
+          (!warehouseFilter ||
+            Number(row.warehouse_id) === Number(warehouseFilter)) &&
           (!filterText ||
             `${row.item_name || ""} ${row.warehouse_name || ""} ${row.note || ""}`
               .toLocaleLowerCase("uz-UZ")
@@ -232,7 +337,8 @@ const Inventory = () => {
     [filterText, movements, warehouseFilter],
   );
 
-  const selectableItems = (type) => items.filter((item) => item.item_type === type);
+  const selectableItems = (type) =>
+    items.filter((item) => item.item_type === type);
   const compatibleWarehouses = (type) =>
     activeWarehouses.filter(
       (warehouse) =>
@@ -246,6 +352,8 @@ const Inventory = () => {
     setReceiptOpen(false);
     setTransferOpen(false);
     setWarehouseOpen(false);
+    setWarehouseDeleteOpen(false);
+    setWarehousePendingDelete(null);
     setThresholdOpen(false);
     setEditingWarehouse(null);
     setMovementForm(emptyMovement);
@@ -264,7 +372,9 @@ const Inventory = () => {
   };
 
   const openInventoryCount = (warehouse) => {
-    const rows = stock.filter((row) => Number(row.warehouse_id) === Number(warehouse.id));
+    const rows = stock.filter(
+      (row) => Number(row.warehouse_id) === Number(warehouse.id),
+    );
     if (!rows.length) {
       toast.error("Bu omborda sanash uchun qoldiq pozitsiyalari yo'q.");
       return;
@@ -284,7 +394,10 @@ const Inventory = () => {
   const saveInventoryCount = async () => {
     if (
       !countWarehouse ||
-      countRows.some((row) => row.counted_quantity === "" || Number(row.counted_quantity) < 0)
+      countRows.some(
+        (row) =>
+          row.counted_quantity === "" || Number(row.counted_quantity) < 0,
+      )
     ) {
       toast.error("Barcha haqiqiy miqdorlarni to'g'ri kiriting.");
       return;
@@ -318,12 +431,18 @@ const Inventory = () => {
       setCountDetail(data.inventory_count);
       setCountDetailOpen(true);
     } catch (error) {
-      toast.error(errorMessage(error, "Inventarizatsiya tafsilotlarini olishda xato."));
+      toast.error(
+        errorMessage(error, "Inventarizatsiya tafsilotlarini olishda xato."),
+      );
     }
   };
 
   const saveMovement = async () => {
-    if (!movementForm.warehouse_id || !movementForm.item_id || !movementForm.quantity) {
+    if (
+      !movementForm.warehouse_id ||
+      !movementForm.item_id ||
+      !movementForm.quantity
+    ) {
       return toast.error("Ombor, element va miqdorni kiriting.");
     }
     setSaving(true);
@@ -333,7 +452,8 @@ const Inventory = () => {
         warehouse_id: Number(movementForm.warehouse_id),
         item_id: Number(movementForm.item_id),
         quantity: Number(movementForm.quantity),
-        unit_cost: movementForm.unit_cost === "" ? null : Number(movementForm.unit_cost),
+        unit_cost:
+          movementForm.unit_cost === "" ? null : Number(movementForm.unit_cost),
         note: movementForm.note.trim() || null,
         idempotency_key: crypto.randomUUID(),
       });
@@ -348,7 +468,11 @@ const Inventory = () => {
   };
 
   const saveProductionReceipt = async () => {
-    if (!receiptForm.warehouse_id || !receiptForm.product_id || Number(receiptForm.quantity) <= 0) {
+    if (
+      !receiptForm.warehouse_id ||
+      !receiptForm.product_id ||
+      Number(receiptForm.quantity) <= 0
+    ) {
       return toast.error("Ombor, tayyor mahsulot va miqdorni kiriting.");
     }
     setSaving(true);
@@ -357,7 +481,8 @@ const Inventory = () => {
         warehouse_id: Number(receiptForm.warehouse_id),
         product_id: Number(receiptForm.product_id),
         quantity: Number(receiptForm.quantity),
-        unit_cost: receiptForm.unit_cost === "" ? null : Number(receiptForm.unit_cost),
+        unit_cost:
+          receiptForm.unit_cost === "" ? null : Number(receiptForm.unit_cost),
         occurred_at: receiptForm.occurred_at || undefined,
         note: receiptForm.note.trim() || null,
         idempotency_key: crypto.randomUUID(),
@@ -366,7 +491,9 @@ const Inventory = () => {
       closeDialogs();
       await load(true);
     } catch (error) {
-      toast.error(errorMessage(error, "Tayyor mahsulotni omborga qabul qilishda xato."));
+      toast.error(
+        errorMessage(error, "Tayyor mahsulotni omborga qabul qilishda xato."),
+      );
     } finally {
       setSaving(false);
     }
@@ -422,7 +549,9 @@ const Inventory = () => {
         const { data } = await createWarehouse(payload);
         savedWarehouse = data.warehouse;
       }
-      toast.success(editingWarehouse ? "Ombor yangilandi." : "Ombor qo'shildi.");
+      toast.success(
+        editingWarehouse ? "Ombor yangilandi." : "Ombor qo'shildi.",
+      );
       closeDialogs();
       await load(true);
       window.dispatchEvent(new Event("warehouses-updated"));
@@ -436,21 +565,34 @@ const Inventory = () => {
     }
   };
 
-  const removeWarehouse = async (warehouse) => {
-    if (!window.confirm(`${warehouse.name} omborini o'chirasizmi?`)) return;
+  const requestWarehouseDelete = (warehouse) => {
+    setWarehousePendingDelete(warehouse);
+    setWarehouseDeleteOpen(true);
+  };
+
+  const removeWarehouse = async () => {
+    if (!warehousePendingDelete) return;
+
+    const warehouse = warehousePendingDelete;
+    setSaving(true);
     try {
       await archiveWarehouse(warehouse.id);
       toast.success("Ombor o'chirildi.");
+      closeDialogs();
       await load(true);
       window.dispatchEvent(new Event("warehouses-updated"));
-      if (Number(warehouseId) === Number(warehouse.id)) navigate("/inventory", { replace: true });
+      if (Number(warehouseId) === Number(warehouse.id))
+        navigate("/inventory", { replace: true });
     } catch (error) {
       toast.error(errorMessage(error, "Omborni o'chirishda xato."));
+    } finally {
+      setSaving(false);
     }
   };
 
   const saveThreshold = async () => {
-    if (!thresholdRow || thresholdValue === "" || Number(thresholdValue) < 0) return;
+    if (!thresholdRow || thresholdValue === "" || Number(thresholdValue) < 0)
+      return;
     setSaving(true);
     try {
       await updateInventoryThreshold(thresholdRow.id, Number(thresholdValue));
@@ -467,30 +609,55 @@ const Inventory = () => {
   if (loading) {
     return (
       <Box className="flex h-80 items-center justify-center">
-        <CircularProgress size={32} sx={{ color: "#8f1d20" }} />
+        <CircularProgress size={32} sx={{ color: "var(--aa-brand-800)" }} />
       </Box>
     );
   }
 
   return (
-    <Box className="crm-page space-y-4">
-      <Box
+    <Box className="crm-page space-y-4" sx={{ pb: 2.5 }}>
+      <Card
         sx={{
+          ...surfaceCardSx,
+          p: { xs: 2, md: 2.5 },
           display: "flex",
           flexDirection: { xs: "column", lg: "row" },
           justifyContent: "space-between",
+          alignItems: { xs: "stretch", lg: "center" },
           gap: 2,
         }}
       >
         <Box>
-          <Typography variant="h5" fontWeight={950}>
+          <Chip
+            size="small"
+            label="Al-amin CRM • ombor nazorati"
+            sx={{
+              mb: 1,
+              color: "var(--aa-brand-800)",
+              fontSize: 12,
+              fontWeight: 950,
+              background: "var(--aa-brand-50)",
+              border: "1px solid var(--aa-brand-200)",
+            }}
+          />
+          <Typography
+            sx={{
+              color: "var(--aa-text)",
+              fontSize: { xs: 27, md: 33 },
+              fontWeight: 950,
+              letterSpacing: "-0.045em",
+              lineHeight: 1.08,
+            }}
+          >
             {isCountsPage
               ? "Inventarizatsiya"
               : isManagementPage
                 ? "Omborlar boshqaruvi"
                 : selectedWarehouse?.name || "Ombor"}
           </Typography>
-          <Typography sx={{ mt: 0.7, color: "#64748b", fontWeight: 700 }}>
+          <Typography
+            sx={{ mt: 0.7, color: "var(--aa-text-secondary)", fontWeight: 700 }}
+          >
             {isCountsPage
               ? "Omborlarni sanash, farqlarni aniqlash va oldingi inventarizatsiyalar tarixi."
               : isManagementPage
@@ -505,11 +672,20 @@ const Inventory = () => {
                 variant="outlined"
                 onClick={() => setTransferOpen(true)}
                 disabled={activeWarehouses.length < 2}
+                sx={{
+                  minHeight: 40,
+                  borderRadius: "var(--aa-radius-md)",
+                  fontWeight: 900,
+                }}
               >
                 Ombordan omborga o'tkazish
               </Button>
             )}
-            <Button variant="contained" onClick={() => setWarehouseOpen(true)}>
+            <Button
+              variant="contained"
+              onClick={() => setWarehouseOpen(true)}
+              sx={primaryButtonSx}
+            >
               Yangi ombor qo'shish
             </Button>
           </Stack>
@@ -518,14 +694,18 @@ const Inventory = () => {
           !isManagementPage &&
           selectedWarehouse?.warehouse_type === "product" &&
           canReceive && (
-            <Button variant="contained" onClick={() => setReceiptOpen(true)}>
+            <Button
+              variant="contained"
+              onClick={() => setReceiptOpen(true)}
+              sx={primaryButtonSx}
+            >
               Mahsulot ishlab chiqarish
             </Button>
           )}
-      </Box>
+      </Card>
 
       {isManagementPage && (
-        <Card className="crm-card" sx={{ p: 2.2 }}>
+        <Card sx={{ ...surfaceCardSx, p: 2.2 }}>
           <Box
             sx={{
               mb: 1.8,
@@ -536,9 +716,21 @@ const Inventory = () => {
             }}
           >
             <Box>
-              <Typography sx={{ fontSize: 18, fontWeight: 950 }}>Faol omborlar</Typography>
-              <Typography sx={{ mt: 0.4, color: "#64748b", fontSize: 13, fontWeight: 700 }}>
-                Ombor yaratish, tahrirlash yoki o'chirish uchun sodda boshqaruv oynasi.
+              <Typography
+                sx={{ color: "var(--aa-text)", fontSize: 18, fontWeight: 950 }}
+              >
+                Faol omborlar
+              </Typography>
+              <Typography
+                sx={{
+                  mt: 0.4,
+                  color: "var(--aa-text-secondary)",
+                  fontSize: 13,
+                  fontWeight: 700,
+                }}
+              >
+                Ombor yaratish, tahrirlash yoki o'chirish uchun sodda boshqaruv
+                oynasi.
               </Typography>
             </Box>
           </Box>
@@ -561,18 +753,35 @@ const Inventory = () => {
                   variant="outlined"
                   sx={{
                     p: 2,
-                    borderColor: "#e2e8f0",
-                    background: "#fff",
+                    borderRadius: "var(--aa-radius-lg)",
+                    borderColor: "var(--aa-border)",
+                    background: "var(--aa-surface-solid)",
+                    boxShadow: "var(--aa-shadow-xs)",
                     opacity: warehouse.is_active ? 1 : 0.62,
                   }}
                 >
-                  <Stack direction="row" justifyContent="space-between" spacing={1}>
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    spacing={1}
+                  >
                     <Box sx={{ minWidth: 0 }}>
-                      <Typography sx={{ fontWeight: 950, color: "#0f172a" }} noWrap>
+                      <Typography
+                        sx={{ fontWeight: 950, color: "var(--aa-text)" }}
+                        noWrap
+                      >
                         {warehouse.name}
                       </Typography>
-                      <Typography sx={{ mt: 0.4, color: "#64748b", fontSize: 12, fontWeight: 750 }}>
-                        {warehouse.code} • {warehouseTypeLabel(warehouse.warehouse_type)}
+                      <Typography
+                        sx={{
+                          mt: 0.4,
+                          color: "var(--aa-text-secondary)",
+                          fontSize: 12,
+                          fontWeight: 750,
+                        }}
+                      >
+                        {warehouse.code} •{" "}
+                        {warehouseTypeLabel(warehouse.warehouse_type)}
                       </Typography>
                     </Box>
                     <Chip
@@ -581,10 +790,23 @@ const Inventory = () => {
                       label={warehouse.is_active ? "Faol" : "Arxiv"}
                     />
                   </Stack>
-                  <Typography sx={{ mt: 1.5, fontSize: 24, fontWeight: 950, color: "#8f1d20" }}>
+                  <Typography
+                    sx={{
+                      mt: 1.5,
+                      fontSize: 24,
+                      fontWeight: 950,
+                      color: "var(--aa-brand-800)",
+                    }}
+                  >
                     {warehouse.stock_lines || 0}
                   </Typography>
-                  <Typography sx={{ color: "#94a3b8", fontSize: 12, fontWeight: 700 }}>
+                  <Typography
+                    sx={{
+                      color: "var(--aa-text-tertiary)",
+                      fontSize: 12,
+                      fontWeight: 700,
+                    }}
+                  >
                     qoldiq pozitsiyasi
                   </Typography>
 
@@ -610,7 +832,7 @@ const Inventory = () => {
                         size="small"
                         variant="outlined"
                         color="error"
-                        onClick={() => removeWarehouse(warehouse)}
+                        onClick={() => requestWarehouseDelete(warehouse)}
                       >
                         O'chirish
                       </Button>
@@ -628,7 +850,11 @@ const Inventory = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", xl: "repeat(4, 1fr)" },
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "1fr 1fr",
+                xl: "repeat(4, 1fr)",
+              },
               gap: 1.5,
             }}
           >
@@ -645,25 +871,39 @@ const Inventory = () => {
               label="Qoldiq pozitsiyalari"
               value={filteredStock.length}
               hint="Shu ombordagi qatorlar"
-              tone="#1d4ed8"
+              tone="var(--aa-info)"
             />
             <MetricCard
               label="Kam qolgan"
               value={filteredStock.filter((row) => row.is_low).length}
               hint="Minimal miqdorga yetgan pozitsiyalar"
-              tone={filteredStock.some((row) => row.is_low) ? "#b91c1c" : "#15803d"}
+              tone={
+                filteredStock.some((row) => row.is_low)
+                  ? "var(--aa-danger)"
+                  : "var(--aa-success)"
+              }
             />
             <MetricCard
               label="Harakatlar"
               value={filteredMovements.length}
               hint="Shu ombordagi operatsiyalar"
-              tone="#7c3aed"
+              tone="var(--aa-brand-600)"
             />
           </Box>
 
-          <Card className="crm-card" sx={{ overflow: "hidden" }}>
-            <Box sx={{ px: 2, pt: 1.2, borderBottom: "1px solid #e6edf7" }}>
-              <Tabs value={tab} onChange={(_event, value) => setTab(value)} variant="scrollable">
+          <Card sx={{ ...surfaceCardSx, overflow: "hidden" }}>
+            <Box
+              sx={{
+                px: 2,
+                pt: 1.2,
+                borderBottom: "1px solid var(--aa-border)",
+              }}
+            >
+              <Tabs
+                value={tab}
+                onChange={(_event, value) => setTab(value)}
+                variant="scrollable"
+              >
                 <Tab label="Qoldiq" />
                 <Tab label="Harakatlar" />
               </Tabs>
@@ -680,7 +920,7 @@ const Inventory = () => {
               >
                 <TextField
                   size="small"
-                  label="Qidirish"
+                  label="Ombordagi elementni qidirish"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                 />
@@ -689,7 +929,7 @@ const Inventory = () => {
 
             {tab === 0 && (
               <Box sx={{ overflowX: "auto" }}>
-                <Table sx={{ minWidth: 900 }}>
+                <Table sx={{ minWidth: 900, ...tableSx }}>
                   <TableHead>
                     <TableRow>
                       <TableCell>Element</TableCell>
@@ -698,7 +938,9 @@ const Inventory = () => {
                       <TableCell>Qoldiq</TableCell>
                       <TableCell>Minimum</TableCell>
                       <TableCell>Holat</TableCell>
-                      {canManageMovements && <TableCell align="right">Amal</TableCell>}
+                      {canManageMovements && (
+                        <TableCell align="right">Amal</TableCell>
+                      )}
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -709,11 +951,21 @@ const Inventory = () => {
                             {row.item_name || `#${row.item_id}`}
                           </TableCell>
                           <TableCell>
-                            <Chip size="small" label={itemTypeLabel(row.item_type)} />
+                            <Chip
+                              size="small"
+                              label={itemTypeLabel(row.item_type)}
+                            />
                           </TableCell>
-                          <TableCell sx={{ fontWeight: 750 }}>{row.warehouse_name}</TableCell>
+                          <TableCell sx={{ fontWeight: 750 }}>
+                            {row.warehouse_name}
+                          </TableCell>
                           <TableCell
-                            sx={{ fontWeight: 950, color: row.is_low ? "#b91c1c" : "#0f172a" }}
+                            sx={{
+                              fontWeight: 950,
+                              color: row.is_low
+                                ? "var(--aa-danger)"
+                                : "var(--aa-text)",
+                            }}
                           >
                             {quantity(row.quantity)} {row.unit}
                           </TableCell>
@@ -734,7 +986,9 @@ const Inventory = () => {
                                 variant="outlined"
                                 onClick={() => {
                                   setThresholdRow(row);
-                                  setThresholdValue(String(row.minimum_quantity || 0));
+                                  setThresholdValue(
+                                    String(row.minimum_quantity || 0),
+                                  );
                                   setThresholdOpen(true);
                                 }}
                               >
@@ -749,7 +1003,11 @@ const Inventory = () => {
                         <TableCell
                           colSpan={canManageMovements ? 7 : 6}
                           align="center"
-                          sx={{ py: 7, color: "#64748b", fontWeight: 800 }}
+                          sx={{
+                            py: 7,
+                            color: "var(--aa-text-secondary)",
+                            fontWeight: 800,
+                          }}
                         >
                           Qoldiq topilmadi. Birinchi kirimni qo'shing.
                         </TableCell>
@@ -762,7 +1020,7 @@ const Inventory = () => {
 
             {tab === 1 && (
               <Box sx={{ overflowX: "auto" }}>
-                <Table sx={{ minWidth: 980 }}>
+                <Table sx={{ minWidth: 980, ...tableSx }}>
                   <TableHead>
                     <TableRow>
                       <TableCell>Sana</TableCell>
@@ -778,7 +1036,9 @@ const Inventory = () => {
                     {filteredMovements.length ? (
                       filteredMovements.map((row) => (
                         <TableRow key={row.id} hover>
-                          <TableCell>{new Date(row.occurred_at).toLocaleString("uz-UZ")}</TableCell>
+                          <TableCell>
+                            {new Date(row.occurred_at).toLocaleString("uz-UZ")}
+                          </TableCell>
                           <TableCell sx={{ fontWeight: 900 }}>
                             {row.item_name || `#${row.item_id}`}
                           </TableCell>
@@ -786,13 +1046,19 @@ const Inventory = () => {
                           <TableCell>
                             <Chip
                               size="small"
-                              label={movementLabels[row.movement_type] || row.movement_type}
+                              label={
+                                movementLabels[row.movement_type] ||
+                                row.movement_type
+                              }
                             />
                           </TableCell>
                           <TableCell
                             sx={{
                               fontWeight: 950,
-                              color: Number(row.quantity_delta) < 0 ? "#b91c1c" : "#15803d",
+                              color:
+                                Number(row.quantity_delta) < 0
+                                  ? "var(--aa-danger)"
+                                  : "var(--aa-success)",
                             }}
                           >
                             {Number(row.quantity_delta) > 0 ? "+" : ""}
@@ -803,7 +1069,12 @@ const Inventory = () => {
                               row.username ||
                               "-"}
                           </TableCell>
-                          <TableCell sx={{ maxWidth: 260, color: "#64748b" }}>
+                          <TableCell
+                            sx={{
+                              maxWidth: 260,
+                              color: "var(--aa-text-secondary)",
+                            }}
+                          >
                             {row.note || "-"}
                           </TableCell>
                         </TableRow>
@@ -813,7 +1084,11 @@ const Inventory = () => {
                         <TableCell
                           colSpan={7}
                           align="center"
-                          sx={{ py: 7, color: "#64748b", fontWeight: 800 }}
+                          sx={{
+                            py: 7,
+                            color: "var(--aa-text-secondary)",
+                            fontWeight: 800,
+                          }}
                         >
                           Harakatlar topilmadi.
                         </TableCell>
@@ -828,7 +1103,7 @@ const Inventory = () => {
       )}
 
       {isCountsPage && (
-        <Card className="crm-card" sx={{ overflow: "hidden" }}>
+        <Card sx={{ ...surfaceCardSx, overflow: "hidden" }}>
           <Box
             sx={{
               p: 2,
@@ -837,13 +1112,25 @@ const Inventory = () => {
               alignItems: { xs: "flex-start", sm: "center" },
               justifyContent: "space-between",
               gap: 1.2,
-              borderBottom: "1px solid #e6edf7",
+              borderBottom: "1px solid var(--aa-border)",
             }}
           >
             <Box>
-              <Typography sx={{ fontSize: 18, fontWeight: 950 }}>Inventarizatsiya</Typography>
-              <Typography sx={{ mt: 0.4, color: "#64748b", fontSize: 13, fontWeight: 700 }}>
-                Haqiqiy sanov, tizimdagi qoldiq bilan farq va oldingi inventarizatsiyalar tarixi.
+              <Typography
+                sx={{ color: "var(--aa-text)", fontSize: 18, fontWeight: 950 }}
+              >
+                Inventarizatsiya
+              </Typography>
+              <Typography
+                sx={{
+                  mt: 0.4,
+                  color: "var(--aa-text-secondary)",
+                  fontSize: 13,
+                  fontWeight: 700,
+                }}
+              >
+                Haqiqiy sanov, tizimdagi qoldiq bilan farq va oldingi
+                inventarizatsiyalar tarixi.
               </Typography>
             </Box>
             {canCount && (
@@ -853,7 +1140,9 @@ const Inventory = () => {
                   select
                   label="Omborni tanlang"
                   value={countWarehouseChoice}
-                  onChange={(event) => setCountWarehouseChoice(event.target.value)}
+                  onChange={(event) =>
+                    setCountWarehouseChoice(event.target.value)
+                  }
                   sx={{ minWidth: 230 }}
                 >
                   {activeWarehouses.map((warehouse) => (
@@ -867,10 +1156,12 @@ const Inventory = () => {
                   disabled={!countWarehouseChoice}
                   onClick={() => {
                     const warehouse = activeWarehouses.find(
-                      (item) => Number(item.id) === Number(countWarehouseChoice),
+                      (item) =>
+                        Number(item.id) === Number(countWarehouseChoice),
                     );
                     if (warehouse) openInventoryCount(warehouse);
                   }}
+                  sx={primaryButtonSx}
                 >
                   Inventarizatsiya qilish
                 </Button>
@@ -878,7 +1169,7 @@ const Inventory = () => {
             )}
           </Box>
           <Box sx={{ overflowX: "auto" }}>
-            <Table sx={{ minWidth: 850 }}>
+            <Table sx={{ minWidth: 850, ...tableSx }}>
               <TableHead>
                 <TableRow>
                   <TableCell>Sana</TableCell>
@@ -894,13 +1185,19 @@ const Inventory = () => {
                 {counts.length ? (
                   counts.map((count) => (
                     <TableRow key={count.id} hover>
-                      <TableCell>{new Date(count.counted_at).toLocaleString("uz-UZ")}</TableCell>
-                      <TableCell sx={{ fontWeight: 900 }}>{count.warehouse_name}</TableCell>
+                      <TableCell>
+                        {new Date(count.counted_at).toLocaleString("uz-UZ")}
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 900 }}>
+                        {count.warehouse_name}
+                      </TableCell>
                       <TableCell>{count.total_lines}</TableCell>
                       <TableCell>
                         <Chip
                           size="small"
-                          color={Number(count.variance_lines) ? "warning" : "success"}
+                          color={
+                            Number(count.variance_lines) ? "warning" : "success"
+                          }
                           label={
                             Number(count.variance_lines)
                               ? `${count.variance_lines} ta farq`
@@ -913,7 +1210,12 @@ const Inventory = () => {
                           count.username ||
                           "-"}
                       </TableCell>
-                      <TableCell sx={{ maxWidth: 250, color: "#64748b" }}>
+                      <TableCell
+                        sx={{
+                          maxWidth: 250,
+                          color: "var(--aa-text-secondary)",
+                        }}
+                      >
                         {count.note || "-"}
                       </TableCell>
                       <TableCell align="right">
@@ -932,7 +1234,11 @@ const Inventory = () => {
                     <TableCell
                       colSpan={7}
                       align="center"
-                      sx={{ py: 6, color: "#64748b", fontWeight: 800 }}
+                      sx={{
+                        py: 6,
+                        color: "var(--aa-text-secondary)",
+                        fontWeight: 800,
+                      }}
                     >
                       Hozircha inventarizatsiya o'tkazilmagan.
                     </TableCell>
@@ -944,11 +1250,17 @@ const Inventory = () => {
         </Card>
       )}
 
-      <Dialog open={countOpen} onClose={closeDialogs} fullWidth maxWidth="md">
-        <DialogTitle sx={{ fontWeight: 950 }}>
+      <Dialog
+        open={countOpen}
+        onClose={closeDialogs}
+        fullWidth
+        maxWidth="md"
+        PaperProps={{ sx: dialogPaperSx }}
+      >
+        <DialogTitle sx={dialogTitleSx}>
           Inventarizatsiya — {countWarehouse?.name}
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={dialogContentSx}>
           <Stack spacing={2} sx={{ pt: 1 }}>
             <Box
               sx={{
@@ -971,8 +1283,14 @@ const Inventory = () => {
                 placeholder="Masalan: Oy yakuni sanovi"
               />
             </Box>
-            <Box sx={{ overflowX: "auto", border: "1px solid #e2e8f0", borderRadius: 2 }}>
-              <Table size="small" sx={{ minWidth: 700 }}>
+            <Box
+              sx={{
+                overflowX: "auto",
+                border: "1px solid var(--aa-border)",
+                borderRadius: "var(--aa-radius-md)",
+              }}
+            >
+              <Table size="small" sx={{ minWidth: 700, ...tableSx }}>
                 <TableHead>
                   <TableRow>
                     <TableCell>Element</TableCell>
@@ -985,10 +1303,13 @@ const Inventory = () => {
                 <TableBody>
                   {countRows.map((row, index) => {
                     const difference =
-                      Number(row.counted_quantity || 0) - Number(row.quantity || 0);
+                      Number(row.counted_quantity || 0) -
+                      Number(row.quantity || 0);
                     return (
                       <TableRow key={row.id}>
-                        <TableCell sx={{ fontWeight: 900 }}>{row.item_name}</TableCell>
+                        <TableCell sx={{ fontWeight: 900 }}>
+                          {row.item_name}
+                        </TableCell>
                         <TableCell>{itemTypeLabel(row.item_type)}</TableCell>
                         <TableCell>
                           {quantity(row.quantity)} {row.unit}
@@ -1002,7 +1323,10 @@ const Inventory = () => {
                               setCountRows((current) =>
                                 current.map((item, rowIndex) =>
                                   rowIndex === index
-                                    ? { ...item, counted_quantity: event.target.value }
+                                    ? {
+                                        ...item,
+                                        counted_quantity: event.target.value,
+                                      }
                                     : item,
                                 ),
                               )
@@ -1011,7 +1335,12 @@ const Inventory = () => {
                           />
                         </TableCell>
                         <TableCell
-                          sx={{ fontWeight: 950, color: difference ? "#b45309" : "#15803d" }}
+                          sx={{
+                            fontWeight: 950,
+                            color: difference
+                              ? "var(--aa-warning)"
+                              : "var(--aa-success)",
+                          }}
                         >
                           {difference > 0 ? "+" : ""}
                           {quantity(difference)} {row.unit}
@@ -1022,33 +1351,59 @@ const Inventory = () => {
                 </TableBody>
               </Table>
             </Box>
-            <Typography sx={{ color: "#64748b", fontSize: 12, fontWeight: 700 }}>
-              Saqlanganda farqlar avtomatik ombor tuzatishi sifatida yoziladi va tarixda qoladi.
+            <Typography
+              sx={{
+                color: "var(--aa-text-secondary)",
+                fontSize: 12,
+                fontWeight: 700,
+              }}
+            >
+              Saqlanganda farqlar avtomatik ombor tuzatishi sifatida yoziladi va
+              tarixda qoladi.
             </Typography>
           </Stack>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={dialogActionsSx}>
           <Button onClick={closeDialogs}>Bekor qilish</Button>
-          <Button variant="contained" disabled={saving} onClick={saveInventoryCount}>
+          <Button
+            variant="contained"
+            disabled={saving}
+            onClick={saveInventoryCount}
+            sx={primaryButtonSx}
+          >
             {saving ? "Saqlanmoqda..." : "Inventarizatsiyani yakunlash"}
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={countDetailOpen} onClose={closeDialogs} fullWidth maxWidth="md">
-        <DialogTitle sx={{ fontWeight: 950 }}>
+      <Dialog
+        open={countDetailOpen}
+        onClose={closeDialogs}
+        fullWidth
+        maxWidth="md"
+        PaperProps={{ sx: dialogPaperSx }}
+      >
+        <DialogTitle sx={dialogTitleSx}>
           Inventarizatsiya #{countDetail?.id} — {countDetail?.warehouse_name}
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={dialogContentSx}>
           <Stack spacing={1.5} sx={{ pt: 1 }}>
-            <Typography sx={{ color: "#64748b", fontWeight: 700 }}>
+            <Typography
+              sx={{ color: "var(--aa-text-secondary)", fontWeight: 700 }}
+            >
               {countDetail?.counted_at
                 ? new Date(countDetail.counted_at).toLocaleString("uz-UZ")
                 : "-"}{" "}
               • {countDetail?.note || "Izohsiz"}
             </Typography>
-            <Box sx={{ overflowX: "auto", border: "1px solid #e2e8f0", borderRadius: 2 }}>
-              <Table size="small" sx={{ minWidth: 680 }}>
+            <Box
+              sx={{
+                overflowX: "auto",
+                border: "1px solid var(--aa-border)",
+                borderRadius: "var(--aa-radius-md)",
+              }}
+            >
+              <Table size="small" sx={{ minWidth: 680, ...tableSx }}>
                 <TableHead>
                   <TableRow>
                     <TableCell>Element</TableCell>
@@ -1061,7 +1416,9 @@ const Inventory = () => {
                 <TableBody>
                   {(countDetail?.items || []).map((row) => (
                     <TableRow key={row.id}>
-                      <TableCell sx={{ fontWeight: 900 }}>{row.item_name}</TableCell>
+                      <TableCell sx={{ fontWeight: 900 }}>
+                        {row.item_name}
+                      </TableCell>
                       <TableCell>{itemTypeLabel(row.item_type)}</TableCell>
                       <TableCell>
                         {quantity(row.expected_quantity)} {row.unit}
@@ -1072,7 +1429,9 @@ const Inventory = () => {
                       <TableCell
                         sx={{
                           fontWeight: 950,
-                          color: Number(row.difference_quantity) ? "#b45309" : "#15803d",
+                          color: Number(row.difference_quantity)
+                            ? "var(--aa-warning)"
+                            : "var(--aa-success)",
                         }}
                       >
                         {Number(row.difference_quantity) > 0 ? "+" : ""}
@@ -1085,21 +1444,30 @@ const Inventory = () => {
             </Box>
           </Stack>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={dialogActionsSx}>
           <Button onClick={closeDialogs}>Yopish</Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={movementOpen} onClose={closeDialogs} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 950 }}>Ombor kirim / chiqimi</DialogTitle>
-        <DialogContent>
+      <Dialog
+        open={movementOpen}
+        onClose={closeDialogs}
+        fullWidth
+        maxWidth="sm"
+        PaperProps={{ sx: dialogPaperSx }}
+      >
+        <DialogTitle sx={dialogTitleSx}>Ombor kirim / chiqimi</DialogTitle>
+        <DialogContent sx={dialogContentSx}>
           <Stack spacing={2} sx={{ pt: 1 }}>
             <TextField
               select
               label="Ombor"
               value={movementForm.warehouse_id}
               onChange={(event) =>
-                setMovementForm((current) => ({ ...current, warehouse_id: event.target.value }))
+                setMovementForm((current) => ({
+                  ...current,
+                  warehouse_id: event.target.value,
+                }))
               }
             >
               {compatibleWarehouses(movementForm.item_type).map((warehouse) => (
@@ -1129,11 +1497,17 @@ const Inventory = () => {
               label="Element"
               value={movementForm.item_id}
               onChange={(event) =>
-                setMovementForm((current) => ({ ...current, item_id: event.target.value }))
+                setMovementForm((current) => ({
+                  ...current,
+                  item_id: event.target.value,
+                }))
               }
             >
               {selectableItems(movementForm.item_type).map((item) => (
-                <MenuItem key={`${item.item_type}-${item.item_id}`} value={item.item_id}>
+                <MenuItem
+                  key={`${item.item_type}-${item.item_id}`}
+                  value={item.item_id}
+                >
                   {item.name} ({item.unit})
                 </MenuItem>
               ))}
@@ -1143,7 +1517,10 @@ const Inventory = () => {
               label="Operatsiya"
               value={movementForm.movement_type}
               onChange={(event) =>
-                setMovementForm((current) => ({ ...current, movement_type: event.target.value }))
+                setMovementForm((current) => ({
+                  ...current,
+                  movement_type: event.target.value,
+                }))
               }
             >
               <MenuItem value="in">Kirim</MenuItem>
@@ -1152,14 +1529,21 @@ const Inventory = () => {
               <MenuItem value="adjustment">Tuzatish (+ yoki -)</MenuItem>
             </TextField>
             <Box
-              sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.4 }}
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                gap: 1.4,
+              }}
             >
               <TextField
                 type="number"
                 label="Miqdor"
                 value={movementForm.quantity}
                 onChange={(event) =>
-                  setMovementForm((current) => ({ ...current, quantity: event.target.value }))
+                  setMovementForm((current) => ({
+                    ...current,
+                    quantity: event.target.value,
+                  }))
                 }
                 helperText={
                   movementForm.movement_type === "adjustment"
@@ -1172,7 +1556,10 @@ const Inventory = () => {
                 label="Birlik tannarxi"
                 value={movementForm.unit_cost}
                 onChange={(event) =>
-                  setMovementForm((current) => ({ ...current, unit_cost: event.target.value }))
+                  setMovementForm((current) => ({
+                    ...current,
+                    unit_cost: event.target.value,
+                  }))
                 }
               />
             </Box>
@@ -1182,26 +1569,43 @@ const Inventory = () => {
               label="Izoh"
               value={movementForm.note}
               onChange={(event) =>
-                setMovementForm((current) => ({ ...current, note: event.target.value }))
+                setMovementForm((current) => ({
+                  ...current,
+                  note: event.target.value,
+                }))
               }
             />
           </Stack>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={dialogActionsSx}>
           <Button onClick={closeDialogs}>Bekor qilish</Button>
-          <Button variant="contained" disabled={saving} onClick={saveMovement}>
+          <Button
+            variant="contained"
+            disabled={saving}
+            onClick={saveMovement}
+            sx={primaryButtonSx}
+          >
             {saving ? "Saqlanmoqda..." : "Saqlash"}
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={receiptOpen} onClose={closeDialogs} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 950 }}>Tayyor mahsulotni omborga qabul qilish</DialogTitle>
-        <DialogContent>
+      <Dialog
+        open={receiptOpen}
+        onClose={closeDialogs}
+        fullWidth
+        maxWidth="sm"
+        PaperProps={{ sx: dialogPaperSx }}
+      >
+        <DialogTitle sx={dialogTitleSx}>
+          Tayyor mahsulotni omborga qabul qilish
+        </DialogTitle>
+        <DialogContent sx={dialogContentSx}>
           <Stack spacing={2} sx={{ pt: 1 }}>
             <Alert severity="info" sx={{ borderRadius: "14px" }}>
-              Retsepti va yakunlovchi bo'limi sozlangan mahsulotlar ish hisobotidan avtomatik
-              kiradi. Quyidagi qo'lda kirim faqat avtomatik hisob yoqilmagan mahsulotlar uchun.
+              Retsepti va yakunlovchi bo'limi sozlangan mahsulotlar ish
+              hisobotidan avtomatik kiradi. Quyidagi qo'lda kirim faqat
+              avtomatik hisob yoqilmagan mahsulotlar uchun.
             </Alert>
             <TextField
               select
@@ -1209,7 +1613,10 @@ const Inventory = () => {
               label="Qabul qiluvchi ombor"
               value={receiptForm.warehouse_id}
               onChange={(event) =>
-                setReceiptForm((current) => ({ ...current, warehouse_id: event.target.value }))
+                setReceiptForm((current) => ({
+                  ...current,
+                  warehouse_id: event.target.value,
+                }))
               }
             >
               {compatibleWarehouses("product").map((warehouse) => (
@@ -1224,22 +1631,33 @@ const Inventory = () => {
               label="Tayyor mahsulot"
               value={receiptForm.product_id}
               onChange={(event) =>
-                setReceiptForm((current) => ({ ...current, product_id: event.target.value }))
+                setReceiptForm((current) => ({
+                  ...current,
+                  product_id: event.target.value,
+                }))
               }
             >
               {selectableItems("product").map((item) => (
                 <MenuItem
                   key={item.item_id}
                   value={item.item_id}
-                  disabled={Boolean(item.has_recipe && item.completion_department_id)}
+                  disabled={Boolean(
+                    item.has_recipe && item.completion_department_id,
+                  )}
                 >
                   {item.name} ({item.unit})
-                  {item.has_recipe && item.completion_department_id ? " — avtomatik" : ""}
+                  {item.has_recipe && item.completion_department_id
+                    ? " — avtomatik"
+                    : ""}
                 </MenuItem>
               ))}
             </TextField>
             <Box
-              sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.4 }}
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                gap: 1.4,
+              }}
             >
               <TextField
                 required
@@ -1247,7 +1665,10 @@ const Inventory = () => {
                 label="Qabul qilingan miqdor"
                 value={receiptForm.quantity}
                 onChange={(event) =>
-                  setReceiptForm((current) => ({ ...current, quantity: event.target.value }))
+                  setReceiptForm((current) => ({
+                    ...current,
+                    quantity: event.target.value,
+                  }))
                 }
                 slotProps={{ htmlInput: { min: 0.001, step: 1 } }}
               />
@@ -1256,7 +1677,10 @@ const Inventory = () => {
                 label="Birlik tannarxi"
                 value={receiptForm.unit_cost}
                 onChange={(event) =>
-                  setReceiptForm((current) => ({ ...current, unit_cost: event.target.value }))
+                  setReceiptForm((current) => ({
+                    ...current,
+                    unit_cost: event.target.value,
+                  }))
                 }
                 helperText="Ixtiyoriy"
                 slotProps={{ htmlInput: { min: 0, step: 1000 } }}
@@ -1267,7 +1691,10 @@ const Inventory = () => {
               label="Qabul sanasi"
               value={receiptForm.occurred_at}
               onChange={(event) =>
-                setReceiptForm((current) => ({ ...current, occurred_at: event.target.value }))
+                setReceiptForm((current) => ({
+                  ...current,
+                  occurred_at: event.target.value,
+                }))
               }
               slotProps={{ inputLabel: { shrink: true } }}
             />
@@ -1277,23 +1704,39 @@ const Inventory = () => {
               label="Izoh"
               value={receiptForm.note}
               onChange={(event) =>
-                setReceiptForm((current) => ({ ...current, note: event.target.value }))
+                setReceiptForm((current) => ({
+                  ...current,
+                  note: event.target.value,
+                }))
               }
               placeholder="Masalan: Yakuniy nazoratdan o'tdi, 2-smena"
             />
           </Stack>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={dialogActionsSx}>
           <Button onClick={closeDialogs}>Bekor qilish</Button>
-          <Button variant="contained" disabled={saving} onClick={saveProductionReceipt}>
+          <Button
+            variant="contained"
+            disabled={saving}
+            onClick={saveProductionReceipt}
+            sx={primaryButtonSx}
+          >
             {saving ? "Saqlanmoqda..." : "Omborga qabul qilish"}
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={transferOpen} onClose={closeDialogs} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 950 }}>Omborlar orasida ko'chirish</DialogTitle>
-        <DialogContent>
+      <Dialog
+        open={transferOpen}
+        onClose={closeDialogs}
+        fullWidth
+        maxWidth="sm"
+        PaperProps={{ sx: dialogPaperSx }}
+      >
+        <DialogTitle sx={dialogTitleSx}>
+          Omborlar orasida ko'chirish
+        </DialogTitle>
+        <DialogContent sx={dialogContentSx}>
           <Stack spacing={2} sx={{ pt: 1 }}>
             <TextField
               select
@@ -1317,12 +1760,17 @@ const Inventory = () => {
               label="Qaysi omborga"
               value={transferForm.to_warehouse_id}
               onChange={(event) =>
-                setTransferForm((current) => ({ ...current, to_warehouse_id: event.target.value }))
+                setTransferForm((current) => ({
+                  ...current,
+                  to_warehouse_id: event.target.value,
+                }))
               }
             >
               {compatibleWarehouses(transferForm.item_type)
                 .filter(
-                  (warehouse) => Number(warehouse.id) !== Number(transferForm.from_warehouse_id),
+                  (warehouse) =>
+                    Number(warehouse.id) !==
+                    Number(transferForm.from_warehouse_id),
                 )
                 .map((warehouse) => (
                   <MenuItem key={warehouse.id} value={warehouse.id}>
@@ -1352,11 +1800,17 @@ const Inventory = () => {
               label="Element"
               value={transferForm.item_id}
               onChange={(event) =>
-                setTransferForm((current) => ({ ...current, item_id: event.target.value }))
+                setTransferForm((current) => ({
+                  ...current,
+                  item_id: event.target.value,
+                }))
               }
             >
               {selectableItems(transferForm.item_type).map((item) => (
-                <MenuItem key={`${item.item_type}-${item.item_id}`} value={item.item_id}>
+                <MenuItem
+                  key={`${item.item_type}-${item.item_id}`}
+                  value={item.item_id}
+                >
                   {item.name} ({item.unit})
                 </MenuItem>
               ))}
@@ -1366,7 +1820,10 @@ const Inventory = () => {
               label="Miqdor"
               value={transferForm.quantity}
               onChange={(event) =>
-                setTransferForm((current) => ({ ...current, quantity: event.target.value }))
+                setTransferForm((current) => ({
+                  ...current,
+                  quantity: event.target.value,
+                }))
               }
             />
             <TextField
@@ -1375,34 +1832,47 @@ const Inventory = () => {
               label="Izoh"
               value={transferForm.note}
               onChange={(event) =>
-                setTransferForm((current) => ({ ...current, note: event.target.value }))
+                setTransferForm((current) => ({
+                  ...current,
+                  note: event.target.value,
+                }))
               }
             />
           </Stack>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={dialogActionsSx}>
           <Button onClick={closeDialogs}>Bekor qilish</Button>
           <Button
             variant="contained"
             disabled={saving || activeWarehouses.length < 2}
             onClick={saveTransfer}
+            sx={primaryButtonSx}
           >
             {saving ? "Ko'chirilmoqda..." : "Ko'chirish"}
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={warehouseOpen} onClose={closeDialogs} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 950 }}>
+      <Dialog
+        open={warehouseOpen}
+        onClose={closeDialogs}
+        fullWidth
+        maxWidth="sm"
+        PaperProps={{ sx: dialogPaperSx }}
+      >
+        <DialogTitle sx={dialogTitleSx}>
           {editingWarehouse ? "Omborni tahrirlash" : "Yangi ombor"}
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={dialogContentSx}>
           <Stack spacing={2} sx={{ pt: 1 }}>
             <TextField
               label="Ombor nomi"
               value={warehouseForm.name}
               onChange={(event) =>
-                setWarehouseForm((current) => ({ ...current, name: event.target.value }))
+                setWarehouseForm((current) => ({
+                  ...current,
+                  name: event.target.value,
+                }))
               }
             />
             <TextField
@@ -1420,7 +1890,10 @@ const Inventory = () => {
               label="Manzil"
               value={warehouseForm.location}
               onChange={(event) =>
-                setWarehouseForm((current) => ({ ...current, location: event.target.value }))
+                setWarehouseForm((current) => ({
+                  ...current,
+                  location: event.target.value,
+                }))
               }
             />
             <TextField
@@ -1428,7 +1901,10 @@ const Inventory = () => {
               label="Saqlanadigan tur"
               value={warehouseForm.warehouse_type}
               onChange={(event) =>
-                setWarehouseForm((current) => ({ ...current, warehouse_type: event.target.value }))
+                setWarehouseForm((current) => ({
+                  ...current,
+                  warehouse_type: event.target.value,
+                }))
               }
             >
               <MenuItem value="product">Tayyor mahsulot</MenuItem>
@@ -1437,18 +1913,75 @@ const Inventory = () => {
             </TextField>
           </Stack>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={dialogActionsSx}>
           <Button onClick={closeDialogs}>Bekor qilish</Button>
-          <Button variant="contained" disabled={saving} onClick={saveWarehouse}>
+          <Button
+            variant="contained"
+            disabled={saving}
+            onClick={saveWarehouse}
+            sx={primaryButtonSx}
+          >
             {saving ? "Saqlanmoqda..." : "Saqlash"}
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={thresholdOpen} onClose={closeDialogs} fullWidth maxWidth="xs">
-        <DialogTitle sx={{ fontWeight: 950 }}>Minimal qoldiq</DialogTitle>
-        <DialogContent>
-          <Typography sx={{ mb: 2, color: "#64748b" }}>
+      <Dialog
+        open={warehouseDeleteOpen}
+        onClose={saving ? undefined : closeDialogs}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{ sx: dialogPaperSx }}
+      >
+        <DialogTitle sx={dialogTitleSx}>Omborni o'chirish</DialogTitle>
+        <DialogContent sx={dialogContentSx}>
+          <Stack spacing={1.2}>
+            <Typography sx={{ color: "var(--aa-text)", fontWeight: 850 }}>
+              {warehousePendingDelete?.name || "Tanlangan ombor"} o'chirilsinmi?
+            </Typography>
+            <Typography
+              sx={{
+                color: "var(--aa-text-secondary)",
+                fontSize: 13.5,
+                lineHeight: 1.55,
+              }}
+            >
+              Ombor arxivlanadi va faol omborlar ro'yxatidan olib tashlanadi. Bu
+              amalni faqat ishonchingiz komil bo'lsa tasdiqlang.
+            </Typography>
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={dialogActionsSx}>
+          <Button onClick={closeDialogs} disabled={saving}>
+            Bekor qilish
+          </Button>
+          <Button
+            color="error"
+            variant="contained"
+            disabled={saving || !warehousePendingDelete}
+            onClick={removeWarehouse}
+            sx={{
+              minHeight: 40,
+              borderRadius: "var(--aa-radius-md)",
+              textTransform: "none",
+              fontWeight: 900,
+            }}
+          >
+            {saving ? "O'chirilmoqda..." : "Ha, o'chirish"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={thresholdOpen}
+        onClose={closeDialogs}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{ sx: dialogPaperSx }}
+      >
+        <DialogTitle sx={dialogTitleSx}>Minimal qoldiq</DialogTitle>
+        <DialogContent sx={dialogContentSx}>
+          <Typography sx={{ mb: 2, color: "var(--aa-text-secondary)" }}>
             {thresholdRow?.item_name} — {thresholdRow?.warehouse_name}
           </Typography>
           <TextField
@@ -1460,9 +1993,14 @@ const Inventory = () => {
             inputProps={{ min: 0, step: 0.001 }}
           />
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={dialogActionsSx}>
           <Button onClick={closeDialogs}>Bekor qilish</Button>
-          <Button variant="contained" disabled={saving} onClick={saveThreshold}>
+          <Button
+            variant="contained"
+            disabled={saving}
+            onClick={saveThreshold}
+            sx={primaryButtonSx}
+          >
             Saqlash
           </Button>
         </DialogActions>

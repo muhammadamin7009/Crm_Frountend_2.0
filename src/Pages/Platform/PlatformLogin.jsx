@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { platformLogin } from "../../api/platform";
+import AuthBrandPanel from "../../Components/Auth/AuthBrandPanel";
 
 const PlatformLogin = () => {
   const navigate = useNavigate();
@@ -36,10 +37,21 @@ const PlatformLogin = () => {
     <Box className="auth-page flex min-h-screen items-center justify-center p-4 sm:p-6">
       <Paper
         elevation={0}
-        className="auth-shell grid w-full max-w-4xl overflow-hidden md:grid-cols-[0.9fr_1.1fr]"
-        sx={{ borderRadius: 2 }}
+        className="auth-shell grid w-full max-w-[1320px] overflow-hidden lg:grid-cols-[1fr_1fr]"
       >
-        <Box className="auth-hero flex min-h-64 flex-col justify-between p-7 text-white sm:p-9">
+        <AuthBrandPanel
+          eyebrow="Platforma boshqaruv markazi"
+          title="Barcha korxonalarni yagona markazdan"
+          accent="boshqaring"
+          description="Korxonalar, obunalar, to'lovlar va platforma holatini xavfsiz boshqaruv panelida nazorat qiling."
+          highlights={[
+            { value: "Korxonalar", label: "Yagona ro'yxat" },
+            { value: "Obunalar", label: "Aniq nazorat" },
+            { value: "To'lovlar", label: "Tushum hisobi" },
+          ]}
+        />
+
+        <Box className="hidden">
           <Box>
             <Box className="mb-8 flex h-11 w-11 items-center justify-center rounded-lg border border-white/30 bg-white/10 text-lg font-black">
               Z
@@ -74,7 +86,7 @@ const PlatformLogin = () => {
           </Box>
         </Box>
 
-        <Box className="flex items-center p-7 sm:p-10 md:p-12">
+        <Box className="auth-form-panel flex min-h-[720px] items-center p-7 sm:p-10 lg:p-14">
           <Box className="w-full">
             <Typography variant="overline" className="font-bold text-red-900">
               Platform administratori
@@ -111,9 +123,8 @@ const PlatformLogin = () => {
                 type="submit"
                 variant="contained"
                 size="large"
+                className="auth-primary-button mt-2"
                 disabled={loading}
-                className="mt-2"
-                sx={{ minHeight: 48, bgcolor: "#7f1d1d", "&:hover": { bgcolor: "#991b1b" } }}
               >
                 {loading ? "Kirilmoqda..." : "Kirish"}
               </Button>

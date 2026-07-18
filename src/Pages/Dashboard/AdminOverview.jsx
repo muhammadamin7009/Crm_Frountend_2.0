@@ -29,6 +29,7 @@ import { getClientBalance, getClientSales, getClientSalesSummary } from "../../a
 import { getMaterialPurchases, getSupplierBalance } from "../../api/materialPurchases";
 import { hasPermission } from "../../utils/permissions";
 import { getInventorySummary } from "../../api/inventory";
+import PageHeader from "../../Components/UI/PageHeader";
 
 const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
 const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
@@ -65,45 +66,46 @@ const percentage = (value, total) => {
 };
 
 const StatCard = ({ label, value, helper, icon, tone = "blue" }) => {
-  const toneClass = {
-    blue: "from-blue-50 to-white text-blue-600 bg-blue-600",
-    green: "from-emerald-50 to-white text-emerald-600 bg-emerald-500",
-    amber: "from-amber-50 to-white text-amber-600 bg-amber-500",
-    violet: "from-violet-50 to-white text-violet-600 bg-violet-500",
-    rose: "from-rose-50 to-white text-rose-600 bg-rose-500",
-  }[tone];
-
   const iconBg = {
-    blue: "#2563eb",
-    green: "#10b981",
-    amber: "#f59e0b",
-    violet: "#8b5cf6",
-    rose: "#f43f5e",
+    blue: "linear-gradient(145deg, #4f67ee, #6757dc)",
+    green: "linear-gradient(145deg, #19a966, #14bf72)",
+    amber: "linear-gradient(145deg, #f29935, #ff7a2f)",
+    violet: "linear-gradient(145deg, #7657e8, #9164df)",
+    rose: "linear-gradient(145deg, #e4515d, #f06b76)",
   }[tone];
 
   return (
     <Paper
       elevation={0}
-      className={`crm-soft-card overflow-hidden bg-gradient-to-br ${toneClass.split(" bg-")[0]} p-5`}
+      className="crm-soft-card overflow-hidden p-5"
+      sx={{ minHeight: 142, background: "rgba(255,255,255,.92) !important" }}
     >
       <Box className="flex items-start justify-between gap-4">
         <Box>
-          <Typography variant="body2" className="font-bold text-slate-500">
+          <Typography variant="body2" className="font-semibold text-[var(--aa-text-secondary)]">
             {label}
           </Typography>
-          <Typography variant="h5" fontWeight={950} className="mt-2 text-slate-950">
+          <Typography
+            variant="h5"
+            fontWeight={850}
+            className="mt-2 text-[var(--aa-text)]"
+            sx={{ letterSpacing: "-.035em" }}
+          >
             {value}
           </Typography>
         </Box>
         <Box
-          className="grid h-12 w-12 place-items-center rounded-2xl text-white shadow-lg"
-          style={{ backgroundColor: iconBg }}
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-[14px] text-white shadow-md"
+          style={{ background: iconBg }}
         >
-          <img className="h-6 w-6 brightness-0 invert" src={icon} alt="" />
+          <img className="h-5 w-5 brightness-0 invert" src={icon} alt="" />
         </Box>
       </Box>
       {helper && (
-        <Typography variant="body2" className="mt-2 text-slate-500">
+        <Typography
+          variant="body2"
+          className="mt-3 text-xs font-medium text-[var(--aa-text-tertiary)]"
+        >
           {helper}
         </Typography>
       )}
@@ -114,7 +116,7 @@ const StatCard = ({ label, value, helper, icon, tone = "blue" }) => {
 const SectionCard = ({ title, action, children, className = "" }) => (
   <Paper elevation={0} className={`crm-card p-5 ${className}`}>
     <Box className="mb-4 flex items-center justify-between gap-3">
-      <Typography fontWeight={950} className="text-slate-950">
+      <Typography fontWeight={850} className="text-[var(--aa-text)]">
         {title}
       </Typography>
       {action}
@@ -124,8 +126,8 @@ const SectionCard = ({ title, action, children, className = "" }) => (
 );
 
 const Empty = ({ children }) => (
-  <Box className="flex min-h-36 items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-slate-50/80">
-    <Typography variant="body2" className="text-slate-500">
+  <Box className="flex min-h-36 items-center justify-center rounded-[16px] border border-dashed border-[var(--aa-border-strong)] bg-[var(--aa-surface-muted)]">
+    <Typography variant="body2" className="text-[var(--aa-text-tertiary)]">
       {children}
     </Typography>
   </Box>
@@ -176,7 +178,7 @@ const SalesChart = ({ bars }) => {
 
   return (
     <Box
-      className="grid h-[250px] items-end gap-5 rounded-3xl bg-gradient-to-b from-slate-50 to-white px-6 py-5"
+      className="grid h-[250px] items-end gap-5 rounded-[16px] border border-[var(--aa-border)] bg-gradient-to-b from-[var(--aa-surface-muted)] to-white px-6 py-5"
       style={{ gridTemplateColumns: `repeat(${Math.max(bars.length, 1)}, minmax(0, 1fr))` }}
     >
       {bars.map((bar) => (
@@ -458,64 +460,63 @@ const AdminOverview = ({ user }) => {
 
   return (
     <Box className="crm-page h-full overflow-auto pr-1">
-      <Box className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-        <Box>
-          <Box className="mb-2 inline-flex rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
-            Al-amin CRM - kengaytirilgan boshqaruv paneli
-          </Box>
-          <Typography variant="h4" fontWeight={950} className="text-slate-950">
-            Xush kelibsiz, {user?.first_name || "Admin"}!
-          </Typography>
-          <Typography variant="body2" className="mt-1 text-slate-500">
-            Sizga ochilgan bo'limlar bo'yicha tanlangan davr ko'rsatkichlari.
-          </Typography>
-        </Box>
-
-        <Paper elevation={0} className="crm-soft-card p-3">
-          <Box className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={() => {
-                const range = monthRange();
-                setFilterForm(range);
-                setAppliedRange(range);
-              }}
-            >
-              Bu oy
-            </Button>
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={() => {
-                const range = previousMonthRange();
-                setFilterForm(range);
-                setAppliedRange(range);
-              }}
-            >
-              O'tgan oy
-            </Button>
-            <TextField
-              type="date"
-              size="small"
-              value={filterForm.date_from}
-              onChange={(event) =>
-                setFilterForm((previous) => ({ ...previous, date_from: event.target.value }))
-              }
-            />
-            <TextField
-              type="date"
-              size="small"
-              value={filterForm.date_to}
-              onChange={(event) =>
-                setFilterForm((previous) => ({ ...previous, date_to: event.target.value }))
-              }
-            />
-            <Button size="small" variant="contained" onClick={() => setAppliedRange(filterForm)}>
-              Ko'rish
-            </Button>
-          </Box>
-        </Paper>
+      <Box className="mb-5">
+        <PageHeader
+          eyebrow="Boshqaruv paneli"
+          title="Asosiy ko'rsatkichlar"
+          description="Sizga ochilgan bo'limlar bo'yicha tanlangan davr natijalari."
+          actions={
+            <Paper elevation={0} className="crm-soft-card p-3">
+              <Box className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => {
+                    const range = monthRange();
+                    setFilterForm(range);
+                    setAppliedRange(range);
+                  }}
+                >
+                  Bu oy
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => {
+                    const range = previousMonthRange();
+                    setFilterForm(range);
+                    setAppliedRange(range);
+                  }}
+                >
+                  O'tgan oy
+                </Button>
+                <TextField
+                  type="date"
+                  size="small"
+                  value={filterForm.date_from}
+                  onChange={(event) =>
+                    setFilterForm((previous) => ({ ...previous, date_from: event.target.value }))
+                  }
+                />
+                <TextField
+                  type="date"
+                  size="small"
+                  value={filterForm.date_to}
+                  onChange={(event) =>
+                    setFilterForm((previous) => ({ ...previous, date_to: event.target.value }))
+                  }
+                />
+                <Button
+                  size="small"
+                  variant="contained"
+                  onClick={() => setAppliedRange(filterForm)}
+                >
+                  Ko'rish
+                </Button>
+              </Box>
+            </Paper>
+          }
+        />
       </Box>
 
       <Box className="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">

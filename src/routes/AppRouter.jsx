@@ -22,6 +22,7 @@ import LandingPage from "../Pages/LandingPage/LandingPage";
 import Permissions from "../Pages/Permission/Permissions";
 import Inventory from "../Pages/Inventory/Inventory";
 import Expenses from "../Pages/Expense/Expenses";
+import Clients from "../Pages/Client/Clients";
 
 const AppRouter = () => {
   return (
@@ -52,6 +53,18 @@ const AppRouter = () => {
             }
           >
             <Route path="/users" element={<Users />} />
+          </Route>
+
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={["super_admin", "admin"]}
+                allowedPermissions={["users.view"]}
+              />
+            }
+          >
+            <Route path="/clients" element={<Clients />} />
+            <Route path="/clients/:id" element={<User backTo="/clients" />} />
           </Route>
 
           <Route

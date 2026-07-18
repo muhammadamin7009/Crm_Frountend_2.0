@@ -110,10 +110,10 @@ const Card = ({ children, sx = {} }) => (
   <Paper
     elevation={0}
     sx={{
-      borderRadius: "20px",
-      border: "1px solid rgba(148, 163, 184, 0.22)",
-      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
-      boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+      borderRadius: "var(--aa-radius-xl)",
+      border: "1px solid var(--aa-border)",
+      background: "var(--aa-surface)",
+      boxShadow: "var(--aa-shadow-sm)",
       overflow: "hidden",
       ...sx,
     }}
@@ -128,20 +128,24 @@ const MiniStat = ({ label, value }) => (
       minWidth: 105,
       px: 2,
       py: 1.4,
-      borderRadius: "16px",
-      background: "#ffffff",
-      border: "1px solid rgba(148, 163, 184, 0.24)",
-      boxShadow: "0 10px 26px rgba(15, 23, 42, 0.05)",
+      borderRadius: "var(--aa-radius-lg)",
+      background: "var(--aa-surface)",
+      border: "1px solid var(--aa-border)",
+      boxShadow: "var(--aa-shadow-xs)",
     }}
   >
-    <Typography sx={{ fontSize: 12, fontWeight: 800, color: "#64748b" }}>{label}</Typography>
+    <Typography
+      sx={{ fontSize: 12, fontWeight: 800, color: "var(--aa-text-secondary)" }}
+    >
+      {label}
+    </Typography>
 
     <Typography
       sx={{
         mt: 0.3,
         fontSize: 20,
         fontWeight: 900,
-        color: "#0f172a",
+        color: "var(--aa-text)",
         letterSpacing: "-0.04em",
       }}
     >
@@ -159,14 +163,23 @@ const StatusChip = ({ active }) => (
       px: 0.35,
       fontSize: 12,
       fontWeight: 900,
-      color: active ? "#15803d" : "#64748b",
-      background: active ? "rgba(34, 197, 94, 0.12)" : "#f1f5f9",
-      border: active ? "1px solid rgba(34, 197, 94, 0.24)" : "1px solid rgba(148, 163, 184, 0.24)",
+      color: active ? "var(--aa-success)" : "var(--aa-text-secondary)",
+      background: active ? "rgba(22, 137, 74, 0.1)" : "var(--aa-surface-muted)",
+      border: active
+        ? "1px solid rgba(22, 137, 74, 0.2)"
+        : "1px solid var(--aa-border)",
     }}
   />
 );
 
-const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md" }) => (
+const PremiumDialog = ({
+  open,
+  onClose,
+  title,
+  children,
+  actions,
+  maxWidth = "md",
+}) => (
   <Dialog
     open={open}
     onClose={onClose}
@@ -174,9 +187,9 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
     maxWidth={maxWidth}
     PaperProps={{
       sx: {
-        borderRadius: "22px",
-        border: "1px solid rgba(148, 163, 184, 0.22)",
-        boxShadow: "0 30px 80px rgba(15, 23, 42, 0.22)",
+        borderRadius: "var(--aa-radius-xl)",
+        border: "1px solid var(--aa-border)",
+        boxShadow: "var(--aa-shadow-lg)",
         overflow: "hidden",
       },
     }}
@@ -187,9 +200,9 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
         py: 2.2,
         fontSize: 22,
         fontWeight: 950,
-        color: "#0f172a",
-        borderBottom: "1px solid rgba(148, 163, 184, 0.18)",
-        background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+        color: "var(--aa-text)",
+        borderBottom: "1px solid var(--aa-border)",
+        background: "var(--aa-surface)",
       }}
     >
       {title}
@@ -202,8 +215,8 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
         sx={{
           px: 3,
           py: 2,
-          borderTop: "1px solid rgba(148, 163, 184, 0.18)",
-          background: "rgba(248, 250, 252, 0.72)",
+          borderTop: "1px solid var(--aa-border)",
+          background: "var(--aa-surface-muted)",
         }}
       >
         {actions}
@@ -222,7 +235,10 @@ const Products = () => {
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [productOptions, setProductOptions] = useState({ models: [], colors: [] });
+  const [productOptions, setProductOptions] = useState({
+    models: [],
+    colors: [],
+  });
   const [pageInfo, setPageInfo] = useState({ total: 0, offset: 0, limit: 10 });
   const [loading, setLoading] = useState(false);
 
@@ -255,7 +271,11 @@ const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categorySaving, setCategorySaving] = useState(false);
   const [settingsTab, setSettingsTab] = useState(0);
-  const [optionEdit, setOptionEdit] = useState({ type: "", currentValue: "", value: "" });
+  const [optionEdit, setOptionEdit] = useState({
+    type: "",
+    currentValue: "",
+    value: "",
+  });
   const [optionSaving, setOptionSaving] = useState(false);
 
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
@@ -276,7 +296,9 @@ const Products = () => {
 
       setCategories(data.categories || []);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Kategoriyalarni olishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Kategoriyalarni olishda xato.",
+      );
     }
   }, []);
 
@@ -288,7 +310,9 @@ const Products = () => {
         colors: data.colors || [],
       });
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Model va ranglarni olishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Model va ranglarni olishda xato.",
+      );
     }
   }, []);
 
@@ -305,7 +329,12 @@ const Products = () => {
           sort_order: filters.sort_order,
         };
 
-        for (const key of ["category_id", "is_active", "min_price", "max_price"]) {
+        for (const key of [
+          "category_id",
+          "is_active",
+          "min_price",
+          "max_price",
+        ]) {
           if (filters[key] !== "") params[key] = filters[key];
         }
 
@@ -314,7 +343,9 @@ const Products = () => {
         setProducts(data.products || []);
         setPageInfo(data.pageInfo || { total: 0, offset, limit });
       } catch (error) {
-        toast.error(error?.response?.data?.message || "Mahsulotlarni olishda xato.");
+        toast.error(
+          error?.response?.data?.message || "Mahsulotlarni olishda xato.",
+        );
       } finally {
         setLoading(false);
       }
@@ -466,7 +497,9 @@ const Products = () => {
       fetchProductOptions();
       fetchProducts(0, pageInfo.limit);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Mahsulot qo'shishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Mahsulot qo'shishda xato.",
+      );
     } finally {
       setSaving(false);
     }
@@ -486,7 +519,9 @@ const Products = () => {
       fetchProductOptions();
       fetchProducts(pageInfo.offset, pageInfo.limit);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Mahsulotni yangilashda xato.");
+      toast.error(
+        error?.response?.data?.message || "Mahsulotni yangilashda xato.",
+      );
     } finally {
       setSaving(false);
     }
@@ -559,7 +594,9 @@ const Products = () => {
       closeProductModals();
       fetchProducts(pageInfo.offset, pageInfo.limit);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Mahsulotni o'chirishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Mahsulotni o'chirishda xato.",
+      );
     } finally {
       setDeleting(false);
     }
@@ -605,7 +642,9 @@ const Products = () => {
       resetCategoryForm();
       fetchCategories();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Kategoriyani saqlashda xato.");
+      toast.error(
+        error?.response?.data?.message || "Kategoriyani saqlashda xato.",
+      );
     } finally {
       setCategorySaving(false);
     }
@@ -619,7 +658,9 @@ const Products = () => {
       if (selectedCategory?.id === category.id) resetCategoryForm();
       fetchCategories();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Kategoriyani o'chirishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Kategoriyani o'chirishda xato.",
+      );
     }
   };
 
@@ -640,13 +681,21 @@ const Products = () => {
 
     setOptionSaving(true);
     try {
-      await updateProductOption(optionEdit.type, optionEdit.currentValue, value);
-      toast.success(optionEdit.type === "model" ? "Model yangilandi." : "Rang yangilandi.");
+      await updateProductOption(
+        optionEdit.type,
+        optionEdit.currentValue,
+        value,
+      );
+      toast.success(
+        optionEdit.type === "model" ? "Model yangilandi." : "Rang yangilandi.",
+      );
       resetOptionEdit();
       fetchProductOptions();
       fetchProducts(pageInfo.offset, pageInfo.limit);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Qiymatni yangilashda xato.");
+      toast.error(
+        error?.response?.data?.message || "Qiymatni yangilashda xato.",
+      );
     } finally {
       setOptionSaving(false);
     }
@@ -654,17 +703,26 @@ const Products = () => {
 
   const handleDeleteOption = async (type, value) => {
     const label = type === "model" ? "model" : "rang";
-    if (!window.confirm(`“${value}” ${label}ini mahsulotlardan olib tashlaysizmi?`)) return;
+    if (
+      !window.confirm(
+        `“${value}” ${label}ini mahsulotlardan olib tashlaysizmi?`,
+      )
+    )
+      return;
 
     setOptionSaving(true);
     try {
       await deleteProductOption(type, value);
-      toast.success(type === "model" ? "Model o'chirildi." : "Rang o'chirildi.");
+      toast.success(
+        type === "model" ? "Model o'chirildi." : "Rang o'chirildi.",
+      );
       resetOptionEdit();
       fetchProductOptions();
       fetchProducts(pageInfo.offset, pageInfo.limit);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Qiymatni o'chirishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Qiymatni o'chirishda xato.",
+      );
     } finally {
       setOptionSaving(false);
     }
@@ -688,11 +746,13 @@ const Products = () => {
       sx={{
         p: 2,
         borderRadius: "18px",
-        border: "1px solid rgba(148, 163, 184, 0.22)",
-        background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+        border: "1px solid var(--aa-border)",
+        background: "var(--aa-surface-muted)",
       }}
     >
-      <Typography sx={{ mb: 1.5, fontSize: 15, fontWeight: 950, color: "#0f172a" }}>
+      <Typography
+        sx={{ mb: 1.5, fontSize: 15, fontWeight: 950, color: "var(--aa-text)" }}
+      >
         Mahsulot rasmi
       </Typography>
 
@@ -705,8 +765,8 @@ const Products = () => {
             borderRadius: "12px",
             textTransform: "none",
             fontWeight: 900,
-            color: "#0f172a",
-            borderColor: "rgba(37, 99, 235, 0.24)",
+            color: "var(--aa-text)",
+            borderColor: "var(--aa-border-strong)",
           }}
         >
           Rasm tanlash
@@ -728,8 +788,9 @@ const Products = () => {
               borderRadius: "12px",
               textTransform: "none",
               fontWeight: 900,
-              background: "linear-gradient(135deg, #2563eb, #4f7df3)",
-              boxShadow: "0 12px 25px rgba(37, 99, 235, 0.18)",
+              background:
+                "linear-gradient(135deg, var(--aa-brand-800), var(--aa-brand-600))",
+              boxShadow: "var(--aa-shadow-sm)",
             }}
           >
             {imageSaving ? "Yuklanmoqda..." : "Yuklash"}
@@ -746,8 +807,8 @@ const Products = () => {
             gap: 1.5,
             p: 1.4,
             borderRadius: "16px",
-            background: "#f8fafc",
-            border: "1px solid rgba(148, 163, 184, 0.18)",
+            background: "var(--aa-surface-muted)",
+            border: "1px solid var(--aa-border)",
           }}
         >
           <Avatar
@@ -757,8 +818,17 @@ const Products = () => {
           />
 
           <Box sx={{ minWidth: 0 }}>
-            <Typography sx={{ fontWeight: 900, color: "#0f172a" }}>Yangi rasm tanlandi</Typography>
-            <Typography sx={{ mt: 0.3, fontSize: 13, fontWeight: 650, color: "#64748b" }}>
+            <Typography sx={{ fontWeight: 900, color: "var(--aa-text)" }}>
+              Yangi rasm tanlandi
+            </Typography>
+            <Typography
+              sx={{
+                mt: 0.3,
+                fontSize: 13,
+                fontWeight: 650,
+                color: "var(--aa-text-secondary)",
+              }}
+            >
               {productImageFile.name}
             </Typography>
           </Box>
@@ -766,7 +836,14 @@ const Products = () => {
       )}
 
       {createOpen && (
-        <Typography sx={{ mt: 1.4, fontSize: 13, fontWeight: 650, color: "#64748b" }}>
+        <Typography
+          sx={{
+            mt: 1.4,
+            fontSize: 13,
+            fontWeight: 650,
+            color: "var(--aa-text-secondary)",
+          }}
+        >
           Rasm mahsulot saqlangandan keyin avtomatik yuklanadi.
         </Typography>
       )}
@@ -792,8 +869,8 @@ const Products = () => {
                     gap: 1.4,
                     p: 1.3,
                     borderRadius: "16px",
-                    border: "1px solid rgba(148, 163, 184, 0.22)",
-                    background: "#fff",
+                    border: "1px solid var(--aa-border)",
+                    background: "var(--aa-surface)",
                   }}
                 >
                   <Avatar
@@ -803,22 +880,43 @@ const Products = () => {
                   />
 
                   <Box sx={{ minWidth: 0, flex: 1 }}>
-                    <Typography sx={{ fontSize: 14, fontWeight: 900, color: "#0f172a" }}>
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        fontWeight: 900,
+                        color: "var(--aa-text)",
+                      }}
+                    >
                       {image.is_primary ? "Asosiy rasm" : "Qo'shimcha rasm"}
                     </Typography>
 
-                    <Typography sx={{ mt: 0.2, fontSize: 12, fontWeight: 650, color: "#64748b" }}>
+                    <Typography
+                      sx={{
+                        mt: 0.2,
+                        fontSize: 12,
+                        fontWeight: 650,
+                        color: "var(--aa-text-secondary)",
+                      }}
+                    >
                       ID: {image.id}
                     </Typography>
 
-                    <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: "wrap" }}>
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      sx={{ mt: 1, flexWrap: "wrap" }}
+                    >
                       {!image.is_primary && (
                         <Button
                           size="small"
                           variant="outlined"
                           disabled={imageSaving}
                           onClick={() => handleSetPrimaryImage(image.id)}
-                          sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 850 }}
+                          sx={{
+                            borderRadius: "10px",
+                            textTransform: "none",
+                            fontWeight: 850,
+                          }}
                         >
                           Asosiy qilish
                         </Button>
@@ -830,7 +928,11 @@ const Products = () => {
                         variant="outlined"
                         disabled={imageSaving}
                         onClick={() => handleDeleteImage(image.id)}
-                        sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 850 }}
+                        sx={{
+                          borderRadius: "10px",
+                          textTransform: "none",
+                          fontWeight: 850,
+                        }}
                       >
                         O'chirish
                       </Button>
@@ -844,12 +946,18 @@ const Products = () => {
               sx={{
                 p: 2,
                 borderRadius: "16px",
-                border: "1px dashed rgba(148, 163, 184, 0.42)",
-                background: "#f8fafc",
+                border: "1px dashed var(--aa-border-strong)",
+                background: "var(--aa-surface-muted)",
                 textAlign: "center",
               }}
             >
-              <Typography sx={{ fontSize: 14, fontWeight: 750, color: "#64748b" }}>
+              <Typography
+                sx={{
+                  fontSize: 14,
+                  fontWeight: 750,
+                  color: "var(--aa-text-secondary)",
+                }}
+              >
                 Hozircha rasm yuklanmagan.
               </Typography>
             </Box>
@@ -860,22 +968,39 @@ const Products = () => {
   );
 
   const renderProductOptionSettings = (type) => {
-    const values = type === "model" ? productOptions.models : productOptions.colors;
+    const values =
+      type === "model" ? productOptions.models : productOptions.colors;
     const title = type === "model" ? "Modellar" : "Ranglar";
 
     return (
       <Box>
-        <Typography sx={{ mb: 0.5, fontSize: 17, fontWeight: 950, color: "#0f172a" }}>
+        <Typography
+          sx={{
+            mb: 0.5,
+            fontSize: 17,
+            fontWeight: 950,
+            color: "var(--aa-text)",
+          }}
+        >
           {title}
         </Typography>
-        <Typography sx={{ mb: 2, fontSize: 13, fontWeight: 700, color: "#64748b" }}>
-          Yangi qiymat mahsulot qo'shish oynasida yozilganda avtomatik ro'yxatga tushadi.
+        <Typography
+          sx={{
+            mb: 2,
+            fontSize: 13,
+            fontWeight: 700,
+            color: "var(--aa-text-secondary)",
+          }}
+        >
+          Yangi qiymat mahsulot qo'shish oynasida yozilganda avtomatik ro'yxatga
+          tushadi.
         </Typography>
 
         <Stack spacing={1}>
           {values.length ? (
             values.map((value) => {
-              const editing = optionEdit.type === type && optionEdit.currentValue === value;
+              const editing =
+                optionEdit.type === type && optionEdit.currentValue === value;
               return (
                 <Box
                   key={value}
@@ -884,9 +1009,9 @@ const Products = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 1,
-                    borderRadius: "13px",
-                    border: "1px solid rgba(148, 163, 184, 0.2)",
-                    background: "#f8fafc",
+                    borderRadius: "var(--aa-radius-md)",
+                    border: "1px solid var(--aa-border)",
+                    background: "var(--aa-surface-muted)",
                   }}
                 >
                   {editing ? (
@@ -896,14 +1021,19 @@ const Products = () => {
                       fullWidth
                       value={optionEdit.value}
                       onChange={(event) =>
-                        setOptionEdit((previous) => ({ ...previous, value: event.target.value }))
+                        setOptionEdit((previous) => ({
+                          ...previous,
+                          value: event.target.value,
+                        }))
                       }
                       onKeyDown={(event) => {
                         if (event.key === "Enter") handleSaveOption();
                       }}
                     />
                   ) : (
-                    <Typography sx={{ flex: 1, fontWeight: 850, color: "#334155" }}>
+                    <Typography
+                      sx={{ flex: 1, fontWeight: 850, color: "var(--aa-text)" }}
+                    >
                       {value}
                     </Typography>
                   )}
@@ -915,14 +1045,22 @@ const Products = () => {
                         variant="contained"
                         disabled={optionSaving}
                         onClick={handleSaveOption}
-                        sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
+                        sx={{
+                          borderRadius: "10px",
+                          textTransform: "none",
+                          fontWeight: 900,
+                        }}
                       >
                         Saqlash
                       </Button>
                       <Button
                         size="small"
                         onClick={resetOptionEdit}
-                        sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 850 }}
+                        sx={{
+                          borderRadius: "10px",
+                          textTransform: "none",
+                          fontWeight: 850,
+                        }}
                       >
                         Bekor
                       </Button>
@@ -933,7 +1071,11 @@ const Products = () => {
                         size="small"
                         variant="outlined"
                         onClick={() => startOptionEdit(type, value)}
-                        sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
+                        sx={{
+                          borderRadius: "10px",
+                          textTransform: "none",
+                          fontWeight: 900,
+                        }}
                       >
                         O'zgartirish
                       </Button>
@@ -943,7 +1085,11 @@ const Products = () => {
                         variant="outlined"
                         disabled={optionSaving}
                         onClick={() => handleDeleteOption(type, value)}
-                        sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
+                        sx={{
+                          borderRadius: "10px",
+                          textTransform: "none",
+                          fontWeight: 900,
+                        }}
                       >
                         O'chirish
                       </Button>
@@ -953,7 +1099,14 @@ const Products = () => {
               );
             })
           ) : (
-            <Typography sx={{ py: 5, textAlign: "center", color: "#64748b", fontWeight: 800 }}>
+            <Typography
+              sx={{
+                py: 5,
+                textAlign: "center",
+                color: "var(--aa-text-secondary)",
+                fontWeight: 800,
+              }}
+            >
               Hozircha {type === "model" ? "model" : "rang"} yo'q
             </Typography>
           )}
@@ -970,7 +1123,10 @@ const Products = () => {
         options={activeCategories.map((category) => category.name)}
         value={productForm.category_name}
         onChange={(_event, value) =>
-          setProductForm((previous) => ({ ...previous, category_name: value || "" }))
+          setProductForm((previous) => ({
+            ...previous,
+            category_name: value || "",
+          }))
         }
         onInputChange={(_event, value) =>
           setProductForm((previous) => ({ ...previous, category_name: value }))
@@ -1075,9 +1231,9 @@ const Products = () => {
         sx={{
           px: 1.2,
           py: 0.7,
-          borderRadius: "14px",
-          background: "#f8fafc",
-          border: "1px solid rgba(148, 163, 184, 0.18)",
+          borderRadius: "var(--aa-radius-md)",
+          background: "var(--aa-surface-muted)",
+          border: "1px solid var(--aa-border)",
         }}
       >
         <FormControlLabel
@@ -1107,10 +1263,10 @@ const Products = () => {
         minHeight: 0,
         display: "flex",
         flexDirection: "column",
-        pb: 2,
+        pb: 2.5,
       }}
     >
-      <Card sx={{ mb: 2.5, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
+      <Card sx={{ mb: 2, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
         <Box
           sx={{
             display: "flex",
@@ -1129,9 +1285,9 @@ const Products = () => {
                 height: 25,
                 fontSize: 12,
                 fontWeight: 950,
-                color: "#2563eb",
-                background: "rgba(37, 99, 235, 0.08)",
-                border: "1px solid rgba(37, 99, 235, 0.16)",
+                color: "var(--aa-brand-800)",
+                background: "var(--aa-brand-50)",
+                border: "1px solid var(--aa-brand-200)",
               }}
             />
 
@@ -1139,7 +1295,7 @@ const Products = () => {
               sx={{
                 fontSize: { xs: 27, md: 33 },
                 fontWeight: 950,
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 letterSpacing: "-0.055em",
                 lineHeight: 1.05,
               }}
@@ -1152,7 +1308,7 @@ const Products = () => {
                 mt: 0.7,
                 fontSize: 14,
                 fontWeight: 650,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
               }}
             >
               Korxona mahsulotlari katalogi, narxlari va kategoriyalari.
@@ -1162,7 +1318,10 @@ const Products = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(3, auto)" },
+              gridTemplateColumns: {
+                xs: "repeat(2, 1fr)",
+                sm: "repeat(3, auto)",
+              },
               gap: 1.4,
               width: { xs: "100%", md: "auto" },
             }}
@@ -1174,7 +1333,7 @@ const Products = () => {
         </Box>
       </Card>
 
-      <Card sx={{ mb: 2.5, p: 2, flexShrink: 0 }}>
+      <Card sx={{ mb: 2, p: 2, flexShrink: 0 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1.6 }}>
           <Box
             sx={{
@@ -1188,14 +1347,18 @@ const Products = () => {
             <Box
               sx={{
                 display: "grid",
-                gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" },
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  lg: "repeat(4, 1fr)",
+                },
                 gap: 1.4,
                 flex: 1,
               }}
             >
               <TextField
                 size="small"
-                label="Qidirish"
+                label="Mahsulotni qidirish"
                 value={filters.q}
                 onChange={handleFilterChange("q")}
                 onKeyDown={(event) => {
@@ -1226,9 +1389,13 @@ const Products = () => {
                   borderRadius: "13px",
                   textTransform: "none",
                   fontWeight: 900,
-                  color: "#0f172a",
-                  borderColor: "rgba(37, 99, 235, 0.22)",
-                  background: "#fff",
+                  color: "var(--aa-text)",
+                  borderColor: "var(--aa-border-strong)",
+                  background: "var(--aa-surface)",
+                  "&:hover": {
+                    borderColor: "var(--aa-brand-800)",
+                    background: "var(--aa-brand-50)",
+                  },
                 }}
               >
                 {filtersOpen ? "Filtrlarni yopish" : "Batafsil filtrlar"}
@@ -1242,9 +1409,13 @@ const Products = () => {
                   borderRadius: "13px",
                   textTransform: "none",
                   fontWeight: 900,
-                  color: "#0f172a",
-                  borderColor: "rgba(37, 99, 235, 0.22)",
-                  background: "#fff",
+                  color: "var(--aa-text)",
+                  borderColor: "var(--aa-border-strong)",
+                  background: "var(--aa-surface)",
+                  "&:hover": {
+                    borderColor: "var(--aa-brand-800)",
+                    background: "var(--aa-brand-50)",
+                  },
                 }}
               >
                 Tozalash
@@ -1262,10 +1433,12 @@ const Products = () => {
                     borderRadius: "13px",
                     textTransform: "none",
                     fontWeight: 950,
-                    background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                    boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
+                    background:
+                      "linear-gradient(135deg, var(--aa-brand-800), var(--aa-brand-600))",
+                    boxShadow: "var(--aa-shadow-sm)",
                     "&:hover": {
-                      background: "linear-gradient(135deg, #7f0101, #991b1b)",
+                      background:
+                        "linear-gradient(135deg, var(--aa-brand-900), var(--aa-brand-700))",
                     },
                   }}
                 >
@@ -1280,9 +1453,13 @@ const Products = () => {
               sx={{
                 pt: 1.6,
                 display: "grid",
-                gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(5, 1fr)" },
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  lg: "repeat(5, 1fr)",
+                },
                 gap: 1.4,
-                borderTop: "1px solid rgba(148, 163, 184, 0.18)",
+                borderTop: "1px solid var(--aa-border)",
               }}
             >
               <TextField
@@ -1324,7 +1501,9 @@ const Products = () => {
                 <MenuItem value="updated_at">Yangilangan</MenuItem>
                 <MenuItem value="name">Nomi</MenuItem>
                 <MenuItem value="sale_price">Sotuv narxi</MenuItem>
-                {canManage && <MenuItem value="purchase_price">Xarid narxi</MenuItem>}
+                {canManage && (
+                  <MenuItem value="purchase_price">Xarid narxi</MenuItem>
+                )}
               </TextField>
 
               <TextField
@@ -1358,18 +1537,18 @@ const Products = () => {
                 py: 1.7,
                 fontSize: 12,
                 fontWeight: 950,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 textTransform: "uppercase",
                 letterSpacing: "0.03em",
-                background: "rgba(248, 250, 252, 0.95)",
-                borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
+                background: "var(--aa-surface-muted)",
+                borderBottom: "1px solid var(--aa-border)",
               },
               "& td": {
                 py: 1.55,
-                borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+                borderBottom: "1px solid var(--aa-border)",
               },
               "& tbody tr:hover": {
-                background: "rgba(37, 99, 235, 0.035)",
+                background: "var(--aa-surface-hover)",
               },
             }}
           >
@@ -1386,7 +1565,11 @@ const Products = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={canManage ? 5 : 4} align="center" sx={{ py: 7 }}>
+                  <TableCell
+                    colSpan={canManage ? 5 : 4}
+                    align="center"
+                    sx={{ py: 7 }}
+                  >
                     <CircularProgress size={30} />
                   </TableCell>
                 </TableRow>
@@ -1399,19 +1582,21 @@ const Products = () => {
                     sx={{ cursor: "pointer" }}
                   >
                     <TableCell>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.6 }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1.6 }}
+                      >
                         <Avatar
                           variant="rounded"
                           src={getImageUrl(product.product_image)}
                           sx={{
                             width: 50,
                             height: 50,
-                            borderRadius: "15px",
-                            bgcolor: "#8b0101",
+                            borderRadius: "var(--aa-radius-lg)",
+                            bgcolor: "var(--aa-brand-800)",
                             color: "#fff",
                             fontWeight: 950,
-                            border: "3px solid #fff",
-                            boxShadow: "0 10px 24px rgba(15, 23, 42, 0.12)",
+                            border: "3px solid var(--aa-surface-solid)",
+                            boxShadow: "var(--aa-shadow-sm)",
                           }}
                         >
                           {getInitial(product.name)}
@@ -1422,7 +1607,7 @@ const Products = () => {
                             sx={{
                               fontSize: 14.5,
                               fontWeight: 900,
-                              color: "#0f172a",
+                              color: "var(--aa-text)",
                               lineHeight: 1.15,
                             }}
                           >
@@ -1434,29 +1619,47 @@ const Products = () => {
                               mt: 0.35,
                               fontSize: 12.5,
                               fontWeight: 700,
-                              color: "#64748b",
+                              color: "var(--aa-text-secondary)",
                             }}
                           >
-                            {product.color || "Rang ko'rsatilmagan"} · {product.unit || "par"}
+                            {product.color || "Rang ko'rsatilmagan"} ·{" "}
+                            {product.unit || "par"}
                           </Typography>
                         </Box>
                       </Box>
                     </TableCell>
 
                     <TableCell>
-                      <Typography sx={{ fontSize: 14, fontWeight: 900, color: "#334155" }}>
+                      <Typography
+                        sx={{
+                          fontSize: 14,
+                          fontWeight: 900,
+                          color: "var(--aa-text)",
+                        }}
+                      >
                         {product.sku || "-"}
                       </Typography>
 
                       <Typography
-                        sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 700, color: "#64748b" }}
+                        sx={{
+                          mt: 0.35,
+                          fontSize: 12.5,
+                          fontWeight: 700,
+                          color: "var(--aa-text-secondary)",
+                        }}
                       >
                         {product.model || "Model yo'q"}
                       </Typography>
                     </TableCell>
 
                     <TableCell>
-                      <Typography sx={{ fontSize: 14, fontWeight: 900, color: "#0f172a" }}>
+                      <Typography
+                        sx={{
+                          fontSize: 14,
+                          fontWeight: 900,
+                          color: "var(--aa-text)",
+                        }}
+                      >
                         Sotuv: {formatMoney(product.sale_price)}
                       </Typography>
 
@@ -1466,7 +1669,7 @@ const Products = () => {
                             mt: 0.35,
                             fontSize: 12.5,
                             fontWeight: 700,
-                            color: "#64748b",
+                            color: "var(--aa-text-secondary)",
                           }}
                         >
                           Xarid: {formatMoney(product.purchase_price)}
@@ -1478,7 +1681,13 @@ const Products = () => {
                       <Stack spacing={0.7} sx={{ alignItems: "flex-start" }}>
                         <StatusChip active={product.is_active} />
 
-                        <Typography sx={{ fontSize: 12.5, fontWeight: 700, color: "#64748b" }}>
+                        <Typography
+                          sx={{
+                            fontSize: 12.5,
+                            fontWeight: 700,
+                            color: "var(--aa-text-secondary)",
+                          }}
+                        >
                           {formatDate(product.updated_at)}
                         </Typography>
                       </Stack>
@@ -1535,7 +1744,11 @@ const Products = () => {
                   <TableCell
                     colSpan={canManage ? 5 : 4}
                     align="center"
-                    sx={{ py: 7, color: "#64748b", fontWeight: 850 }}
+                    sx={{
+                      py: 7,
+                      color: "var(--aa-text-secondary)",
+                      fontWeight: 850,
+                    }}
                   >
                     Mahsulotlar topilmadi
                   </TableCell>
@@ -1547,15 +1760,17 @@ const Products = () => {
 
         <Box
           sx={{
-            borderTop: "1px solid rgba(148, 163, 184, 0.18)",
-            background: "rgba(248, 250, 252, 0.65)",
+            borderTop: "1px solid var(--aa-border)",
+            background: "var(--aa-surface-muted)",
           }}
         >
           <CrmPagination
             total={pageInfo.total}
             page={page}
             limit={pageInfo.limit}
-            onPageChange={(nextPage) => fetchProducts(nextPage * pageInfo.limit, pageInfo.limit)}
+            onPageChange={(nextPage) =>
+              fetchProducts(nextPage * pageInfo.limit, pageInfo.limit)
+            }
             onLimitChange={(limit) => fetchProducts(0, limit)}
           />
         </Box>
@@ -1569,7 +1784,11 @@ const Products = () => {
           <>
             <Button
               onClick={closeProductModals}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 850,
+              }}
             >
               Bekor qilish
             </Button>
@@ -1583,8 +1802,9 @@ const Products = () => {
                 borderRadius: "12px",
                 textTransform: "none",
                 fontWeight: 900,
-                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                boxShadow: "0 12px 25px rgba(139, 1, 1, 0.2)",
+                background:
+                  "linear-gradient(135deg, var(--aa-brand-800), var(--aa-brand-600))",
+                boxShadow: "var(--aa-shadow-sm)",
               }}
             >
               {saving ? "Saqlanmoqda..." : "Qo'shish"}
@@ -1603,7 +1823,11 @@ const Products = () => {
           <>
             <Button
               onClick={closeProductModals}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 850,
+              }}
             >
               Bekor qilish
             </Button>
@@ -1617,8 +1841,9 @@ const Products = () => {
                 borderRadius: "12px",
                 textTransform: "none",
                 fontWeight: 900,
-                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                boxShadow: "0 12px 25px rgba(139, 1, 1, 0.2)",
+                background:
+                  "linear-gradient(135deg, var(--aa-brand-800), var(--aa-brand-600))",
+                boxShadow: "var(--aa-shadow-sm)",
               }}
             >
               {saving ? "Saqlanmoqda..." : "Saqlash"}
@@ -1638,7 +1863,11 @@ const Products = () => {
           <>
             <Button
               onClick={closeProductModals}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 850,
+              }}
             >
               Bekor qilish
             </Button>
@@ -1648,14 +1877,18 @@ const Products = () => {
               variant="contained"
               onClick={handleDeleteProduct}
               disabled={deleting}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 900 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 900,
+              }}
             >
               {deleting ? "O'chirilmoqda..." : "O'chirish"}
             </Button>
           </>
         }
       >
-        <Typography sx={{ color: "#334155", fontWeight: 700 }}>
+        <Typography sx={{ color: "var(--aa-text)", fontWeight: 700 }}>
           {selectedProduct?.name} mahsulotini o'chirmoqchimisiz?
         </Typography>
       </PremiumDialog>
@@ -1673,7 +1906,11 @@ const Products = () => {
             {selectedCategory && (
               <Button
                 onClick={resetCategoryForm}
-                sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+                sx={{
+                  borderRadius: "12px",
+                  textTransform: "none",
+                  fontWeight: 850,
+                }}
               >
                 Tozalash
               </Button>
@@ -1685,7 +1922,11 @@ const Products = () => {
                 resetCategoryForm();
                 resetOptionEdit();
               }}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 850,
+              }}
             >
               Yopish
             </Button>
@@ -1700,11 +1941,20 @@ const Products = () => {
             resetOptionEdit();
           }}
           variant="fullWidth"
-          sx={{ mb: 2.5, borderBottom: "1px solid rgba(148, 163, 184, 0.2)" }}
+          sx={{ mb: 2.5, borderBottom: "1px solid var(--aa-border)" }}
         >
-          <Tab label="Kategoriyalar" sx={{ textTransform: "none", fontWeight: 900 }} />
-          <Tab label="Modellar" sx={{ textTransform: "none", fontWeight: 900 }} />
-          <Tab label="Ranglar" sx={{ textTransform: "none", fontWeight: 900 }} />
+          <Tab
+            label="Kategoriyalar"
+            sx={{ textTransform: "none", fontWeight: 900 }}
+          />
+          <Tab
+            label="Modellar"
+            sx={{ textTransform: "none", fontWeight: 900 }}
+          />
+          <Tab
+            label="Ranglar"
+            sx={{ textTransform: "none", fontWeight: 900 }}
+          />
         </Tabs>
 
         {settingsTab === 0 && (
@@ -1750,7 +2000,8 @@ const Products = () => {
                   borderRadius: "12px",
                   textTransform: "none",
                   fontWeight: 900,
-                  background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                  background:
+                    "linear-gradient(135deg, var(--aa-brand-800), var(--aa-brand-600))",
                 }}
               >
                 {selectedCategory ? "Saqlash" : "Qo'shish"}
@@ -1762,9 +2013,9 @@ const Products = () => {
                 mb: 2,
                 px: 1.2,
                 py: 0.7,
-                borderRadius: "14px",
-                background: "#f8fafc",
-                border: "1px solid rgba(148, 163, 184, 0.18)",
+                borderRadius: "var(--aa-radius-md)",
+                background: "var(--aa-surface-muted)",
+                border: "1px solid var(--aa-border)",
               }}
             >
               <FormControlLabel
@@ -1793,13 +2044,13 @@ const Products = () => {
                       py: 1.5,
                       fontSize: 12,
                       fontWeight: 950,
-                      color: "#64748b",
+                      color: "var(--aa-text-secondary)",
                       textTransform: "uppercase",
-                      background: "#f8fafc",
+                      background: "var(--aa-surface-muted)",
                     },
                     "& td": {
                       py: 1.4,
-                      borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+                      borderBottom: "1px solid var(--aa-border)",
                     },
                   }}
                 >
@@ -1816,11 +2067,18 @@ const Products = () => {
                     {categories.length ? (
                       categories.map((category) => (
                         <TableRow key={category.id} hover>
-                          <TableCell sx={{ fontWeight: 900, color: "#0f172a" }}>
+                          <TableCell
+                            sx={{ fontWeight: 900, color: "var(--aa-text)" }}
+                          >
                             {category.name}
                           </TableCell>
 
-                          <TableCell sx={{ fontWeight: 700, color: "#64748b" }}>
+                          <TableCell
+                            sx={{
+                              fontWeight: 700,
+                              color: "var(--aa-text-secondary)",
+                            }}
+                          >
                             {category.description || "-"}
                           </TableCell>
 
@@ -1829,7 +2087,11 @@ const Products = () => {
                           </TableCell>
 
                           <TableCell align="right">
-                            <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
+                            <Stack
+                              direction="row"
+                              spacing={1}
+                              sx={{ justifyContent: "flex-end" }}
+                            >
                               <Button
                                 size="small"
                                 variant="outlined"
@@ -1865,7 +2127,11 @@ const Products = () => {
                         <TableCell
                           colSpan={4}
                           align="center"
-                          sx={{ py: 6, color: "#64748b", fontWeight: 850 }}
+                          sx={{
+                            py: 6,
+                            color: "var(--aa-text-secondary)",
+                            fontWeight: 850,
+                          }}
                         >
                           Kategoriyalar topilmadi
                         </TableCell>

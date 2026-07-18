@@ -105,10 +105,10 @@ const Card = ({ children, sx = {} }) => (
   <Paper
     elevation={0}
     sx={{
-      borderRadius: "20px",
-      border: "1px solid rgba(148, 163, 184, 0.22)",
-      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
-      boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+      borderRadius: "var(--aa-radius-xl)",
+      border: "1px solid var(--aa-border)",
+      background: "var(--aa-surface)",
+      boxShadow: "var(--aa-shadow-xs)",
       overflow: "hidden",
       ...sx,
     }}
@@ -120,29 +120,29 @@ const Card = ({ children, sx = {} }) => (
 const MiniStat = ({ label, value, tone = "default" }) => {
   const tones = {
     default: {
-      color: "#0f172a",
-      bg: "#ffffff",
-      border: "rgba(148, 163, 184, 0.24)",
+      color: "var(--aa-text)",
+      bg: "var(--aa-surface-solid)",
+      border: "var(--aa-border)",
     },
     blue: {
-      color: "#2563eb",
-      bg: "rgba(37, 99, 235, 0.08)",
-      border: "rgba(37, 99, 235, 0.18)",
+      color: "var(--aa-info)",
+      bg: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
+      border: "color-mix(in srgb, var(--aa-info) 18%, transparent)",
     },
     green: {
-      color: "#15803d",
-      bg: "rgba(34, 197, 94, 0.1)",
-      border: "rgba(34, 197, 94, 0.22)",
+      color: "var(--aa-success)",
+      bg: "color-mix(in srgb, var(--aa-success) 9%, transparent)",
+      border: "color-mix(in srgb, var(--aa-success) 20%, transparent)",
     },
     red: {
-      color: "#8b0101",
-      bg: "rgba(139, 1, 1, 0.08)",
-      border: "rgba(139, 1, 1, 0.18)",
+      color: "var(--aa-brand-700)",
+      bg: "var(--aa-brand-50)",
+      border: "var(--aa-brand-100)",
     },
     orange: {
-      color: "#92400e",
-      bg: "rgba(245, 158, 11, 0.12)",
-      border: "rgba(245, 158, 11, 0.24)",
+      color: "var(--aa-warning)",
+      bg: "color-mix(in srgb, var(--aa-warning) 10%, transparent)",
+      border: "color-mix(in srgb, var(--aa-warning) 22%, transparent)",
     },
   };
 
@@ -154,13 +154,21 @@ const MiniStat = ({ label, value, tone = "default" }) => {
         minWidth: 130,
         px: 2,
         py: 1.35,
-        borderRadius: "16px",
+        borderRadius: "var(--aa-radius-lg)",
         background: current.bg,
         border: `1px solid ${current.border}`,
-        boxShadow: "0 10px 26px rgba(15, 23, 42, 0.05)",
+        boxShadow: "var(--aa-shadow-xs)",
       }}
     >
-      <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+      <Typography
+        sx={{
+          fontSize: 12,
+          fontWeight: 850,
+          color: "var(--aa-text-secondary)",
+        }}
+      >
+        {label}
+      </Typography>
 
       <Typography
         sx={{
@@ -181,19 +189,19 @@ const MiniStat = ({ label, value, tone = "default" }) => {
 const PaymentTypeChip = ({ type }) => {
   const styles = {
     salary: {
-      color: "#15803d",
-      bg: "rgba(34, 197, 94, 0.12)",
-      border: "rgba(34, 197, 94, 0.24)",
+      color: "var(--aa-success)",
+      bg: "color-mix(in srgb, var(--aa-success) 10%, transparent)",
+      border: "color-mix(in srgb, var(--aa-success) 22%, transparent)",
     },
     bonus: {
-      color: "#2563eb",
-      bg: "rgba(37, 99, 235, 0.08)",
-      border: "rgba(37, 99, 235, 0.16)",
+      color: "var(--aa-info)",
+      bg: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
+      border: "color-mix(in srgb, var(--aa-info) 16%, transparent)",
     },
     other: {
-      color: "#92400e",
-      bg: "rgba(245, 158, 11, 0.12)",
-      border: "rgba(245, 158, 11, 0.24)",
+      color: "var(--aa-warning)",
+      bg: "color-mix(in srgb, var(--aa-warning) 10%, transparent)",
+      border: "color-mix(in srgb, var(--aa-warning) 22%, transparent)",
     },
   };
 
@@ -216,7 +224,14 @@ const PaymentTypeChip = ({ type }) => {
   );
 };
 
-const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "sm" }) => (
+const PremiumDialog = ({
+  open,
+  onClose,
+  title,
+  children,
+  actions,
+  maxWidth = "sm",
+}) => (
   <Dialog
     open={open}
     onClose={onClose}
@@ -224,9 +239,10 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "sm
     maxWidth={maxWidth}
     PaperProps={{
       sx: {
-        borderRadius: "22px",
-        border: "1px solid rgba(148, 163, 184, 0.22)",
-        boxShadow: "0 30px 80px rgba(15, 23, 42, 0.22)",
+        borderRadius: "var(--aa-radius-xl)",
+        border: "1px solid var(--aa-border)",
+        boxShadow: "var(--aa-shadow-lg)",
+        backgroundImage: "none",
         overflow: "hidden",
       },
     }}
@@ -237,9 +253,9 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "sm
         py: 2.2,
         fontSize: 22,
         fontWeight: 950,
-        color: "#0f172a",
-        borderBottom: "1px solid rgba(148, 163, 184, 0.18)",
-        background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+        color: "var(--aa-text)",
+        borderBottom: "1px solid var(--aa-border)",
+        background: "var(--aa-surface)",
       }}
     >
       {title}
@@ -252,8 +268,8 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "sm
         sx={{
           px: 3,
           py: 2,
-          borderTop: "1px solid rgba(148, 163, 184, 0.18)",
-          background: "rgba(248, 250, 252, 0.72)",
+          borderTop: "1px solid var(--aa-border)",
+          background: "var(--aa-surface-muted)",
         }}
       >
         {actions}
@@ -264,23 +280,31 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "sm
 
 const BalanceBox = ({ label, value, tone = "default" }) => {
   const colors = {
-    default: "#0f172a",
-    green: "#15803d",
-    red: "#8b0101",
-    blue: "#2563eb",
-    orange: "#92400e",
+    default: "var(--aa-text)",
+    green: "var(--aa-success)",
+    red: "var(--aa-brand-700)",
+    blue: "var(--aa-info)",
+    orange: "var(--aa-warning)",
   };
 
   return (
     <Box
       sx={{
         p: 1.5,
-        borderRadius: "15px",
-        background: "#fff",
-        border: "1px solid rgba(148, 163, 184, 0.2)",
+        borderRadius: "var(--aa-radius-md)",
+        background: "var(--aa-surface-solid)",
+        border: "1px solid var(--aa-border)",
       }}
     >
-      <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+      <Typography
+        sx={{
+          fontSize: 12,
+          fontWeight: 850,
+          color: "var(--aa-text-secondary)",
+        }}
+      >
+        {label}
+      </Typography>
 
       <Typography
         sx={{
@@ -350,11 +374,14 @@ const WorkerPayments = () => {
   const [balanceLoading, setBalanceLoading] = useState(false);
 
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
-  const enteredPaymentTotal = Number(form.amount || 0) + Number(form.advance_deduction || 0);
+  const enteredPaymentTotal =
+    Number(form.amount || 0) + Number(form.advance_deduction || 0);
   const editingPaymentTotal = selectedPayment
-    ? Number(selectedPayment.amount || 0) + Number(selectedPayment.advance_deduction || 0)
+    ? Number(selectedPayment.amount || 0) +
+      Number(selectedPayment.advance_deduction || 0)
     : 0;
-  const availableWorkerBalance = Number(selectedWorkerBalance.remaining || 0) + editingPaymentTotal;
+  const availableWorkerBalance =
+    Number(selectedWorkerBalance.remaining || 0) + editingPaymentTotal;
   const paymentExceedsBalance =
     Boolean(form.worker_id) && enteredPaymentTotal > availableWorkerBalance;
 
@@ -367,9 +394,15 @@ const WorkerPayments = () => {
         sort_order: "desc",
       });
 
-      setWorkers((data.users || data.list || []).filter((user) => user.role === "worker"));
+      setWorkers(
+        (data.users || data.list || []).filter(
+          (user) => user.role === "worker",
+        ),
+      );
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Ishchilarni olishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Ishchilarni olishda xato.",
+      );
     }
   }, []);
 
@@ -382,7 +415,13 @@ const WorkerPayments = () => {
         sort_order: filters.sort_order,
       };
 
-      for (const key of ["q", "worker_id", "payment_type", "date_from", "date_to"]) {
+      for (const key of [
+        "q",
+        "worker_id",
+        "payment_type",
+        "date_from",
+        "date_to",
+      ]) {
         if (filters[key] !== "") params[key] = filters[key];
       }
 
@@ -401,7 +440,9 @@ const WorkerPayments = () => {
         setPayments(data.worker_payments || []);
         setPageInfo(data.pageInfo || { total: 0, offset, limit });
       } catch (error) {
-        toast.error(error?.response?.data?.message || "To'lovlarni olishda xato.");
+        toast.error(
+          error?.response?.data?.message || "To'lovlarni olishda xato.",
+        );
       } finally {
         setLoading(false);
       }
@@ -431,7 +472,9 @@ const WorkerPayments = () => {
         },
       );
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Oylik summary olishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Oylik summary olishda xato.",
+      );
     } finally {
       setSummaryLoading(false);
     }
@@ -486,7 +529,9 @@ const WorkerPayments = () => {
         ...(advanceRes.data.balance || {}),
       });
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Ishchi balansini olishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Ishchi balansini olishda xato.",
+      );
     } finally {
       setBalanceLoading(false);
     }
@@ -552,9 +597,15 @@ const WorkerPayments = () => {
       amount: payment.amount ?? "",
       advance_deduction: payment.advance_deduction ?? "",
       payment_type: payment.payment_type || "salary",
-      paid_at: payment.paid_at ? String(payment.paid_at).slice(0, 10) : emptyForm.paid_at,
-      period_from: payment.period_from ? String(payment.period_from).slice(0, 10) : "",
-      period_to: payment.period_to ? String(payment.period_to).slice(0, 10) : "",
+      paid_at: payment.paid_at
+        ? String(payment.paid_at).slice(0, 10)
+        : emptyForm.paid_at,
+      period_from: payment.period_from
+        ? String(payment.period_from).slice(0, 10)
+        : "",
+      period_to: payment.period_to
+        ? String(payment.period_to).slice(0, 10)
+        : "",
       note: payment.note || "",
     };
 
@@ -594,7 +645,8 @@ const WorkerPayments = () => {
     }
 
     if (
-      Number(form.advance_deduction || 0) > Number(selectedWorkerBalance.remaining_advance || 0)
+      Number(form.advance_deduction || 0) >
+      Number(selectedWorkerBalance.remaining_advance || 0)
     ) {
       toast.error("Avans ushlanmasi qolgan avansdan oshmasin.");
       return false;
@@ -664,7 +716,9 @@ const WorkerPayments = () => {
       closeModals();
       refreshPage();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "To'lovni o'chirishda xato.");
+      toast.error(
+        error?.response?.data?.message || "To'lovni o'chirishda xato.",
+      );
     } finally {
       setDeleting(false);
     }
@@ -735,6 +789,11 @@ const WorkerPayments = () => {
         display: "flex",
         flexDirection: "column",
         pb: 2,
+        color: "var(--aa-text)",
+        "& .MuiOutlinedInput-root": {
+          borderRadius: "var(--aa-radius-md)",
+          backgroundColor: "var(--aa-surface-solid)",
+        },
       }}
     >
       <Card sx={{ mb: 1, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
@@ -756,9 +815,10 @@ const WorkerPayments = () => {
                 height: 25,
                 fontSize: 12,
                 fontWeight: 950,
-                color: "#2563eb",
-                background: "rgba(37, 99, 235, 0.08)",
-                border: "1px solid rgba(37, 99, 235, 0.16)",
+                color: "var(--aa-brand-700)",
+                background: "var(--aa-brand-50)",
+                border: "1px solid var(--aa-brand-100)",
+                borderRadius: "var(--aa-radius-pill)",
               }}
             />
 
@@ -766,7 +826,7 @@ const WorkerPayments = () => {
               sx={{
                 fontSize: { xs: 27, md: 33 },
                 fontWeight: 950,
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 letterSpacing: "-0.055em",
                 lineHeight: 1.05,
               }}
@@ -779,7 +839,7 @@ const WorkerPayments = () => {
                 mt: 0.7,
                 fontSize: 14,
                 fontWeight: 650,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
               }}
             >
               Ishchilarga berilgan oylik, avans va balans nazorati.
@@ -798,9 +858,21 @@ const WorkerPayments = () => {
               width: { xs: "100%", xl: "auto" },
             }}
           >
-            <MiniStat label="Ishlab topgan" value={formatMoney(balance.total_earned)} tone="blue" />
-            <MiniStat label="Berilgan" value={formatMoney(balance.total_paid)} tone="green" />
-            <MiniStat label="Qolgan" value={formatMoney(balance.remaining)} tone="red" />
+            <MiniStat
+              label="Ishlab topgan"
+              value={formatMoney(balance.total_earned)}
+              tone="blue"
+            />
+            <MiniStat
+              label="Berilgan"
+              value={formatMoney(balance.total_paid)}
+              tone="green"
+            />
+            <MiniStat
+              label="Qolgan"
+              value={formatMoney(balance.remaining)}
+              tone="red"
+            />
             <MiniStat label="To'lovlar" value={pageInfo.total} tone="default" />
             <MiniStat
               label="Qolgan avans"
@@ -909,12 +981,12 @@ const WorkerPayments = () => {
               onClick={resetFilters}
               sx={{
                 height: 42,
-                borderRadius: "13px",
+                borderRadius: "var(--aa-radius-md)",
                 textTransform: "none",
                 fontWeight: 900,
-                color: "#0f172a",
-                borderColor: "rgba(37, 99, 235, 0.22)",
-                background: "#fff",
+                color: "var(--aa-text)",
+                borderColor: "var(--aa-border-strong)",
+                background: "var(--aa-surface-solid)",
               }}
             >
               Tozalash
@@ -929,12 +1001,12 @@ const WorkerPayments = () => {
                 sx={{
                   minWidth: 120,
                   height: 42,
-                  borderRadius: "13px",
+                  borderRadius: "var(--aa-radius-md)",
                   textTransform: "none",
                   fontWeight: 900,
-                  color: "#0f172a",
-                  borderColor: "rgba(37, 99, 235, 0.22)",
-                  background: "#fff",
+                  color: "var(--aa-text)",
+                  borderColor: "var(--aa-border-strong)",
+                  background: "var(--aa-surface-solid)",
                 }}
               >
                 Avanslar
@@ -952,12 +1024,12 @@ const WorkerPayments = () => {
                 sx={{
                   minWidth: 130,
                   height: 42,
-                  borderRadius: "13px",
+                  borderRadius: "var(--aa-radius-md)",
                   textTransform: "none",
                   fontWeight: 900,
-                  color: "#0f172a",
-                  borderColor: "rgba(37, 99, 235, 0.22)",
-                  background: "#fff",
+                  color: "var(--aa-text)",
+                  borderColor: "var(--aa-border-strong)",
+                  background: "var(--aa-surface-solid)",
                 }}
               >
                 Avans berish
@@ -969,13 +1041,13 @@ const WorkerPayments = () => {
                 sx={{
                   minWidth: 135,
                   height: 42,
-                  borderRadius: "13px",
+                  borderRadius: "var(--aa-radius-md)",
                   textTransform: "none",
                   fontWeight: 950,
-                  background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                  boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
+                  background: "var(--aa-brand-700)",
+                  boxShadow: "var(--aa-shadow-sm)",
                   "&:hover": {
-                    background: "linear-gradient(135deg, #7f0101, #991b1b)",
+                    background: "var(--aa-brand-800)",
                   },
                 }}
               >
@@ -1003,10 +1075,10 @@ const WorkerPayments = () => {
                   alignItems: "center",
                   gap: 1.4,
                   p: 1.4,
-                  borderRadius: "17px",
-                  background: "#fff",
-                  border: "1px solid rgba(148, 163, 184, 0.22)",
-                  boxShadow: "0 10px 24px rgba(15, 23, 42, 0.04)",
+                  borderRadius: "var(--aa-radius-lg)",
+                  background: "var(--aa-surface-solid)",
+                  border: "1px solid var(--aa-border)",
+                  boxShadow: "var(--aa-shadow-xs)",
                 }}
               >
                 <Avatar
@@ -1014,8 +1086,8 @@ const WorkerPayments = () => {
                   sx={{
                     width: 46,
                     height: 46,
-                    bgcolor: "#8b0101",
-                    color: "#fff",
+                    bgcolor: "var(--aa-brand-50)",
+                    color: "var(--aa-brand-700)",
                     fontWeight: 950,
                   }}
                 >
@@ -1027,7 +1099,7 @@ const WorkerPayments = () => {
                     sx={{
                       fontSize: 14,
                       fontWeight: 900,
-                      color: "#0f172a",
+                      color: "var(--aa-text)",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
@@ -1036,11 +1108,24 @@ const WorkerPayments = () => {
                     {item.first_name} {item.last_name}
                   </Typography>
 
-                  <Typography sx={{ mt: 0.2, fontSize: 15, fontWeight: 950, color: "#8b0101" }}>
+                  <Typography
+                    sx={{
+                      mt: 0.2,
+                      fontSize: 15,
+                      fontWeight: 950,
+                      color: "var(--aa-brand-700)",
+                    }}
+                  >
                     {formatMoney(item.remaining)}
                   </Typography>
 
-                  <Typography sx={{ fontSize: 12, fontWeight: 700, color: "#64748b" }}>
+                  <Typography
+                    sx={{
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: "var(--aa-text-secondary)",
+                    }}
+                  >
                     Berilishi kerak
                   </Typography>
                 </Box>
@@ -1062,7 +1147,13 @@ const WorkerPayments = () => {
           </Box>
         ) : (
           <Box sx={{ minHeight: 92, display: "grid", placeItems: "center" }}>
-            <Typography sx={{ fontSize: 14, fontWeight: 750, color: "#64748b" }}>
+            <Typography
+              sx={{
+                fontSize: 14,
+                fontWeight: 750,
+                color: "var(--aa-text-secondary)",
+              }}
+            >
               Oyligi qolgan ishchilar yo'q.
             </Typography>
           </Box>
@@ -1085,18 +1176,18 @@ const WorkerPayments = () => {
                 py: 1.7,
                 fontSize: 12,
                 fontWeight: 950,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 textTransform: "uppercase",
                 letterSpacing: "0.03em",
-                background: "rgba(248, 250, 252, 0.95)",
-                borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
+                background: "var(--aa-surface-muted)",
+                borderBottom: "1px solid var(--aa-border)",
               },
               "& td": {
                 py: 1.55,
-                borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+                borderBottom: "1px solid var(--aa-border)",
               },
               "& tbody tr:hover": {
-                background: "rgba(37, 99, 235, 0.035)",
+                background: "var(--aa-surface-hover)",
               },
             }}
           >
@@ -1115,7 +1206,11 @@ const WorkerPayments = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={canManage ? 7 : 6} align="center" sx={{ py: 7 }}>
+                  <TableCell
+                    colSpan={canManage ? 7 : 6}
+                    align="center"
+                    sx={{ py: 7 }}
+                  >
                     <CircularProgress size={30} />
                   </TableCell>
                 </TableRow>
@@ -1123,16 +1218,18 @@ const WorkerPayments = () => {
                 payments.map((payment) => (
                   <TableRow key={payment.id} hover>
                     <TableCell>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.6 }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1.6 }}
+                      >
                         <Avatar
                           sx={{
                             width: 48,
                             height: 48,
-                            bgcolor: "#8b0101",
-                            color: "#fff",
+                            bgcolor: "var(--aa-brand-50)",
+                            color: "var(--aa-brand-700)",
                             fontWeight: 950,
-                            border: "3px solid #fff",
-                            boxShadow: "0 10px 24px rgba(139, 1, 1, 0.14)",
+                            border: "3px solid var(--aa-surface-solid)",
+                            boxShadow: "var(--aa-shadow-sm)",
                           }}
                         >
                           {getInitial(payment.worker_name)}
@@ -1143,7 +1240,7 @@ const WorkerPayments = () => {
                             sx={{
                               fontSize: 14.5,
                               fontWeight: 900,
-                              color: "#0f172a",
+                              color: "var(--aa-text)",
                               lineHeight: 1.15,
                             }}
                           >
@@ -1155,7 +1252,7 @@ const WorkerPayments = () => {
                               mt: 0.35,
                               fontSize: 12.5,
                               fontWeight: 700,
-                              color: "#64748b",
+                              color: "var(--aa-text-secondary)",
                             }}
                           >
                             @{payment.worker_username || "worker"}
@@ -1169,7 +1266,13 @@ const WorkerPayments = () => {
                     </TableCell>
 
                     <TableCell>
-                      <Typography sx={{ fontSize: 14.5, fontWeight: 950, color: "#0f172a" }}>
+                      <Typography
+                        sx={{
+                          fontSize: 14.5,
+                          fontWeight: 950,
+                          color: "var(--aa-text)",
+                        }}
+                      >
                         {formatMoney(payment.amount)}
                       </Typography>
 
@@ -1179,7 +1282,7 @@ const WorkerPayments = () => {
                             mt: 0.35,
                             fontSize: 12.5,
                             fontWeight: 700,
-                            color: "#64748b",
+                            color: "var(--aa-text-secondary)",
                           }}
                         >
                           Avansdan: {formatMoney(payment.advance_deduction)}
@@ -1187,15 +1290,32 @@ const WorkerPayments = () => {
                       )}
                     </TableCell>
 
-                    <TableCell sx={{ fontWeight: 800, color: "#334155" }}>
+                    <TableCell
+                      sx={{
+                        fontWeight: 800,
+                        color: "var(--aa-text-secondary)",
+                      }}
+                    >
                       {formatDate(payment.paid_at)}
                     </TableCell>
 
-                    <TableCell sx={{ fontWeight: 750, color: "#334155" }}>
-                      {formatDate(payment.period_from)} - {formatDate(payment.period_to)}
+                    <TableCell
+                      sx={{
+                        fontWeight: 750,
+                        color: "var(--aa-text-secondary)",
+                      }}
+                    >
+                      {formatDate(payment.period_from)} -{" "}
+                      {formatDate(payment.period_to)}
                     </TableCell>
 
-                    <TableCell sx={{ maxWidth: 220, color: "#64748b", fontWeight: 700 }}>
+                    <TableCell
+                      sx={{
+                        maxWidth: 220,
+                        color: "var(--aa-text-secondary)",
+                        fontWeight: 700,
+                      }}
+                    >
                       {payment.note || "-"}
                     </TableCell>
 
@@ -1245,7 +1365,11 @@ const WorkerPayments = () => {
                   <TableCell
                     colSpan={canManage ? 7 : 6}
                     align="center"
-                    sx={{ py: 7, color: "#64748b", fontWeight: 850 }}
+                    sx={{
+                      py: 7,
+                      color: "var(--aa-text-secondary)",
+                      fontWeight: 850,
+                    }}
                   >
                     To'lovlar topilmadi
                   </TableCell>
@@ -1257,15 +1381,17 @@ const WorkerPayments = () => {
 
         <Box
           sx={{
-            borderTop: "1px solid rgba(148, 163, 184, 0.18)",
-            background: "rgba(248, 250, 252, 0.65)",
+            borderTop: "1px solid var(--aa-border)",
+            background: "var(--aa-surface-muted)",
           }}
         >
           <CrmPagination
             total={pageInfo.total}
             page={page}
             limit={pageInfo.limit}
-            onPageChange={(nextPage) => fetchPayments(nextPage * pageInfo.limit, pageInfo.limit)}
+            onPageChange={(nextPage) =>
+              fetchPayments(nextPage * pageInfo.limit, pageInfo.limit)
+            }
             onLimitChange={(limit) => fetchPayments(0, limit)}
           />
         </Box>
@@ -1280,7 +1406,11 @@ const WorkerPayments = () => {
           <>
             <Button
               onClick={closeModals}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 850,
+              }}
             >
               Bekor qilish
             </Button>
@@ -1294,8 +1424,9 @@ const WorkerPayments = () => {
                 borderRadius: "12px",
                 textTransform: "none",
                 fontWeight: 900,
-                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                boxShadow: "0 12px 25px rgba(139, 1, 1, 0.2)",
+                background: "var(--aa-brand-700)",
+                boxShadow: "var(--aa-shadow-sm)",
+                "&:hover": { background: "var(--aa-brand-800)" },
               }}
             >
               {saving ? "Saqlanmoqda..." : "Saqlash"}
@@ -1322,10 +1453,10 @@ const WorkerPayments = () => {
             sx={{
               p: 2,
               borderRadius: "18px",
-              background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+              background: "var(--aa-surface)",
               border: paymentExceedsBalance
-                ? "1px solid rgba(220, 38, 38, 0.35)"
-                : "1px solid rgba(148, 163, 184, 0.22)",
+                ? "1px solid color-mix(in srgb, var(--aa-danger) 35%, transparent)"
+                : "1px solid var(--aa-border)",
             }}
           >
             <Box
@@ -1337,7 +1468,9 @@ const WorkerPayments = () => {
                 gap: 1.5,
               }}
             >
-              <Typography sx={{ fontSize: 16, fontWeight: 950, color: "#0f172a" }}>
+              <Typography
+                sx={{ fontSize: 16, fontWeight: 950, color: "var(--aa-text)" }}
+              >
                 Tanlangan ishchi balansi
               </Typography>
 
@@ -1347,7 +1480,11 @@ const WorkerPayments = () => {
             <Box
               sx={{
                 display: "grid",
-                gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" },
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  lg: "repeat(4, 1fr)",
+                },
                 gap: 1.2,
               }}
             >
@@ -1389,7 +1526,9 @@ const WorkerPayments = () => {
               onChange={handleFormChange("amount")}
               error={paymentExceedsBalance}
               helperText={
-                paymentExceedsBalance ? `Maksimum ${formatMoney(availableWorkerBalance)}` : " "
+                paymentExceedsBalance
+                  ? `Maksimum ${formatMoney(availableWorkerBalance)}`
+                  : " "
               }
               slotProps={{ htmlInput: { min: 0, step: 1000 } }}
             />
@@ -1452,13 +1591,22 @@ const WorkerPayments = () => {
                 px: 2,
                 py: 1.5,
                 borderRadius: "16px",
-                background: "rgba(254, 242, 242, 0.95)",
-                border: "1px solid rgba(220, 38, 38, 0.3)",
+                background:
+                  "color-mix(in srgb, var(--aa-danger) 7%, transparent)",
+                border:
+                  "1px solid color-mix(in srgb, var(--aa-danger) 28%, transparent)",
               }}
             >
-              <Typography sx={{ fontSize: 14, fontWeight: 900, color: "#b91c1c" }}>
-                Ogohlantirish: kiritilgan {formatMoney(enteredPaymentTotal)} summa ishchining qolgan{" "}
-                {formatMoney(availableWorkerBalance)} haqidan oshib ketdi.
+              <Typography
+                sx={{
+                  fontSize: 14,
+                  fontWeight: 900,
+                  color: "var(--aa-danger)",
+                }}
+              >
+                Ogohlantirish: kiritilgan {formatMoney(enteredPaymentTotal)}{" "}
+                summa ishchining qolgan {formatMoney(availableWorkerBalance)}{" "}
+                haqidan oshib ketdi.
               </Typography>
             </Box>
           )}
@@ -1470,19 +1618,27 @@ const WorkerPayments = () => {
               gap: 1.2,
               p: 1.5,
               borderRadius: "18px",
-              background: paymentExceedsBalance ? "rgba(254, 242, 242, 0.95)" : "#f8fafc",
+              background: paymentExceedsBalance
+                ? "color-mix(in srgb, var(--aa-danger) 7%, transparent)"
+                : "var(--aa-surface-muted)",
               border: paymentExceedsBalance
-                ? "1px solid rgba(220, 38, 38, 0.3)"
-                : "1px solid rgba(148, 163, 184, 0.2)",
+                ? "1px solid color-mix(in srgb, var(--aa-danger) 28%, transparent)"
+                : "1px solid var(--aa-border)",
             }}
           >
             <BalanceBox
               label="Oylikdan yopiladi"
-              value={formatMoney(Number(form.amount || 0) + Number(form.advance_deduction || 0))}
+              value={formatMoney(
+                Number(form.amount || 0) + Number(form.advance_deduction || 0),
+              )}
               tone="blue"
             />
 
-            <BalanceBox label="Naqd beriladi" value={formatMoney(form.amount)} tone="green" />
+            <BalanceBox
+              label="Naqd beriladi"
+              value={formatMoney(form.amount)}
+              tone="green"
+            />
 
             <BalanceBox
               label="Qoladigan avans"
@@ -1516,7 +1672,11 @@ const WorkerPayments = () => {
         actions={
           <Button
             onClick={() => setAdvancesOpen(false)}
-            sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+            sx={{
+              borderRadius: "12px",
+              textTransform: "none",
+              fontWeight: 850,
+            }}
           >
             Yopish
           </Button>
@@ -1536,13 +1696,13 @@ const WorkerPayments = () => {
                   py: 1.5,
                   fontSize: 12,
                   fontWeight: 950,
-                  color: "#64748b",
+                  color: "var(--aa-text-secondary)",
                   textTransform: "uppercase",
-                  background: "#f8fafc",
+                  background: "var(--aa-surface-muted)",
                 },
                 "& td": {
                   py: 1.4,
-                  borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+                  borderBottom: "1px solid var(--aa-border)",
                 },
               }}
             >
@@ -1559,28 +1719,46 @@ const WorkerPayments = () => {
                 {advances.length ? (
                   advances.map((advance) => (
                     <TableRow key={advance.id} hover>
-                      <TableCell sx={{ fontWeight: 900, color: "#0f172a" }}>
+                      <TableCell
+                        sx={{ fontWeight: 900, color: "var(--aa-text)" }}
+                      >
                         {advance.worker_name}
                       </TableCell>
 
                       <TableCell>
-                        <Typography sx={{ fontWeight: 950, color: "#8b0101" }}>
+                        <Typography
+                          sx={{ fontWeight: 950, color: "var(--aa-brand-700)" }}
+                        >
                           {formatMoney(advance.amount)}
                         </Typography>
                       </TableCell>
 
-                      <TableCell sx={{ fontWeight: 750, color: "#334155" }}>
+                      <TableCell
+                        sx={{
+                          fontWeight: 750,
+                          color: "var(--aa-text-secondary)",
+                        }}
+                      >
                         {formatDate(advance.given_at)}
                       </TableCell>
 
-                      <TableCell sx={{ fontWeight: 700, color: "#64748b" }}>
+                      <TableCell
+                        sx={{
+                          fontWeight: 700,
+                          color: "var(--aa-text-secondary)",
+                        }}
+                      >
                         {advance.note || "-"}
                       </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} align="center" sx={{ py: 6, fontWeight: 850 }}>
+                    <TableCell
+                      colSpan={4}
+                      align="center"
+                      sx={{ py: 6, fontWeight: 850 }}
+                    >
                       Avans yozuvlari topilmadi
                     </TableCell>
                   </TableRow>
@@ -1600,7 +1778,11 @@ const WorkerPayments = () => {
           <>
             <Button
               onClick={closeModals}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 850,
+              }}
             >
               Bekor qilish
             </Button>
@@ -1614,8 +1796,9 @@ const WorkerPayments = () => {
                 borderRadius: "12px",
                 textTransform: "none",
                 fontWeight: 900,
-                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                boxShadow: "0 12px 25px rgba(139, 1, 1, 0.2)",
+                background: "var(--aa-brand-700)",
+                boxShadow: "var(--aa-shadow-sm)",
+                "&:hover": { background: "var(--aa-brand-800)" },
               }}
             >
               {advanceSaving ? "Saqlanmoqda..." : "Avans berish"}
@@ -1644,7 +1827,11 @@ const WorkerPayments = () => {
           </TextField>
 
           <Box
-            sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.6 }}
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+              gap: 1.6,
+            }}
           >
             <TextField
               required
@@ -1698,7 +1885,11 @@ const WorkerPayments = () => {
           <>
             <Button
               onClick={closeModals}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 850,
+              }}
             >
               Bekor qilish
             </Button>
@@ -1708,16 +1899,20 @@ const WorkerPayments = () => {
               variant="contained"
               onClick={handleDelete}
               disabled={deleting}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 900 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 900,
+              }}
             >
               {deleting ? "O'chirilmoqda..." : "O'chirish"}
             </Button>
           </>
         }
       >
-        <Typography sx={{ color: "#334155", fontWeight: 700 }}>
-          {selectedPayment?.worker_name} uchun {formatMoney(selectedPayment?.amount)} to'lovni
-          o'chirmoqchimisiz?
+        <Typography sx={{ color: "var(--aa-text-secondary)", fontWeight: 700 }}>
+          {selectedPayment?.worker_name} uchun{" "}
+          {formatMoney(selectedPayment?.amount)} to'lovni o'chirmoqchimisiz?
         </Typography>
       </PremiumDialog>
     </Box>
