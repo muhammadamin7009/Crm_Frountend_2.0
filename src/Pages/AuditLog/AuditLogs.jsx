@@ -5,6 +5,10 @@ import {
   Button,
   Chip,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   MenuItem,
   Paper,
   Table,
@@ -50,24 +54,24 @@ const entityNames = {
 
 const actionStyles = {
   POST: {
-    color: "#15803d",
-    bg: "rgba(34, 197, 94, 0.12)",
-    border: "rgba(34, 197, 94, 0.24)",
+    color: "var(--aa-success)",
+    bg: "color-mix(in srgb, var(--aa-success) 10%, transparent)",
+    border: "color-mix(in srgb, var(--aa-success) 22%, transparent)",
   },
   PUT: {
-    color: "#2563eb",
-    bg: "rgba(37, 99, 235, 0.08)",
-    border: "rgba(37, 99, 235, 0.16)",
+    color: "var(--aa-info)",
+    bg: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
+    border: "color-mix(in srgb, var(--aa-info) 16%, transparent)",
   },
   PATCH: {
-    color: "#92400e",
-    bg: "rgba(245, 158, 11, 0.12)",
-    border: "rgba(245, 158, 11, 0.24)",
+    color: "var(--aa-warning)",
+    bg: "color-mix(in srgb, var(--aa-warning) 10%, transparent)",
+    border: "color-mix(in srgb, var(--aa-warning) 22%, transparent)",
   },
   DELETE: {
-    color: "#8b0101",
-    bg: "rgba(139, 1, 1, 0.08)",
-    border: "rgba(139, 1, 1, 0.18)",
+    color: "var(--aa-danger)",
+    bg: "color-mix(in srgb, var(--aa-danger) 8%, transparent)",
+    border: "color-mix(in srgb, var(--aa-danger) 18%, transparent)",
   },
 };
 
@@ -100,10 +104,10 @@ const Card = ({ children, sx = {} }) => (
   <Paper
     elevation={0}
     sx={{
-      borderRadius: "20px",
-      border: "1px solid rgba(148, 163, 184, 0.22)",
-      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
-      boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+      borderRadius: "var(--aa-radius-xl)",
+      border: "1px solid var(--aa-border)",
+      background: "var(--aa-surface)",
+      boxShadow: "var(--aa-shadow-xs)",
       overflow: "hidden",
       ...sx,
     }}
@@ -115,19 +119,19 @@ const Card = ({ children, sx = {} }) => (
 const MiniStat = ({ label, value, tone = "default" }) => {
   const tones = {
     default: {
-      color: "#0f172a",
-      bg: "#ffffff",
-      border: "rgba(148, 163, 184, 0.24)",
+      color: "var(--aa-text)",
+      bg: "var(--aa-surface-solid)",
+      border: "var(--aa-border)",
     },
     blue: {
-      color: "#2563eb",
-      bg: "rgba(37, 99, 235, 0.08)",
-      border: "rgba(37, 99, 235, 0.18)",
+      color: "var(--aa-info)",
+      bg: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
+      border: "color-mix(in srgb, var(--aa-info) 18%, transparent)",
     },
     red: {
-      color: "#8b0101",
-      bg: "rgba(139, 1, 1, 0.08)",
-      border: "rgba(139, 1, 1, 0.18)",
+      color: "var(--aa-danger)",
+      bg: "color-mix(in srgb, var(--aa-danger) 8%, transparent)",
+      border: "color-mix(in srgb, var(--aa-danger) 18%, transparent)",
     },
   };
 
@@ -139,13 +143,21 @@ const MiniStat = ({ label, value, tone = "default" }) => {
         minWidth: 120,
         px: 2,
         py: 1.35,
-        borderRadius: "16px",
+        borderRadius: "var(--aa-radius-lg)",
         background: current.bg,
         border: `1px solid ${current.border}`,
-        boxShadow: "0 10px 26px rgba(15, 23, 42, 0.05)",
+        boxShadow: "var(--aa-shadow-xs)",
       }}
     >
-      <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+      <Typography
+        sx={{
+          fontSize: 12,
+          fontWeight: 850,
+          color: "var(--aa-text-secondary)",
+        }}
+      >
+        {label}
+      </Typography>
 
       <Typography
         sx={{
@@ -165,9 +177,9 @@ const MiniStat = ({ label, value, tone = "default" }) => {
 
 const ActionChip = ({ action }) => {
   const style = actionStyles[action] || {
-    color: "#475569",
-    bg: "#f1f5f9",
-    border: "rgba(148, 163, 184, 0.24)",
+    color: "var(--aa-text-secondary)",
+    bg: "var(--aa-surface-muted)",
+    border: "var(--aa-border)",
   };
 
   return (
@@ -196,9 +208,9 @@ const EntityChip = ({ entity }) => (
       px: 0.35,
       fontSize: 12,
       fontWeight: 900,
-      color: "#2563eb",
-      background: "rgba(37, 99, 235, 0.08)",
-      border: "1px solid rgba(37, 99, 235, 0.16)",
+      color: "var(--aa-info)",
+      background: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
+      border: "1px solid color-mix(in srgb, var(--aa-info) 16%, transparent)",
     }}
   />
 );
@@ -209,6 +221,7 @@ const AuditLogs = () => {
   const [q, setQ] = useState("");
   const [action, setAction] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedLog, setSelectedLog] = useState(null);
 
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
 
@@ -227,7 +240,9 @@ const AuditLogs = () => {
         setRows(data.audit_logs || []);
         setPageInfo(data.pageInfo || { total: 0, offset, limit });
       } catch (error) {
-        toast.error(error?.response?.data?.message || "Amallar tarixini olishda xato.");
+        toast.error(
+          error?.response?.data?.message || "Amallar tarixini olishda xato.",
+        );
       } finally {
         setLoading(false);
       }
@@ -254,6 +269,11 @@ const AuditLogs = () => {
         display: "flex",
         flexDirection: "column",
         pb: 2,
+        color: "var(--aa-text)",
+        "& .MuiOutlinedInput-root": {
+          borderRadius: "var(--aa-radius-md)",
+          backgroundColor: "var(--aa-surface-solid)",
+        },
       }}
     >
       <Card sx={{ mb: 0.5, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
@@ -275,9 +295,10 @@ const AuditLogs = () => {
                 height: 25,
                 fontSize: 12,
                 fontWeight: 950,
-                color: "#2563eb",
-                background: "rgba(37, 99, 235, 0.08)",
-                border: "1px solid rgba(37, 99, 235, 0.16)",
+                color: "var(--aa-brand-700)",
+                background: "var(--aa-brand-50)",
+                border: "1px solid var(--aa-brand-100)",
+                borderRadius: "var(--aa-radius-pill)",
               }}
             />
 
@@ -285,7 +306,7 @@ const AuditLogs = () => {
               sx={{
                 fontSize: { xs: 27, md: 33 },
                 fontWeight: 950,
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 letterSpacing: "-0.055em",
                 lineHeight: 1.05,
               }}
@@ -298,17 +319,21 @@ const AuditLogs = () => {
                 mt: 0.7,
                 fontSize: 14,
                 fontWeight: 650,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
               }}
             >
-              Tizimda bajarilgan muhim o'zgarishlar va foydalanuvchi harakatlari.
+              Tizimda bajarilgan muhim o'zgarishlar va foydalanuvchi
+              harakatlari.
             </Typography>
           </Box>
 
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(2, auto)" },
+              gridTemplateColumns: {
+                xs: "repeat(2, 1fr)",
+                sm: "repeat(2, auto)",
+              },
               gap: 1.2,
               width: { xs: "100%", md: "auto" },
             }}
@@ -369,12 +394,12 @@ const AuditLogs = () => {
             sx={{
               minWidth: 110,
               height: 42,
-              borderRadius: "13px",
+              borderRadius: "var(--aa-radius-md)",
               textTransform: "none",
               fontWeight: 900,
-              color: "#0f172a",
-              borderColor: "rgba(37, 99, 235, 0.22)",
-              background: "#fff",
+              color: "var(--aa-text)",
+              borderColor: "var(--aa-border-strong)",
+              background: "var(--aa-surface-solid)",
             }}
           >
             Tozalash
@@ -399,18 +424,18 @@ const AuditLogs = () => {
                 py: 1.7,
                 fontSize: 12,
                 fontWeight: 950,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 textTransform: "uppercase",
                 letterSpacing: "0.03em",
-                background: "rgba(248, 250, 252, 0.98)",
-                borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
+                background: "var(--aa-surface-muted)",
+                borderBottom: "1px solid var(--aa-border)",
               },
               "& td": {
                 py: 1.55,
-                borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+                borderBottom: "1px solid var(--aa-border)",
               },
               "& tbody tr:hover": {
-                background: "rgba(37, 99, 235, 0.035)",
+                background: "var(--aa-surface-hover)",
               },
             }}
           >
@@ -434,22 +459,35 @@ const AuditLogs = () => {
                 </TableRow>
               ) : rows.length ? (
                 rows.map((row) => (
-                  <TableRow key={row.id} hover>
-                    <TableCell sx={{ whiteSpace: "nowrap", fontWeight: 800, color: "#334155" }}>
+                  <TableRow
+                    key={row.id}
+                    hover
+                    onClick={() => setSelectedLog(row)}
+                    sx={{ cursor: "pointer" }}
+                  >
+                    <TableCell
+                      sx={{
+                        whiteSpace: "nowrap",
+                        fontWeight: 800,
+                        color: "var(--aa-text-secondary)",
+                      }}
+                    >
                       {formatDate(row.created_at)}
                     </TableCell>
 
                     <TableCell>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.6 }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1.6 }}
+                      >
                         <Avatar
                           sx={{
                             width: 44,
                             height: 44,
-                            bgcolor: "#8b0101",
-                            color: "#fff",
+                            bgcolor: "var(--aa-brand-50)",
+                            color: "var(--aa-brand-700)",
                             fontWeight: 950,
-                            border: "3px solid #fff",
-                            boxShadow: "0 10px 24px rgba(139, 1, 1, 0.14)",
+                            border: "3px solid var(--aa-surface-solid)",
+                            boxShadow: "var(--aa-shadow-sm)",
                           }}
                         >
                           {getInitial(row)}
@@ -460,7 +498,7 @@ const AuditLogs = () => {
                             sx={{
                               fontSize: 14.5,
                               fontWeight: 900,
-                              color: "#0f172a",
+                              color: "var(--aa-text)",
                               lineHeight: 1.15,
                             }}
                           >
@@ -472,7 +510,7 @@ const AuditLogs = () => {
                               mt: 0.35,
                               fontSize: 12.5,
                               fontWeight: 700,
-                              color: "#64748b",
+                              color: "var(--aa-text-secondary)",
                             }}
                           >
                             @{row.username || "unknown"}
@@ -489,7 +527,12 @@ const AuditLogs = () => {
                       <EntityChip entity={row.entity_type} />
                     </TableCell>
 
-                    <TableCell sx={{ fontWeight: 900, color: "#334155" }}>
+                    <TableCell
+                      sx={{
+                        fontWeight: 900,
+                        color: "var(--aa-text-secondary)",
+                      }}
+                    >
                       {row.entity_id || "-"}
                     </TableCell>
 
@@ -499,7 +542,7 @@ const AuditLogs = () => {
                           maxWidth: 360,
                           fontSize: 13,
                           fontWeight: 700,
-                          color: "#64748b",
+                          color: "var(--aa-text-secondary)",
                           wordBreak: "break-word",
                         }}
                       >
@@ -510,7 +553,11 @@ const AuditLogs = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 7, fontWeight: 850 }}>
+                  <TableCell
+                    colSpan={6}
+                    align="center"
+                    sx={{ py: 7, fontWeight: 850 }}
+                  >
                     Amallar tarixi topilmadi
                   </TableCell>
                 </TableRow>
@@ -521,20 +568,145 @@ const AuditLogs = () => {
 
         <Box
           sx={{
-            borderTop: "1px solid rgba(148, 163, 184, 0.18)",
-            background: "rgba(248, 250, 252, 0.65)",
+            borderTop: "1px solid var(--aa-border)",
+            background: "var(--aa-surface-muted)",
           }}
         >
           <CrmPagination
             total={pageInfo.total}
             page={page}
             limit={pageInfo.limit}
-            onPageChange={(nextPage) => load(nextPage * pageInfo.limit, pageInfo.limit)}
+            onPageChange={(nextPage) =>
+              load(nextPage * pageInfo.limit, pageInfo.limit)
+            }
             onLimitChange={(limit) => load(0, limit)}
             rowsPerPageOptions={[20, 50, 100]}
           />
         </Box>
       </Card>
+
+      <Dialog
+        open={Boolean(selectedLog)}
+        onClose={() => setSelectedLog(null)}
+        fullWidth
+        maxWidth="sm"
+        PaperProps={{
+          sx: {
+            borderRadius: "var(--aa-radius-xl)",
+            border: "1px solid var(--aa-border)",
+            boxShadow: "var(--aa-shadow-lg)",
+            backgroundImage: "none",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            px: 3,
+            py: 2.2,
+            fontSize: 21,
+            fontWeight: 950,
+            borderBottom: "1px solid var(--aa-border)",
+          }}
+        >
+          Amal tafsiloti
+        </DialogTitle>
+        <DialogContent sx={{ px: 3, py: "22px !important" }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "130px minmax(0, 1fr)",
+              gap: 1.25,
+            }}
+          >
+            {[
+              ["Foydalanuvchi", selectedLog ? getFullName(selectedLog) : "-"],
+              ["Vaqt", formatDate(selectedLog?.created_at)],
+              [
+                "Amal",
+                actionNames[selectedLog?.action] || selectedLog?.action || "-",
+              ],
+              [
+                "Bo'lim",
+                entityNames[selectedLog?.entity_type] ||
+                  selectedLog?.entity_type ||
+                  "-",
+              ],
+              ["Obyekt ID", selectedLog?.entity_id || "-"],
+              ["Natija kodi", selectedLog?.status_code || "-"],
+              ["IP manzil", selectedLog?.ip || "-"],
+              ["API manzil", selectedLog?.path || "-"],
+            ].map(([label, value]) => (
+              <Box key={label} sx={{ display: "contents" }}>
+                <Typography
+                  sx={{
+                    color: "var(--aa-text-tertiary)",
+                    fontSize: 12.5,
+                    fontWeight: 800,
+                  }}
+                >
+                  {label}
+                </Typography>
+                <Typography
+                  sx={{
+                    color: "var(--aa-text)",
+                    fontSize: 13.5,
+                    fontWeight: 750,
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {value}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+
+          {selectedLog?.details && (
+            <Box sx={{ mt: 2.2 }}>
+              <Typography
+                sx={{
+                  mb: 0.8,
+                  color: "var(--aa-text-secondary)",
+                  fontSize: 12.5,
+                  fontWeight: 850,
+                }}
+              >
+                Qo'shimcha ma'lumot
+              </Typography>
+              <Box
+                component="pre"
+                sx={{
+                  m: 0,
+                  p: 1.5,
+                  maxHeight: 240,
+                  overflow: "auto",
+                  borderRadius: "var(--aa-radius-md)",
+                  bgcolor: "var(--aa-surface-muted)",
+                  border: "1px solid var(--aa-border)",
+                  color: "var(--aa-text-secondary)",
+                  fontSize: 12,
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
+                  userSelect: "text",
+                }}
+              >
+                {JSON.stringify(selectedLog.details, null, 2)}
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions
+          sx={{
+            px: 3,
+            py: 2,
+            borderTop: "1px solid var(--aa-border)",
+            bgcolor: "var(--aa-surface-muted)",
+          }}
+        >
+          <Button onClick={() => setSelectedLog(null)} sx={{ fontWeight: 850 }}>
+            Yopish
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

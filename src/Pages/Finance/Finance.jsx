@@ -46,7 +46,8 @@ import {
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
+const money = (value) =>
+  `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
 
 const date = (value) => {
   if (!value) return "-";
@@ -78,10 +79,10 @@ const Card = ({ children, sx = {} }) => (
   <Paper
     elevation={0}
     sx={{
-      borderRadius: "20px",
-      border: "1px solid rgba(148, 163, 184, 0.22)",
-      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
-      boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+      borderRadius: "var(--aa-radius-xl)",
+      border: "1px solid var(--aa-border)",
+      background: "var(--aa-surface)",
+      boxShadow: "var(--aa-shadow-xs)",
       overflow: "hidden",
       ...sx,
     }}
@@ -93,29 +94,29 @@ const Card = ({ children, sx = {} }) => (
 const MiniStat = ({ label, value, tone = "default" }) => {
   const tones = {
     default: {
-      color: "#0f172a",
-      bg: "#ffffff",
-      border: "rgba(148, 163, 184, 0.24)",
+      color: "var(--aa-text)",
+      bg: "var(--aa-surface-solid)",
+      border: "var(--aa-border)",
     },
     blue: {
-      color: "#2563eb",
-      bg: "rgba(37, 99, 235, 0.08)",
-      border: "rgba(37, 99, 235, 0.18)",
+      color: "var(--aa-info)",
+      bg: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
+      border: "color-mix(in srgb, var(--aa-info) 18%, transparent)",
     },
     green: {
-      color: "#15803d",
-      bg: "rgba(34, 197, 94, 0.1)",
-      border: "rgba(34, 197, 94, 0.22)",
+      color: "var(--aa-success)",
+      bg: "color-mix(in srgb, var(--aa-success) 9%, transparent)",
+      border: "color-mix(in srgb, var(--aa-success) 20%, transparent)",
     },
     red: {
-      color: "#8b0101",
-      bg: "rgba(139, 1, 1, 0.08)",
-      border: "rgba(139, 1, 1, 0.18)",
+      color: "var(--aa-brand-700)",
+      bg: "var(--aa-brand-50)",
+      border: "var(--aa-brand-100)",
     },
     orange: {
-      color: "#92400e",
-      bg: "rgba(245, 158, 11, 0.12)",
-      border: "rgba(245, 158, 11, 0.24)",
+      color: "var(--aa-warning)",
+      bg: "color-mix(in srgb, var(--aa-warning) 10%, transparent)",
+      border: "color-mix(in srgb, var(--aa-warning) 22%, transparent)",
     },
   };
 
@@ -127,13 +128,21 @@ const MiniStat = ({ label, value, tone = "default" }) => {
         minWidth: 130,
         px: 2,
         py: 1.35,
-        borderRadius: "16px",
+        borderRadius: "var(--aa-radius-lg)",
         background: current.bg,
         border: `1px solid ${current.border}`,
-        boxShadow: "0 10px 26px rgba(15, 23, 42, 0.05)",
+        boxShadow: "var(--aa-shadow-xs)",
       }}
     >
-      <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+      <Typography
+        sx={{
+          fontSize: 12,
+          fontWeight: 850,
+          color: "var(--aa-text-secondary)",
+        }}
+      >
+        {label}
+      </Typography>
 
       <Typography
         sx={{
@@ -163,11 +172,13 @@ const StatusChip = ({ status }) => {
         px: 0.35,
         fontSize: 12,
         fontWeight: 900,
-        color: closed ? "#64748b" : "#15803d",
-        background: closed ? "#f1f5f9" : "rgba(34, 197, 94, 0.12)",
+        color: closed ? "var(--aa-text-secondary)" : "var(--aa-success)",
+        background: closed
+          ? "var(--aa-surface-muted)"
+          : "color-mix(in srgb, var(--aa-success) 10%, transparent)",
         border: closed
-          ? "1px solid rgba(148, 163, 184, 0.24)"
-          : "1px solid rgba(34, 197, 94, 0.24)",
+          ? "1px solid var(--aa-border)"
+          : "1px solid color-mix(in srgb, var(--aa-success) 22%, transparent)",
       }}
     />
   );
@@ -185,15 +196,26 @@ const TypeChip = ({ type }) => {
         px: 0.35,
         fontSize: 12,
         fontWeight: 900,
-        color: income ? "#15803d" : "#8b0101",
-        background: income ? "rgba(34, 197, 94, 0.12)" : "rgba(139, 1, 1, 0.08)",
-        border: income ? "1px solid rgba(34, 197, 94, 0.24)" : "1px solid rgba(139, 1, 1, 0.18)",
+        color: income ? "var(--aa-success)" : "var(--aa-danger)",
+        background: income
+          ? "color-mix(in srgb, var(--aa-success) 10%, transparent)"
+          : "color-mix(in srgb, var(--aa-danger) 8%, transparent)",
+        border: income
+          ? "1px solid color-mix(in srgb, var(--aa-success) 22%, transparent)"
+          : "1px solid color-mix(in srgb, var(--aa-danger) 18%, transparent)",
       }}
     />
   );
 };
 
-const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "sm" }) => (
+const PremiumDialog = ({
+  open,
+  onClose,
+  title,
+  children,
+  actions,
+  maxWidth = "sm",
+}) => (
   <Dialog
     open={open}
     onClose={onClose}
@@ -201,9 +223,10 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "sm
     maxWidth={maxWidth}
     PaperProps={{
       sx: {
-        borderRadius: "22px",
-        border: "1px solid rgba(148, 163, 184, 0.22)",
-        boxShadow: "0 30px 80px rgba(15, 23, 42, 0.22)",
+        borderRadius: "var(--aa-radius-xl)",
+        border: "1px solid var(--aa-border)",
+        boxShadow: "var(--aa-shadow-lg)",
+        backgroundImage: "none",
         overflow: "hidden",
       },
     }}
@@ -214,9 +237,9 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "sm
         py: 2.2,
         fontSize: 22,
         fontWeight: 950,
-        color: "#0f172a",
-        borderBottom: "1px solid rgba(148, 163, 184, 0.18)",
-        background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+        color: "var(--aa-text)",
+        borderBottom: "1px solid var(--aa-border)",
+        background: "var(--aa-surface)",
       }}
     >
       {title}
@@ -229,8 +252,8 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "sm
         sx={{
           px: 3,
           py: 2,
-          borderTop: "1px solid rgba(148, 163, 184, 0.18)",
-          background: "rgba(248, 250, 252, 0.72)",
+          borderTop: "1px solid var(--aa-border)",
+          background: "var(--aa-surface-muted)",
         }}
       >
         {actions}
@@ -250,20 +273,20 @@ const Grid = ({ heads, rows, onRow }) => (
             py: 1.6,
             fontSize: 12,
             fontWeight: 950,
-            color: "#64748b",
+            color: "var(--aa-text-secondary)",
             textTransform: "uppercase",
             letterSpacing: "0.03em",
-            background: "rgba(248, 250, 252, 0.96)",
-            borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
+            background: "var(--aa-surface-muted)",
+            borderBottom: "1px solid var(--aa-border)",
           },
           "& td": {
             py: 1.5,
-            borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+            borderBottom: "1px solid var(--aa-border)",
             fontWeight: 700,
-            color: "#334155",
+            color: "var(--aa-text-secondary)",
           },
           "& tbody tr:hover": {
-            background: onRow ? "rgba(37, 99, 235, 0.035)" : "inherit",
+            background: onRow ? "var(--aa-surface-hover)" : "inherit",
           },
         }}
       >
@@ -291,7 +314,11 @@ const Grid = ({ heads, rows, onRow }) => (
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={heads.length} align="center" sx={{ py: 6, fontWeight: 850 }}>
+              <TableCell
+                colSpan={heads.length}
+                align="center"
+                sx={{ py: 6, fontWeight: 850 }}
+              >
                 Ma'lumot topilmadi
               </TableCell>
             </TableRow>
@@ -306,20 +333,28 @@ const StatCard = ({ label, value, danger }) => (
   <Box
     sx={{
       p: 2,
-      borderRadius: "18px",
-      background: danger ? "rgba(254, 242, 242, 0.95)" : "#ffffff",
-      border: danger ? "1px solid rgba(220, 38, 38, 0.25)" : "1px solid rgba(148, 163, 184, 0.22)",
-      boxShadow: "0 10px 24px rgba(15, 23, 42, 0.04)",
+      borderRadius: "var(--aa-radius-lg)",
+      background: danger
+        ? "color-mix(in srgb, var(--aa-danger) 7%, transparent)"
+        : "var(--aa-surface-solid)",
+      border: danger
+        ? "1px solid color-mix(in srgb, var(--aa-danger) 22%, transparent)"
+        : "1px solid var(--aa-border)",
+      boxShadow: "var(--aa-shadow-xs)",
     }}
   >
-    <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+    <Typography
+      sx={{ fontSize: 12, fontWeight: 850, color: "var(--aa-text-secondary)" }}
+    >
+      {label}
+    </Typography>
 
     <Typography
       sx={{
         mt: 0.45,
         fontSize: 18,
         fontWeight: 950,
-        color: danger ? "#8b0101" : "#0f172a",
+        color: danger ? "var(--aa-danger)" : "var(--aa-text)",
         letterSpacing: "-0.04em",
       }}
     >
@@ -420,7 +455,9 @@ const Finance = () => {
         }));
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Ma'lumotlarni olishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Ma'lumotlarni olishda xato.",
+      );
     } finally {
       setLoading(false);
     }
@@ -519,7 +556,9 @@ const Finance = () => {
       const response = await getPayrollPeriod(id);
       setDetail(response.data);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Haftalik hisob ochilmadi.");
+      toast.error(
+        error?.response?.data?.message || "Haftalik hisob ochilmadi.",
+      );
     }
   };
 
@@ -542,7 +581,11 @@ const Finance = () => {
   const pageStats = {
     payroll: [
       ["Davrlar", data.periods?.length || 0, "blue"],
-      ["Ochiq", data.periods?.filter((item) => item.status !== "closed").length || 0, "green"],
+      [
+        "Ochiq",
+        data.periods?.filter((item) => item.status !== "closed").length || 0,
+        "green",
+      ],
     ],
     expenses: [
       ["Xarajat", money(data.expenseTotal), "red"],
@@ -574,6 +617,11 @@ const Finance = () => {
         display: "flex",
         flexDirection: "column",
         pb: 2,
+        color: "var(--aa-text)",
+        "& .MuiOutlinedInput-root": {
+          borderRadius: "var(--aa-radius-md)",
+          backgroundColor: "var(--aa-surface-solid)",
+        },
       }}
     >
       <Card sx={{ mb: 2.5, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
@@ -595,9 +643,10 @@ const Finance = () => {
                 height: 25,
                 fontSize: 12,
                 fontWeight: 950,
-                color: "#2563eb",
-                background: "rgba(37, 99, 235, 0.08)",
-                border: "1px solid rgba(37, 99, 235, 0.16)",
+                color: "var(--aa-brand-700)",
+                background: "var(--aa-brand-50)",
+                border: "1px solid var(--aa-brand-100)",
+                borderRadius: "var(--aa-radius-pill)",
               }}
             />
 
@@ -605,7 +654,7 @@ const Finance = () => {
               sx={{
                 fontSize: { xs: 27, md: 33 },
                 fontWeight: 950,
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 letterSpacing: "-0.055em",
                 lineHeight: 1.05,
               }}
@@ -618,7 +667,7 @@ const Finance = () => {
                 mt: 0.7,
                 fontSize: 14,
                 fontWeight: 650,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
               }}
             >
               Korxonaning pul, xarajat, oylik va foyda-zarar markazi.
@@ -628,7 +677,10 @@ const Finance = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(2, auto)" },
+              gridTemplateColumns: {
+                xs: "repeat(2, 1fr)",
+                sm: "repeat(2, auto)",
+              },
               gap: 1.2,
               width: { xs: "100%", xl: "auto" },
             }}
@@ -659,19 +711,22 @@ const Finance = () => {
                 sx={{
                   height: 40,
                   px: 2,
-                  borderRadius: "13px",
+                  borderRadius: "var(--aa-radius-md)",
                   whiteSpace: "nowrap",
                   textTransform: "none",
                   fontWeight: 900,
-                  color: tab === key ? "#fff" : "#0f172a",
-                  borderColor: "rgba(37, 99, 235, 0.22)",
-                  background: tab === key ? "linear-gradient(135deg, #8b0101, #b91c1c)" : "#fff",
-                  boxShadow: tab === key ? "0 12px 25px rgba(139, 1, 1, 0.18)" : "none",
+                  color: tab === key ? "#fff" : "var(--aa-text)",
+                  borderColor: "var(--aa-border-strong)",
+                  background:
+                    tab === key
+                      ? "var(--aa-brand-700)"
+                      : "var(--aa-surface-solid)",
+                  boxShadow: tab === key ? "var(--aa-shadow-sm)" : "none",
                   "&:hover": {
                     background:
                       tab === key
-                        ? "linear-gradient(135deg, #7f0101, #991b1b)"
-                        : "rgba(37, 99, 235, 0.04)",
+                        ? "var(--aa-brand-800)"
+                        : "var(--aa-surface-hover)",
                   },
                 }}
               >
@@ -695,7 +750,10 @@ const Finance = () => {
                 label="Dan"
                 value={filters.date_from}
                 onChange={(event) =>
-                  setFilters((previous) => ({ ...previous, date_from: event.target.value }))
+                  setFilters((previous) => ({
+                    ...previous,
+                    date_from: event.target.value,
+                  }))
                 }
                 slotProps={{ inputLabel: { shrink: true } }}
               />
@@ -706,7 +764,10 @@ const Finance = () => {
                 label="Gacha"
                 value={filters.date_to}
                 onChange={(event) =>
-                  setFilters((previous) => ({ ...previous, date_to: event.target.value }))
+                  setFilters((previous) => ({
+                    ...previous,
+                    date_to: event.target.value,
+                  }))
                 }
                 slotProps={{ inputLabel: { shrink: true } }}
               />
@@ -732,9 +793,15 @@ const Finance = () => {
                 canManage={canManage}
               />
             )}
-            {tab === "expenses" && <Expenses data={data} open={open} canManage={canManage} />}
-            {tab === "accounts" && <Accounts data={data} open={open} canManage={canManage} />}
-            {tab === "returns" && <Returns data={data} open={open} canManage={canManage} />}
+            {tab === "expenses" && (
+              <Expenses data={data} open={open} canManage={canManage} />
+            )}
+            {tab === "accounts" && (
+              <Accounts data={data} open={open} canManage={canManage} />
+            )}
+            {tab === "returns" && (
+              <Returns data={data} open={open} canManage={canManage} />
+            )}
             {tab === "profit" && <Profit report={data.report} />}
           </>
         )}
@@ -757,28 +824,29 @@ const Payroll = ({ data, detail, show, open, closePeriod, canManage }) => (
   <Stack spacing={2.5}>
     {canManage && (
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-      <Button
-        variant="contained"
-        onClick={() =>
-          open("payroll", {
-            period_from: "",
-            period_to: "",
-            payment_date: "",
-            note: "",
-          })
-        }
-        sx={{
-          minWidth: 135,
-          height: 42,
-          borderRadius: "13px",
-          textTransform: "none",
-          fontWeight: 950,
-          background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-          boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
-        }}
-      >
-        Hafta ochish
-      </Button>
+        <Button
+          variant="contained"
+          onClick={() =>
+            open("payroll", {
+              period_from: "",
+              period_to: "",
+              payment_date: "",
+              note: "",
+            })
+          }
+          sx={{
+            minWidth: 135,
+            height: 42,
+            borderRadius: "var(--aa-radius-md)",
+            textTransform: "none",
+            fontWeight: 950,
+            background: "var(--aa-brand-700)",
+            boxShadow: "var(--aa-shadow-sm)",
+            "&:hover": { background: "var(--aa-brand-800)" },
+          }}
+        >
+          Hafta ochish
+        </Button>
       </Box>
     )}
 
@@ -810,10 +878,19 @@ const Payroll = ({ data, detail, show, open, closePeriod, canManage }) => (
           }}
         >
           <Box>
-            <Typography sx={{ fontSize: 18, fontWeight: 950, color: "#0f172a" }}>
+            <Typography
+              sx={{ fontSize: 18, fontWeight: 950, color: "var(--aa-text)" }}
+            >
               Haftalik ish haqi tafsiloti
             </Typography>
-            <Typography sx={{ mt: 0.4, fontSize: 13.5, fontWeight: 650, color: "#64748b" }}>
+            <Typography
+              sx={{
+                mt: 0.4,
+                fontSize: 13.5,
+                fontWeight: 650,
+                color: "var(--aa-text-secondary)",
+              }}
+            >
               Hodimlar bo'yicha hisoblangan va beriladigan summalar.
             </Typography>
           </Box>
@@ -823,7 +900,11 @@ const Payroll = ({ data, detail, show, open, closePeriod, canManage }) => (
               variant="contained"
               color="success"
               onClick={closePeriod}
-              sx={{ borderRadius: "13px", textTransform: "none", fontWeight: 900 }}
+              sx={{
+                borderRadius: "13px",
+                textTransform: "none",
+                fontWeight: 900,
+              }}
             >
               Davrni yopish
             </Button>
@@ -857,7 +938,11 @@ const Payroll = ({ data, detail, show, open, closePeriod, canManage }) => (
                   size="small"
                   variant="outlined"
                   onClick={() => open("line", item)}
-                  sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
+                  sx={{
+                    borderRadius: "10px",
+                    textTransform: "none",
+                    fontWeight: 900,
+                  }}
                 >
                   O'zgartirish
                 </Button>
@@ -882,7 +967,11 @@ const Expenses = ({ data, open, canManage }) => (
         alignItems: "stretch",
       }}
     >
-      <StatCard label="Davrdagi xarajat" value={money(data.expenseTotal)} danger />
+      <StatCard
+        label="Davrdagi xarajat"
+        value={money(data.expenseTotal)}
+        danger
+      />
 
       {canManage && (
         <>
@@ -891,12 +980,12 @@ const Expenses = ({ data, open, canManage }) => (
             onClick={() => open("category", { name: "", description: "" })}
             sx={{
               height: 42,
-              borderRadius: "13px",
+              borderRadius: "var(--aa-radius-md)",
               textTransform: "none",
               fontWeight: 900,
-              color: "#0f172a",
-              borderColor: "rgba(37, 99, 235, 0.22)",
-              background: "#fff",
+              color: "var(--aa-text)",
+              borderColor: "var(--aa-border-strong)",
+              background: "var(--aa-surface-solid)",
             }}
           >
             Kategoriya
@@ -916,10 +1005,11 @@ const Expenses = ({ data, open, canManage }) => (
             }
             sx={{
               height: 42,
-              borderRadius: "13px",
+              borderRadius: "var(--aa-radius-md)",
               textTransform: "none",
               fontWeight: 950,
-              background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+              background: "var(--aa-brand-700)",
+              "&:hover": { background: "var(--aa-brand-800)" },
             }}
           >
             Xarajat qo'shish
@@ -946,55 +1036,67 @@ const Expenses = ({ data, open, canManage }) => (
 const Accounts = ({ data, open, canManage }) => (
   <Stack spacing={2.5}>
     {canManage && (
-      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1.2, flexWrap: "wrap" }}>
-      <Button
-        variant="outlined"
-        onClick={() =>
-          open("account", {
-            name: "",
-            account_type: "cash",
-            opening_balance: "",
-          })
-        }
+      <Box
         sx={{
-          height: 42,
-          borderRadius: "13px",
-          textTransform: "none",
-          fontWeight: 900,
-          color: "#0f172a",
-          borderColor: "rgba(37, 99, 235, 0.22)",
-          background: "#fff",
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: 1.2,
+          flexWrap: "wrap",
         }}
       >
-        Hisob yaratish
-      </Button>
+        <Button
+          variant="outlined"
+          onClick={() =>
+            open("account", {
+              name: "",
+              account_type: "cash",
+              opening_balance: "",
+            })
+          }
+          sx={{
+            height: 42,
+            borderRadius: "var(--aa-radius-md)",
+            textTransform: "none",
+            fontWeight: 900,
+            color: "var(--aa-text)",
+            borderColor: "var(--aa-border-strong)",
+            background: "var(--aa-surface-solid)",
+          }}
+        >
+          Hisob yaratish
+        </Button>
 
-      <Button
-        variant="contained"
-        onClick={() =>
-          open("transaction", {
-            account_id: "",
-            transaction_type: "income",
-            amount: "",
-            transacted_at: today(),
-            description: "",
-          })
-        }
-        sx={{
-          height: 42,
-          borderRadius: "13px",
-          textTransform: "none",
-          fontWeight: 950,
-          background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-        }}
-      >
-        Kirim-chiqim
-      </Button>
+        <Button
+          variant="contained"
+          onClick={() =>
+            open("transaction", {
+              account_id: "",
+              transaction_type: "income",
+              amount: "",
+              transacted_at: today(),
+              description: "",
+            })
+          }
+          sx={{
+            height: 42,
+            borderRadius: "var(--aa-radius-md)",
+            textTransform: "none",
+            fontWeight: 950,
+            background: "var(--aa-brand-700)",
+            "&:hover": { background: "var(--aa-brand-800)" },
+          }}
+        >
+          Kirim-chiqim
+        </Button>
       </Box>
     )}
 
     <Box
-      sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" }, gap: 1.4 }}
+      sx={{
+        display: "grid",
+        gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" },
+        gap: 1.4,
+      }}
     >
       {data.accounts.map((item) => (
         <StatCard
@@ -1010,7 +1112,10 @@ const Accounts = ({ data, open, canManage }) => (
       rows={data.transactions.map((item) => ({
         cells: [
           item.account_name,
-          <TypeChip key={`transaction-type-${item.id}`} type={item.transaction_type} />,
+          <TypeChip
+            key={`transaction-type-${item.id}`}
+            type={item.transaction_type}
+          />,
           money(item.amount),
           item.description || "-",
           date(item.transacted_at),
@@ -1024,26 +1129,27 @@ const Returns = ({ data, open, canManage }) => (
   <Stack spacing={2.5}>
     {canManage && (
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-      <Button
-        variant="contained"
-        onClick={() =>
-          open("return", {
-            client_sale_id: "",
-            quantity: "",
-            returned_at: today(),
-            reason: "",
-          })
-        }
-        sx={{
-          height: 42,
-          borderRadius: "13px",
-          textTransform: "none",
-          fontWeight: 950,
-          background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-        }}
-      >
-        Qaytarish qo'shish
-      </Button>
+        <Button
+          variant="contained"
+          onClick={() =>
+            open("return", {
+              client_sale_id: "",
+              quantity: "",
+              returned_at: today(),
+              reason: "",
+            })
+          }
+          sx={{
+            height: 42,
+            borderRadius: "var(--aa-radius-md)",
+            textTransform: "none",
+            fontWeight: 950,
+            background: "var(--aa-brand-700)",
+            "&:hover": { background: "var(--aa-brand-800)" },
+          }}
+        >
+          Qaytarish qo'shish
+        </Button>
       </Box>
     )}
 
@@ -1070,14 +1176,22 @@ const Profit = ({ report }) => (
     </Alert>
 
     <Box
-      sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" }, gap: 1.4 }}
+      sx={{
+        display: "grid",
+        gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" },
+        gap: 1.4,
+      }}
     >
       <StatCard label="Savdo" value={money(report.sales)} />
       <StatCard label="Qaytarish" value={money(report.returns)} danger />
       <StatCard label="Sof tushum" value={money(report.net_revenue)} />
       <StatCard label="Homashyo" value={money(report.material_costs)} danger />
       <StatCard label="Ish haqi" value={money(report.payroll_costs)} danger />
-      <StatCard label="Boshqa xarajat" value={money(report.other_expenses)} danger />
+      <StatCard
+        label="Boshqa xarajat"
+        value={money(report.other_expenses)}
+        danger
+      />
       <StatCard
         label="Operatsion natija"
         value={money(report.operational_result)}
@@ -1260,7 +1374,11 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
         <>
           <Button
             onClick={close}
-            sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+            sx={{
+              borderRadius: "12px",
+              textTransform: "none",
+              fontWeight: 850,
+            }}
           >
             Bekor qilish
           </Button>
@@ -1274,7 +1392,8 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
               borderRadius: "12px",
               textTransform: "none",
               fontWeight: 900,
-              background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+              background: "var(--aa-brand-700)",
+              "&:hover": { background: "var(--aa-brand-800)" },
             }}
           >
             {saving ? "Saqlanmoqda..." : "Saqlash"}

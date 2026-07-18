@@ -74,7 +74,8 @@ const getLocalUser = () => {
   }
 };
 
-const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
+const money = (value) =>
+  `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
 
 const date = (value) => {
   if (!value) return "-";
@@ -90,10 +91,10 @@ const Card = ({ children, sx = {} }) => (
   <Paper
     elevation={0}
     sx={{
-      borderRadius: "20px",
-      border: "1px solid rgba(148, 163, 184, 0.22)",
-      background: "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(248,250,252,0.92))",
-      boxShadow: "0 18px 50px rgba(15, 23, 42, 0.07)",
+      borderRadius: "var(--aa-radius-xl)",
+      border: "1px solid var(--aa-border)",
+      background: "var(--aa-surface)",
+      boxShadow: "var(--aa-shadow-xs)",
       overflow: "hidden",
       ...sx,
     }}
@@ -105,29 +106,29 @@ const Card = ({ children, sx = {} }) => (
 const MiniStat = ({ label, value, tone = "default" }) => {
   const tones = {
     default: {
-      color: "#0f172a",
-      bg: "#ffffff",
-      border: "rgba(148, 163, 184, 0.24)",
+      color: "var(--aa-text)",
+      bg: "var(--aa-surface-solid)",
+      border: "var(--aa-border)",
     },
     blue: {
-      color: "#2563eb",
-      bg: "rgba(37, 99, 235, 0.08)",
-      border: "rgba(37, 99, 235, 0.18)",
+      color: "var(--aa-info)",
+      bg: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
+      border: "color-mix(in srgb, var(--aa-info) 18%, transparent)",
     },
     green: {
-      color: "#15803d",
-      bg: "rgba(34, 197, 94, 0.1)",
-      border: "rgba(34, 197, 94, 0.22)",
+      color: "var(--aa-success)",
+      bg: "color-mix(in srgb, var(--aa-success) 9%, transparent)",
+      border: "color-mix(in srgb, var(--aa-success) 20%, transparent)",
     },
     red: {
-      color: "#8b0101",
-      bg: "rgba(139, 1, 1, 0.08)",
-      border: "rgba(139, 1, 1, 0.18)",
+      color: "var(--aa-brand-700)",
+      bg: "var(--aa-brand-50)",
+      border: "var(--aa-brand-100)",
     },
     orange: {
-      color: "#92400e",
-      bg: "rgba(245, 158, 11, 0.12)",
-      border: "rgba(245, 158, 11, 0.24)",
+      color: "var(--aa-warning)",
+      bg: "color-mix(in srgb, var(--aa-warning) 10%, transparent)",
+      border: "color-mix(in srgb, var(--aa-warning) 22%, transparent)",
     },
   };
 
@@ -139,13 +140,21 @@ const MiniStat = ({ label, value, tone = "default" }) => {
         minWidth: 135,
         px: 2,
         py: 1.35,
-        borderRadius: "16px",
+        borderRadius: "var(--aa-radius-lg)",
         background: current.bg,
         border: `1px solid ${current.border}`,
-        boxShadow: "0 10px 26px rgba(15, 23, 42, 0.05)",
+        boxShadow: "var(--aa-shadow-xs)",
       }}
     >
-      <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+      <Typography
+        sx={{
+          fontSize: 12,
+          fontWeight: 850,
+          color: "var(--aa-text-secondary)",
+        }}
+      >
+        {label}
+      </Typography>
 
       <Typography
         sx={{
@@ -165,23 +174,31 @@ const MiniStat = ({ label, value, tone = "default" }) => {
 
 const BalanceBox = ({ label, value, tone = "default" }) => {
   const colors = {
-    default: "#0f172a",
-    blue: "#2563eb",
-    green: "#15803d",
-    red: "#8b0101",
-    orange: "#92400e",
+    default: "var(--aa-text)",
+    blue: "var(--aa-info)",
+    green: "var(--aa-success)",
+    red: "var(--aa-brand-700)",
+    orange: "var(--aa-warning)",
   };
 
   return (
     <Box
       sx={{
         p: 1.5,
-        borderRadius: "15px",
-        background: "#fff",
-        border: "1px solid rgba(148, 163, 184, 0.2)",
+        borderRadius: "var(--aa-radius-md)",
+        background: "var(--aa-surface-solid)",
+        border: "1px solid var(--aa-border)",
       }}
     >
-      <Typography sx={{ fontSize: 12, fontWeight: 850, color: "#64748b" }}>{label}</Typography>
+      <Typography
+        sx={{
+          fontSize: 12,
+          fontWeight: 850,
+          color: "var(--aa-text-secondary)",
+        }}
+      >
+        {label}
+      </Typography>
 
       <Typography
         sx={{
@@ -198,7 +215,14 @@ const BalanceBox = ({ label, value, tone = "default" }) => {
   );
 };
 
-const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md" }) => (
+const PremiumDialog = ({
+  open,
+  onClose,
+  title,
+  children,
+  actions,
+  maxWidth = "md",
+}) => (
   <Dialog
     open={open}
     onClose={onClose}
@@ -206,9 +230,10 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
     maxWidth={maxWidth}
     PaperProps={{
       sx: {
-        borderRadius: "22px",
-        border: "1px solid rgba(148, 163, 184, 0.22)",
-        boxShadow: "0 30px 80px rgba(15, 23, 42, 0.22)",
+        borderRadius: "var(--aa-radius-xl)",
+        border: "1px solid var(--aa-border)",
+        boxShadow: "var(--aa-shadow-lg)",
+        backgroundImage: "none",
         overflow: "hidden",
       },
     }}
@@ -219,9 +244,9 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
         py: 2.2,
         fontSize: 22,
         fontWeight: 950,
-        color: "#0f172a",
-        borderBottom: "1px solid rgba(148, 163, 184, 0.18)",
-        background: "linear-gradient(135deg, #ffffff, #f8fafc)",
+        color: "var(--aa-text)",
+        borderBottom: "1px solid var(--aa-border)",
+        background: "var(--aa-surface)",
       }}
     >
       {title}
@@ -234,8 +259,8 @@ const PremiumDialog = ({ open, onClose, title, children, actions, maxWidth = "md
         sx={{
           px: 3,
           py: 2,
-          borderTop: "1px solid rgba(148, 163, 184, 0.18)",
-          background: "rgba(248, 250, 252, 0.72)",
+          borderTop: "1px solid var(--aa-border)",
+          background: "var(--aa-surface-muted)",
         }}
       >
         {actions}
@@ -275,6 +300,8 @@ const MaterialPurchases = () => {
   const [purchaseForm, setPurchaseForm] = useState(emptyPurchase);
   const [supplierForm, setSupplierForm] = useState(emptySupplier);
   const [selectedSupplierForEdit, setSelectedSupplierForEdit] = useState(null);
+  const [selectedSupplierForDelete, setSelectedSupplierForDelete] =
+    useState(null);
   const [materialForm, setMaterialForm] = useState(emptyMaterial);
   const [paymentForm, setPaymentForm] = useState(emptyPayment);
 
@@ -286,6 +313,10 @@ const MaterialPurchases = () => {
 
   const [quickMaterialIndex, setQuickMaterialIndex] = useState(0);
   const [quickMaterialForm, setQuickMaterialForm] = useState(emptyMaterial);
+  const [selectedPurchase, setSelectedPurchase] = useState(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [supplierDeleteOpen, setSupplierDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
@@ -299,7 +330,8 @@ const MaterialPurchases = () => {
   const subtotal = useMemo(
     () =>
       purchaseForm.items.reduce(
-        (sum, item) => sum + Number(item.quantity || 0) * Number(item.unit_price || 0),
+        (sum, item) =>
+          sum + Number(item.quantity || 0) * Number(item.unit_price || 0),
         0,
       ),
     [purchaseForm.items],
@@ -335,7 +367,9 @@ const MaterialPurchases = () => {
       setSuppliers(withBalances);
       setMaterials(materialsRes.data.raw_materials || []);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Ma'lumotlarni olishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Ma'lumotlarni olishda xato.",
+      );
     }
   }, []);
 
@@ -377,7 +411,9 @@ const MaterialPurchases = () => {
           },
         );
       } catch (error) {
-        toast.error(error?.response?.data?.message || "Xaridlarni olishda xato.");
+        toast.error(
+          error?.response?.data?.message || "Xaridlarni olishda xato.",
+        );
       } finally {
         setLoading(false);
       }
@@ -406,6 +442,10 @@ const MaterialPurchases = () => {
     setMaterialOpen(false);
     setPaymentOpen(false);
     setQuickMaterialOpen(false);
+    setDeleteOpen(false);
+    setSupplierDeleteOpen(false);
+    setSelectedPurchase(null);
+    setSelectedSupplierForDelete(null);
     setPurchaseForm(emptyPurchase);
     setSupplierForm(emptySupplier);
     setSelectedSupplierForEdit(null);
@@ -418,10 +458,29 @@ const MaterialPurchases = () => {
     fetchPurchases(pageInfo.offset, pageInfo.limit);
   };
 
+  const confirmDeletePurchase = async () => {
+    if (!selectedPurchase || deleting) return;
+    setDeleting(true);
+    try {
+      await deleteMaterialPurchase(selectedPurchase.id);
+      toast.success("Xarid o'chirildi.");
+      close();
+      refresh();
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Xaridni o'chirishda xato.",
+      );
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const changeItem = (index, field, value) =>
     setPurchaseForm((previous) => ({
       ...previous,
-      items: previous.items.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
+      items: previous.items.map((item, i) =>
+        i === index ? { ...item, [field]: value } : item,
+      ),
     }));
 
   const saveSupplier = async () => {
@@ -467,21 +526,31 @@ const MaterialPurchases = () => {
     });
   };
 
-  const removeSupplier = async (supplier) => {
-    if (!window.confirm(`${supplier.name} ta'minotchisini o'chirmoqchimisiz?`)) return;
+  const removeSupplier = (supplier) => {
+    setSelectedSupplierForDelete(supplier);
+    setSupplierDeleteOpen(true);
+  };
 
+  const confirmRemoveSupplier = async () => {
+    if (!selectedSupplierForDelete || deleting) return;
+    setDeleting(true);
     try {
-      await deleteSupplier(supplier.id);
+      await deleteSupplier(selectedSupplierForDelete.id);
       toast.success("Ta'minotchi o'chirildi.");
 
-      if (selectedSupplierForEdit?.id === supplier.id) {
+      if (selectedSupplierForEdit?.id === selectedSupplierForDelete.id) {
         setSelectedSupplierForEdit(null);
         setSupplierForm(emptySupplier);
       }
 
+      close();
       refresh();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Ta'minotchini o'chirishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Ta'minotchini o'chirishda xato.",
+      );
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -523,7 +592,9 @@ const MaterialPurchases = () => {
       setQuickMaterialForm(emptyMaterial);
       toast.success("Homashyo yaratildi va qatorga tanlandi.");
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Homashyoni yaratishda xato.");
+      toast.error(
+        error?.response?.data?.message || "Homashyoni yaratishda xato.",
+      );
     } finally {
       setSaving(false);
     }
@@ -534,7 +605,9 @@ const MaterialPurchases = () => {
       !purchaseForm.supplier_id ||
       purchaseForm.items.some(
         (item) =>
-          !item.raw_material_id || Number(item.quantity) <= 0 || Number(item.unit_price) < 0,
+          !item.raw_material_id ||
+          Number(item.quantity) <= 0 ||
+          Number(item.unit_price) < 0,
       )
     ) {
       toast.error("Ta'minotchi va barcha homashyo qatorlarini to'ldiring.");
@@ -598,6 +671,11 @@ const MaterialPurchases = () => {
         display: "flex",
         flexDirection: "column",
         pb: 2,
+        color: "var(--aa-text)",
+        "& .MuiOutlinedInput-root": {
+          borderRadius: "var(--aa-radius-md)",
+          backgroundColor: "var(--aa-surface-solid)",
+        },
       }}
     >
       <Card sx={{ mb: 1, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
@@ -619,9 +697,10 @@ const MaterialPurchases = () => {
                 height: 25,
                 fontSize: 12,
                 fontWeight: 950,
-                color: "#2563eb",
-                background: "rgba(37, 99, 235, 0.08)",
-                border: "1px solid rgba(37, 99, 235, 0.16)",
+                color: "var(--aa-brand-700)",
+                background: "var(--aa-brand-50)",
+                border: "1px solid var(--aa-brand-100)",
+                borderRadius: "var(--aa-radius-pill)",
               }}
             />
 
@@ -629,7 +708,7 @@ const MaterialPurchases = () => {
               sx={{
                 fontSize: { xs: 27, md: 33 },
                 fontWeight: 950,
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 letterSpacing: "-0.055em",
                 lineHeight: 1.05,
               }}
@@ -642,7 +721,7 @@ const MaterialPurchases = () => {
                 mt: 0.7,
                 fontSize: 14,
                 fontWeight: 650,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
               }}
             >
               Qayerdan, nima, qancha va nech pulga kelganini nazorat qilish.
@@ -652,15 +731,34 @@ const MaterialPurchases = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(4, auto)" },
+              gridTemplateColumns: {
+                xs: "repeat(2, 1fr)",
+                sm: "repeat(4, auto)",
+              },
               gap: 1.2,
               width: { xs: "100%", xl: "auto" },
             }}
           >
-            <MiniStat label="Davr xaridi" value={money(balance.total_purchase)} tone="blue" />
-            <MiniStat label="Berildi" value={money(balance.total_paid)} tone="green" />
-            <MiniStat label="Oldingi qarz" value={money(openingPeriodDebt)} tone="orange" />
-            <MiniStat label="Umumiy qarz" value={money(balance.debt_amount)} tone="red" />
+            <MiniStat
+              label="Davr xaridi"
+              value={money(balance.total_purchase)}
+              tone="blue"
+            />
+            <MiniStat
+              label="Berildi"
+              value={money(balance.total_paid)}
+              tone="green"
+            />
+            <MiniStat
+              label="Oldingi qarz"
+              value={money(openingPeriodDebt)}
+              tone="orange"
+            />
+            <MiniStat
+              label="Umumiy qarz"
+              value={money(balance.debt_amount)}
+              tone="red"
+            />
           </Box>
         </Box>
       </Card>
@@ -676,10 +774,19 @@ const MaterialPurchases = () => {
           }}
         >
           <Box>
-            <Typography sx={{ fontSize: 17, fontWeight: 950, color: "#0f172a" }}>
+            <Typography
+              sx={{ fontSize: 17, fontWeight: 950, color: "var(--aa-text)" }}
+            >
               Homashyo kirim hisoboti
             </Typography>
-            <Typography sx={{ mt: 0.35, fontSize: 13, fontWeight: 650, color: "#64748b" }}>
+            <Typography
+              sx={{
+                mt: 0.35,
+                fontSize: 13,
+                fontWeight: 650,
+                color: "var(--aa-text-secondary)",
+              }}
+            >
               Tanlangan davr bo'yicha kelgan homashyo miqdori va summasi.
             </Typography>
           </Box>
@@ -691,9 +798,10 @@ const MaterialPurchases = () => {
               height: 26,
               fontSize: 12,
               fontWeight: 900,
-              color: "#2563eb",
-              background: "rgba(37, 99, 235, 0.08)",
-              border: "1px solid rgba(37, 99, 235, 0.16)",
+              color: "var(--aa-info)",
+              background: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
+              border:
+                "1px solid color-mix(in srgb, var(--aa-info) 16%, transparent)",
             }}
           />
         </Box>
@@ -702,7 +810,11 @@ const MaterialPurchases = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)", xl: "repeat(4, 1fr)" },
+              gridTemplateColumns: {
+                xs: "1fr",
+                md: "repeat(2, 1fr)",
+                xl: "repeat(4, 1fr)",
+              },
               gap: 1.2,
             }}
           >
@@ -711,28 +823,63 @@ const MaterialPurchases = () => {
                 key={item.id}
                 sx={{
                   p: 1.5,
-                  borderRadius: "16px",
-                  background: "#fff",
-                  border: "1px solid rgba(148, 163, 184, 0.2)",
+                  borderRadius: "var(--aa-radius-lg)",
+                  background: "var(--aa-surface-solid)",
+                  border: "1px solid var(--aa-border)",
                 }}
               >
-                <Typography sx={{ fontSize: 14, fontWeight: 950, color: "#0f172a" }}>
+                <Typography
+                  sx={{
+                    fontSize: 14,
+                    fontWeight: 950,
+                    color: "var(--aa-text)",
+                  }}
+                >
                   {item.name}
                 </Typography>
-                <Typography sx={{ mt: 0.45, fontSize: 13, fontWeight: 750, color: "#64748b" }}>
-                  {Number(item.total_quantity || 0).toLocaleString("uz-UZ")} {item.unit}
+                <Typography
+                  sx={{
+                    mt: 0.45,
+                    fontSize: 13,
+                    fontWeight: 750,
+                    color: "var(--aa-text-secondary)",
+                  }}
+                >
+                  {Number(item.total_quantity || 0).toLocaleString("uz-UZ")}{" "}
+                  {item.unit}
                 </Typography>
-                <Typography sx={{ mt: 0.35, fontSize: 13, fontWeight: 850, color: "#15803d" }}>
+                <Typography
+                  sx={{
+                    mt: 0.35,
+                    fontSize: 13,
+                    fontWeight: 850,
+                    color: "var(--aa-success)",
+                  }}
+                >
                   Jami: {money(item.total_amount)}
                 </Typography>
-                <Typography sx={{ mt: 0.25, fontSize: 12, fontWeight: 700, color: "#94a3b8" }}>
+                <Typography
+                  sx={{
+                    mt: 0.25,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: "var(--aa-text-tertiary)",
+                  }}
+                >
                   O'rtacha: {money(item.average_price)}
                 </Typography>
               </Box>
             ))}
           </Box>
         ) : (
-          <Typography sx={{ py: 2, fontSize: 14, fontWeight: 750, color: "#64748b" }}>
+          <Typography
+            sx={{
+              py: 2,
+              fontSize: 14,
+              fontWeight: 750,
+              color: "var(--aa-text-secondary)",
+            }}
+          >
             Tanlangan davr bo'yicha homashyo kirimi topilmadi.
           </Typography>
         )}
@@ -751,7 +898,11 @@ const MaterialPurchases = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" },
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, 1fr)",
+                lg: "repeat(4, 1fr)",
+              },
               gap: 1.2,
               flex: 1,
             }}
@@ -771,7 +922,9 @@ const MaterialPurchases = () => {
               size="small"
               label="Ta'minotchi"
               value={filters.supplier_id}
-              onChange={(e) => setFilters((p) => ({ ...p, supplier_id: e.target.value }))}
+              onChange={(e) =>
+                setFilters((p) => ({ ...p, supplier_id: e.target.value }))
+              }
             >
               <MenuItem value="">Barchasi</MenuItem>
               {suppliers.map((supplier) => (
@@ -786,12 +939,12 @@ const MaterialPurchases = () => {
               onClick={() => setFiltersOpen((open) => !open)}
               sx={{
                 height: 42,
-                borderRadius: "13px",
+                borderRadius: "var(--aa-radius-md)",
                 textTransform: "none",
                 fontWeight: 900,
-                color: "#0f172a",
-                borderColor: "rgba(37, 99, 235, 0.22)",
-                background: "#fff",
+                color: "var(--aa-text)",
+                borderColor: "var(--aa-border-strong)",
+                background: "var(--aa-surface-solid)",
               }}
             >
               {filtersOpen ? "Filtrlarni yopish" : "Batafsil filtrlar"}
@@ -802,12 +955,12 @@ const MaterialPurchases = () => {
               onClick={resetFilters}
               sx={{
                 height: 42,
-                borderRadius: "13px",
+                borderRadius: "var(--aa-radius-md)",
                 textTransform: "none",
                 fontWeight: 900,
-                color: "#0f172a",
-                borderColor: "rgba(37, 99, 235, 0.22)",
-                background: "#fff",
+                color: "var(--aa-text)",
+                borderColor: "var(--aa-border-strong)",
+                background: "var(--aa-surface-solid)",
               }}
             >
               Tozalash
@@ -820,7 +973,9 @@ const MaterialPurchases = () => {
                   type="date"
                   label="Dan"
                   value={filters.date_from}
-                  onChange={(e) => setFilters((p) => ({ ...p, date_from: e.target.value }))}
+                  onChange={(e) =>
+                    setFilters((p) => ({ ...p, date_from: e.target.value }))
+                  }
                   slotProps={{ inputLabel: { shrink: true } }}
                 />
 
@@ -829,7 +984,9 @@ const MaterialPurchases = () => {
                   type="date"
                   label="Gacha"
                   value={filters.date_to}
-                  onChange={(e) => setFilters((p) => ({ ...p, date_to: e.target.value }))}
+                  onChange={(e) =>
+                    setFilters((p) => ({ ...p, date_to: e.target.value }))
+                  }
                   slotProps={{ inputLabel: { shrink: true } }}
                 />
               </>
@@ -837,77 +994,77 @@ const MaterialPurchases = () => {
           </Box>
 
           {canManage && (
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.2}>
-            <Button
-              variant="outlined"
-              onClick={() => setSupplierOpen(true)}
-              sx={{
-                minWidth: 135,
-                height: 42,
-                borderRadius: "13px",
-                textTransform: "none",
-                fontWeight: 900,
-                color: "#0f172a",
-                borderColor: "rgba(37, 99, 235, 0.22)",
-                background: "#fff",
-              }}
-            >
-              Ta'minotchilar
-            </Button>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.2}>
+              <Button
+                variant="outlined"
+                onClick={() => setSupplierOpen(true)}
+                sx={{
+                  minWidth: 135,
+                  height: 42,
+                  borderRadius: "var(--aa-radius-md)",
+                  textTransform: "none",
+                  fontWeight: 900,
+                  color: "var(--aa-text)",
+                  borderColor: "var(--aa-border-strong)",
+                  background: "var(--aa-surface-solid)",
+                }}
+              >
+                Ta'minotchilar
+              </Button>
 
-            <Button
-              variant="outlined"
-              onClick={() => setMaterialOpen(true)}
-              sx={{
-                minWidth: 115,
-                height: 42,
-                borderRadius: "13px",
-                textTransform: "none",
-                fontWeight: 900,
-                color: "#0f172a",
-                borderColor: "rgba(37, 99, 235, 0.22)",
-                background: "#fff",
-              }}
-            >
-              Homashyo
-            </Button>
+              <Button
+                variant="outlined"
+                onClick={() => setMaterialOpen(true)}
+                sx={{
+                  minWidth: 115,
+                  height: 42,
+                  borderRadius: "var(--aa-radius-md)",
+                  textTransform: "none",
+                  fontWeight: 900,
+                  color: "var(--aa-text)",
+                  borderColor: "var(--aa-border-strong)",
+                  background: "var(--aa-surface-solid)",
+                }}
+              >
+                Homashyo
+              </Button>
 
-            <Button
-              variant="outlined"
-              onClick={() => setPaymentOpen(true)}
-              sx={{
-                minWidth: 95,
-                height: 42,
-                borderRadius: "13px",
-                textTransform: "none",
-                fontWeight: 900,
-                color: "#0f172a",
-                borderColor: "rgba(37, 99, 235, 0.22)",
-                background: "#fff",
-              }}
-            >
-              To'lov
-            </Button>
+              <Button
+                variant="outlined"
+                onClick={() => setPaymentOpen(true)}
+                sx={{
+                  minWidth: 95,
+                  height: 42,
+                  borderRadius: "var(--aa-radius-md)",
+                  textTransform: "none",
+                  fontWeight: 900,
+                  color: "var(--aa-text)",
+                  borderColor: "var(--aa-border-strong)",
+                  background: "var(--aa-surface-solid)",
+                }}
+              >
+                To'lov
+              </Button>
 
-            <Button
-              variant="contained"
-              onClick={() => setPurchaseOpen(true)}
-              sx={{
-                minWidth: 135,
-                height: 42,
-                borderRadius: "13px",
-                textTransform: "none",
-                fontWeight: 950,
-                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
-                boxShadow: "0 14px 28px rgba(139, 1, 1, 0.2)",
-                "&:hover": {
-                  background: "linear-gradient(135deg, #7f0101, #991b1b)",
-                },
-              }}
-            >
-              Xarid qo'shish
-            </Button>
-          </Stack>
+              <Button
+                variant="contained"
+                onClick={() => setPurchaseOpen(true)}
+                sx={{
+                  minWidth: 135,
+                  height: 42,
+                  borderRadius: "var(--aa-radius-md)",
+                  textTransform: "none",
+                  fontWeight: 950,
+                  background: "var(--aa-brand-700)",
+                  boxShadow: "var(--aa-shadow-sm)",
+                  "&:hover": {
+                    background: "var(--aa-brand-800)",
+                  },
+                }}
+              >
+                Xarid qo'shish
+              </Button>
+            </Stack>
           )}
         </Box>
       </Card>
@@ -928,18 +1085,18 @@ const MaterialPurchases = () => {
                 py: 1.7,
                 fontSize: 12,
                 fontWeight: 950,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 textTransform: "uppercase",
                 letterSpacing: "0.03em",
-                background: "rgba(248, 250, 252, 0.95)",
-                borderBottom: "1px solid rgba(148, 163, 184, 0.2)",
+                background: "var(--aa-surface-muted)",
+                borderBottom: "1px solid var(--aa-border)",
               },
               "& td": {
                 py: 1.55,
-                borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+                borderBottom: "1px solid var(--aa-border)",
               },
               "& tbody tr:hover": {
-                background: "rgba(37, 99, 235, 0.035)",
+                background: "var(--aa-surface-hover)",
               },
             }}
           >
@@ -955,7 +1112,11 @@ const MaterialPurchases = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={canManage ? 4 : 3} align="center" sx={{ py: 7 }}>
+                  <TableCell
+                    colSpan={canManage ? 4 : 3}
+                    align="center"
+                    sx={{ py: 7 }}
+                  >
                     <CircularProgress size={30} />
                   </TableCell>
                 </TableRow>
@@ -963,7 +1124,13 @@ const MaterialPurchases = () => {
                 purchases.map((purchase) => (
                   <TableRow key={purchase.id} hover>
                     <TableCell>
-                      <Typography sx={{ fontSize: 14.5, fontWeight: 950, color: "#0f172a" }}>
+                      <Typography
+                        sx={{
+                          fontSize: 14.5,
+                          fontWeight: 950,
+                          color: "var(--aa-text)",
+                        }}
+                      >
                         {purchase.supplier_name}
                       </Typography>
 
@@ -971,35 +1138,61 @@ const MaterialPurchases = () => {
                         {purchase.items.map((item) => (
                           <Typography
                             key={item.id}
-                            sx={{ fontSize: 12.8, fontWeight: 700, color: "#64748b" }}
+                            sx={{
+                              fontSize: 12.8,
+                              fontWeight: 700,
+                              color: "var(--aa-text-secondary)",
+                            }}
                           >
-                            {item.material_name}: {Number(item.quantity)} {item.unit} x{" "}
-                            {money(item.unit_price)}
+                            {item.material_name}: {Number(item.quantity)}{" "}
+                            {item.unit} x {money(item.unit_price)}
                           </Typography>
                         ))}
                       </Stack>
                     </TableCell>
 
                     <TableCell>
-                      <Typography sx={{ fontSize: 14.5, fontWeight: 950, color: "#0f172a" }}>
+                      <Typography
+                        sx={{
+                          fontSize: 14.5,
+                          fontWeight: 950,
+                          color: "var(--aa-text)",
+                        }}
+                      >
                         Jami: {money(purchase.subtotal)}
                       </Typography>
 
                       <Typography
-                        sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 800, color: "#15803d" }}
+                        sx={{
+                          mt: 0.35,
+                          fontSize: 12.5,
+                          fontWeight: 800,
+                          color: "var(--aa-success)",
+                        }}
                       >
                         Berildi: {money(purchase.paid_amount)}
                       </Typography>
 
                       <Typography
-                        sx={{ mt: 0.35, fontSize: 12.5, fontWeight: 800, color: "#8b0101" }}
+                        sx={{
+                          mt: 0.35,
+                          fontSize: 12.5,
+                          fontWeight: 800,
+                          color: "var(--aa-brand-700)",
+                        }}
                       >
                         Qarz qo'shildi: {money(purchase.debt_amount)}
                       </Typography>
                     </TableCell>
 
                     <TableCell>
-                      <Typography sx={{ fontSize: 13.5, fontWeight: 800, color: "#334155" }}>
+                      <Typography
+                        sx={{
+                          fontSize: 13.5,
+                          fontWeight: 800,
+                          color: "var(--aa-text-secondary)",
+                        }}
+                      >
                         {date(purchase.purchased_at)}
                       </Typography>
 
@@ -1009,7 +1202,7 @@ const MaterialPurchases = () => {
                           maxWidth: 240,
                           fontSize: 12.5,
                           fontWeight: 700,
-                          color: "#64748b",
+                          color: "var(--aa-text-secondary)",
                         }}
                       >
                         {purchase.note || "Izoh yo'q"}
@@ -1022,12 +1215,15 @@ const MaterialPurchases = () => {
                           size="small"
                           color="error"
                           variant="outlined"
-                          onClick={async () => {
-                            if (!window.confirm("Xarid o'chirilsinmi?")) return;
-                            await deleteMaterialPurchase(purchase.id);
-                            refresh();
+                          onClick={() => {
+                            setSelectedPurchase(purchase);
+                            setDeleteOpen(true);
                           }}
-                          sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
+                          sx={{
+                            borderRadius: "10px",
+                            textTransform: "none",
+                            fontWeight: 900,
+                          }}
                         >
                           O'chirish
                         </Button>
@@ -1037,7 +1233,11 @@ const MaterialPurchases = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={canManage ? 4 : 3} align="center" sx={{ py: 7, fontWeight: 850 }}>
+                  <TableCell
+                    colSpan={canManage ? 4 : 3}
+                    align="center"
+                    sx={{ py: 7, fontWeight: 850 }}
+                  >
                     Xaridlar topilmadi
                   </TableCell>
                 </TableRow>
@@ -1048,15 +1248,17 @@ const MaterialPurchases = () => {
 
         <Box
           sx={{
-            borderTop: "1px solid rgba(148, 163, 184, 0.18)",
-            background: "rgba(248, 250, 252, 0.65)",
+            borderTop: "1px solid var(--aa-border)",
+            background: "var(--aa-surface-muted)",
           }}
         >
           <CrmPagination
             total={pageInfo.total}
             page={page}
             limit={pageInfo.limit}
-            onPageChange={(nextPage) => fetchPurchases(nextPage * pageInfo.limit, pageInfo.limit)}
+            onPageChange={(nextPage) =>
+              fetchPurchases(nextPage * pageInfo.limit, pageInfo.limit)
+            }
             onLimitChange={(limit) => fetchPurchases(0, limit)}
           />
         </Box>
@@ -1070,7 +1272,11 @@ const MaterialPurchases = () => {
           <>
             <Button
               onClick={close}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 850,
+              }}
             >
               Bekor qilish
             </Button>
@@ -1084,7 +1290,8 @@ const MaterialPurchases = () => {
                 borderRadius: "12px",
                 textTransform: "none",
                 fontWeight: 900,
-                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                background: "var(--aa-brand-700)",
+                "&:hover": { background: "var(--aa-brand-800)" },
               }}
             >
               {saving ? "Saqlanmoqda..." : "Saqlash"}
@@ -1094,7 +1301,11 @@ const MaterialPurchases = () => {
       >
         <Stack spacing={2.1}>
           <Box
-            sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.6 }}
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+              gap: 1.6,
+            }}
           >
             <TextField
               select
@@ -1132,8 +1343,8 @@ const MaterialPurchases = () => {
             sx={{
               p: 2,
               borderRadius: "18px",
-              background: "linear-gradient(135deg, #ffffff, #f8fafc)",
-              border: "1px solid rgba(148, 163, 184, 0.22)",
+              background: "var(--aa-surface)",
+              border: "1px solid var(--aa-border)",
             }}
           >
             <Box
@@ -1147,11 +1358,24 @@ const MaterialPurchases = () => {
               }}
             >
               <Box>
-                <Typography sx={{ fontSize: 16, fontWeight: 950, color: "#0f172a" }}>
+                <Typography
+                  sx={{
+                    fontSize: 16,
+                    fontWeight: 950,
+                    color: "var(--aa-text)",
+                  }}
+                >
                   Homashyo qatorlari
                 </Typography>
 
-                <Typography sx={{ mt: 0.4, fontSize: 13, fontWeight: 650, color: "#64748b" }}>
+                <Typography
+                  sx={{
+                    mt: 0.4,
+                    fontSize: 13,
+                    fontWeight: 650,
+                    color: "var(--aa-text-secondary)",
+                  }}
+                >
                   Bir nechta homashyoni bitta xaridga qo'shishingiz mumkin.
                 </Typography>
               </Box>
@@ -1161,10 +1385,17 @@ const MaterialPurchases = () => {
                 onClick={() =>
                   setPurchaseForm((p) => ({
                     ...p,
-                    items: [...p.items, { raw_material_id: "", quantity: "", unit_price: "" }],
+                    items: [
+                      ...p.items,
+                      { raw_material_id: "", quantity: "", unit_price: "" },
+                    ],
                   }))
                 }
-                sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 900 }}
+                sx={{
+                  borderRadius: "12px",
+                  textTransform: "none",
+                  fontWeight: 900,
+                }}
               >
                 Yana homashyo
               </Button>
@@ -1176,12 +1407,15 @@ const MaterialPurchases = () => {
                   key={index}
                   sx={{
                     display: "grid",
-                    gridTemplateColumns: { xs: "1fr", md: "1.5fr 1fr 1fr auto" },
+                    gridTemplateColumns: {
+                      xs: "1fr",
+                      md: "1.5fr 1fr 1fr auto",
+                    },
                     gap: 1.3,
                     p: 1.4,
                     borderRadius: "16px",
-                    background: "#ffffff",
-                    border: "1px solid rgba(148, 163, 184, 0.2)",
+                    background: "var(--aa-surface-solid)",
+                    border: "1px solid var(--aa-border)",
                   }}
                 >
                   <Box>
@@ -1190,7 +1424,9 @@ const MaterialPurchases = () => {
                       fullWidth
                       label="Homashyo"
                       value={item.raw_material_id}
-                      onChange={(e) => changeItem(index, "raw_material_id", e.target.value)}
+                      onChange={(e) =>
+                        changeItem(index, "raw_material_id", e.target.value)
+                      }
                     >
                       {materials.map((material) => (
                         <MenuItem key={material.id} value={material.id}>
@@ -1201,7 +1437,12 @@ const MaterialPurchases = () => {
 
                     <Button
                       size="small"
-                      sx={{ mt: 0.5, px: 0, textTransform: "none", fontWeight: 850 }}
+                      sx={{
+                        mt: 0.5,
+                        px: 0,
+                        textTransform: "none",
+                        fontWeight: 850,
+                      }}
                       onClick={() => {
                         setQuickMaterialIndex(index);
                         setQuickMaterialForm(emptyMaterial);
@@ -1216,14 +1457,18 @@ const MaterialPurchases = () => {
                     type="number"
                     label="Miqdor"
                     value={item.quantity}
-                    onChange={(e) => changeItem(index, "quantity", e.target.value)}
+                    onChange={(e) =>
+                      changeItem(index, "quantity", e.target.value)
+                    }
                   />
 
                   <TextField
                     type="number"
                     label="Birlik narxi"
                     value={item.unit_price}
-                    onChange={(e) => changeItem(index, "unit_price", e.target.value)}
+                    onChange={(e) =>
+                      changeItem(index, "unit_price", e.target.value)
+                    }
                   />
 
                   <Button
@@ -1235,7 +1480,11 @@ const MaterialPurchases = () => {
                         items: p.items.filter((_, i) => i !== index),
                       }))
                     }
-                    sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+                    sx={{
+                      borderRadius: "12px",
+                      textTransform: "none",
+                      fontWeight: 850,
+                    }}
                   >
                     Olib tashlash
                   </Button>
@@ -1252,22 +1501,26 @@ const MaterialPurchases = () => {
                 gap: 1.3,
                 p: 1.6,
                 borderRadius: "18px",
-                background: "#f8fafc",
-                border: "1px solid rgba(148, 163, 184, 0.28)",
+                background: "var(--aa-surface-muted)",
+                border: "1px solid var(--aa-border-strong)",
               }}
             >
               <TextField
                 size="small"
                 label="Yangi homashyo nomi"
                 value={quickMaterialForm.name}
-                onChange={(e) => setQuickMaterialForm((p) => ({ ...p, name: e.target.value }))}
+                onChange={(e) =>
+                  setQuickMaterialForm((p) => ({ ...p, name: e.target.value }))
+                }
               />
 
               <TextField
                 size="small"
                 label="Birligi"
                 value={quickMaterialForm.unit}
-                onChange={(e) => setQuickMaterialForm((p) => ({ ...p, unit: e.target.value }))}
+                onChange={(e) =>
+                  setQuickMaterialForm((p) => ({ ...p, unit: e.target.value }))
+                }
                 helperText="dona, kg, metr, litr"
               />
 
@@ -1275,14 +1528,22 @@ const MaterialPurchases = () => {
                 variant="contained"
                 disabled={saving}
                 onClick={saveQuickMaterial}
-                sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 900 }}
+                sx={{
+                  borderRadius: "12px",
+                  textTransform: "none",
+                  fontWeight: 900,
+                }}
               >
                 Yaratish
               </Button>
 
               <Button
                 onClick={() => setQuickMaterialOpen(false)}
-                sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+                sx={{
+                  borderRadius: "12px",
+                  textTransform: "none",
+                  fontWeight: 850,
+                }}
               >
                 Bekor qilish
               </Button>
@@ -1293,24 +1554,38 @@ const MaterialPurchases = () => {
             type="number"
             label="To'lanadigan summa"
             value={purchaseForm.paid_amount}
-            onChange={(e) => setPurchaseForm((p) => ({ ...p, paid_amount: e.target.value }))}
+            onChange={(e) =>
+              setPurchaseForm((p) => ({ ...p, paid_amount: e.target.value }))
+            }
             slotProps={{ htmlInput: { min: 0, step: 1000 } }}
           />
 
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" },
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, 1fr)",
+                lg: "repeat(4, 1fr)",
+              },
               gap: 1.2,
               p: 1.5,
               borderRadius: "18px",
-              background: "#f8fafc",
-              border: "1px solid rgba(148, 163, 184, 0.2)",
+              background: "var(--aa-surface-muted)",
+              border: "1px solid var(--aa-border)",
             }}
           >
             <BalanceBox label="Xarid" value={money(subtotal)} tone="blue" />
-            <BalanceBox label="Oldingi qarz" value={money(previousDebt)} tone="orange" />
-            <BalanceBox label="Beriladi" value={money(paidAmount)} tone="green" />
+            <BalanceBox
+              label="Oldingi qarz"
+              value={money(previousDebt)}
+              tone="orange"
+            />
+            <BalanceBox
+              label="Beriladi"
+              value={money(paidAmount)}
+              tone="green"
+            />
             <BalanceBox label="Yangi qarz" value={money(newDebt)} tone="red" />
           </Box>
 
@@ -1319,7 +1594,9 @@ const MaterialPurchases = () => {
             minRows={2}
             label="Izoh"
             value={purchaseForm.note}
-            onChange={(e) => setPurchaseForm((p) => ({ ...p, note: e.target.value }))}
+            onChange={(e) =>
+              setPurchaseForm((p) => ({ ...p, note: e.target.value }))
+            }
           />
         </Stack>
       </PremiumDialog>
@@ -1332,36 +1609,54 @@ const MaterialPurchases = () => {
         actions={
           <Button
             onClick={close}
-            sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+            sx={{
+              borderRadius: "12px",
+              textTransform: "none",
+              fontWeight: 850,
+            }}
           >
             Yopish
           </Button>
         }
       >
         <Stack spacing={2}>
-          <Typography sx={{ fontSize: 16, fontWeight: 950, color: "#0f172a" }}>
-            {selectedSupplierForEdit ? "Ta'minotchini tahrirlash" : "Yangi ta'minotchi"}
+          <Typography
+            sx={{ fontSize: 16, fontWeight: 950, color: "var(--aa-text)" }}
+          >
+            {selectedSupplierForEdit
+              ? "Ta'minotchini tahrirlash"
+              : "Yangi ta'minotchi"}
           </Typography>
 
           <Box
-            sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.4 }}
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+              gap: 1.4,
+            }}
           >
             <TextField
               label="Nomi"
               value={supplierForm.name}
-              onChange={(e) => setSupplierForm((p) => ({ ...p, name: e.target.value }))}
+              onChange={(e) =>
+                setSupplierForm((p) => ({ ...p, name: e.target.value }))
+              }
             />
 
             <TextField
               label="Telefon"
               value={supplierForm.phone}
-              onChange={(e) => setSupplierForm((p) => ({ ...p, phone: e.target.value }))}
+              onChange={(e) =>
+                setSupplierForm((p) => ({ ...p, phone: e.target.value }))
+              }
             />
 
             <TextField
               label="Manzil"
               value={supplierForm.address}
-              onChange={(e) => setSupplierForm((p) => ({ ...p, address: e.target.value }))}
+              onChange={(e) =>
+                setSupplierForm((p) => ({ ...p, address: e.target.value }))
+              }
             />
 
             <TextField
@@ -1382,17 +1677,27 @@ const MaterialPurchases = () => {
             minRows={2}
             label="Izoh"
             value={supplierForm.note}
-            onChange={(e) => setSupplierForm((p) => ({ ...p, note: e.target.value }))}
+            onChange={(e) =>
+              setSupplierForm((p) => ({ ...p, note: e.target.value }))
+            }
           />
 
-          <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ justifyContent: "flex-end" }}
+          >
             {selectedSupplierForEdit && (
               <Button
                 onClick={() => {
                   setSelectedSupplierForEdit(null);
                   setSupplierForm(emptySupplier);
                 }}
-                sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+                sx={{
+                  borderRadius: "12px",
+                  textTransform: "none",
+                  fontWeight: 850,
+                }}
               >
                 Tozalash
               </Button>
@@ -1406,10 +1711,15 @@ const MaterialPurchases = () => {
                 borderRadius: "12px",
                 textTransform: "none",
                 fontWeight: 900,
-                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                background: "var(--aa-brand-700)",
+                "&:hover": { background: "var(--aa-brand-800)" },
               }}
             >
-              {saving ? "Saqlanmoqda..." : selectedSupplierForEdit ? "Yangilash" : "Qo'shish"}
+              {saving
+                ? "Saqlanmoqda..."
+                : selectedSupplierForEdit
+                  ? "Yangilash"
+                  : "Qo'shish"}
             </Button>
           </Stack>
         </Stack>
@@ -1424,13 +1734,13 @@ const MaterialPurchases = () => {
                   py: 1.5,
                   fontSize: 12,
                   fontWeight: 950,
-                  color: "#64748b",
+                  color: "var(--aa-text-secondary)",
                   textTransform: "uppercase",
-                  background: "#f8fafc",
+                  background: "var(--aa-surface-muted)",
                 },
                 "& td": {
                   py: 1.4,
-                  borderBottom: "1px solid rgba(148, 163, 184, 0.14)",
+                  borderBottom: "1px solid var(--aa-border)",
                 },
               }}
             >
@@ -1449,28 +1759,55 @@ const MaterialPurchases = () => {
                 {suppliers.length ? (
                   suppliers.map((supplier) => (
                     <TableRow key={supplier.id} hover>
-                      <TableCell sx={{ fontWeight: 900, color: "#0f172a" }}>
+                      <TableCell
+                        sx={{ fontWeight: 900, color: "var(--aa-text)" }}
+                      >
                         {supplier.name}
                       </TableCell>
-                      <TableCell sx={{ fontWeight: 700, color: "#334155" }}>
+                      <TableCell
+                        sx={{
+                          fontWeight: 700,
+                          color: "var(--aa-text-secondary)",
+                        }}
+                      >
                         {supplier.phone || "-"}
                       </TableCell>
-                      <TableCell sx={{ fontWeight: 700, color: "#334155" }}>
+                      <TableCell
+                        sx={{
+                          fontWeight: 700,
+                          color: "var(--aa-text-secondary)",
+                        }}
+                      >
                         {supplier.address || "-"}
                       </TableCell>
-                      <TableCell sx={{ fontWeight: 800, color: "#64748b" }}>
+                      <TableCell
+                        sx={{
+                          fontWeight: 800,
+                          color: "var(--aa-text-secondary)",
+                        }}
+                      >
                         {money(supplier.opening_balance)}
                       </TableCell>
-                      <TableCell sx={{ fontWeight: 950, color: "#8b0101" }}>
+                      <TableCell
+                        sx={{ fontWeight: 950, color: "var(--aa-brand-700)" }}
+                      >
                         {money(supplier.current_debt)}
                       </TableCell>
                       <TableCell align="right">
-                        <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          sx={{ justifyContent: "flex-end" }}
+                        >
                           <Button
                             size="small"
                             variant="outlined"
                             onClick={() => editSupplier(supplier)}
-                            sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
+                            sx={{
+                              borderRadius: "10px",
+                              textTransform: "none",
+                              fontWeight: 900,
+                            }}
                           >
                             O'zgartirish
                           </Button>
@@ -1480,7 +1817,11 @@ const MaterialPurchases = () => {
                             variant="outlined"
                             color="error"
                             onClick={() => removeSupplier(supplier)}
-                            sx={{ borderRadius: "10px", textTransform: "none", fontWeight: 900 }}
+                            sx={{
+                              borderRadius: "10px",
+                              textTransform: "none",
+                              fontWeight: 900,
+                            }}
                           >
                             O'chirish
                           </Button>
@@ -1490,7 +1831,11 @@ const MaterialPurchases = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} align="center" sx={{ py: 6, fontWeight: 850 }}>
+                    <TableCell
+                      colSpan={6}
+                      align="center"
+                      sx={{ py: 6, fontWeight: 850 }}
+                    >
                       Ta'minotchilar topilmadi
                     </TableCell>
                   </TableRow>
@@ -1510,7 +1855,11 @@ const MaterialPurchases = () => {
           <>
             <Button
               onClick={close}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 850,
+              }}
             >
               Bekor qilish
             </Button>
@@ -1524,7 +1873,8 @@ const MaterialPurchases = () => {
                 borderRadius: "12px",
                 textTransform: "none",
                 fontWeight: 900,
-                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                background: "var(--aa-brand-700)",
+                "&:hover": { background: "var(--aa-brand-800)" },
               }}
             >
               Saqlash
@@ -1536,13 +1886,17 @@ const MaterialPurchases = () => {
           <TextField
             label="Nomi"
             value={materialForm.name}
-            onChange={(e) => setMaterialForm((p) => ({ ...p, name: e.target.value }))}
+            onChange={(e) =>
+              setMaterialForm((p) => ({ ...p, name: e.target.value }))
+            }
           />
 
           <TextField
             label="O'lchov birligi"
             value={materialForm.unit}
-            onChange={(e) => setMaterialForm((p) => ({ ...p, unit: e.target.value }))}
+            onChange={(e) =>
+              setMaterialForm((p) => ({ ...p, unit: e.target.value }))
+            }
             helperText="dona, kg, metr yoki litr"
           />
         </Stack>
@@ -1557,7 +1911,11 @@ const MaterialPurchases = () => {
           <>
             <Button
               onClick={close}
-              sx={{ borderRadius: "12px", textTransform: "none", fontWeight: 850 }}
+              sx={{
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 850,
+              }}
             >
               Bekor qilish
             </Button>
@@ -1571,7 +1929,8 @@ const MaterialPurchases = () => {
                 borderRadius: "12px",
                 textTransform: "none",
                 fontWeight: 900,
-                background: "linear-gradient(135deg, #8b0101, #b91c1c)",
+                background: "var(--aa-brand-700)",
+                "&:hover": { background: "var(--aa-brand-800)" },
               }}
             >
               To'lov qilish
@@ -1584,7 +1943,9 @@ const MaterialPurchases = () => {
             select
             label="Ta'minotchi"
             value={paymentForm.supplier_id}
-            onChange={(e) => setPaymentForm((p) => ({ ...p, supplier_id: e.target.value }))}
+            onChange={(e) =>
+              setPaymentForm((p) => ({ ...p, supplier_id: e.target.value }))
+            }
           >
             {suppliers.map((supplier) => (
               <MenuItem key={supplier.id} value={supplier.id}>
@@ -1597,14 +1958,18 @@ const MaterialPurchases = () => {
             type="number"
             label="Summa"
             value={paymentForm.amount}
-            onChange={(e) => setPaymentForm((p) => ({ ...p, amount: e.target.value }))}
+            onChange={(e) =>
+              setPaymentForm((p) => ({ ...p, amount: e.target.value }))
+            }
           />
 
           <TextField
             type="date"
             label="Sana"
             value={paymentForm.paid_at}
-            onChange={(e) => setPaymentForm((p) => ({ ...p, paid_at: e.target.value }))}
+            onChange={(e) =>
+              setPaymentForm((p) => ({ ...p, paid_at: e.target.value }))
+            }
             slotProps={{ inputLabel: { shrink: true } }}
           />
 
@@ -1613,9 +1978,101 @@ const MaterialPurchases = () => {
             minRows={2}
             label="Izoh"
             value={paymentForm.note}
-            onChange={(e) => setPaymentForm((p) => ({ ...p, note: e.target.value }))}
+            onChange={(e) =>
+              setPaymentForm((p) => ({ ...p, note: e.target.value }))
+            }
           />
         </Stack>
+      </PremiumDialog>
+
+      <PremiumDialog
+        open={deleteOpen}
+        onClose={close}
+        title="Xaridni o'chirish"
+        maxWidth="xs"
+        actions={
+          <>
+            <Button
+              onClick={close}
+              disabled={deleting}
+              sx={{ borderRadius: "var(--aa-radius-md)", fontWeight: 850 }}
+            >
+              Bekor qilish
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              disabled={deleting}
+              onClick={confirmDeletePurchase}
+              sx={{
+                minWidth: 110,
+                borderRadius: "var(--aa-radius-md)",
+                fontWeight: 900,
+              }}
+            >
+              {deleting ? "O'chirilmoqda..." : "O'chirish"}
+            </Button>
+          </>
+        }
+      >
+        <Typography
+          sx={{
+            color: "var(--aa-text-secondary)",
+            fontWeight: 700,
+            lineHeight: 1.65,
+          }}
+        >
+          <strong>
+            {selectedPurchase?.supplier_name || "Tanlangan xarid"}
+          </strong>{" "}
+          xaridi o'chiriladi. U bilan bog'liq xomashyo kirimi va qarzdorlik
+          hisoblari ham qayta hisoblanadi. Davom etasizmi?
+        </Typography>
+      </PremiumDialog>
+
+      <PremiumDialog
+        open={supplierDeleteOpen}
+        onClose={close}
+        title="Ta'minotchini o'chirish"
+        maxWidth="xs"
+        actions={
+          <>
+            <Button
+              onClick={close}
+              disabled={deleting}
+              sx={{ borderRadius: "var(--aa-radius-md)", fontWeight: 850 }}
+            >
+              Bekor qilish
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              disabled={deleting}
+              onClick={confirmRemoveSupplier}
+              sx={{
+                minWidth: 110,
+                borderRadius: "var(--aa-radius-md)",
+                fontWeight: 900,
+              }}
+            >
+              {deleting ? "O'chirilmoqda..." : "O'chirish"}
+            </Button>
+          </>
+        }
+      >
+        <Typography
+          sx={{
+            color: "var(--aa-text-secondary)",
+            fontWeight: 700,
+            lineHeight: 1.65,
+          }}
+        >
+          <strong>
+            {selectedSupplierForDelete?.name || "Tanlangan ta'minotchi"}
+          </strong>
+          ta'minotchisi o'chiriladi. Agar unga bog'langan xaridlar mavjud
+          bo'lsa, tizim xavfsizlik sababli amalni rad etishi mumkin.
+        </Typography>
       </PremiumDialog>
     </Box>
   );
