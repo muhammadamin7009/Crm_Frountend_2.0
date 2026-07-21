@@ -45,7 +45,10 @@ const emptyForm = {
   note: "",
 };
 
-const emptyBatchItem = { product_id: "", quantity: "" };
+const emptyBatchItem = {
+  product_id: "",
+  quantity: "",
+};
 
 const getLocalUser = () => {
   try {
@@ -56,33 +59,39 @@ const getLocalUser = () => {
 };
 
 const formatMoney = (value) => {
-  if (value === null || value === undefined || value === "") return "0 so'm";
+  if (value === null || value === undefined || value === "") {
+    return "0 so'm";
+  }
+
   return `${new Intl.NumberFormat("uz-UZ").format(Number(value))} so'm`;
 };
 
-const formatNumber = (value) =>
-  new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
+const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
-const formatProductName = (product) =>
-  [product?.name, product?.color].filter(Boolean).join(" — ");
+const formatProductName = (product) => [product?.name, product?.color].filter(Boolean).join(" — ");
 
 const ProductOptionLabel = ({ product }) => (
   <Box sx={{ minWidth: 0, py: 0.25 }}>
     <Typography
-      sx={{ fontSize: 14, fontWeight: 850, color: "var(--aa-text)" }}
       noWrap
+      sx={{
+        color: "#334155",
+        fontSize: 14,
+        fontWeight: 850,
+      }}
     >
       {formatProductName(product)}
     </Typography>
+
     {product.sku && (
       <Typography
+        noWrap
         sx={{
           mt: 0.15,
+          color: "#94a3b8",
           fontSize: 11.5,
           fontWeight: 650,
-          color: "var(--aa-text-tertiary)",
         }}
-        noWrap
       >
         SKU: {product.sku}
       </Typography>
@@ -110,11 +119,11 @@ const Card = ({ children, sx = {} }) => (
   <Paper
     elevation={0}
     sx={{
-      borderRadius: "var(--aa-radius-xl)",
-      border: "1px solid var(--aa-border)",
-      background: "var(--aa-surface)",
-      boxShadow: "var(--aa-shadow-xs)",
       overflow: "hidden",
+      borderRadius: "22px",
+      border: "1px solid #e4e9ef",
+      backgroundColor: "#ffffff",
+      boxShadow: "0 14px 40px rgba(15,23,42,.045)",
       ...sx,
     }}
   >
@@ -122,64 +131,98 @@ const Card = ({ children, sx = {} }) => (
   </Paper>
 );
 
-const MiniStat = ({ label, value, tone = "default" }) => {
+const HeroMetric = ({ label, value, helper, tone = "red" }) => {
   const tones = {
-    default: {
-      color: "var(--aa-text)",
-      bg: "var(--aa-surface-solid)",
-      border: "var(--aa-border)",
-    },
-    blue: {
-      color: "var(--aa-info)",
-      bg: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
-      border: "color-mix(in srgb, var(--aa-info) 18%, transparent)",
-    },
-    green: {
-      color: "var(--aa-success)",
-      bg: "color-mix(in srgb, var(--aa-success) 9%, transparent)",
-      border: "color-mix(in srgb, var(--aa-success) 20%, transparent)",
-    },
     red: {
-      color: "var(--aa-brand-700)",
-      bg: "var(--aa-brand-50)",
-      border: "var(--aa-brand-100)",
+      color: "#fecdd3",
+      background: "rgba(220,38,38,.15)",
+      border: "rgba(248,113,113,.15)",
+    },
+
+    green: {
+      color: "#bbf7d0",
+      background: "rgba(34,197,94,.14)",
+      border: "rgba(74,222,128,.15)",
+    },
+
+    amber: {
+      color: "#fde68a",
+      background: "rgba(245,158,11,.15)",
+      border: "rgba(251,191,36,.15)",
+    },
+
+    blue: {
+      color: "#bfdbfe",
+      background: "rgba(37,99,235,.15)",
+      border: "rgba(96,165,250,.15)",
     },
   };
 
-  const current = tones[tone] || tones.default;
+  const current = tones[tone] || tones.red;
 
   return (
     <Box
       sx={{
-        minWidth: 120,
-        px: 2,
-        py: 1.4,
-        borderRadius: "var(--aa-radius-lg)",
-        background: current.bg,
-        border: `1px solid ${current.border}`,
-        boxShadow: "var(--aa-shadow-xs)",
+        minWidth: 0,
+        minHeight: 126,
+        p: 1.8,
+        borderRadius: "18px",
+        border: "1px solid rgba(255,255,255,.075)",
+        background: "linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025))",
+        backdropFilter: "blur(16px)",
       }}
     >
+      <Box
+        sx={{
+          width: 34,
+          height: 34,
+          display: "grid",
+          placeItems: "center",
+          borderRadius: "11px",
+          color: current.color,
+          backgroundColor: current.background,
+          border: `1px solid ${current.border}`,
+          fontSize: 13,
+          fontWeight: 950,
+        }}
+      >
+        {label.charAt(0)}
+      </Box>
+
       <Typography
         sx={{
-          fontSize: 12,
-          fontWeight: 800,
-          color: "var(--aa-text-secondary)",
+          mt: 1.4,
+          color: "rgba(255,255,255,.44) !important",
+          fontSize: 9.5,
+          fontWeight: 750,
         }}
       >
         {label}
       </Typography>
 
       <Typography
+        noWrap
         sx={{
-          mt: 0.3,
-          fontSize: 20,
+          mt: 0.6,
+          color: "#ffffff !important",
+          fontSize: 18,
+          lineHeight: 1.2,
           fontWeight: 950,
-          color: current.color,
-          letterSpacing: "-0.04em",
+          letterSpacing: "-.035em",
         }}
       >
         {value}
+      </Typography>
+
+      <Typography
+        noWrap
+        sx={{
+          mt: 0.55,
+          color: "rgba(255,255,255,.28) !important",
+          fontSize: 9,
+        }}
+      >
+        {helper}
       </Typography>
     </Box>
   );
@@ -192,11 +235,11 @@ const DepartmentChip = ({ label }) => (
     sx={{
       height: 25,
       px: 0.35,
-      fontSize: 12,
+      color: "#1d4ed8",
+      fontSize: 9.5,
       fontWeight: 900,
-      color: "var(--aa-info)",
-      background: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
-      border: "1px solid color-mix(in srgb, var(--aa-info) 16%, transparent)",
+      backgroundColor: "rgba(37,99,235,.09)",
+      border: "1px solid rgba(37,99,235,.16)",
     }}
   />
 );
@@ -205,6 +248,7 @@ const PremiumDialog = ({
   open,
   onClose,
   title,
+  subtitle = "Ishlab chiqarish ma’lumotlarini boshqarish",
   children,
   actions,
   maxWidth = "md",
@@ -216,37 +260,54 @@ const PremiumDialog = ({
     maxWidth={maxWidth}
     PaperProps={{
       sx: {
-        borderRadius: "var(--aa-radius-xl)",
-        border: "1px solid var(--aa-border)",
-        boxShadow: "var(--aa-shadow-lg)",
-        backgroundImage: "none",
         overflow: "hidden",
+        borderRadius: "23px",
+        border: "1px solid rgba(148,163,184,.20)",
+        boxShadow: "0 30px 80px rgba(15,23,42,.22)",
       },
     }}
   >
     <DialogTitle
+      className="worker-output-dialog-title"
       sx={{
         px: 3,
-        py: 2.2,
-        fontSize: 22,
-        fontWeight: 950,
-        color: "var(--aa-text)",
-        borderBottom: "1px solid var(--aa-border)",
-        background: "var(--aa-surface)",
+        py: 2.35,
+        color: "#ffffff !important",
+        backgroundColor: "#0d1117 !important",
+        backgroundImage:
+          "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
       }}
     >
-      {title}
+      <Typography
+        sx={{
+          color: "#ffffff !important",
+          fontSize: 19,
+          fontWeight: 950,
+        }}
+      >
+        {title}
+      </Typography>
+
+      <Typography
+        sx={{
+          mt: 0.5,
+          color: "rgba(255,255,255,.43) !important",
+          fontSize: 10.5,
+        }}
+      >
+        {subtitle}
+      </Typography>
     </DialogTitle>
 
-    <DialogContent sx={{ px: 3, py: 2.5 }}>{children}</DialogContent>
+    <DialogContent sx={{ px: 3, py: 2.7 }}>{children}</DialogContent>
 
     {actions && (
       <DialogActions
         sx={{
           px: 3,
-          py: 2,
-          borderTop: "1px solid var(--aa-border)",
-          background: "var(--aa-surface-muted)",
+          py: 2.1,
+          borderTop: "1px solid #edf0f3",
+          backgroundColor: "#fafbfc",
         }}
       >
         {actions}
@@ -258,13 +319,24 @@ const PremiumDialog = ({
 const WorkerOutputs = () => {
   const auth = useAuth();
   const currentUser = auth?.user || getLocalUser();
+
   const canManage =
     ["super_admin", "admin"].includes(currentUser?.role) &&
     hasPermission(currentUser, "production.manage");
 
   const [outputs, setOutputs] = useState([]);
-  const [pageInfo, setPageInfo] = useState({ total: 0, offset: 0, limit: 10 });
-  const [totals, setTotals] = useState({ total_quantity: 0, total_amount: 0 });
+
+  const [pageInfo, setPageInfo] = useState({
+    total: 0,
+    offset: 0,
+    limit: 10,
+  });
+
+  const [totals, setTotals] = useState({
+    total_quantity: 0,
+    total_amount: 0,
+  });
+
   const [loading, setLoading] = useState(false);
 
   const [workers, setWorkers] = useState([]);
@@ -281,54 +353,47 @@ const WorkerOutputs = () => {
     sort_by: "worked_at",
     sort_order: "desc",
   });
+
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const [form, setForm] = useState(emptyForm);
+
   const [batchItems, setBatchItems] = useState([{ ...emptyBatchItem }]);
+
   const [selectedOutput, setSelectedOutput] = useState(null);
+
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
 
   const selectedProduct = useMemo(
-    () =>
-      products.find(
-        (product) => Number(product.id) === Number(form.product_id),
-      ),
+    () => products.find((product) => Number(product.id) === Number(form.product_id)),
     [form.product_id, products],
   );
 
   const selectedDepartment = useMemo(
-    () =>
-      departments.find(
-        (department) => Number(department.id) === Number(form.department_id),
-      ),
+    () => departments.find((department) => Number(department.id) === Number(form.department_id)),
     [departments, form.department_id],
   );
 
   const selectedProductCompletesStock = Boolean(
     selectedProduct?.has_recipe &&
     selectedProduct?.completion_department_id &&
-    Number(selectedProduct.completion_department_id) ===
-      Number(form.department_id),
+    Number(selectedProduct.completion_department_id) === Number(form.department_id),
   );
 
   const batchProductsCompletingStock = useMemo(
     () =>
       batchItems
-        .map((item) =>
-          products.find(
-            (product) => Number(product.id) === Number(item.product_id),
-          ),
-        )
+        .map((item) => products.find((product) => Number(product.id) === Number(item.product_id)))
         .filter(
           (product) =>
             product?.has_recipe &&
-            Number(product.completion_department_id) ===
-              Number(form.department_id),
+            Number(product.completion_department_id) === Number(form.department_id),
         ),
     [batchItems, form.department_id, products],
   );
@@ -342,6 +407,7 @@ const WorkerOutputs = () => {
           sort_by: "created_at",
           sort_order: "desc",
         }),
+
         getProducts({
           offset: 0,
           limit: 100,
@@ -349,6 +415,7 @@ const WorkerOutputs = () => {
           sort_order: "asc",
           is_active: true,
         }),
+
         getDepartments({
           offset: 0,
           limit: 100,
@@ -359,16 +426,14 @@ const WorkerOutputs = () => {
       ]);
 
       setWorkers(
-        (usersRes.data.users || usersRes.data.list || []).filter(
-          (user) => user.role === "worker",
-        ),
+        (usersRes.data.users || usersRes.data.list || []).filter((user) => user.role === "worker"),
       );
+
       setProducts(productsRes.data.products || []);
+
       setDepartments(departmentsRes.data.departments || []);
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "Tanlov ma'lumotlarini olishda xato.",
-      );
+      toast.error(error?.response?.data?.message || "Tanlov ma'lumotlarini olishda xato.");
     }
   }, []);
 
@@ -381,15 +446,10 @@ const WorkerOutputs = () => {
         sort_order: filters.sort_order,
       };
 
-      for (const key of [
-        "q",
-        "worker_id",
-        "product_id",
-        "department_id",
-        "date_from",
-        "date_to",
-      ]) {
-        if (filters[key] !== "") params[key] = filters[key];
+      for (const key of ["q", "worker_id", "product_id", "department_id", "date_from", "date_to"]) {
+        if (filters[key] !== "") {
+          params[key] = filters[key];
+        }
       }
 
       return params;
@@ -405,12 +465,23 @@ const WorkerOutputs = () => {
         const { data } = await getWorkerOutputs(buildParams(offset, limit));
 
         setOutputs(data.worker_outputs || []);
-        setTotals(data.totals || { total_quantity: 0, total_amount: 0 });
-        setPageInfo(data.pageInfo || { total: 0, offset, limit });
-      } catch (error) {
-        toast.error(
-          error?.response?.data?.message || "Ish yozuvlarini olishda xato.",
+
+        setTotals(
+          data.totals || {
+            total_quantity: 0,
+            total_amount: 0,
+          },
         );
+
+        setPageInfo(
+          data.pageInfo || {
+            total: 0,
+            offset,
+            limit,
+          },
+        );
+      } catch (error) {
+        toast.error(error?.response?.data?.message || "Ish yozuvlarini olishda xato.");
       } finally {
         setLoading(false);
       }
@@ -431,11 +502,17 @@ const WorkerOutputs = () => {
   }, [filters, pageInfo.limit, fetchOutputs]);
 
   const handleFilterChange = (field) => (event) => {
-    setFilters((previous) => ({ ...previous, [field]: event.target.value }));
+    setFilters((previous) => ({
+      ...previous,
+      [field]: event.target.value,
+    }));
   };
 
   const handleFormChange = (field) => (event) => {
-    setForm((previous) => ({ ...previous, [field]: event.target.value }));
+    setForm((previous) => ({
+      ...previous,
+      [field]: event.target.value,
+    }));
   };
 
   const refreshPage = () => {
@@ -451,16 +528,18 @@ const WorkerOutputs = () => {
 
   const openEditModal = (output) => {
     setSelectedOutput(output);
+
     setForm({
       worker_id: output.worker_id || "",
       product_id: output.product_id || "",
       department_id: output.department_id || "",
       quantity: output.quantity ?? "",
-      worked_at: output.worked_at
-        ? String(output.worked_at).slice(0, 10)
-        : emptyForm.worked_at,
+
+      worked_at: output.worked_at ? String(output.worked_at).slice(0, 10) : emptyForm.worked_at,
+
       note: output.note || "",
     });
+
     setModalOpen(true);
   };
 
@@ -477,7 +556,12 @@ const WorkerOutputs = () => {
 
     setBatchItems((previous) =>
       previous.map((item, itemIndex) =>
-        itemIndex === index ? { ...item, [field]: value } : item,
+        itemIndex === index
+          ? {
+              ...item,
+              [field]: value,
+            }
+          : item,
       ),
     );
   };
@@ -487,9 +571,7 @@ const WorkerOutputs = () => {
   };
 
   const removeBatchItem = (index) => {
-    setBatchItems((previous) =>
-      previous.filter((_, itemIndex) => itemIndex !== index),
-    );
+    setBatchItems((previous) => previous.filter((_, itemIndex) => itemIndex !== index));
   };
 
   const validateForm = () => {
@@ -514,21 +596,17 @@ const WorkerOutputs = () => {
         return false;
       }
     } else {
-      if (
-        batchItems.some(
-          (item) => !item.product_id || Number(item.quantity) <= 0,
-        )
-      ) {
+      if (batchItems.some((item) => !item.product_id || Number(item.quantity) <= 0)) {
         toast.error("Har bir qatorda mahsulot va miqdorni to'g'ri kiriting.");
+
         return false;
       }
 
       const productIds = batchItems.map((item) => String(item.product_id));
 
       if (new Set(productIds).size !== productIds.length) {
-        toast.error(
-          "Bir mahsulotni ikki marta tanlamang, miqdorini bitta qatorda jamlang.",
-        );
+        toast.error("Bir mahsulotni ikki marta tanlamang, miqdorini bitta qatorda jamlang.");
+
         return false;
       }
     }
@@ -553,27 +631,31 @@ const WorkerOutputs = () => {
     try {
       if (selectedOutput) {
         await updateWorkerOutput(selectedOutput.id, buildPayload());
+
         toast.success("Ish yozuvi yangilandi.");
       } else {
         await createBulkWorkerOutputs({
           worker_id: Number(form.worker_id),
+
           department_id: Number(form.department_id),
+
           worked_at: form.worked_at || undefined,
+
           note: form.note.trim() || null,
+
           items: batchItems.map((item) => ({
             product_id: Number(item.product_id),
             quantity: Number(item.quantity),
           })),
         });
+
         toast.success(`${batchItems.length} ta ish yozuvi qo'shildi.`);
       }
 
       closeModals();
       refreshPage();
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "Ish yozuvini saqlashda xato.",
-      );
+      toast.error(error?.response?.data?.message || "Ish yozuvini saqlashda xato.");
     } finally {
       setSaving(false);
     }
@@ -586,13 +668,13 @@ const WorkerOutputs = () => {
 
     try {
       await deleteWorkerOutput(selectedOutput.id);
+
       toast.success("Ish yozuvi o'chirildi.");
+
       closeModals();
       refreshPage();
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "Ish yozuvini o'chirishda xato.",
-      );
+      toast.error(error?.response?.data?.message || "Ish yozuvini o'chirishda xato.");
     } finally {
       setDeleting(false);
     }
@@ -613,57 +695,128 @@ const WorkerOutputs = () => {
       sort_by: "worked_at",
       sort_order: "desc",
     });
+
     setFiltersOpen(false);
   };
 
   return (
     <Box
+      className="crm-page worker-outputs-page"
       sx={{
         height: "100%",
         minHeight: 0,
         display: "flex",
         flexDirection: "column",
-        pb: 2,
-        color: "var(--aa-text)",
-        "& .MuiOutlinedInput-root": {
-          borderRadius: "var(--aa-radius-md)",
-          backgroundColor: "var(--aa-surface-solid)",
-        },
+        pb: 2.5,
       }}
     >
-      <Card sx={{ mb: 2.5, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
+      <style>{workerOutputsStyles}</style>
+
+      <Box
+        component="section"
+        className="worker-outputs-hero"
+        sx={{
+          position: "relative",
+          isolation: "isolate",
+          mb: 2,
+
+          p: {
+            xs: 2.5,
+            md: 3,
+          },
+
+          overflow: "hidden",
+          color: "#ffffff",
+          borderRadius: "25px",
+
+          border: "1px solid rgba(255,255,255,.075)",
+
+          backgroundColor: "#0d1117 !important",
+
+          backgroundImage:
+            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
+
+          boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+
+          flexShrink: 0,
+
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            width: 390,
+            height: 390,
+            top: -275,
+            right: -210,
+            borderRadius: "50%",
+
+            border: "1px solid rgba(248,113,113,.16)",
+
+            boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+
+            pointerEvents: "none",
+          },
+        }}
+      >
         <Box
           sx={{
-            display: "flex",
-            alignItems: { xs: "flex-start", md: "center" },
-            justifyContent: "space-between",
-            flexDirection: { xs: "column", md: "row" },
-            gap: 2,
+            position: "relative",
+            zIndex: 1,
+            display: "grid",
+
+            gridTemplateColumns: {
+              xs: "1fr",
+              xl: ".8fr 1.2fr",
+            },
+
+            gap: 3,
+            alignItems: "center",
           }}
         >
           <Box>
-            <Chip
-              label="Al-amin CRM • ish hisoboti"
-              size="small"
+            <Box
               sx={{
-                mb: 1,
-                height: 25,
-                fontSize: 12,
-                fontWeight: 950,
-                color: "var(--aa-brand-700)",
-                background: "var(--aa-brand-50)",
-                border: "1px solid var(--aa-brand-100)",
-                borderRadius: "var(--aa-radius-pill)",
+                display: "flex",
+                alignItems: "center",
+                gap: 1.1,
               }}
-            />
+            >
+              <Box
+                sx={{
+                  width: 25,
+                  height: 2,
+                  borderRadius: 99,
+
+                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                }}
+              />
+
+              <Typography
+                sx={{
+                  color: "#fecdd3 !important",
+                  fontSize: 10,
+                  fontWeight: 950,
+                  letterSpacing: ".13em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Ishlab chiqarish markazi
+              </Typography>
+            </Box>
 
             <Typography
+              component="h1"
               sx={{
-                fontSize: { xs: 27, md: 33 },
+                mt: 1.5,
+                color: "#ffffff !important",
+
+                fontSize: {
+                  xs: 29,
+                  md: 36,
+                },
+
+                lineHeight: 1.08,
                 fontWeight: 950,
-                color: "var(--aa-text)",
-                letterSpacing: "-0.055em",
-                lineHeight: 1.05,
+                letterSpacing: "-.045em",
               }}
             >
               Ish hisoboti
@@ -671,61 +824,135 @@ const WorkerOutputs = () => {
 
             <Typography
               sx={{
-                mt: 0.7,
-                fontSize: 14,
-                fontWeight: 650,
-                color: "var(--aa-text-secondary)",
+                maxWidth: 560,
+                mt: 1.4,
+
+                color: "rgba(255,255,255,.45) !important",
+
+                fontSize: 12.5,
+                lineHeight: 1.75,
               }}
             >
-              Ishchilar bajargan mahsulot ishlari va oylik hisob-kitobi.
+              Ishchilar bajargan mahsulotlar, bo‘limlar, ish haqi va omborga tayyor mahsulot
+              kirimini bir joydan boshqaring.
             </Typography>
+
+            {canManage && (
+              <Button
+                onClick={openCreateModal}
+                sx={{
+                  mt: 2.4,
+                  minHeight: 43,
+                  px: 2.2,
+
+                  color: "#ffffff !important",
+
+                  borderRadius: "13px",
+                  fontSize: 11.5,
+                  fontWeight: 900,
+                  textTransform: "none",
+
+                  background: "linear-gradient(135deg,#991b1b,#dc2626)",
+
+                  boxShadow: "0 12px 26px rgba(127,29,29,.30)",
+
+                  "&:hover": {
+                    background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+                  },
+                }}
+              >
+                + Ish yozuvi qo‘shish
+              </Button>
+            )}
           </Box>
 
           <Box
             sx={{
               display: "grid",
+
               gridTemplateColumns: {
-                xs: "repeat(2, 1fr)",
-                sm: "repeat(3, auto)",
+                xs: "1fr",
+                sm: "repeat(2,minmax(0,1fr))",
+                lg: "repeat(4,minmax(0,1fr))",
               },
-              gap: 1.4,
-              width: { xs: "100%", md: "auto" },
+
+              gap: 1.3,
             }}
           >
-            <MiniStat label="Yozuvlar" value={pageInfo.total} tone="blue" />
-            <MiniStat
-              label="Miqdor"
-              value={formatNumber(totals.total_quantity)}
+            <HeroMetric
+              label="Ish yozuvlari"
+              value={formatNumber(pageInfo.total)}
+              helper="Tanlangan filtr bo‘yicha"
+              tone="blue"
+            />
+
+            <HeroMetric
+              label="Jami miqdor"
+              value={`${formatNumber(totals.total_quantity)} par`}
+              helper="Bajarilgan mahsulotlar"
               tone="green"
             />
-            <MiniStat
-              label="Summa"
+
+            <HeroMetric
+              label="Hisoblangan haq"
               value={formatMoney(totals.total_amount)}
+              helper="Ishchilarga hisoblangan"
               tone="red"
+            />
+
+            <HeroMetric
+              label="Bo‘limlar"
+              value={formatNumber(departments.length)}
+              helper="Faol ishlab chiqarish bo‘limlari"
+              tone="amber"
             />
           </Box>
         </Box>
-      </Card>
+      </Box>
 
-      <Card sx={{ mb: 2.5, p: 2, flexShrink: 0 }}>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.6 }}>
+      <Card
+        sx={{
+          mb: 2,
+          p: 2,
+          flexShrink: 0,
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 1.6,
+          }}
+        >
           <Box
             sx={{
               display: "flex",
-              alignItems: { xs: "stretch", xl: "center" },
+
+              alignItems: {
+                xs: "stretch",
+                xl: "center",
+              },
+
               justifyContent: "space-between",
-              flexDirection: { xs: "column", xl: "row" },
+
+              flexDirection: {
+                xs: "column",
+                xl: "row",
+              },
+
               gap: 2,
             }}
           >
             <Box
               sx={{
                 display: "grid",
+
                 gridTemplateColumns: {
                   xs: "1fr",
-                  sm: "repeat(2, 1fr)",
-                  lg: "repeat(4, 1fr)",
+                  sm: "repeat(2,1fr)",
+                  lg: "repeat(4,1fr)",
                 },
+
                 gap: 1.4,
                 flex: 1,
               }}
@@ -733,10 +960,13 @@ const WorkerOutputs = () => {
               <TextField
                 size="small"
                 label="Qidirish"
+                placeholder="Ishchi yoki mahsulot nomi"
                 value={filters.q}
                 onChange={handleFilterChange("q")}
                 onKeyDown={(event) => {
-                  if (event.key === "Enter") applyFilters();
+                  if (event.key === "Enter") {
+                    applyFilters();
+                  }
                 }}
               />
 
@@ -748,6 +978,7 @@ const WorkerOutputs = () => {
                 onChange={handleFilterChange("worker_id")}
               >
                 <MenuItem value="">Barchasi</MenuItem>
+
                 {workers.map((worker) => (
                   <MenuItem key={worker.id} value={worker.id}>
                     {worker.first_name} {worker.last_name}
@@ -758,56 +989,15 @@ const WorkerOutputs = () => {
               <Button
                 variant="outlined"
                 onClick={() => setFiltersOpen((open) => !open)}
-                sx={{
-                  height: 42,
-                  borderRadius: "var(--aa-radius-md)",
-                  textTransform: "none",
-                  fontWeight: 900,
-                  color: "var(--aa-text)",
-                  borderColor: "var(--aa-border-strong)",
-                  background: "var(--aa-surface-solid)",
-                }}
+                sx={filterButtonSx}
               >
                 {filtersOpen ? "Filtrlarni yopish" : "Batafsil filtrlar"}
               </Button>
 
-              <Button
-                variant="outlined"
-                onClick={resetFilters}
-                sx={{
-                  height: 42,
-                  borderRadius: "var(--aa-radius-md)",
-                  textTransform: "none",
-                  fontWeight: 900,
-                  color: "var(--aa-text)",
-                  borderColor: "var(--aa-border-strong)",
-                  background: "var(--aa-surface-solid)",
-                }}
-              >
+              <Button variant="outlined" onClick={resetFilters} sx={filterButtonSx}>
                 Tozalash
               </Button>
             </Box>
-
-            {canManage && (
-              <Button
-                variant="contained"
-                onClick={openCreateModal}
-                sx={{
-                  minWidth: 210,
-                  height: 42,
-                  borderRadius: "var(--aa-radius-md)",
-                  textTransform: "none",
-                  fontWeight: 950,
-                  background: "var(--aa-brand-700)",
-                  boxShadow: "var(--aa-shadow-sm)",
-                  "&:hover": {
-                    background: "var(--aa-brand-800)",
-                  },
-                }}
-              >
-                Ish yozuvi qo'shish
-              </Button>
-            )}
           </Box>
 
           {filtersOpen && (
@@ -815,13 +1005,15 @@ const WorkerOutputs = () => {
               sx={{
                 pt: 1.6,
                 display: "grid",
+
                 gridTemplateColumns: {
                   xs: "1fr",
-                  sm: "repeat(2, 1fr)",
-                  lg: "repeat(4, 1fr)",
+                  sm: "repeat(2,1fr)",
+                  lg: "repeat(4,1fr)",
                 },
+
                 gap: 1.4,
-                borderTop: "1px solid var(--aa-border)",
+                borderTop: "1px solid #edf0f3",
               }}
             >
               <TextField
@@ -834,14 +1026,13 @@ const WorkerOutputs = () => {
                   renderValue: (value) =>
                     value
                       ? formatProductName(
-                          products.find(
-                            (product) => Number(product.id) === Number(value),
-                          ),
+                          products.find((product) => Number(product.id) === Number(value)),
                         )
                       : "Barchasi",
                 }}
               >
                 <MenuItem value="">Barchasi</MenuItem>
+
                 {products.map((product) => (
                   <MenuItem key={product.id} value={product.id}>
                     <ProductOptionLabel product={product} />
@@ -852,11 +1043,12 @@ const WorkerOutputs = () => {
               <TextField
                 select
                 size="small"
-                label="Bo'lim"
+                label="Bo‘lim"
                 value={filters.department_id}
                 onChange={handleFilterChange("department_id")}
               >
                 <MenuItem value="">Barchasi</MenuItem>
+
                 {departments.map((department) => (
                   <MenuItem key={department.id} value={department.id}>
                     {department.name}
@@ -870,7 +1062,11 @@ const WorkerOutputs = () => {
                 label="Dan"
                 value={filters.date_from}
                 onChange={handleFilterChange("date_from")}
-                slotProps={{ inputLabel: { shrink: true } }}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
               />
 
               <TextField
@@ -879,7 +1075,11 @@ const WorkerOutputs = () => {
                 label="Gacha"
                 value={filters.date_to}
                 onChange={handleFilterChange("date_to")}
-                slotProps={{ inputLabel: { shrink: true } }}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
               />
             </Box>
           )}
@@ -894,26 +1094,83 @@ const WorkerOutputs = () => {
           flexDirection: "column",
         }}
       >
-        <Box sx={{ minHeight: 0, flex: 1, overflow: "auto" }}>
+        <Box
+          sx={{
+            px: 2.4,
+            py: 1.9,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 2,
+            borderBottom: "1px solid #edf0f3",
+          }}
+        >
+          <Box>
+            <Typography
+              sx={{
+                color: "#0f172a",
+                fontSize: 15,
+                fontWeight: 950,
+              }}
+            >
+              Ish yozuvlari ro‘yxati
+            </Typography>
+
+            <Typography
+              sx={{
+                mt: 0.45,
+                color: "#94a3b8",
+                fontSize: 10.5,
+              }}
+            >
+              Ishchi, mahsulot, bo‘lim va hisoblangan summa
+            </Typography>
+          </Box>
+
+          <Chip
+            size="small"
+            label={`${formatNumber(pageInfo.total)} ta`}
+            sx={{
+              height: 25,
+              color: "#991b1b",
+              fontSize: 9.5,
+              fontWeight: 900,
+              backgroundColor: "rgba(153,27,27,.07)",
+            }}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            minHeight: 0,
+            flex: 1,
+            overflow: "auto",
+          }}
+        >
           <Table
             sx={{
-              minWidth: canManage ? 980 : 820,
+              minWidth: canManage ? 1040 : 860,
+
               "& th": {
-                py: 1.7,
-                fontSize: 12,
-                fontWeight: 950,
-                color: "var(--aa-text-secondary)",
-                textTransform: "uppercase",
-                letterSpacing: "0.03em",
-                background: "var(--aa-surface-muted)",
-                borderBottom: "1px solid var(--aa-border)",
-              },
-              "& td": {
                 py: 1.55,
-                borderBottom: "1px solid var(--aa-border)",
+                color: "#94a3b8",
+                fontSize: 9.5,
+                fontWeight: 900,
+                letterSpacing: ".045em",
+                textTransform: "uppercase",
+                backgroundColor: "#fafbfc",
+                borderColor: "#edf0f3",
               },
+
+              "& td": {
+                py: 1.4,
+                color: "#64748b",
+                fontSize: 10.5,
+                borderColor: "#edf0f3",
+              },
+
               "& tbody tr:hover": {
-                background: "var(--aa-surface-hover)",
+                backgroundColor: "rgba(153,27,27,.025)",
               },
             }}
           >
@@ -923,6 +1180,7 @@ const WorkerOutputs = () => {
                 <TableCell>Ish turi</TableCell>
                 <TableCell>Hisob</TableCell>
                 <TableCell>Sana</TableCell>
+
                 {canManage && <TableCell align="right">Amallar</TableCell>}
               </TableRow>
             </TableHead>
@@ -930,12 +1188,8 @@ const WorkerOutputs = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={canManage ? 5 : 4}
-                    align="center"
-                    sx={{ py: 7 }}
-                  >
-                    <CircularProgress size={30} />
+                  <TableCell colSpan={canManage ? 5 : 4} align="center" sx={{ py: 7 }}>
+                    <CircularProgress size={30} sx={{ color: "#991b1b" }} />
                   </TableCell>
                 </TableRow>
               ) : outputs.length ? (
@@ -943,17 +1197,25 @@ const WorkerOutputs = () => {
                   <TableRow key={output.id} hover>
                     <TableCell>
                       <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1.6 }}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1.6,
+                        }}
                       >
                         <Avatar
                           sx={{
                             width: 48,
                             height: 48,
-                            bgcolor: "var(--aa-brand-50)",
-                            color: "var(--aa-brand-700)",
+                            color: "#ffffff",
+                            fontSize: 13,
                             fontWeight: 950,
-                            border: "3px solid var(--aa-surface-solid)",
-                            boxShadow: "var(--aa-shadow-sm)",
+
+                            background: "linear-gradient(135deg,#7f1d1d,#c81e2a)",
+
+                            border: "3px solid #ffffff",
+
+                            boxShadow: "0 8px 20px rgba(127,29,29,.16)",
                           }}
                         >
                           {getInitial(output.worker_name)}
@@ -962,9 +1224,9 @@ const WorkerOutputs = () => {
                         <Box sx={{ minWidth: 0 }}>
                           <Typography
                             sx={{
+                              color: "#334155",
                               fontSize: 14.5,
                               fontWeight: 900,
-                              color: "var(--aa-text)",
                               lineHeight: 1.15,
                             }}
                           >
@@ -974,9 +1236,9 @@ const WorkerOutputs = () => {
                           <Typography
                             sx={{
                               mt: 0.35,
+                              color: "#64748b",
                               fontSize: 12.5,
                               fontWeight: 700,
-                              color: "var(--aa-text-secondary)",
                             }}
                           >
                             @{output.worker_username || "worker"}
@@ -988,9 +1250,9 @@ const WorkerOutputs = () => {
                     <TableCell>
                       <Typography
                         sx={{
+                          color: "#334155",
                           fontSize: 14.5,
                           fontWeight: 900,
-                          color: "var(--aa-text)",
                         }}
                       >
                         {output.product_name || "-"}
@@ -1000,9 +1262,9 @@ const WorkerOutputs = () => {
                         sx={{
                           mt: 0.35,
                           mb: 0.7,
+                          color: "#64748b",
                           fontSize: 12.5,
                           fontWeight: 700,
-                          color: "var(--aa-text-secondary)",
                         }}
                       >
                         {output.product_sku || output.product_model || "-"}
@@ -1014,9 +1276,9 @@ const WorkerOutputs = () => {
                     <TableCell>
                       <Typography
                         sx={{
+                          color: "#334155",
                           fontSize: 14.5,
                           fontWeight: 950,
-                          color: "var(--aa-text)",
                         }}
                       >
                         {formatMoney(output.total_amount)}
@@ -1025,21 +1287,20 @@ const WorkerOutputs = () => {
                       <Typography
                         sx={{
                           mt: 0.35,
+                          color: "#64748b",
                           fontSize: 12.5,
                           fontWeight: 700,
-                          color: "var(--aa-text-secondary)",
                         }}
                       >
-                        {formatNumber(output.quantity)}{" "}
-                        {output.product_unit || "par"} ×{" "}
+                        {formatNumber(output.quantity)} {output.product_unit || "par"} ×{" "}
                         {formatMoney(output.price_per_unit)}
                       </Typography>
                     </TableCell>
 
                     <TableCell
                       sx={{
+                        color: "#64748b",
                         fontWeight: 800,
-                        color: "var(--aa-text-secondary)",
                       }}
                     >
                       {formatDate(output.worked_at)}
@@ -1051,19 +1312,18 @@ const WorkerOutputs = () => {
                           direction="row"
                           spacing={1}
                           useFlexGap
-                          sx={{ justifyContent: "flex-end", flexWrap: "wrap" }}
+                          sx={{
+                            justifyContent: "flex-end",
+                            flexWrap: "wrap",
+                          }}
                         >
                           <Button
                             size="small"
                             variant="outlined"
                             onClick={() => openEditModal(output)}
-                            sx={{
-                              borderRadius: "10px",
-                              textTransform: "none",
-                              fontWeight: 900,
-                            }}
+                            sx={tableActionSx}
                           >
-                            O'zgartirish
+                            Tahrirlash
                           </Button>
 
                           <Button
@@ -1074,13 +1334,9 @@ const WorkerOutputs = () => {
                               setSelectedOutput(output);
                               setDeleteOpen(true);
                             }}
-                            sx={{
-                              borderRadius: "10px",
-                              textTransform: "none",
-                              fontWeight: 900,
-                            }}
+                            sx={tableActionSx}
                           >
-                            O'chirish
+                            O‘chirish
                           </Button>
                         </Stack>
                       </TableCell>
@@ -1094,7 +1350,7 @@ const WorkerOutputs = () => {
                     align="center"
                     sx={{
                       py: 7,
-                      color: "var(--aa-text-secondary)",
+                      color: "#94a3b8",
                       fontWeight: 850,
                     }}
                   >
@@ -1108,17 +1364,15 @@ const WorkerOutputs = () => {
 
         <Box
           sx={{
-            borderTop: "1px solid var(--aa-border)",
-            background: "var(--aa-surface-muted)",
+            borderTop: "1px solid #edf0f3",
+            backgroundColor: "#fafbfc",
           }}
         >
           <CrmPagination
             total={pageInfo.total}
             page={page}
             limit={pageInfo.limit}
-            onPageChange={(nextPage) =>
-              fetchOutputs(nextPage * pageInfo.limit, pageInfo.limit)
-            }
+            onPageChange={(nextPage) => fetchOutputs(nextPage * pageInfo.limit, pageInfo.limit)}
             onLimitChange={(limit) => fetchOutputs(0, limit)}
           />
         </Box>
@@ -1127,36 +1381,14 @@ const WorkerOutputs = () => {
       <PremiumDialog
         open={modalOpen}
         onClose={closeModals}
-        title={
-          selectedOutput ? "Ish yozuvini tahrirlash" : "Ish yozuvi qo'shish"
-        }
+        title={selectedOutput ? "Ish yozuvini tahrirlash" : "Ish yozuvi qo‘shish"}
         actions={
           <>
-            <Button
-              onClick={closeModals}
-              sx={{
-                borderRadius: "12px",
-                textTransform: "none",
-                fontWeight: 850,
-              }}
-            >
+            <Button onClick={closeModals} sx={dialogCancelSx}>
               Bekor qilish
             </Button>
 
-            <Button
-              variant="contained"
-              onClick={handleSave}
-              disabled={saving}
-              sx={{
-                minWidth: 120,
-                borderRadius: "12px",
-                textTransform: "none",
-                fontWeight: 900,
-                background: "var(--aa-brand-700)",
-                boxShadow: "var(--aa-shadow-sm)",
-                "&:hover": { background: "var(--aa-brand-800)" },
-              }}
-            >
+            <Button variant="contained" onClick={handleSave} disabled={saving} sx={dialogPrimarySx}>
               {saving ? "Saqlanmoqda..." : "Saqlash"}
             </Button>
           </>
@@ -1166,7 +1398,12 @@ const WorkerOutputs = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2,minmax(0,1fr))",
+              },
+
               gap: 1.6,
             }}
           >
@@ -1187,7 +1424,7 @@ const WorkerOutputs = () => {
             <TextField
               select
               required
-              label="Bo'lim"
+              label="Bo‘lim"
               value={form.department_id}
               onChange={handleFormChange("department_id")}
             >
@@ -1203,7 +1440,11 @@ const WorkerOutputs = () => {
               label="Sana"
               value={form.worked_at}
               onChange={handleFormChange("worked_at")}
-              InputLabelProps={{ shrink: true }}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
             />
           </Box>
 
@@ -1211,9 +1452,8 @@ const WorkerOutputs = () => {
             ? selectedProductCompletesStock
             : batchProductsCompletingStock.length > 0) && (
             <Alert severity="success" sx={{ borderRadius: "14px" }}>
-              Bu yakuniy ishlab chiqarish bosqichi. Saqlanganda tayyor mahsulot
-              omboriga par qo'shiladi va retsept bo'yicha homashyolar avtomatik
-              kamayadi.
+              Bu yakuniy ishlab chiqarish bosqichi. Saqlanganda tayyor mahsulot omboriga par
+              qo‘shiladi va retsept bo‘yicha homashyolar avtomatik kamayadi.
             </Alert>
           )}
 
@@ -1222,7 +1462,12 @@ const WorkerOutputs = () => {
               <Box
                 sx={{
                   display: "grid",
-                  gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    sm: "repeat(2,minmax(0,1fr))",
+                  },
+
                   gap: 1.6,
                 }}
               >
@@ -1235,9 +1480,7 @@ const WorkerOutputs = () => {
                   SelectProps={{
                     renderValue: (value) =>
                       formatProductName(
-                        products.find(
-                          (product) => Number(product.id) === Number(value),
-                        ),
+                        products.find((product) => Number(product.id) === Number(value)),
                       ),
                   }}
                 >
@@ -1254,7 +1497,12 @@ const WorkerOutputs = () => {
                   label="Miqdor (par)"
                   value={form.quantity}
                   onChange={handleFormChange("quantity")}
-                  slotProps={{ htmlInput: { min: 0, step: 1 } }}
+                  slotProps={{
+                    htmlInput: {
+                      min: 0,
+                      step: 1,
+                    },
+                  }}
                 />
               </Box>
 
@@ -1262,30 +1510,30 @@ const WorkerOutputs = () => {
                 sx={{
                   p: 2,
                   borderRadius: "18px",
-                  background: "var(--aa-surface-muted)",
-                  border: "1px solid var(--aa-border)",
+                  border: "1px solid #e7ebf0",
+                  background: "linear-gradient(145deg,#ffffff,#f8fafc)",
                 }}
               >
                 <Typography
                   sx={{
-                    fontSize: 13,
+                    color: "#94a3b8",
+                    fontSize: 10,
                     fontWeight: 800,
-                    color: "var(--aa-text-secondary)",
                   }}
                 >
-                  Tanlangan
+                  Tanlangan ish
                 </Typography>
 
                 <Typography
                   sx={{
                     mt: 0.6,
-                    fontSize: 15,
+                    color: "#334155",
+                    fontSize: 13,
                     fontWeight: 950,
-                    color: "var(--aa-text)",
                   }}
                 >
                   {selectedProduct?.name || "Mahsulot tanlanmagan"} /{" "}
-                  {selectedDepartment?.name || "Bo'lim tanlanmagan"}
+                  {selectedDepartment?.name || "Bo‘lim tanlanmagan"}
                 </Typography>
               </Box>
             </>
@@ -1294,26 +1542,36 @@ const WorkerOutputs = () => {
               sx={{
                 p: 2,
                 borderRadius: "18px",
-                background: "var(--aa-surface)",
-                border: "1px solid var(--aa-border)",
+                border: "1px solid #e7ebf0",
+                background: "linear-gradient(145deg,#ffffff,#f8fafc)",
               }}
             >
               <Box
                 sx={{
                   mb: 1.6,
                   display: "flex",
-                  alignItems: { xs: "flex-start", sm: "center" },
+
+                  alignItems: {
+                    xs: "flex-start",
+                    sm: "center",
+                  },
+
                   justifyContent: "space-between",
-                  flexDirection: { xs: "column", sm: "row" },
+
+                  flexDirection: {
+                    xs: "column",
+                    sm: "row",
+                  },
+
                   gap: 1.3,
                 }}
               >
                 <Box>
                   <Typography
                     sx={{
+                      color: "#334155",
                       fontSize: 16,
                       fontWeight: 950,
-                      color: "var(--aa-text)",
                     }}
                   >
                     Mahsulot va miqdorlar
@@ -1322,25 +1580,17 @@ const WorkerOutputs = () => {
                   <Typography
                     sx={{
                       mt: 0.4,
-                      fontSize: 13,
-                      fontWeight: 650,
-                      color: "var(--aa-text-secondary)",
+                      color: "#64748b",
+                      fontSize: 11,
+                      lineHeight: 1.6,
                     }}
                   >
                     Narx va summa backendda avtomatik hisoblanadi.
                   </Typography>
                 </Box>
 
-                <Button
-                  variant="outlined"
-                  onClick={addBatchItem}
-                  sx={{
-                    borderRadius: "12px",
-                    textTransform: "none",
-                    fontWeight: 900,
-                  }}
-                >
-                  Qator qo'shish
+                <Button variant="outlined" onClick={addBatchItem} sx={filterButtonSx}>
+                  + Qator qo‘shish
                 </Button>
               </Box>
 
@@ -1350,12 +1600,17 @@ const WorkerOutputs = () => {
                     key={index}
                     sx={{
                       display: "grid",
-                      gridTemplateColumns: { xs: "1fr", sm: "1fr 180px auto" },
+
+                      gridTemplateColumns: {
+                        xs: "1fr",
+                        sm: "1fr 180px auto",
+                      },
+
                       gap: 1.3,
                       p: 1.4,
                       borderRadius: "16px",
-                      background: "var(--aa-surface-solid)",
-                      border: "1px solid var(--aa-border)",
+                      backgroundColor: "#ffffff",
+                      border: "1px solid #e7ebf0",
                     }}
                   >
                     <TextField
@@ -1367,9 +1622,7 @@ const WorkerOutputs = () => {
                       SelectProps={{
                         renderValue: (value) =>
                           formatProductName(
-                            products.find(
-                              (product) => Number(product.id) === Number(value),
-                            ),
+                            products.find((product) => Number(product.id) === Number(value)),
                           ),
                       }}
                     >
@@ -1379,8 +1632,7 @@ const WorkerOutputs = () => {
                           value={product.id}
                           disabled={batchItems.some(
                             (row, rowIndex) =>
-                              rowIndex !== index &&
-                              Number(row.product_id) === Number(product.id),
+                              rowIndex !== index && Number(row.product_id) === Number(product.id),
                           )}
                         >
                           <ProductOptionLabel product={product} />
@@ -1394,7 +1646,12 @@ const WorkerOutputs = () => {
                       label="Miqdor (par)"
                       value={item.quantity}
                       onChange={changeBatchItem(index, "quantity")}
-                      slotProps={{ htmlInput: { min: 0, step: 1 } }}
+                      slotProps={{
+                        htmlInput: {
+                          min: 0,
+                          step: 1,
+                        },
+                      }}
                     />
 
                     <Button
@@ -1402,9 +1659,10 @@ const WorkerOutputs = () => {
                       onClick={() => removeBatchItem(index)}
                       disabled={batchItems.length === 1}
                       sx={{
-                        borderRadius: "12px",
-                        textTransform: "none",
+                        borderRadius: "11px",
+                        fontSize: 10,
                         fontWeight: 850,
+                        textTransform: "none",
                       }}
                     >
                       Olib tashlash
@@ -1429,18 +1687,12 @@ const WorkerOutputs = () => {
       <PremiumDialog
         open={deleteOpen}
         onClose={closeModals}
-        title="Ish yozuvini o'chirish"
+        title="Ish yozuvini o‘chirish"
+        subtitle="Bu amal tanlangan ish yozuvini o‘chiradi"
         maxWidth="xs"
         actions={
           <>
-            <Button
-              onClick={closeModals}
-              sx={{
-                borderRadius: "12px",
-                textTransform: "none",
-                fontWeight: 850,
-              }}
-            >
+            <Button onClick={closeModals} sx={dialogCancelSx}>
               Bekor qilish
             </Button>
 
@@ -1450,22 +1702,116 @@ const WorkerOutputs = () => {
               onClick={handleDelete}
               disabled={deleting}
               sx={{
-                borderRadius: "12px",
-                textTransform: "none",
+                borderRadius: "11px",
                 fontWeight: 900,
+                textTransform: "none",
               }}
             >
-              {deleting ? "O'chirilmoqda..." : "O'chirish"}
+              {deleting ? "O‘chirilmoqda..." : "O‘chirish"}
             </Button>
           </>
         }
       >
-        <Typography sx={{ color: "var(--aa-text-secondary)", fontWeight: 700 }}>
-          {selectedOutput?.worker_name} yozuvini o'chirmoqchimisiz?
+        <Typography
+          sx={{
+            color: "#64748b",
+            fontSize: 12.5,
+            lineHeight: 1.7,
+            fontWeight: 700,
+          }}
+        >
+          <strong>{selectedOutput?.worker_name}</strong> foydalanuvchisining ish yozuvini
+          o‘chirmoqchimisiz?
         </Typography>
       </PremiumDialog>
     </Box>
   );
 };
+
+const filterButtonSx = {
+  minHeight: 40,
+  px: 1.8,
+  color: "#64748b",
+  borderRadius: "11px",
+  borderColor: "#dce3ea",
+  fontSize: 10.5,
+  fontWeight: 900,
+  textTransform: "none",
+  backgroundColor: "#ffffff",
+
+  "&:hover": {
+    color: "#991b1b",
+    borderColor: "rgba(153,27,27,.22)",
+    backgroundColor: "rgba(153,27,27,.04)",
+  },
+};
+
+const tableActionSx = {
+  borderRadius: "9px",
+  fontSize: 9.5,
+  fontWeight: 900,
+  textTransform: "none",
+};
+
+const dialogCancelSx = {
+  color: "#64748b",
+  borderRadius: "11px",
+  fontWeight: 850,
+  textTransform: "none",
+};
+
+const dialogPrimarySx = {
+  minWidth: 120,
+  minHeight: 40,
+  px: 2,
+  color: "#ffffff",
+  borderRadius: "11px",
+  fontSize: 10.5,
+  fontWeight: 900,
+  textTransform: "none",
+
+  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+
+  boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+
+  "&:hover": {
+    background: "linear-gradient(135deg,#681818,#991b1b)",
+  },
+};
+
+const workerOutputsStyles = `
+  .crm-page .worker-outputs-hero {
+    color: #ffffff !important;
+    background-color: #0d1117 !important;
+    background-image:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(220,38,38,.34),
+        transparent 30%
+      ),
+      linear-gradient(
+        145deg,
+        #0d1117,
+        #171117 52%,
+        #3a121a
+      ) !important;
+  }
+
+  .worker-output-dialog-title {
+    color: #ffffff !important;
+    background-color: #0d1117 !important;
+    background-image:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(220,38,38,.28),
+        transparent 36%
+      ),
+      linear-gradient(
+        135deg,
+        #11151c,
+        #321319
+      ) !important;
+  }
+`;
 
 export default WorkerOutputs;

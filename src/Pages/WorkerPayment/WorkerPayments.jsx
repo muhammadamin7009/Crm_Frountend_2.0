@@ -40,12 +40,14 @@ import {
   getWorkerAdvanceBalance,
 } from "../../api/workerAdvances";
 
+const today = () => new Date().toISOString().slice(0, 10);
+
 const emptyForm = {
   worker_id: "",
   amount: "",
   advance_deduction: "",
   payment_type: "salary",
-  paid_at: new Date().toISOString().slice(0, 10),
+  paid_at: today(),
   period_from: "",
   period_to: "",
   note: "",
@@ -54,8 +56,17 @@ const emptyForm = {
 const emptyAdvanceForm = {
   worker_id: "",
   amount: "",
-  given_at: new Date().toISOString().slice(0, 10),
+  given_at: today(),
   note: "",
+};
+
+const emptyBalance = {
+  total_earned: 0,
+  total_paid: 0,
+  remaining: 0,
+  total_advance: 0,
+  advance_deducted: 0,
+  remaining_advance: 0,
 };
 
 const paymentTypeLabels = {
@@ -76,16 +87,16 @@ const getImageUrl = (path) => {
   if (!path) return undefined;
   if (path.startsWith("http")) return path;
 
-  const baseUrl = String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
-  return `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
+  const base = String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+
+  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 };
 
-const formatMoney = (value) => {
-  if (value === null || value === undefined || value === "") return "0 so'm";
-  return `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
-};
+const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
 
-const formatDate = (value) => {
+const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
+
+const date = (value) => {
   if (!value) return "-";
 
   return new Intl.DateTimeFormat("uz-UZ", {
@@ -95,7 +106,7 @@ const formatDate = (value) => {
   }).format(new Date(value));
 };
 
-const getInitial = (value) =>
+const initial = (value) =>
   String(value || "I")
     .trim()
     .slice(0, 1)
@@ -105,11 +116,11 @@ const Card = ({ children, sx = {} }) => (
   <Paper
     elevation={0}
     sx={{
-      borderRadius: "var(--aa-radius-xl)",
-      border: "1px solid var(--aa-border)",
-      background: "var(--aa-surface)",
-      boxShadow: "var(--aa-shadow-xs)",
       overflow: "hidden",
+      borderRadius: "22px",
+      border: "1px solid #e4e9ef",
+      backgroundColor: "#fff",
+      boxShadow: "0 14px 40px rgba(15,23,42,.045)",
       ...sx,
     }}
   >
@@ -117,70 +128,57 @@ const Card = ({ children, sx = {} }) => (
   </Paper>
 );
 
-const MiniStat = ({ label, value, tone = "default" }) => {
+const HeroMetric = ({ label, value, helper, tone = "red" }) => {
   const tones = {
-    default: {
-      color: "var(--aa-text)",
-      bg: "var(--aa-surface-solid)",
-      border: "var(--aa-border)",
-    },
-    blue: {
-      color: "var(--aa-info)",
-      bg: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
-      border: "color-mix(in srgb, var(--aa-info) 18%, transparent)",
-    },
-    green: {
-      color: "var(--aa-success)",
-      bg: "color-mix(in srgb, var(--aa-success) 9%, transparent)",
-      border: "color-mix(in srgb, var(--aa-success) 20%, transparent)",
-    },
-    red: {
-      color: "var(--aa-brand-700)",
-      bg: "var(--aa-brand-50)",
-      border: "var(--aa-brand-100)",
-    },
-    orange: {
-      color: "var(--aa-warning)",
-      bg: "color-mix(in srgb, var(--aa-warning) 10%, transparent)",
-      border: "color-mix(in srgb, var(--aa-warning) 22%, transparent)",
-    },
+    red: ["#fecdd3", "rgba(220,38,38,.15)", "rgba(248,113,113,.15)"],
+    green: ["#bbf7d0", "rgba(34,197,94,.14)", "rgba(74,222,128,.15)"],
+    blue: ["#bfdbfe", "rgba(37,99,235,.15)", "rgba(96,165,250,.15)"],
+    amber: ["#fde68a", "rgba(245,158,11,.15)", "rgba(251,191,36,.15)"],
+    gray: ["#e2e8f0", "rgba(148,163,184,.14)", "rgba(203,213,225,.13)"],
   };
 
-  const current = tones[tone] || tones.default;
+  const current = tones[tone] || tones.red;
 
   return (
     <Box
       sx={{
-        minWidth: 130,
-        px: 2,
-        py: 1.35,
-        borderRadius: "var(--aa-radius-lg)",
-        background: current.bg,
-        border: `1px solid ${current.border}`,
-        boxShadow: "var(--aa-shadow-xs)",
+        minWidth: 0,
+        minHeight: 126,
+        p: 1.8,
+        borderRadius: "18px",
+
+        border: "1px solid rgba(255,255,255,.075)",
+
+        background: "linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025))",
+
+        backdropFilter: "blur(16px)",
       }}
     >
-      <Typography
+      <Box
         sx={{
-          fontSize: 12,
-          fontWeight: 850,
-          color: "var(--aa-text-secondary)",
+          width: 34,
+          height: 34,
+          display: "grid",
+          placeItems: "center",
+          borderRadius: "11px",
+          color: current[0],
+          backgroundColor: current[1],
+          border: `1px solid ${current[2]}`,
+          fontSize: 13,
+          fontWeight: 950,
         }}
       >
-        {label}
+        {label.charAt(0)}
+      </Box>
+
+      <Typography sx={heroLabelSx}>{label}</Typography>
+
+      <Typography noWrap sx={heroValueSx}>
+        {value}
       </Typography>
 
-      <Typography
-        sx={{
-          mt: 0.35,
-          fontSize: 18,
-          fontWeight: 950,
-          color: current.color,
-          letterSpacing: "-0.04em",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {value}
+      <Typography noWrap sx={heroHelperSx}>
+        {helper}
       </Typography>
     </Box>
   );
@@ -188,21 +186,11 @@ const MiniStat = ({ label, value, tone = "default" }) => {
 
 const PaymentTypeChip = ({ type }) => {
   const styles = {
-    salary: {
-      color: "var(--aa-success)",
-      bg: "color-mix(in srgb, var(--aa-success) 10%, transparent)",
-      border: "color-mix(in srgb, var(--aa-success) 22%, transparent)",
-    },
-    bonus: {
-      color: "var(--aa-info)",
-      bg: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
-      border: "color-mix(in srgb, var(--aa-info) 16%, transparent)",
-    },
-    other: {
-      color: "var(--aa-warning)",
-      bg: "color-mix(in srgb, var(--aa-warning) 10%, transparent)",
-      border: "color-mix(in srgb, var(--aa-warning) 22%, transparent)",
-    },
+    salary: ["#15803d", "rgba(34,197,94,.10)", "rgba(34,197,94,.20)"],
+
+    bonus: ["#1d4ed8", "rgba(37,99,235,.09)", "rgba(37,99,235,.18)"],
+
+    other: ["#b45309", "rgba(245,158,11,.12)", "rgba(245,158,11,.22)"],
   };
 
   const current = styles[type] || styles.other;
@@ -212,15 +200,64 @@ const PaymentTypeChip = ({ type }) => {
       size="small"
       label={paymentTypeLabels[type] || type || "-"}
       sx={{
-        height: 26,
-        px: 0.35,
-        fontSize: 12,
+        height: 25,
+        color: current[0],
+        fontSize: 9.5,
         fontWeight: 900,
-        color: current.color,
-        background: current.bg,
-        border: `1px solid ${current.border}`,
+        backgroundColor: current[1],
+        border: `1px solid ${current[2]}`,
       }}
     />
+  );
+};
+
+const BalanceBox = ({ label, value, tone = "default" }) => {
+  const tones = {
+    default: ["#334155", "#fff", "#e7ebf0"],
+
+    green: ["#15803d", "rgba(34,197,94,.07)", "rgba(34,197,94,.17)"],
+
+    red: ["#991b1b", "rgba(153,27,27,.07)", "rgba(153,27,27,.16)"],
+
+    blue: ["#1d4ed8", "rgba(37,99,235,.07)", "rgba(37,99,235,.17)"],
+
+    amber: ["#b45309", "rgba(245,158,11,.09)", "rgba(245,158,11,.19)"],
+  };
+
+  const current = tones[tone] || tones.default;
+
+  return (
+    <Box
+      sx={{
+        minWidth: 0,
+        p: 1.5,
+        borderRadius: "15px",
+        backgroundColor: current[1],
+        border: `1px solid ${current[2]}`,
+      }}
+    >
+      <Typography
+        sx={{
+          color: "#94a3b8",
+          fontSize: 9.5,
+          fontWeight: 800,
+        }}
+      >
+        {label}
+      </Typography>
+
+      <Typography
+        noWrap
+        sx={{
+          mt: 0.55,
+          color: current[0],
+          fontSize: 13,
+          fontWeight: 950,
+        }}
+      >
+        {value}
+      </Typography>
+    </Box>
   );
 };
 
@@ -228,6 +265,7 @@ const PremiumDialog = ({
   open,
   onClose,
   title,
+  subtitle = "Oylik va avans ma’lumotlarini boshqarish",
   children,
   actions,
   maxWidth = "sm",
@@ -239,105 +277,77 @@ const PremiumDialog = ({
     maxWidth={maxWidth}
     PaperProps={{
       sx: {
-        borderRadius: "var(--aa-radius-xl)",
-        border: "1px solid var(--aa-border)",
-        boxShadow: "var(--aa-shadow-lg)",
-        backgroundImage: "none",
         overflow: "hidden",
+        borderRadius: "23px",
+
+        border: "1px solid rgba(148,163,184,.20)",
+
+        boxShadow: "0 30px 80px rgba(15,23,42,.22)",
       },
     }}
   >
-    <DialogTitle
-      sx={{
-        px: 3,
-        py: 2.2,
-        fontSize: 22,
-        fontWeight: 950,
-        color: "var(--aa-text)",
-        borderBottom: "1px solid var(--aa-border)",
-        background: "var(--aa-surface)",
-      }}
-    >
-      {title}
-    </DialogTitle>
-
-    <DialogContent sx={{ px: 3, py: 2.5 }}>{children}</DialogContent>
-
-    {actions && (
-      <DialogActions
+    <DialogTitle className="worker-payments-dialog-title" sx={dialogTitleSx}>
+      <Typography
         sx={{
-          px: 3,
-          py: 2,
-          borderTop: "1px solid var(--aa-border)",
-          background: "var(--aa-surface-muted)",
+          color: "#fff !important",
+          fontSize: 19,
+          fontWeight: 950,
         }}
       >
-        {actions}
-      </DialogActions>
-    )}
+        {title}
+      </Typography>
+
+      <Typography
+        sx={{
+          mt: 0.5,
+
+          color: "rgba(255,255,255,.43) !important",
+
+          fontSize: 10.5,
+        }}
+      >
+        {subtitle}
+      </Typography>
+    </DialogTitle>
+
+    <DialogContent
+      sx={{
+        px: 3,
+        py: 2.7,
+      }}
+    >
+      {children}
+    </DialogContent>
+
+    {actions && <DialogActions sx={dialogActionsSx}>{actions}</DialogActions>}
   </Dialog>
 );
 
-const BalanceBox = ({ label, value, tone = "default" }) => {
-  const colors = {
-    default: "var(--aa-text)",
-    green: "var(--aa-success)",
-    red: "var(--aa-brand-700)",
-    blue: "var(--aa-info)",
-    orange: "var(--aa-warning)",
-  };
-
-  return (
-    <Box
-      sx={{
-        p: 1.5,
-        borderRadius: "var(--aa-radius-md)",
-        background: "var(--aa-surface-solid)",
-        border: "1px solid var(--aa-border)",
-      }}
-    >
-      <Typography
-        sx={{
-          fontSize: 12,
-          fontWeight: 850,
-          color: "var(--aa-text-secondary)",
-        }}
-      >
-        {label}
-      </Typography>
-
-      <Typography
-        sx={{
-          mt: 0.45,
-          fontSize: 15,
-          fontWeight: 950,
-          color: colors[tone] || colors.default,
-          letterSpacing: "-0.035em",
-        }}
-      >
-        {value}
-      </Typography>
-    </Box>
-  );
-};
-
 const WorkerPayments = () => {
   const auth = useAuth();
+
   const currentUser = auth?.user || getLocalUser();
+
   const canManage =
     ["super_admin", "admin"].includes(currentUser?.role) &&
     hasPermission(currentUser, "payroll.manage");
 
   const [payments, setPayments] = useState([]);
+
   const [workerDues, setWorkerDues] = useState([]);
-  const [balance, setBalance] = useState({
-    total_earned: 0,
-    total_paid: 0,
-    remaining: 0,
+
+  const [balance, setBalance] = useState(emptyBalance);
+
+  const [pageInfo, setPageInfo] = useState({
+    total: 0,
+    offset: 0,
+    limit: 10,
   });
-  const [pageInfo, setPageInfo] = useState({ total: 0, offset: 0, limit: 10 });
+
   const [workers, setWorkers] = useState([]);
+
   const [loading, setLoading] = useState(false);
+
   const [summaryLoading, setSummaryLoading] = useState(false);
 
   const [filters, setFilters] = useState({
@@ -352,36 +362,43 @@ const WorkerPayments = () => {
   });
 
   const [form, setForm] = useState(emptyForm);
+
   const [selectedPayment, setSelectedPayment] = useState(null);
+
   const [modalOpen, setModalOpen] = useState(false);
+
   const [deleteOpen, setDeleteOpen] = useState(false);
+
   const [advanceOpen, setAdvanceOpen] = useState(false);
+
   const [advancesOpen, setAdvancesOpen] = useState(false);
+
   const [advances, setAdvances] = useState([]);
+
   const [advancesLoading, setAdvancesLoading] = useState(false);
+
   const [advanceForm, setAdvanceForm] = useState(emptyAdvanceForm);
+
   const [advanceSaving, setAdvanceSaving] = useState(false);
+
   const [saving, setSaving] = useState(false);
+
   const [deleting, setDeleting] = useState(false);
-  const [selectedWorkerBalance, setSelectedWorkerBalance] = useState({
-    total_earned: 0,
-    total_paid: 0,
-    remaining: 0,
-    total_advance: 0,
-    advance_deducted: 0,
-    remaining_advance: 0,
-  });
+
+  const [selectedWorkerBalance, setSelectedWorkerBalance] = useState(emptyBalance);
+
   const [balanceLoading, setBalanceLoading] = useState(false);
 
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
-  const enteredPaymentTotal =
-    Number(form.amount || 0) + Number(form.advance_deduction || 0);
+
+  const enteredPaymentTotal = Number(form.amount || 0) + Number(form.advance_deduction || 0);
+
   const editingPaymentTotal = selectedPayment
-    ? Number(selectedPayment.amount || 0) +
-      Number(selectedPayment.advance_deduction || 0)
+    ? Number(selectedPayment.amount || 0) + Number(selectedPayment.advance_deduction || 0)
     : 0;
-  const availableWorkerBalance =
-    Number(selectedWorkerBalance.remaining || 0) + editingPaymentTotal;
+
+  const availableWorkerBalance = Number(selectedWorkerBalance.remaining || 0) + editingPaymentTotal;
+
   const paymentExceedsBalance =
     Boolean(form.worker_id) && enteredPaymentTotal > availableWorkerBalance;
 
@@ -394,15 +411,9 @@ const WorkerPayments = () => {
         sort_order: "desc",
       });
 
-      setWorkers(
-        (data.users || data.list || []).filter(
-          (user) => user.role === "worker",
-        ),
-      );
+      setWorkers((data.users || data.list || []).filter((user) => user.role === "worker"));
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "Ishchilarni olishda xato.",
-      );
+      toast.error(error?.response?.data?.message || "Ishchilarni olishda xato.");
     }
   }, []);
 
@@ -415,14 +426,10 @@ const WorkerPayments = () => {
         sort_order: filters.sort_order,
       };
 
-      for (const key of [
-        "q",
-        "worker_id",
-        "payment_type",
-        "date_from",
-        "date_to",
-      ]) {
-        if (filters[key] !== "") params[key] = filters[key];
+      for (const key of ["q", "worker_id", "payment_type", "date_from", "date_to"]) {
+        if (filters[key] !== "") {
+          params[key] = filters[key];
+        }
       }
 
       return params;
@@ -438,11 +445,16 @@ const WorkerPayments = () => {
         const { data } = await getWorkerPayments(buildParams(offset, limit));
 
         setPayments(data.worker_payments || []);
-        setPageInfo(data.pageInfo || { total: 0, offset, limit });
-      } catch (error) {
-        toast.error(
-          error?.response?.data?.message || "To'lovlarni olishda xato.",
+
+        setPageInfo(
+          data.pageInfo || {
+            total: 0,
+            offset,
+            limit,
+          },
         );
+      } catch (error) {
+        toast.error(error?.response?.data?.message || "To'lovlarni olishda xato.");
       } finally {
         setLoading(false);
       }
@@ -454,27 +466,31 @@ const WorkerPayments = () => {
     setSummaryLoading(true);
 
     try {
-      const [balanceRes, duesRes] = await Promise.all([
+      const [balanceRes, duesRes, advanceRes] = await Promise.all([
         getWorkerBalance({
           worker_id: filters.worker_id || undefined,
+
           date_from: filters.date_from || undefined,
+
           date_to: filters.date_to || undefined,
         }),
+
         getWorkerDues(),
+
+        getWorkerAdvanceBalance({
+          worker_id: filters.worker_id || undefined,
+        }),
       ]);
 
       setWorkerDues(duesRes.data.worker_dues || []);
-      setBalance(
-        balanceRes.data.balance || {
-          total_earned: 0,
-          total_paid: 0,
-          remaining: 0,
-        },
-      );
+
+      setBalance({
+        ...emptyBalance,
+        ...(balanceRes.data.balance || {}),
+        ...(advanceRes.data.balance || {}),
+      });
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "Oylik summary olishda xato.",
-      );
+      toast.error(error?.response?.data?.message || "Oylik summary olishda xato.");
     } finally {
       setSummaryLoading(false);
     }
@@ -487,6 +503,7 @@ const WorkerPayments = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchPayments(0, pageInfo.limit);
+
       fetchSummary();
     }, 250);
 
@@ -494,44 +511,41 @@ const WorkerPayments = () => {
   }, [filters, pageInfo.limit, fetchPayments, fetchSummary]);
 
   const handleFilterChange = (field) => (event) => {
-    setFilters((previous) => ({ ...previous, [field]: event.target.value }));
+    setFilters((previous) => ({
+      ...previous,
+      [field]: event.target.value,
+    }));
   };
 
   const fetchSelectedWorkerBalance = useCallback(async (workerId) => {
     if (!workerId) {
-      setSelectedWorkerBalance({
-        total_earned: 0,
-        total_paid: 0,
-        remaining: 0,
-        total_advance: 0,
-        advance_deducted: 0,
-        remaining_advance: 0,
-      });
+      setSelectedWorkerBalance(emptyBalance);
+
       return;
     }
 
     setBalanceLoading(true);
 
     try {
-      const [{ data }, advanceRes] = await Promise.all([
+      const [balanceRes, advanceRes] = await Promise.all([
         getWorkerBalance({
           worker_id: workerId,
         }),
-        getWorkerAdvanceBalance({ worker_id: workerId }),
+
+        getWorkerAdvanceBalance({
+          worker_id: workerId,
+        }),
       ]);
 
       setSelectedWorkerBalance({
-        ...(data.balance || {
-          total_earned: 0,
-          total_paid: 0,
-          remaining: 0,
-        }),
+        ...emptyBalance,
+
+        ...(balanceRes.data.balance || {}),
+
         ...(advanceRes.data.balance || {}),
       });
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "Ishchi balansini olishda xato.",
-      );
+      toast.error(error?.response?.data?.message || "Ishchi balansini olishda xato.");
     } finally {
       setBalanceLoading(false);
     }
@@ -540,24 +554,19 @@ const WorkerPayments = () => {
   const handleFormChange = (field) => (event) => {
     const value = event.target.value;
 
-    setForm((previous) => ({ ...previous, [field]: value }));
+    setForm((previous) => ({
+      ...previous,
+      [field]: value,
+    }));
 
     if (field === "worker_id") {
       fetchSelectedWorkerBalance(value);
-    }
-
-    if (field === "period_from" || field === "period_to") {
-      fetchSelectedWorkerBalance(form.worker_id);
     }
   };
 
   const refreshPage = () => {
     fetchPayments(pageInfo.offset, pageInfo.limit);
-    fetchSummary();
-  };
 
-  const applyFilters = () => {
-    fetchPayments(0, pageInfo.limit);
     fetchSummary();
   };
 
@@ -579,13 +588,18 @@ const WorkerPayments = () => {
 
     const nextForm = {
       ...emptyForm,
+      paid_at: today(),
+
       period_from: filters.date_from || "",
+
       period_to: filters.date_to || "",
+
       worker_id: filters.worker_id || "",
     };
 
     setForm(nextForm);
     setModalOpen(true);
+
     fetchSelectedWorkerBalance(nextForm.worker_id);
   };
 
@@ -594,23 +608,25 @@ const WorkerPayments = () => {
 
     const nextForm = {
       worker_id: payment.worker_id || "",
+
       amount: payment.amount ?? "",
+
       advance_deduction: payment.advance_deduction ?? "",
+
       payment_type: payment.payment_type || "salary",
-      paid_at: payment.paid_at
-        ? String(payment.paid_at).slice(0, 10)
-        : emptyForm.paid_at,
-      period_from: payment.period_from
-        ? String(payment.period_from).slice(0, 10)
-        : "",
-      period_to: payment.period_to
-        ? String(payment.period_to).slice(0, 10)
-        : "",
+
+      paid_at: payment.paid_at ? String(payment.paid_at).slice(0, 10) : today(),
+
+      period_from: payment.period_from ? String(payment.period_from).slice(0, 10) : "",
+
+      period_to: payment.period_to ? String(payment.period_to).slice(0, 10) : "",
+
       note: payment.note || "",
     };
 
     setForm(nextForm);
     setModalOpen(true);
+
     fetchSelectedWorkerBalance(nextForm.worker_id);
   };
 
@@ -619,16 +635,18 @@ const WorkerPayments = () => {
     setDeleteOpen(false);
     setAdvanceOpen(false);
     setSelectedPayment(null);
-    setForm(emptyForm);
-    setAdvanceForm(emptyAdvanceForm);
-    setSelectedWorkerBalance({
-      total_earned: 0,
-      total_paid: 0,
-      remaining: 0,
-      total_advance: 0,
-      advance_deducted: 0,
-      remaining_advance: 0,
+
+    setForm({
+      ...emptyForm,
+      paid_at: today(),
     });
+
+    setAdvanceForm({
+      ...emptyAdvanceForm,
+      given_at: today(),
+    });
+
+    setSelectedWorkerBalance(emptyBalance);
   };
 
   const validateForm = () => {
@@ -637,25 +655,23 @@ const WorkerPayments = () => {
       return false;
     }
 
-    if (!form.amount || Number(form.amount) <= 0) {
-      if (Number(form.advance_deduction || 0) <= 0) {
-        toast.error("Naqd summa yoki avans ushlanmasini kiriting.");
-        return false;
-      }
+    if (Number(form.amount || 0) <= 0 && Number(form.advance_deduction || 0) <= 0) {
+      toast.error("Naqd summa yoki avans ushlanmasini kiriting.");
+
+      return false;
     }
 
     if (
-      Number(form.advance_deduction || 0) >
-      Number(selectedWorkerBalance.remaining_advance || 0)
+      Number(form.advance_deduction || 0) > Number(selectedWorkerBalance.remaining_advance || 0)
     ) {
       toast.error("Avans ushlanmasi qolgan avansdan oshmasin.");
+
       return false;
     }
 
     if (paymentExceedsBalance) {
-      toast.error(
-        `Ogohlantirish: to'lov qolgan ${formatMoney(availableWorkerBalance)} ish haqidan oshmasin.`,
-      );
+      toast.error(`To'lov qolgan ${money(availableWorkerBalance)} ish haqidan oshmasin.`);
+
       return false;
     }
 
@@ -665,6 +681,7 @@ const WorkerPayments = () => {
       new Date(form.period_from) > new Date(form.period_to)
     ) {
       toast.error("Davr boshlanishi tugash sanasidan katta bo'lmasin.");
+
       return false;
     }
 
@@ -673,12 +690,19 @@ const WorkerPayments = () => {
 
   const buildPayload = () => ({
     worker_id: Number(form.worker_id),
+
     amount: Number(form.amount || 0),
+
     advance_deduction: Number(form.advance_deduction || 0),
+
     payment_type: form.payment_type,
+
     paid_at: form.paid_at || undefined,
+
     period_from: form.period_from || null,
+
     period_to: form.period_to || null,
+
     note: form.note.trim() || null,
   });
 
@@ -690,9 +714,11 @@ const WorkerPayments = () => {
     try {
       if (selectedPayment) {
         await updateWorkerPayment(selectedPayment.id, buildPayload());
+
         toast.success("To'lov yangilandi.");
       } else {
         await createWorkerPayment(buildPayload());
+
         toast.success("To'lov qo'shildi.");
       }
 
@@ -712,13 +738,13 @@ const WorkerPayments = () => {
 
     try {
       await deleteWorkerPayment(selectedPayment.id);
+
       toast.success("To'lov o'chirildi.");
+
       closeModals();
       refreshPage();
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "To'lovni o'chirishda xato.",
-      );
+      toast.error(error?.response?.data?.message || "To'lovni o'chirishda xato.");
     } finally {
       setDeleting(false);
     }
@@ -727,16 +753,22 @@ const WorkerPayments = () => {
   const openWorkerPayment = (workerId) => {
     setSelectedPayment(null);
 
-    const nextForm = { ...emptyForm, worker_id: workerId };
+    const nextForm = {
+      ...emptyForm,
+      paid_at: today(),
+      worker_id: workerId,
+    };
 
     setForm(nextForm);
     setModalOpen(true);
+
     fetchSelectedWorkerBalance(workerId);
   };
 
   const handleSaveAdvance = async () => {
     if (!advanceForm.worker_id || Number(advanceForm.amount) <= 0) {
       toast.error("Ishchi va avans summasini kiriting.");
+
       return;
     }
 
@@ -745,12 +777,16 @@ const WorkerPayments = () => {
     try {
       await createWorkerAdvance({
         worker_id: Number(advanceForm.worker_id),
+
         amount: Number(advanceForm.amount),
+
         given_at: advanceForm.given_at,
+
         note: advanceForm.note.trim() || null,
       });
 
       toast.success("Avans berildi.");
+
       closeModals();
       refreshPage();
     } catch (error) {
@@ -767,6 +803,7 @@ const WorkerPayments = () => {
     try {
       const { data } = await getWorkerAdvances({
         worker_id: filters.worker_id || undefined,
+
         offset: 0,
         limit: 100,
         sort_by: "given_at",
@@ -783,125 +820,189 @@ const WorkerPayments = () => {
 
   return (
     <Box
+      className="crm-page worker-payments-page"
       sx={{
         height: "100%",
         minHeight: 0,
         display: "flex",
         flexDirection: "column",
-        pb: 2,
-        color: "var(--aa-text)",
-        "& .MuiOutlinedInput-root": {
-          borderRadius: "var(--aa-radius-md)",
-          backgroundColor: "var(--aa-surface-solid)",
-        },
+        pb: 2.5,
       }}
     >
-      <Card sx={{ mb: 1, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
+      <style>{workerPaymentsStyles}</style>
+
+      <Box component="section" className="worker-payments-hero" sx={heroSx}>
         <Box
           sx={{
-            display: "flex",
-            alignItems: { xs: "flex-start", xl: "center" },
-            justifyContent: "space-between",
-            flexDirection: { xs: "column", xl: "row" },
-            gap: 2,
+            position: "relative",
+            zIndex: 1,
+            display: "grid",
+
+            gridTemplateColumns: {
+              xs: "1fr",
+              xl: ".76fr 1.24fr",
+            },
+
+            gap: 3,
+            alignItems: "center",
           }}
         >
           <Box>
-            <Chip
-              label="Al-amin CRM • oyliklar"
-              size="small"
+            <Box
               sx={{
-                mb: 1,
-                height: 25,
-                fontSize: 12,
-                fontWeight: 950,
-                color: "var(--aa-brand-700)",
-                background: "var(--aa-brand-50)",
-                border: "1px solid var(--aa-brand-100)",
-                borderRadius: "var(--aa-radius-pill)",
-              }}
-            />
-
-            <Typography
-              sx={{
-                fontSize: { xs: 27, md: 33 },
-                fontWeight: 950,
-                color: "var(--aa-text)",
-                letterSpacing: "-0.055em",
-                lineHeight: 1.05,
+                display: "flex",
+                alignItems: "center",
+                gap: 1.1,
               }}
             >
+              <Box
+                sx={{
+                  width: 25,
+                  height: 2,
+                  borderRadius: 99,
+
+                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                }}
+              />
+
+              <Typography sx={eyebrowSx}>Ish haqi va avans markazi</Typography>
+            </Box>
+
+            <Typography component="h1" sx={heroTitleSx}>
               Oyliklar
             </Typography>
 
-            <Typography
-              sx={{
-                mt: 0.7,
-                fontSize: 14,
-                fontWeight: 650,
-                color: "var(--aa-text-secondary)",
-              }}
-            >
-              Ishchilarga berilgan oylik, avans va balans nazorati.
+            <Typography sx={heroDescriptionSx}>
+              Ishchilarning hisoblangan ish haqi, berilgan to‘lovlar, qolgan qarz va avanslarini
+              yagona sahifada nazorat qiling.
             </Typography>
+
+            {canManage && (
+              <Stack
+                direction={{
+                  xs: "column",
+                  sm: "row",
+                }}
+                spacing={1.1}
+                sx={{ mt: 2.4 }}
+              >
+                <Button onClick={openCreateModal} sx={heroPrimaryButtonSx}>
+                  + Oylik berish
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    setAdvanceForm({
+                      ...emptyAdvanceForm,
+
+                      given_at: today(),
+
+                      worker_id: filters.worker_id || "",
+                    });
+
+                    setAdvanceOpen(true);
+                  }}
+                  sx={heroSecondaryButtonSx}
+                >
+                  Avans berish
+                </Button>
+              </Stack>
+            )}
           </Box>
 
           <Box
             sx={{
               display: "grid",
+
               gridTemplateColumns: {
-                xs: "repeat(2, 1fr)",
-                sm: "repeat(3, auto)",
-                xl: "repeat(5, auto)",
+                xs: "1fr",
+
+                sm: "repeat(2,minmax(0,1fr))",
+
+                lg: "repeat(5,minmax(0,1fr))",
               },
+
               gap: 1.2,
-              width: { xs: "100%", xl: "auto" },
             }}
           >
-            <MiniStat
+            <HeroMetric
               label="Ishlab topgan"
-              value={formatMoney(balance.total_earned)}
+              value={money(balance.total_earned)}
+              helper="Hisoblangan ish haqi"
               tone="blue"
             />
-            <MiniStat
+
+            <HeroMetric
               label="Berilgan"
-              value={formatMoney(balance.total_paid)}
+              value={money(balance.total_paid)}
+              helper="Naqd va yopilgan summa"
               tone="green"
             />
-            <MiniStat
+
+            <HeroMetric
               label="Qolgan"
-              value={formatMoney(balance.remaining)}
+              value={money(balance.remaining)}
+              helper="Berilishi kerak"
               tone="red"
             />
-            <MiniStat label="To'lovlar" value={pageInfo.total} tone="default" />
-            <MiniStat
+
+            <HeroMetric
+              label="To‘lovlar"
+              value={number(pageInfo.total)}
+              helper="To‘lov yozuvlari"
+              tone="gray"
+            />
+
+            <HeroMetric
               label="Qolgan avans"
-              value={formatMoney(balance.remaining_advance)}
-              tone="orange"
+              value={money(balance.remaining_advance)}
+              helper="Keyingi oylikdan ushlanadi"
+              tone="amber"
             />
           </Box>
         </Box>
-      </Card>
+      </Box>
 
-      <Card sx={{ mb: 1, p: 2, flexShrink: 0 }}>
+      <Card
+        sx={{
+          mb: 2,
+          p: 2,
+          flexShrink: 0,
+        }}
+      >
         <Box
           sx={{
             display: "flex",
-            alignItems: { xs: "stretch", xl: "center" },
+
+            alignItems: {
+              xs: "stretch",
+              xl: "center",
+            },
+
             justifyContent: "space-between",
-            flexDirection: { xs: "column", xl: "row" },
+
+            flexDirection: {
+              xs: "column",
+              xl: "row",
+            },
+
             gap: 2,
           }}
         >
           <Box
             sx={{
               display: "grid",
+
               gridTemplateColumns: {
                 xs: "1fr",
-                sm: "repeat(2, 1fr)",
-                lg: "repeat(4, 1fr)",
-                xl: "repeat(7, 1fr)",
+
+                sm: "repeat(2,minmax(0,1fr))",
+
+                lg: "repeat(4,minmax(0,1fr))",
+
+                xl: "repeat(7,minmax(0,1fr))",
               },
+
               gap: 1.2,
               flex: 1,
             }}
@@ -909,11 +1010,9 @@ const WorkerPayments = () => {
             <TextField
               size="small"
               label="Qidirish"
+              placeholder="Ishchi yoki izoh"
               value={filters.q}
               onChange={handleFilterChange("q")}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") applyFilters();
-              }}
             />
 
             <TextField
@@ -924,6 +1023,7 @@ const WorkerPayments = () => {
               onChange={handleFilterChange("worker_id")}
             >
               <MenuItem value="">Barchasi</MenuItem>
+
               {workers.map((worker) => (
                 <MenuItem key={worker.id} value={worker.id}>
                   {worker.first_name} {worker.last_name}
@@ -934,11 +1034,12 @@ const WorkerPayments = () => {
             <TextField
               select
               size="small"
-              label="To'lov turi"
+              label="To‘lov turi"
               value={filters.payment_type}
               onChange={handleFilterChange("payment_type")}
             >
               <MenuItem value="">Barchasi</MenuItem>
+
               {Object.entries(paymentTypeLabels).map(([value, label]) => (
                 <MenuItem key={value} value={value}>
                   {label}
@@ -952,7 +1053,11 @@ const WorkerPayments = () => {
               label="Dan"
               value={filters.date_from}
               onChange={handleFilterChange("date_from")}
-              slotProps={{ inputLabel: { shrink: true } }}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
             />
 
             <TextField
@@ -961,7 +1066,11 @@ const WorkerPayments = () => {
               label="Gacha"
               value={filters.date_to}
               onChange={handleFilterChange("date_to")}
-              slotProps={{ inputLabel: { shrink: true } }}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
             />
 
             <TextField
@@ -972,189 +1081,181 @@ const WorkerPayments = () => {
               onChange={handleFilterChange("group_by")}
             >
               <MenuItem value="worker">Ishchi</MenuItem>
-              <MenuItem value="payment_type">To'lov turi</MenuItem>
+
+              <MenuItem value="payment_type">To‘lov turi</MenuItem>
+
               <MenuItem value="day">Kun</MenuItem>
             </TextField>
 
-            <Button
-              variant="outlined"
-              onClick={resetFilters}
-              sx={{
-                height: 42,
-                borderRadius: "var(--aa-radius-md)",
-                textTransform: "none",
-                fontWeight: 900,
-                color: "var(--aa-text)",
-                borderColor: "var(--aa-border-strong)",
-                background: "var(--aa-surface-solid)",
-              }}
-            >
+            <Button variant="outlined" onClick={resetFilters} sx={filterButtonSx}>
               Tozalash
             </Button>
           </Box>
 
           {canManage && (
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.2}>
-              <Button
-                variant="outlined"
-                onClick={openAdvancesHistory}
-                sx={{
-                  minWidth: 120,
-                  height: 42,
-                  borderRadius: "var(--aa-radius-md)",
-                  textTransform: "none",
-                  fontWeight: 900,
-                  color: "var(--aa-text)",
-                  borderColor: "var(--aa-border-strong)",
-                  background: "var(--aa-surface-solid)",
-                }}
-              >
-                Avanslar
-              </Button>
-
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  setAdvanceForm({
-                    ...emptyAdvanceForm,
-                    worker_id: filters.worker_id || "",
-                  });
-                  setAdvanceOpen(true);
-                }}
-                sx={{
-                  minWidth: 130,
-                  height: 42,
-                  borderRadius: "var(--aa-radius-md)",
-                  textTransform: "none",
-                  fontWeight: 900,
-                  color: "var(--aa-text)",
-                  borderColor: "var(--aa-border-strong)",
-                  background: "var(--aa-surface-solid)",
-                }}
-              >
-                Avans berish
-              </Button>
-
-              <Button
-                variant="contained"
-                onClick={openCreateModal}
-                sx={{
-                  minWidth: 135,
-                  height: 42,
-                  borderRadius: "var(--aa-radius-md)",
-                  textTransform: "none",
-                  fontWeight: 950,
-                  background: "var(--aa-brand-700)",
-                  boxShadow: "var(--aa-shadow-sm)",
-                  "&:hover": {
-                    background: "var(--aa-brand-800)",
-                  },
-                }}
-              >
-                Oylik berish
-              </Button>
-            </Stack>
+            <Button variant="outlined" onClick={openAdvancesHistory} sx={filterButtonSx}>
+              Avanslar tarixi
+            </Button>
           )}
         </Box>
       </Card>
 
-      <Card sx={{ mb: 1, p: 1.6, flexShrink: 0 }}>
+      <Card
+        sx={{
+          mb: 2,
+          p: 1.6,
+          flexShrink: 0,
+        }}
+      >
         {summaryLoading ? (
-          <Box sx={{ minHeight: 92, display: "grid", placeItems: "center" }}>
-            <CircularProgress size={24} />
+          <Box
+            sx={{
+              minHeight: 100,
+              display: "grid",
+              placeItems: "center",
+            }}
+          >
+            <CircularProgress size={25} sx={{ color: "#991b1b" }} />
           </Box>
         ) : workerDues.length ? (
-          <Box sx={{ display: "flex", gap: 1.4, overflowX: "auto", pb: 0.3 }}>
-            {workerDues.map((item) => (
-              <Box
-                key={item.worker_id}
-                sx={{
-                  width: 315,
-                  flexShrink: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.4,
-                  p: 1.4,
-                  borderRadius: "var(--aa-radius-lg)",
-                  background: "var(--aa-surface-solid)",
-                  border: "1px solid var(--aa-border)",
-                  boxShadow: "var(--aa-shadow-xs)",
-                }}
-              >
-                <Avatar
-                  src={getImageUrl(item.user_image)}
+          <>
+            <Box
+              sx={{
+                mb: 1.4,
+                display: "flex",
+
+                justifyContent: "space-between",
+
+                gap: 2,
+              }}
+            >
+              <Box>
+                <Typography
                   sx={{
-                    width: 46,
-                    height: 46,
-                    bgcolor: "var(--aa-brand-50)",
-                    color: "var(--aa-brand-700)",
+                    color: "#0f172a",
+                    fontSize: 14,
                     fontWeight: 950,
                   }}
                 >
-                  {getInitial(item.first_name)}
-                </Avatar>
+                  Oyligi qolgan ishchilar
+                </Typography>
 
-                <Box sx={{ minWidth: 0, flex: 1 }}>
-                  <Typography
-                    sx={{
-                      fontSize: 14,
-                      fontWeight: 900,
-                      color: "var(--aa-text)",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {item.first_name} {item.last_name}
-                  </Typography>
-
-                  <Typography
-                    sx={{
-                      mt: 0.2,
-                      fontSize: 15,
-                      fontWeight: 950,
-                      color: "var(--aa-brand-700)",
-                    }}
-                  >
-                    {formatMoney(item.remaining)}
-                  </Typography>
-
-                  <Typography
-                    sx={{
-                      fontSize: 12,
-                      fontWeight: 700,
-                      color: "var(--aa-text-secondary)",
-                    }}
-                  >
-                    Berilishi kerak
-                  </Typography>
-                </Box>
-
-                <Button
-                  size="small"
-                  variant="outlined"
-                  onClick={() => openWorkerPayment(item.worker_id)}
+                <Typography
                   sx={{
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    fontWeight: 900,
+                    mt: 0.35,
+                    color: "#94a3b8",
+                    fontSize: 10,
                   }}
                 >
-                  Berish
-                </Button>
+                  Tezkor to‘lov qilish uchun ishchini tanlang
+                </Typography>
               </Box>
-            ))}
-          </Box>
-        ) : (
-          <Box sx={{ minHeight: 92, display: "grid", placeItems: "center" }}>
-            <Typography
+
+              <Chip
+                size="small"
+                label={`${number(workerDues.length)} ta`}
+                sx={{
+                  color: "#991b1b",
+                  fontSize: 9.5,
+                  fontWeight: 900,
+
+                  backgroundColor: "rgba(153,27,27,.07)",
+                }}
+              />
+            </Box>
+
+            <Box
               sx={{
-                fontSize: 14,
-                fontWeight: 750,
-                color: "var(--aa-text-secondary)",
+                display: "flex",
+                gap: 1.3,
+                overflowX: "auto",
+                pb: 0.4,
               }}
             >
-              Oyligi qolgan ishchilar yo'q.
+              {workerDues.map((item) => (
+                <Box key={item.worker_id} sx={dueCardSx}>
+                  <Avatar
+                    src={getImageUrl(item.user_image)}
+                    sx={{
+                      width: 45,
+                      height: 45,
+                      color: "#fff",
+                      fontWeight: 950,
+
+                      background: "linear-gradient(135deg,#7f1d1d,#c81e2a)",
+                    }}
+                  >
+                    {initial(item.first_name)}
+                  </Avatar>
+
+                  <Box
+                    sx={{
+                      minWidth: 0,
+                      flex: 1,
+                    }}
+                  >
+                    <Typography
+                      noWrap
+                      sx={{
+                        color: "#334155",
+                        fontSize: 12,
+                        fontWeight: 900,
+                      }}
+                    >
+                      {item.first_name} {item.last_name}
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        mt: 0.3,
+                        color: "#991b1b",
+                        fontSize: 14,
+                        fontWeight: 950,
+                      }}
+                    >
+                      {money(item.remaining)}
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        color: "#94a3b8",
+                        fontSize: 9.5,
+                      }}
+                    >
+                      Berilishi kerak
+                    </Typography>
+                  </Box>
+
+                  {canManage && (
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() => openWorkerPayment(item.worker_id)}
+                      sx={tableActionSx}
+                    >
+                      Berish
+                    </Button>
+                  )}
+                </Box>
+              ))}
+            </Box>
+          </>
+        ) : (
+          <Box
+            sx={{
+              minHeight: 92,
+              display: "grid",
+              placeItems: "center",
+            }}
+          >
+            <Typography
+              sx={{
+                color: "#94a3b8",
+                fontSize: 11,
+                fontWeight: 800,
+              }}
+            >
+              Oyligi qolgan ishchilar yo‘q.
             </Typography>
           </Box>
         )}
@@ -1168,37 +1269,65 @@ const WorkerPayments = () => {
           flexDirection: "column",
         }}
       >
-        <Box sx={{ minHeight: 0, flex: 1, overflow: "auto" }}>
-          <Table
-            sx={{
-              minWidth: canManage ? 1080 : 940,
-              "& th": {
-                py: 1.7,
-                fontSize: 12,
+        <Box sx={tableHeaderBoxSx}>
+          <Box>
+            <Typography
+              sx={{
+                color: "#0f172a",
+                fontSize: 15,
                 fontWeight: 950,
-                color: "var(--aa-text-secondary)",
-                textTransform: "uppercase",
-                letterSpacing: "0.03em",
-                background: "var(--aa-surface-muted)",
-                borderBottom: "1px solid var(--aa-border)",
-              },
-              "& td": {
-                py: 1.55,
-                borderBottom: "1px solid var(--aa-border)",
-              },
-              "& tbody tr:hover": {
-                background: "var(--aa-surface-hover)",
-              },
+              }}
+            >
+              To‘lovlar tarixi
+            </Typography>
+
+            <Typography
+              sx={{
+                mt: 0.45,
+                color: "#94a3b8",
+                fontSize: 10.5,
+              }}
+            >
+              Oylik, bonus, avans ushlanmasi va davr ma’lumotlari
+            </Typography>
+          </Box>
+
+          <Chip
+            size="small"
+            label={`${number(pageInfo.total)} ta`}
+            sx={{
+              height: 25,
+              color: "#991b1b",
+              fontSize: 9.5,
+              fontWeight: 900,
+
+              backgroundColor: "rgba(153,27,27,.07)",
             }}
-          >
+          />
+        </Box>
+
+        <Box
+          sx={{
+            minHeight: 0,
+            flex: 1,
+            overflow: "auto",
+          }}
+        >
+          <Table sx={tableSx}>
             <TableHead>
               <TableRow>
                 <TableCell>Ishchi</TableCell>
-                <TableCell>To'lov turi</TableCell>
+
+                <TableCell>To‘lov turi</TableCell>
+
                 <TableCell>Summa</TableCell>
-                <TableCell>To'lov sanasi</TableCell>
+
+                <TableCell>To‘lov sanasi</TableCell>
+
                 <TableCell>Davr</TableCell>
+
                 <TableCell>Izoh</TableCell>
+
                 {canManage && <TableCell align="right">Amallar</TableCell>}
               </TableRow>
             </TableHead>
@@ -1206,12 +1335,13 @@ const WorkerPayments = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={canManage ? 7 : 6}
-                    align="center"
-                    sx={{ py: 7 }}
-                  >
-                    <CircularProgress size={30} />
+                  <TableCell colSpan={canManage ? 7 : 6} align="center" sx={{ py: 8 }}>
+                    <CircularProgress
+                      size={30}
+                      sx={{
+                        color: "#991b1b",
+                      }}
+                    />
                   </TableCell>
                 </TableRow>
               ) : payments.length ? (
@@ -1219,29 +1349,43 @@ const WorkerPayments = () => {
                   <TableRow key={payment.id} hover>
                     <TableCell>
                       <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1.6 }}
+                        sx={{
+                          display: "flex",
+
+                          alignItems: "center",
+
+                          gap: 1.4,
+                        }}
                       >
                         <Avatar
                           sx={{
-                            width: 48,
-                            height: 48,
-                            bgcolor: "var(--aa-brand-50)",
-                            color: "var(--aa-brand-700)",
+                            width: 47,
+                            height: 47,
+                            color: "#fff",
                             fontWeight: 950,
-                            border: "3px solid var(--aa-surface-solid)",
-                            boxShadow: "var(--aa-shadow-sm)",
+
+                            background: "linear-gradient(135deg,#7f1d1d,#c81e2a)",
+
+                            border: "3px solid #fff",
+
+                            boxShadow: "0 8px 20px rgba(127,29,29,.16)",
                           }}
                         >
-                          {getInitial(payment.worker_name)}
+                          {initial(payment.worker_name)}
                         </Avatar>
 
-                        <Box sx={{ minWidth: 0 }}>
+                        <Box
+                          sx={{
+                            minWidth: 0,
+                          }}
+                        >
                           <Typography
                             sx={{
-                              fontSize: 14.5,
+                              color: "#334155",
+
+                              fontSize: 12.5,
+
                               fontWeight: 900,
-                              color: "var(--aa-text)",
-                              lineHeight: 1.15,
                             }}
                           >
                             {payment.worker_name || "-"}
@@ -1250,9 +1394,9 @@ const WorkerPayments = () => {
                           <Typography
                             sx={{
                               mt: 0.35,
-                              fontSize: 12.5,
-                              fontWeight: 700,
-                              color: "var(--aa-text-secondary)",
+                              color: "#94a3b8",
+
+                              fontSize: 9.5,
                             }}
                           >
                             @{payment.worker_username || "worker"}
@@ -1268,52 +1412,41 @@ const WorkerPayments = () => {
                     <TableCell>
                       <Typography
                         sx={{
-                          fontSize: 14.5,
+                          color: "#15803d",
+
+                          fontSize: 11.5,
+
                           fontWeight: 950,
-                          color: "var(--aa-text)",
                         }}
                       >
-                        {formatMoney(payment.amount)}
+                        Naqd: {money(payment.amount)}
                       </Typography>
 
                       {Number(payment.advance_deduction || 0) > 0 && (
                         <Typography
                           sx={{
-                            mt: 0.35,
-                            fontSize: 12.5,
-                            fontWeight: 700,
-                            color: "var(--aa-text-secondary)",
+                            mt: 0.4,
+                            color: "#b45309",
+
+                            fontSize: 9.5,
+
+                            fontWeight: 800,
                           }}
                         >
-                          Avansdan: {formatMoney(payment.advance_deduction)}
+                          Avansdan: {money(payment.advance_deduction)}
                         </Typography>
                       )}
                     </TableCell>
 
-                    <TableCell
-                      sx={{
-                        fontWeight: 800,
-                        color: "var(--aa-text-secondary)",
-                      }}
-                    >
-                      {formatDate(payment.paid_at)}
-                    </TableCell>
+                    <TableCell>{date(payment.paid_at)}</TableCell>
 
-                    <TableCell
-                      sx={{
-                        fontWeight: 750,
-                        color: "var(--aa-text-secondary)",
-                      }}
-                    >
-                      {formatDate(payment.period_from)} -{" "}
-                      {formatDate(payment.period_to)}
+                    <TableCell>
+                      {date(payment.period_from)} — {date(payment.period_to)}
                     </TableCell>
 
                     <TableCell
                       sx={{
                         maxWidth: 220,
-                        color: "var(--aa-text-secondary)",
-                        fontWeight: 700,
                       }}
                     >
                       {payment.note || "-"}
@@ -1323,20 +1456,18 @@ const WorkerPayments = () => {
                       <TableCell align="right">
                         <Stack
                           direction="row"
-                          spacing={1}
-                          sx={{ justifyContent: "flex-end", flexWrap: "wrap" }}
+                          spacing={0.8}
+                          sx={{
+                            justifyContent: "flex-end",
+                          }}
                         >
                           <Button
                             size="small"
                             variant="outlined"
                             onClick={() => openEditModal(payment)}
-                            sx={{
-                              borderRadius: "10px",
-                              textTransform: "none",
-                              fontWeight: 900,
-                            }}
+                            sx={tableActionSx}
                           >
-                            O'zgartirish
+                            Tahrirlash
                           </Button>
 
                           <Button
@@ -1345,15 +1476,12 @@ const WorkerPayments = () => {
                             variant="outlined"
                             onClick={() => {
                               setSelectedPayment(payment);
+
                               setDeleteOpen(true);
                             }}
-                            sx={{
-                              borderRadius: "10px",
-                              textTransform: "none",
-                              fontWeight: 900,
-                            }}
+                            sx={tableActionSx}
                           >
-                            O'chirish
+                            O‘chirish
                           </Button>
                         </Stack>
                       </TableCell>
@@ -1366,12 +1494,12 @@ const WorkerPayments = () => {
                     colSpan={canManage ? 7 : 6}
                     align="center"
                     sx={{
-                      py: 7,
-                      color: "var(--aa-text-secondary)",
+                      py: 8,
+                      color: "#94a3b8",
                       fontWeight: 850,
                     }}
                   >
-                    To'lovlar topilmadi
+                    To‘lovlar topilmadi
                   </TableCell>
                 </TableRow>
               )}
@@ -1381,8 +1509,9 @@ const WorkerPayments = () => {
 
         <Box
           sx={{
-            borderTop: "1px solid var(--aa-border)",
-            background: "var(--aa-surface-muted)",
+            borderTop: "1px solid #edf0f3",
+
+            backgroundColor: "#fafbfc",
           }}
         >
           <CrmPagination
@@ -1390,7 +1519,11 @@ const WorkerPayments = () => {
             page={page}
             limit={pageInfo.limit}
             onPageChange={(nextPage) =>
-              fetchPayments(nextPage * pageInfo.limit, pageInfo.limit)
+              fetchPayments(
+                nextPage * pageInfo.limit,
+
+                pageInfo.limit,
+              )
             }
             onLimitChange={(limit) => fetchPayments(0, limit)}
           />
@@ -1400,18 +1533,11 @@ const WorkerPayments = () => {
       <PremiumDialog
         open={modalOpen}
         onClose={closeModals}
-        title={selectedPayment ? "To'lovni tahrirlash" : "Oylik berish"}
+        title={selectedPayment ? "To‘lovni tahrirlash" : "Oylik berish"}
         maxWidth="md"
         actions={
           <>
-            <Button
-              onClick={closeModals}
-              sx={{
-                borderRadius: "12px",
-                textTransform: "none",
-                fontWeight: 850,
-              }}
-            >
+            <Button onClick={closeModals} sx={dialogCancelSx}>
               Bekor qilish
             </Button>
 
@@ -1419,15 +1545,7 @@ const WorkerPayments = () => {
               variant="contained"
               onClick={handleSave}
               disabled={saving || paymentExceedsBalance}
-              sx={{
-                minWidth: 120,
-                borderRadius: "12px",
-                textTransform: "none",
-                fontWeight: 900,
-                background: "var(--aa-brand-700)",
-                boxShadow: "var(--aa-shadow-sm)",
-                "&:hover": { background: "var(--aa-brand-800)" },
-              }}
+              sx={dialogPrimarySx}
             >
               {saving ? "Saqlanmoqda..." : "Saqlash"}
             </Button>
@@ -1453,60 +1571,91 @@ const WorkerPayments = () => {
             sx={{
               p: 2,
               borderRadius: "18px",
-              background: "var(--aa-surface)",
-              border: paymentExceedsBalance
-                ? "1px solid color-mix(in srgb, var(--aa-danger) 35%, transparent)"
-                : "1px solid var(--aa-border)",
+
+              border: paymentExceedsBalance ? "1px solid rgba(220,38,38,.28)" : "1px solid #e7ebf0",
+
+              background: "linear-gradient(145deg,#fff,#f8fafc)",
             }}
           >
             <Box
               sx={{
                 mb: 1.5,
                 display: "flex",
-                alignItems: "center",
+
                 justifyContent: "space-between",
+
                 gap: 1.5,
               }}
             >
-              <Typography
-                sx={{ fontSize: 16, fontWeight: 950, color: "var(--aa-text)" }}
-              >
-                Tanlangan ishchi balansi
-              </Typography>
+              <Box>
+                <Typography
+                  sx={{
+                    color: "#334155",
+                    fontSize: 14,
+                    fontWeight: 950,
+                  }}
+                >
+                  Tanlangan ishchi balansi
+                </Typography>
 
-              {balanceLoading && <CircularProgress size={18} />}
+                <Typography
+                  sx={{
+                    mt: 0.35,
+                    color: "#94a3b8",
+                    fontSize: 9.5,
+                  }}
+                >
+                  To‘lovdan oldingi hisob holati
+                </Typography>
+              </Box>
+
+              {balanceLoading && (
+                <CircularProgress
+                  size={18}
+                  sx={{
+                    color: "#991b1b",
+                  }}
+                />
+              )}
             </Box>
 
             <Box
               sx={{
                 display: "grid",
+
                 gridTemplateColumns: {
                   xs: "1fr",
-                  sm: "repeat(2, 1fr)",
-                  lg: "repeat(4, 1fr)",
+
+                  sm: "repeat(2,1fr)",
+
+                  lg: "repeat(4,1fr)",
                 },
+
                 gap: 1.2,
               }}
             >
               <BalanceBox
                 label="Oldingi qoldiq"
-                value={formatMoney(selectedWorkerBalance.previous_remaining)}
+                value={money(selectedWorkerBalance.previous_remaining)}
                 tone="blue"
               />
+
               <BalanceBox
                 label="Yangi ish haqi"
-                value={formatMoney(selectedWorkerBalance.new_earnings)}
+                value={money(selectedWorkerBalance.new_earnings)}
                 tone="green"
               />
+
               <BalanceBox
                 label="Berilishi kerak"
-                value={formatMoney(selectedWorkerBalance.remaining)}
+                value={money(selectedWorkerBalance.remaining)}
                 tone="red"
               />
+
               <BalanceBox
                 label="Qolgan avans"
-                value={formatMoney(selectedWorkerBalance.remaining_advance)}
-                tone="orange"
+                value={money(selectedWorkerBalance.remaining_advance)}
+                tone="amber"
               />
             </Box>
           </Box>
@@ -1514,23 +1663,26 @@ const WorkerPayments = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2,1fr)",
+              },
+
               gap: 1.6,
             }}
           >
             <TextField
-              required
               type="number"
               label="Naqd beriladi"
               value={form.amount}
               onChange={handleFormChange("amount")}
               error={paymentExceedsBalance}
-              helperText={
-                paymentExceedsBalance
-                  ? `Maksimum ${formatMoney(availableWorkerBalance)}`
-                  : " "
-              }
-              slotProps={{ htmlInput: { min: 0, step: 1000 } }}
+              helperText={paymentExceedsBalance ? `Maksimum ${money(availableWorkerBalance)}` : " "}
+              inputProps={{
+                min: 0,
+                step: 1000,
+              }}
             />
 
             <TextField
@@ -1542,14 +1694,17 @@ const WorkerPayments = () => {
               helperText={
                 paymentExceedsBalance
                   ? "Jami summa qolgan ish haqidan oshdi"
-                  : `Maksimum: ${formatMoney(selectedWorkerBalance.remaining_advance)}`
+                  : `Maksimum: ${money(selectedWorkerBalance.remaining_advance)}`
               }
-              slotProps={{ htmlInput: { min: 0, step: 1000 } }}
+              inputProps={{
+                min: 0,
+                step: 1000,
+              }}
             />
 
             <TextField
               select
-              label="To'lov turi"
+              label="To‘lov turi"
               value={form.payment_type}
               onChange={handleFormChange("payment_type")}
             >
@@ -1562,10 +1717,14 @@ const WorkerPayments = () => {
 
             <TextField
               type="date"
-              label="To'lov sanasi"
+              label="To‘lov sanasi"
               value={form.paid_at}
               onChange={handleFormChange("paid_at")}
-              InputLabelProps={{ shrink: true }}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
             />
 
             <TextField
@@ -1573,7 +1732,11 @@ const WorkerPayments = () => {
               label="Davr boshidan"
               value={form.period_from}
               onChange={handleFormChange("period_from")}
-              slotProps={{ inputLabel: { shrink: true } }}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
             />
 
             <TextField
@@ -1581,7 +1744,11 @@ const WorkerPayments = () => {
               label="Davr oxirigacha"
               value={form.period_to}
               onChange={handleFormChange("period_to")}
-              slotProps={{ inputLabel: { shrink: true } }}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
             />
           </Box>
 
@@ -1590,23 +1757,22 @@ const WorkerPayments = () => {
               sx={{
                 px: 2,
                 py: 1.5,
-                borderRadius: "16px",
-                background:
-                  "color-mix(in srgb, var(--aa-danger) 7%, transparent)",
-                border:
-                  "1px solid color-mix(in srgb, var(--aa-danger) 28%, transparent)",
+                borderRadius: "15px",
+                color: "#b91c1c",
+
+                backgroundColor: "rgba(220,38,38,.07)",
+
+                border: "1px solid rgba(220,38,38,.22)",
               }}
             >
               <Typography
                 sx={{
-                  fontSize: 14,
+                  fontSize: 11,
                   fontWeight: 900,
-                  color: "var(--aa-danger)",
                 }}
               >
-                Ogohlantirish: kiritilgan {formatMoney(enteredPaymentTotal)}{" "}
-                summa ishchining qolgan {formatMoney(availableWorkerBalance)}{" "}
-                haqidan oshib ketdi.
+                Kiritilgan {money(enteredPaymentTotal)} summa ishchining qolgan{" "}
+                {money(availableWorkerBalance)} haqidan oshib ketdi.
               </Typography>
             </Box>
           )}
@@ -1614,42 +1780,36 @@ const WorkerPayments = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" },
+
+              gridTemplateColumns: {
+                xs: "1fr",
+
+                sm: "repeat(3,1fr)",
+              },
+
               gap: 1.2,
               p: 1.5,
               borderRadius: "18px",
-              background: paymentExceedsBalance
-                ? "color-mix(in srgb, var(--aa-danger) 7%, transparent)"
-                : "var(--aa-surface-muted)",
-              border: paymentExceedsBalance
-                ? "1px solid color-mix(in srgb, var(--aa-danger) 28%, transparent)"
-                : "1px solid var(--aa-border)",
+
+              border: "1px solid #e7ebf0",
+
+              backgroundColor: "#f8fafc",
             }}
           >
-            <BalanceBox
-              label="Oylikdan yopiladi"
-              value={formatMoney(
-                Number(form.amount || 0) + Number(form.advance_deduction || 0),
-              )}
-              tone="blue"
-            />
+            <BalanceBox label="Oylikdan yopiladi" value={money(enteredPaymentTotal)} tone="blue" />
 
-            <BalanceBox
-              label="Naqd beriladi"
-              value={formatMoney(form.amount)}
-              tone="green"
-            />
+            <BalanceBox label="Naqd beriladi" value={money(form.amount)} tone="green" />
 
             <BalanceBox
               label="Qoladigan avans"
-              value={formatMoney(
+              value={money(
                 Math.max(
                   Number(selectedWorkerBalance.remaining_advance || 0) -
                     Number(form.advance_deduction || 0),
                   0,
                 ),
               )}
-              tone="orange"
+              tone="amber"
             />
           </Box>
 
@@ -1670,47 +1830,36 @@ const WorkerPayments = () => {
         title="Avanslar tarixi"
         maxWidth="md"
         actions={
-          <Button
-            onClick={() => setAdvancesOpen(false)}
-            sx={{
-              borderRadius: "12px",
-              textTransform: "none",
-              fontWeight: 850,
-            }}
-          >
+          <Button onClick={() => setAdvancesOpen(false)} sx={dialogCancelSx}>
             Yopish
           </Button>
         }
       >
         {advancesLoading ? (
-          <Box sx={{ minHeight: 160, display: "grid", placeItems: "center" }}>
-            <CircularProgress size={28} />
+          <Box
+            sx={{
+              minHeight: 160,
+              display: "grid",
+              placeItems: "center",
+            }}
+          >
+            <CircularProgress size={28} sx={{ color: "#991b1b" }} />
           </Box>
         ) : (
-          <Box sx={{ overflowX: "auto" }}>
-            <Table
-              size="small"
-              sx={{
-                minWidth: 720,
-                "& th": {
-                  py: 1.5,
-                  fontSize: 12,
-                  fontWeight: 950,
-                  color: "var(--aa-text-secondary)",
-                  textTransform: "uppercase",
-                  background: "var(--aa-surface-muted)",
-                },
-                "& td": {
-                  py: 1.4,
-                  borderBottom: "1px solid var(--aa-border)",
-                },
-              }}
-            >
+          <Box
+            sx={{
+              overflowX: "auto",
+            }}
+          >
+            <Table size="small" sx={smallTableSx}>
               <TableHead>
                 <TableRow>
                   <TableCell>Ishchi</TableCell>
+
                   <TableCell>Avans</TableCell>
+
                   <TableCell>Sana</TableCell>
+
                   <TableCell>Izoh</TableCell>
                 </TableRow>
               </TableHead>
@@ -1720,36 +1869,28 @@ const WorkerPayments = () => {
                   advances.map((advance) => (
                     <TableRow key={advance.id} hover>
                       <TableCell
-                        sx={{ fontWeight: 900, color: "var(--aa-text)" }}
+                        sx={{
+                          fontWeight: 900,
+
+                          color: "#334155",
+                        }}
                       >
                         {advance.worker_name}
                       </TableCell>
 
-                      <TableCell>
-                        <Typography
-                          sx={{ fontWeight: 950, color: "var(--aa-brand-700)" }}
-                        >
-                          {formatMoney(advance.amount)}
-                        </Typography>
-                      </TableCell>
-
                       <TableCell
                         sx={{
-                          fontWeight: 750,
-                          color: "var(--aa-text-secondary)",
+                          fontWeight: 950,
+
+                          color: "#991b1b",
                         }}
                       >
-                        {formatDate(advance.given_at)}
+                        {money(advance.amount)}
                       </TableCell>
 
-                      <TableCell
-                        sx={{
-                          fontWeight: 700,
-                          color: "var(--aa-text-secondary)",
-                        }}
-                      >
-                        {advance.note || "-"}
-                      </TableCell>
+                      <TableCell>{date(advance.given_at)}</TableCell>
+
+                      <TableCell>{advance.note || "-"}</TableCell>
                     </TableRow>
                   ))
                 ) : (
@@ -1757,7 +1898,11 @@ const WorkerPayments = () => {
                     <TableCell
                       colSpan={4}
                       align="center"
-                      sx={{ py: 6, fontWeight: 850 }}
+                      sx={{
+                        py: 6,
+                        color: "#94a3b8",
+                        fontWeight: 850,
+                      }}
                     >
                       Avans yozuvlari topilmadi
                     </TableCell>
@@ -1773,17 +1918,9 @@ const WorkerPayments = () => {
         open={advanceOpen}
         onClose={closeModals}
         title="Ishchiga avans berish"
-        maxWidth="sm"
         actions={
           <>
-            <Button
-              onClick={closeModals}
-              sx={{
-                borderRadius: "12px",
-                textTransform: "none",
-                fontWeight: 850,
-              }}
-            >
+            <Button onClick={closeModals} sx={dialogCancelSx}>
               Bekor qilish
             </Button>
 
@@ -1791,15 +1928,7 @@ const WorkerPayments = () => {
               variant="contained"
               onClick={handleSaveAdvance}
               disabled={advanceSaving}
-              sx={{
-                minWidth: 125,
-                borderRadius: "12px",
-                textTransform: "none",
-                fontWeight: 900,
-                background: "var(--aa-brand-700)",
-                boxShadow: "var(--aa-shadow-sm)",
-                "&:hover": { background: "var(--aa-brand-800)" },
-              }}
+              sx={dialogPrimarySx}
             >
               {advanceSaving ? "Saqlanmoqda..." : "Avans berish"}
             </Button>
@@ -1815,6 +1944,7 @@ const WorkerPayments = () => {
             onChange={(event) =>
               setAdvanceForm((previous) => ({
                 ...previous,
+
                 worker_id: event.target.value,
               }))
             }
@@ -1829,7 +1959,12 @@ const WorkerPayments = () => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "1fr 1fr",
+              },
+
               gap: 1.6,
             }}
           >
@@ -1841,10 +1976,14 @@ const WorkerPayments = () => {
               onChange={(event) =>
                 setAdvanceForm((previous) => ({
                   ...previous,
+
                   amount: event.target.value,
                 }))
               }
-              slotProps={{ htmlInput: { min: 0, step: 1000 } }}
+              inputProps={{
+                min: 0,
+                step: 1000,
+              }}
             />
 
             <TextField
@@ -1854,10 +1993,15 @@ const WorkerPayments = () => {
               onChange={(event) =>
                 setAdvanceForm((previous) => ({
                   ...previous,
+
                   given_at: event.target.value,
                 }))
               }
-              slotProps={{ inputLabel: { shrink: true } }}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
             />
           </Box>
 
@@ -1869,6 +2013,7 @@ const WorkerPayments = () => {
             onChange={(event) =>
               setAdvanceForm((previous) => ({
                 ...previous,
+
                 note: event.target.value,
               }))
             }
@@ -1879,18 +2024,12 @@ const WorkerPayments = () => {
       <PremiumDialog
         open={deleteOpen}
         onClose={closeModals}
-        title="To'lovni o'chirish"
+        title="To‘lovni o‘chirish"
+        subtitle="Bu amal tanlangan to‘lov yozuvini o‘chiradi"
         maxWidth="xs"
         actions={
           <>
-            <Button
-              onClick={closeModals}
-              sx={{
-                borderRadius: "12px",
-                textTransform: "none",
-                fontWeight: 850,
-              }}
-            >
+            <Button onClick={closeModals} sx={dialogCancelSx}>
               Bekor qilish
             </Button>
 
@@ -1899,24 +2038,357 @@ const WorkerPayments = () => {
               variant="contained"
               onClick={handleDelete}
               disabled={deleting}
-              sx={{
-                borderRadius: "12px",
-                textTransform: "none",
-                fontWeight: 900,
-              }}
+              sx={deleteButtonSx}
             >
-              {deleting ? "O'chirilmoqda..." : "O'chirish"}
+              {deleting ? "O‘chirilmoqda..." : "O‘chirish"}
             </Button>
           </>
         }
       >
-        <Typography sx={{ color: "var(--aa-text-secondary)", fontWeight: 700 }}>
-          {selectedPayment?.worker_name} uchun{" "}
-          {formatMoney(selectedPayment?.amount)} to'lovni o'chirmoqchimisiz?
+        <Typography
+          sx={{
+            color: "#64748b",
+            fontSize: 12.5,
+            lineHeight: 1.7,
+            fontWeight: 700,
+          }}
+        >
+          <strong>{selectedPayment?.worker_name}</strong> uchun {money(selectedPayment?.amount)}{" "}
+          to‘lovni o‘chirmoqchimisiz?
         </Typography>
       </PremiumDialog>
     </Box>
   );
 };
+
+const heroLabelSx = {
+  mt: 1.35,
+
+  color: "rgba(255,255,255,.44) !important",
+
+  fontSize: 9.5,
+  fontWeight: 750,
+};
+
+const heroValueSx = {
+  mt: 0.6,
+  color: "#fff !important",
+  fontSize: 17,
+  lineHeight: 1.2,
+  fontWeight: 950,
+  letterSpacing: "-.035em",
+};
+
+const heroHelperSx = {
+  mt: 0.55,
+
+  color: "rgba(255,255,255,.28) !important",
+
+  fontSize: 9,
+};
+
+const eyebrowSx = {
+  color: "#fecdd3 !important",
+  fontSize: 10,
+  fontWeight: 950,
+  letterSpacing: ".13em",
+  textTransform: "uppercase",
+};
+
+const heroTitleSx = {
+  mt: 1.5,
+  color: "#fff !important",
+
+  fontSize: {
+    xs: 29,
+    md: 36,
+  },
+
+  lineHeight: 1.08,
+  fontWeight: 950,
+  letterSpacing: "-.045em",
+};
+
+const heroDescriptionSx = {
+  maxWidth: 555,
+  mt: 1.4,
+
+  color: "rgba(255,255,255,.45) !important",
+
+  fontSize: 12.5,
+  lineHeight: 1.75,
+};
+
+const heroSx = {
+  position: "relative",
+  isolation: "isolate",
+  mb: 2,
+
+  p: {
+    xs: 2.5,
+    md: 3,
+  },
+
+  overflow: "hidden",
+  color: "#fff",
+  borderRadius: "25px",
+
+  border: "1px solid rgba(255,255,255,.075)",
+
+  backgroundColor: "#0d1117 !important",
+
+  backgroundImage:
+    "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
+
+  boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+
+  flexShrink: 0,
+
+  "&::before": {
+    content: '""',
+    position: "absolute",
+    width: 390,
+    height: 390,
+    top: -275,
+    right: -210,
+    borderRadius: "50%",
+
+    border: "1px solid rgba(248,113,113,.16)",
+
+    boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+
+    pointerEvents: "none",
+  },
+};
+
+const heroPrimaryButtonSx = {
+  minHeight: 43,
+  px: 2.2,
+  color: "#fff !important",
+  borderRadius: "13px",
+  fontSize: 11.5,
+  fontWeight: 900,
+  textTransform: "none",
+
+  background: "linear-gradient(135deg,#991b1b,#dc2626)",
+
+  boxShadow: "0 12px 26px rgba(127,29,29,.30)",
+
+  "&:hover": {
+    background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+  },
+};
+
+const heroSecondaryButtonSx = {
+  minHeight: 43,
+  px: 2,
+
+  color: "rgba(255,255,255,.72) !important",
+
+  borderRadius: "13px",
+
+  border: "1px solid rgba(255,255,255,.10)",
+
+  backgroundColor: "rgba(255,255,255,.055)",
+
+  fontSize: 11,
+  fontWeight: 900,
+  textTransform: "none",
+
+  "&:hover": {
+    backgroundColor: "rgba(255,255,255,.10)",
+  },
+};
+
+const filterButtonSx = {
+  minHeight: 40,
+  px: 1.8,
+  color: "#64748b",
+  borderRadius: "11px",
+  borderColor: "#dce3ea",
+  fontSize: 10.5,
+  fontWeight: 900,
+  textTransform: "none",
+  backgroundColor: "#fff",
+
+  "&:hover": {
+    color: "#991b1b",
+
+    borderColor: "rgba(153,27,27,.22)",
+
+    backgroundColor: "rgba(153,27,27,.04)",
+  },
+};
+
+const dueCardSx = {
+  width: 310,
+  flexShrink: 0,
+  display: "flex",
+  alignItems: "center",
+  gap: 1.3,
+  p: 1.35,
+  borderRadius: "17px",
+
+  border: "1px solid #e7ebf0",
+
+  background: "linear-gradient(145deg,#fff,#f8fafc)",
+};
+
+const tableHeaderBoxSx = {
+  px: 2.4,
+  py: 1.9,
+  display: "flex",
+  alignItems: "center",
+
+  justifyContent: "space-between",
+
+  gap: 2,
+
+  borderBottom: "1px solid #edf0f3",
+};
+
+const tableActionSx = {
+  borderRadius: "9px",
+  fontSize: 9.5,
+  fontWeight: 900,
+  textTransform: "none",
+};
+
+const dialogCancelSx = {
+  color: "#64748b",
+  borderRadius: "11px",
+  fontWeight: 850,
+  textTransform: "none",
+};
+
+const dialogPrimarySx = {
+  minWidth: 120,
+  minHeight: 40,
+  px: 2,
+  color: "#fff",
+  borderRadius: "11px",
+  fontSize: 10.5,
+  fontWeight: 900,
+  textTransform: "none",
+
+  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+
+  boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+
+  "&:hover": {
+    background: "linear-gradient(135deg,#681818,#991b1b)",
+  },
+};
+
+const deleteButtonSx = {
+  borderRadius: "11px",
+  fontWeight: 900,
+  textTransform: "none",
+};
+
+const dialogActionsSx = {
+  px: 3,
+  py: 2.1,
+
+  borderTop: "1px solid #edf0f3",
+
+  backgroundColor: "#fafbfc",
+};
+
+const dialogTitleSx = {
+  px: 3,
+  py: 2.35,
+
+  color: "#fff !important",
+
+  backgroundColor: "#0d1117 !important",
+
+  backgroundImage:
+    "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
+};
+
+const tableSx = {
+  minWidth: 1120,
+
+  "& th": {
+    py: 1.55,
+    color: "#94a3b8",
+    fontSize: 9.5,
+    fontWeight: 900,
+    letterSpacing: ".045em",
+    textTransform: "uppercase",
+
+    backgroundColor: "#fafbfc",
+
+    borderColor: "#edf0f3",
+  },
+
+  "& td": {
+    py: 1.4,
+    color: "#64748b",
+    fontSize: 10.5,
+    borderColor: "#edf0f3",
+  },
+
+  "& tbody tr:hover": {
+    backgroundColor: "rgba(153,27,27,.025)",
+  },
+};
+
+const smallTableSx = {
+  minWidth: 720,
+
+  "& th": {
+    py: 1.45,
+    color: "#94a3b8",
+    fontSize: 9.5,
+    fontWeight: 900,
+    textTransform: "uppercase",
+
+    backgroundColor: "#fafbfc",
+  },
+
+  "& td": {
+    py: 1.35,
+    color: "#64748b",
+    fontSize: 10.5,
+    borderColor: "#edf0f3",
+  },
+};
+
+const workerPaymentsStyles = `
+  .crm-page .worker-payments-hero {
+    color: #ffffff !important;
+    background-color: #0d1117 !important;
+    background-image:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(220,38,38,.34),
+        transparent 30%
+      ),
+      linear-gradient(
+        145deg,
+        #0d1117,
+        #171117 52%,
+        #3a121a
+      ) !important;
+  }
+
+  .worker-payments-dialog-title {
+    color: #ffffff !important;
+    background-color: #0d1117 !important;
+    background-image:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(220,38,38,.28),
+        transparent 36%
+      ),
+      linear-gradient(
+        135deg,
+        #11151c,
+        #321319
+      ) !important;
+  }
+`;
 
 export default WorkerPayments;

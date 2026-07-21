@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
 import {
   Avatar,
   Box,
@@ -21,6 +20,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { toast } from "react-toastify";
+
 import { useAuth } from "../../Context/AuthContext";
 import { getUsers } from "../../api/getUsers";
 import { getDepartments } from "../../api/departments";
@@ -34,8 +35,27 @@ import {
 } from "../../api/positions";
 
 const today = () => new Date().toISOString().slice(0, 10);
-const money = (value) =>
-  `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
+
+const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
+
+const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
+
+const date = (value) => {
+  if (!value) return "-";
+
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return "-";
+  }
+
+  return new Intl.DateTimeFormat("uz-UZ", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(parsed);
+};
+
 const typeLabels = {
   piece_rate: "Mahsulot bay",
   fixed_salary: "Doimiy maosh",
@@ -43,14 +63,31 @@ const typeLabels = {
   mixed: "Aralash",
   commission: "Foizli",
 };
-const periodLabels = { weekly: "Haftalik", monthly: "Oylik" };
-const emptyPosition = { name: "", department_id: "", description: "" };
+
+const periodLabels = {
+  weekly: "Haftalik",
+  monthly: "Oylik",
+};
+
+const roleLabels = {
+  super_admin: "Super administrator",
+  admin: "Administrator",
+  worker: "Ishchi",
+};
+
+const emptyPosition = {
+  name: "",
+  department_id: "",
+  description: "",
+};
+
 const emptyProfile = {
   user_id: "",
   position_id: "",
   hired_at: today(),
   note: "",
 };
+
 const emptyAgreement = {
   employee_id: "",
   payment_type: "fixed_salary",
@@ -70,30 +107,359 @@ const getLocalUser = () => {
   }
 };
 
+const getImageUrl = (path) => {
+  if (!path) return undefined;
+
+  if (path.startsWith("http")) {
+    return path;
+  }
+
+  const baseUrl = String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+
+  if (!baseUrl) {
+    return path;
+  }
+
+  return `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
+};
+
+const getFullName = (employee) =>
+  `${employee?.first_name || ""} ${employee?.last_name || ""}`.trim() ||
+  employee?.username ||
+  "Xodim";
+
+const getInitials = (employee) => {
+  const first = employee?.first_name?.[0] || "";
+
+  const last = employee?.last_name?.[0] || "";
+
+  const username = employee?.username?.[0] || "";
+
+  return `${first}${last}`.toUpperCase() || username.toUpperCase() || "X";
+};
+
+const getAgreementValue = (agreement) => {
+  if (!agreement) {
+    return "-";
+  }
+
+  if (agreement.payment_type === "commission") {
+    return `${number(agreement.commission_percent)}%`;
+  }
+
+  if (agreement.payment_type === "daily_rate") {
+    return `${money(agreement.daily_rate)} / kun`;
+  }
+
+  if (agreement.payment_type === "mixed") {
+    const values = [];
+
+    if (Number(agreement.fixed_amount || 0) > 0) {
+      values.push(money(agreement.fixed_amount));
+    }
+
+    if (Number(agreement.daily_rate || 0) > 0) {
+      values.push(`${money(agreement.daily_rate)} / kun`);
+    }
+
+    if (Number(agreement.commission_percent || 0) > 0) {
+      values.push(`${number(agreement.commission_percent)}%`);
+    }
+
+    return values.join(" + ") || "-";
+  }
+
+  if (agreement.payment_type === "piece_rate") {
+    return "Mahsulot bo‘yicha";
+  }
+
+  return money(agreement.fixed_amount);
+};
+
+const Card = ({ children, sx = {} }) => (
+  <Paper
+    elevation={0}
+    sx={{
+      overflow: "hidden",
+      borderRadius: "22px",
+      border: "1px solid #e4e9ef",
+      backgroundColor: "#ffffff",
+      boxShadow: "0 14px 40px rgba(15,23,42,.045)",
+      ...sx,
+    }}
+  >
+    {children}
+  </Paper>
+);
+
+const HeroMetric = ({ label, value, helper, tone = "red" }) => {
+  const tones = {
+    red: ["#fecdd3", "rgba(220,38,38,.15)", "rgba(248,113,113,.15)"],
+
+    green: ["#bbf7d0", "rgba(34,197,94,.14)", "rgba(74,222,128,.15)"],
+
+    blue: ["#bfdbfe", "rgba(37,99,235,.15)", "rgba(96,165,250,.15)"],
+
+    amber: ["#fde68a", "rgba(245,158,11,.15)", "rgba(251,191,36,.15)"],
+  };
+
+  const current = tones[tone] || tones.red;
+
+  return (
+    <Box
+      sx={{
+        minWidth: 0,
+        minHeight: 126,
+        p: 1.8,
+        borderRadius: "18px",
+
+        border: "1px solid rgba(255,255,255,.075)",
+
+        background: "linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025))",
+
+        backdropFilter: "blur(16px)",
+      }}
+    >
+      <Box
+        sx={{
+          width: 34,
+          height: 34,
+          display: "grid",
+          placeItems: "center",
+          borderRadius: "11px",
+          color: current[0],
+          backgroundColor: current[1],
+          border: `1px solid ${current[2]}`,
+          fontSize: 13,
+          fontWeight: 950,
+        }}
+      >
+        {label.charAt(0)}
+      </Box>
+
+      <Typography
+        sx={{
+          mt: 1.35,
+          color: "rgba(255,255,255,.44) !important",
+          fontSize: 9.5,
+          fontWeight: 750,
+        }}
+      >
+        {label}
+      </Typography>
+
+      <Typography
+        noWrap
+        sx={{
+          mt: 0.6,
+          color: "#ffffff !important",
+          fontSize: 18,
+          lineHeight: 1.2,
+          fontWeight: 950,
+          letterSpacing: "-.035em",
+        }}
+      >
+        {value}
+      </Typography>
+
+      <Typography
+        noWrap
+        sx={{
+          mt: 0.55,
+          color: "rgba(255,255,255,.28) !important",
+          fontSize: 9,
+        }}
+      >
+        {helper}
+      </Typography>
+    </Box>
+  );
+};
+
+const RoleChip = ({ role }) => {
+  const styles = {
+    super_admin: {
+      color: "#7c3aed",
+      background: "rgba(139,92,246,.09)",
+      border: "rgba(139,92,246,.18)",
+    },
+
+    admin: {
+      color: "#1d4ed8",
+      background: "rgba(37,99,235,.08)",
+      border: "rgba(37,99,235,.17)",
+    },
+
+    worker: {
+      color: "#b45309",
+      background: "rgba(245,158,11,.10)",
+      border: "rgba(245,158,11,.20)",
+    },
+  };
+
+  const current = styles[role] || {
+    color: "#64748b",
+    background: "#f1f5f9",
+    border: "#e2e8f0",
+  };
+
+  return (
+    <Chip
+      size="small"
+      label={roleLabels[role] || role || "-"}
+      sx={{
+        height: 25,
+        px: 0.3,
+        color: current.color,
+        fontSize: 9.5,
+        fontWeight: 900,
+        backgroundColor: current.background,
+        border: `1px solid ${current.border}`,
+      }}
+    />
+  );
+};
+
+const AgreementChip = ({ agreement }) => {
+  const hasAgreement = Boolean(agreement);
+
+  return (
+    <Chip
+      size="small"
+      label={hasAgreement ? typeLabels[agreement.payment_type] || "Kelishuv" : "Kelishuv yo‘q"}
+      sx={{
+        height: 25,
+        px: 0.3,
+
+        color: hasAgreement ? "#15803d" : "#b91c1c",
+
+        fontSize: 9.5,
+        fontWeight: 900,
+
+        backgroundColor: hasAgreement ? "rgba(34,197,94,.09)" : "rgba(220,38,38,.08)",
+
+        border: hasAgreement ? "1px solid rgba(34,197,94,.18)" : "1px solid rgba(220,38,38,.18)",
+      }}
+    />
+  );
+};
+
+const PremiumDialog = ({ open, onClose, title, subtitle, children, actions, maxWidth = "sm" }) => (
+  <Dialog
+    open={open}
+    onClose={onClose}
+    fullWidth
+    maxWidth={maxWidth}
+    PaperProps={{
+      sx: {
+        overflow: "hidden",
+        borderRadius: "23px",
+        border: "1px solid rgba(148,163,184,.20)",
+        boxShadow: "0 30px 80px rgba(15,23,42,.22)",
+      },
+    }}
+  >
+    <DialogTitle
+      className="employees-dialog-title"
+      sx={{
+        px: 3,
+        py: 2.35,
+        color: "#ffffff !important",
+        backgroundColor: "#0d1117 !important",
+
+        backgroundImage:
+          "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
+      }}
+    >
+      <Typography
+        sx={{
+          color: "#ffffff !important",
+          fontSize: 19,
+          fontWeight: 950,
+        }}
+      >
+        {title}
+      </Typography>
+
+      <Typography
+        sx={{
+          mt: 0.5,
+
+          color: "rgba(255,255,255,.43) !important",
+
+          fontSize: 10.5,
+        }}
+      >
+        {subtitle}
+      </Typography>
+    </DialogTitle>
+
+    <DialogContent
+      sx={{
+        px: 3,
+        py: "24px !important",
+      }}
+    >
+      {children}
+    </DialogContent>
+
+    {actions && (
+      <DialogActions
+        sx={{
+          px: 3,
+          py: 2.1,
+          borderTop: "1px solid #edf0f3",
+          backgroundColor: "#fafbfc",
+        }}
+      >
+        {actions}
+      </DialogActions>
+    )}
+  </Dialog>
+);
+
 const Employees = () => {
   const auth = useAuth();
+
   const currentUser = auth?.user || getLocalUser();
+
   const canManage =
     ["super_admin", "admin"].includes(currentUser?.role) &&
     hasPermission(currentUser, "employees.manage");
 
   const [positions, setPositions] = useState([]);
+
   const [employees, setEmployees] = useState([]);
+
   const [users, setUsers] = useState([]);
+
   const [departments, setDepartments] = useState([]);
+
   const [loading, setLoading] = useState(true);
-  const [positionOpen, setPositionOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
-  const [agreementOpen, setAgreementOpen] = useState(false);
-  const [positionForm, setPositionForm] = useState(emptyPosition);
-  const [profileForm, setProfileForm] = useState(emptyProfile);
-  const [agreementForm, setAgreementForm] = useState(emptyAgreement);
+
   const [saving, setSaving] = useState(false);
+
+  const [positionOpen, setPositionOpen] = useState(false);
+
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  const [agreementOpen, setAgreementOpen] = useState(false);
+
+  const [positionForm, setPositionForm] = useState(emptyPosition);
+
+  const [profileForm, setProfileForm] = useState(emptyProfile);
+
+  const [agreementForm, setAgreementForm] = useState(emptyAgreement);
+
   const [query, setQuery] = useState("");
 
   const visibleEmployees = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase("uz-UZ");
-    if (!needle) return employees;
+
+    if (!needle) {
+      return employees;
+    }
+
     return employees.filter((employee) =>
       [
         employee.first_name,
@@ -101,7 +467,10 @@ const Employees = () => {
         employee.username,
         employee.position_name,
         employee.department_name,
+
         typeLabels[employee.agreement?.payment_type],
+
+        periodLabels[employee.agreement?.payment_period],
       ]
         .filter(Boolean)
         .join(" ")
@@ -110,820 +479,1433 @@ const Employees = () => {
     );
   }, [employees, query]);
 
-  const fieldSx = {
-    "& .MuiOutlinedInput-root": {
-      borderRadius: "var(--aa-radius-md)",
-      backgroundColor: "var(--aa-surface-solid)",
-    },
-  };
+  const availableUsers = useMemo(
+    () =>
+      users.filter(
+        (user) => !employees.some((employee) => Number(employee.user_id) === Number(user.id)),
+      ),
+    [employees, users],
+  );
 
-  const dialogProps = {
-    PaperProps: {
-      sx: {
-        borderRadius: "var(--aa-radius-xl)",
-        border: "1px solid var(--aa-border)",
-        boxShadow: "var(--aa-shadow-lg)",
-        backgroundImage: "none",
-      },
-    },
-  };
+  const employeeStats = useMemo(() => {
+    const activeAgreements = employees.filter((employee) => Boolean(employee.agreement)).length;
+
+    const monthlyAgreements = employees.filter(
+      (employee) => employee.agreement?.payment_period === "monthly",
+    ).length;
+
+    const weeklyAgreements = employees.filter(
+      (employee) => employee.agreement?.payment_period === "weekly",
+    ).length;
+
+    return {
+      activeAgreements,
+      monthlyAgreements,
+      weeklyAgreements,
+    };
+  }, [employees]);
 
   const load = useCallback(async () => {
     setLoading(true);
+
     try {
-      const [positionsRes, employeesRes, usersRes, departmentsRes] =
-        await Promise.all([
-          getPositions({ limit: 100 }),
-          getEmployees({ limit: 100 }),
-          getUsers({ limit: 100 }),
-          getDepartments({ limit: 100 }),
-        ]);
-      setPositions(positionsRes.data.positions || []);
-      setEmployees(employeesRes.data.employees || []);
+      const [positionsRes, employeesRes, usersRes, departmentsRes] = await Promise.all([
+        getPositions({
+          limit: 100,
+        }),
+
+        getEmployees({
+          limit: 100,
+        }),
+
+        getUsers({
+          limit: 100,
+        }),
+
+        getDepartments({
+          limit: 100,
+        }),
+      ]);
+
+      const positionsData = positionsRes?.data || positionsRes || {};
+
+      const employeesData = employeesRes?.data || employeesRes || {};
+
+      const usersData = usersRes?.data || usersRes || {};
+
+      const departmentsData = departmentsRes?.data || departmentsRes || {};
+
+      setPositions(positionsData.positions || []);
+
+      setEmployees(employeesData.employees || []);
+
       setUsers(
-        (usersRes.data.users || usersRes.data.list || []).filter((user) =>
+        (usersData.users || usersData.list || []).filter((user) =>
           ["super_admin", "admin", "worker"].includes(user.role),
         ),
       );
-      setDepartments(departmentsRes.data.departments || []);
+
+      setDepartments(departmentsData.departments || []);
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "Hodim ma'lumotlarini olishda xato.",
-      );
+      toast.error(error?.response?.data?.message || "Xodim ma’lumotlarini olishda xato.");
     } finally {
       setLoading(false);
     }
   }, []);
+
   useEffect(() => {
     load();
   }, [load]);
 
   const close = () => {
+    if (saving) return;
+
     setPositionOpen(false);
     setProfileOpen(false);
     setAgreementOpen(false);
+
     setPositionForm(emptyPosition);
-    setProfileForm(emptyProfile);
-    setAgreementForm(emptyAgreement);
+
+    setProfileForm({
+      ...emptyProfile,
+      hired_at: today(),
+    });
+
+    setAgreementForm({
+      ...emptyAgreement,
+      effective_from: today(),
+    });
   };
+
   const savePosition = async () => {
-    if (!canManage)
-      return toast.error("Sizda lavozimlarni boshqarish uchun ruxsat yo'q.");
-    if (!positionForm.name.trim())
-      return toast.error("Lavozim nomini kiriting.");
+    if (!canManage) {
+      toast.error("Sizda lavozimlarni boshqarish uchun ruxsat yo‘q.");
+
+      return;
+    }
+
+    if (!positionForm.name.trim()) {
+      toast.error("Lavozim nomini kiriting.");
+
+      return;
+    }
+
     setSaving(true);
+
     try {
       await createPosition({
-        ...positionForm,
-        department_id: positionForm.department_id
-          ? Number(positionForm.department_id)
-          : null,
+        name: positionForm.name.trim(),
+
+        department_id: positionForm.department_id ? Number(positionForm.department_id) : null,
+
+        description: positionForm.description.trim() || null,
       });
-      toast.success("Lavozim qo'shildi.");
+
+      toast.success("Lavozim qo‘shildi.");
+
       close();
-      load();
+      await load();
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "Lavozimni saqlashda xato.",
-      );
+      toast.error(error?.response?.data?.message || "Lavozimni saqlashda xato.");
     } finally {
       setSaving(false);
     }
   };
+
   const saveProfile = async () => {
-    if (!canManage)
-      return toast.error("Sizda hodim profilini boshqarish uchun ruxsat yo'q.");
-    if (!profileForm.user_id || !profileForm.position_id)
-      return toast.error("Hodim va lavozimni tanlang.");
+    if (!canManage) {
+      toast.error("Sizda xodim profilini boshqarish uchun ruxsat yo‘q.");
+
+      return;
+    }
+
+    if (!profileForm.user_id || !profileForm.position_id) {
+      toast.error("Xodim va lavozimni tanlang.");
+
+      return;
+    }
+
     setSaving(true);
+
     try {
       await createEmployee({
-        ...profileForm,
         user_id: Number(profileForm.user_id),
+
         position_id: Number(profileForm.position_id),
+
+        hired_at: profileForm.hired_at || undefined,
+
+        note: profileForm.note.trim() || null,
       });
-      toast.success("Hodim profili yaratildi.");
+
+      toast.success("Xodim profili yaratildi.");
+
       close();
-      load();
+      await load();
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "Hodim profilini saqlashda xato.",
-      );
+      toast.error(error?.response?.data?.message || "Xodim profilini saqlashda xato.");
     } finally {
       setSaving(false);
     }
   };
+
   const saveAgreement = async () => {
-    if (!canManage)
-      return toast.error("Sizda kelishuvlarni boshqarish uchun ruxsat yo'q.");
-    if (!agreementForm.employee_id) return toast.error("Hodimni tanlang.");
+    if (!canManage) {
+      toast.error("Sizda kelishuvlarni boshqarish uchun ruxsat yo‘q.");
+
+      return;
+    }
+
+    if (!agreementForm.employee_id) {
+      toast.error("Xodimni tanlang.");
+
+      return;
+    }
+
+    if (
+      agreementForm.payment_type === "fixed_salary" &&
+      Number(agreementForm.fixed_amount || 0) <= 0
+    ) {
+      toast.error("Doimiy maosh summasini kiriting.");
+
+      return;
+    }
+
+    if (agreementForm.payment_type === "daily_rate" && Number(agreementForm.daily_rate || 0) <= 0) {
+      toast.error("Kunlik stavkani kiriting.");
+
+      return;
+    }
+
+    if (
+      agreementForm.payment_type === "commission" &&
+      Number(agreementForm.commission_percent || 0) <= 0
+    ) {
+      toast.error("Foiz miqdorini kiriting.");
+
+      return;
+    }
+
     setSaving(true);
+
     try {
       await createEmployeeAgreement({
-        ...agreementForm,
         employee_id: Number(agreementForm.employee_id),
+
+        payment_type: agreementForm.payment_type,
+
         fixed_amount: Number(agreementForm.fixed_amount || 0),
+
         daily_rate: Number(agreementForm.daily_rate || 0),
+
         commission_percent: Number(agreementForm.commission_percent || 0),
+
+        payment_period: agreementForm.payment_period,
+
+        effective_from: agreementForm.effective_from || undefined,
+
+        note: agreementForm.note.trim() || null,
       });
+
       toast.success("Yangi maosh kelishuvi saqlandi.");
+
       close();
-      load();
+      await load();
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "Kelishuvni saqlashda xato.",
-      );
+      toast.error(error?.response?.data?.message || "Kelishuvni saqlashda xato.");
     } finally {
       setSaving(false);
     }
+  };
+
+  const openAgreement = (employee) => {
+    setAgreementForm({
+      ...emptyAgreement,
+      employee_id: employee.id,
+      effective_from: today(),
+    });
+
+    setAgreementOpen(true);
   };
 
   return (
     <Box
-      className="crm-page flex h-full min-h-0 flex-col"
-      sx={{ color: "var(--aa-text)" }}
+      className="crm-page employees-page"
+      sx={{
+        height: "100%",
+        minHeight: 0,
+        display: "flex",
+        flexDirection: "column",
+        pb: 2.5,
+      }}
     >
-      <Paper
-        elevation={0}
+      <style>{employeesPageStyles}</style>
+
+      <Box
+        component="section"
+        className="employees-hero"
         sx={{
+          position: "relative",
+          isolation: "isolate",
           mb: 2,
-          px: { xs: 2, md: 2.75 },
-          py: { xs: 2, md: 2.4 },
-          borderRadius: "var(--aa-radius-xl)",
-          border: "1px solid var(--aa-border)",
-          background: "var(--aa-surface)",
-          boxShadow: "var(--aa-shadow-xs)",
-        }}
-        className="flex shrink-0 flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
-      >
-        <Box>
-          <Chip
-            size="small"
-            label="Al-amin CRM • xodimlar boshqaruvi"
-            sx={{
-              mb: 1,
-              height: 25,
-              borderRadius: "var(--aa-radius-pill)",
-              bgcolor: "var(--aa-brand-50)",
-              color: "var(--aa-brand-700)",
-              fontWeight: 800,
-              fontSize: 11.5,
-            }}
-          />
-          <Typography
-            sx={{
-              fontSize: { xs: 27, md: 33 },
-              lineHeight: 1.12,
-              fontWeight: 900,
-            }}
-          >
-            Xodimlar va kelishuvlar
-          </Typography>
-          <Typography
-            sx={{
-              mt: 0.75,
-              color: "var(--aa-text-secondary)",
-              fontWeight: 600,
-            }}
-          >
-            Lavozim, bo‘lim va ish haqi shartlarini bitta joydan boshqaring.
-          </Typography>
-        </Box>
-        {canManage && (
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
-            <Button
-              variant="outlined"
-              onClick={() => setPositionOpen(true)}
-              sx={{
-                borderRadius: "var(--aa-radius-md)",
-                px: 2,
-                py: 1.15,
-                fontWeight: 800,
-              }}
-            >
-              Lavozim qo'shish
-            </Button>
-            <Button
-              variant="outlined"
-              onClick={() => setProfileOpen(true)}
-              sx={{
-                borderRadius: "var(--aa-radius-md)",
-                px: 2,
-                py: 1.15,
-                fontWeight: 800,
-              }}
-            >
-              Hodim biriktirish
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => setAgreementOpen(true)}
-              sx={{
-                borderRadius: "var(--aa-radius-md)",
-                px: 2.2,
-                py: 1.15,
-                bgcolor: "var(--aa-brand-700)",
-                fontWeight: 850,
-                boxShadow: "var(--aa-shadow-sm)",
-                "&:hover": { bgcolor: "var(--aa-brand-800)" },
-              }}
-            >
-              Kelishuv qo'shish
-            </Button>
-          </Stack>
-        )}
-      </Paper>
-      <Box className="mb-4 grid shrink-0 grid-cols-1 gap-3 sm:grid-cols-3">
-        <Paper
-          elevation={0}
-          sx={{
-            p: 2.1,
-            borderRadius: "var(--aa-radius-lg)",
-            border: "1px solid var(--aa-border)",
-            boxShadow: "var(--aa-shadow-xs)",
-          }}
-        >
-          <Typography
-            sx={{
-              color: "var(--aa-text-secondary)",
-              fontSize: 13,
-              fontWeight: 750,
-            }}
-          >
-            Lavozimlar
-          </Typography>
-          <Typography sx={{ mt: 0.4, fontSize: 27, fontWeight: 900 }}>
-            {positions.length}
-          </Typography>
-        </Paper>
-        <Paper
-          elevation={0}
-          sx={{
-            p: 2.1,
-            borderRadius: "var(--aa-radius-lg)",
-            border: "1px solid var(--aa-border)",
-            boxShadow: "var(--aa-shadow-xs)",
-          }}
-        >
-          <Typography
-            sx={{
-              color: "var(--aa-text-secondary)",
-              fontSize: 13,
-              fontWeight: 750,
-            }}
-          >
-            Korxona hodimlari
-          </Typography>
-          <Typography sx={{ mt: 0.4, fontSize: 27, fontWeight: 900 }}>
-            {employees.length}
-          </Typography>
-        </Paper>
-        <Paper
-          elevation={0}
-          sx={{
-            p: 2.1,
-            borderRadius: "var(--aa-radius-lg)",
-            border: "1px solid var(--aa-border)",
-            boxShadow: "var(--aa-shadow-xs)",
-          }}
-        >
-          <Typography
-            sx={{
-              color: "var(--aa-text-secondary)",
-              fontSize: 13,
-              fontWeight: 750,
-            }}
-          >
-            Aktiv kelishuvlar
-          </Typography>
-          <Typography
-            sx={{
-              mt: 0.4,
-              fontSize: 27,
-              fontWeight: 900,
-              color: "var(--aa-success)",
-            }}
-          >
-            {employees.filter((e) => e.agreement).length}
-          </Typography>
-        </Paper>
-      </Box>
-      <Paper
-        elevation={0}
-        sx={{
-          minHeight: 0,
-          flex: 1,
+
+          p: {
+            xs: 2.5,
+            md: 3,
+          },
+
           overflow: "hidden",
-          borderRadius: "var(--aa-radius-xl)",
-          border: "1px solid var(--aa-border)",
-          boxShadow: "var(--aa-shadow-xs)",
-          backgroundImage: "none",
+          color: "#ffffff",
+          borderRadius: "25px",
+
+          border: "1px solid rgba(255,255,255,.075)",
+
+          backgroundColor: "#0d1117 !important",
+
+          backgroundImage:
+            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
+
+          boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+
+          flexShrink: 0,
+
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            width: 390,
+            height: 390,
+            top: -275,
+            right: -210,
+            borderRadius: "50%",
+
+            border: "1px solid rgba(248,113,113,.16)",
+
+            boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+
+            pointerEvents: "none",
+          },
         }}
       >
         <Box
           sx={{
-            px: { xs: 2, md: 2.5 },
-            py: 1.8,
-            display: "flex",
-            gap: 1.5,
-            alignItems: { xs: "stretch", sm: "center" },
-            justifyContent: "space-between",
-            flexDirection: { xs: "column", sm: "row" },
-            borderBottom: "1px solid var(--aa-border)",
+            position: "relative",
+            zIndex: 1,
+            display: "grid",
+
+            gridTemplateColumns: {
+              xs: "1fr",
+              xl: ".78fr 1.22fr",
+            },
+
+            gap: 3,
+            alignItems: "center",
           }}
         >
           <Box>
-            <Typography sx={{ fontSize: 17, fontWeight: 900 }}>
-              Xodimlar ro'yxati
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1.1,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 25,
+                  height: 2,
+                  borderRadius: 99,
+
+                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                }}
+              />
+
+              <Typography
+                sx={{
+                  color: "#fecdd3 !important",
+
+                  fontSize: 10,
+                  fontWeight: 950,
+                  letterSpacing: ".13em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Xodimlar boshqaruvi
+              </Typography>
+            </Box>
+
+            <Typography
+              component="h1"
+              sx={{
+                mt: 1.5,
+                color: "#ffffff !important",
+
+                fontSize: {
+                  xs: 29,
+                  md: 36,
+                },
+
+                lineHeight: 1.08,
+                fontWeight: 950,
+                letterSpacing: "-.045em",
+              }}
+            >
+              Xodimlar va kelishuvlar
             </Typography>
+
             <Typography
               sx={{
-                mt: 0.25,
-                color: "var(--aa-text-secondary)",
+                maxWidth: 570,
+                mt: 1.4,
+
+                color: "rgba(255,255,255,.45) !important",
+
                 fontSize: 12.5,
-                fontWeight: 650,
+                lineHeight: 1.75,
               }}
             >
-              {visibleEmployees.length} ta xodim ko'rsatilmoqda
+              Xodimlar, lavozimlar, bo‘limlar va ish haqi shartlarini yagona boshqaruv markazida
+              nazorat qiling.
+            </Typography>
+
+            {canManage && (
+              <Stack
+                direction={{
+                  xs: "column",
+                  sm: "row",
+                }}
+                spacing={1}
+                useFlexGap
+                sx={{
+                  mt: 2.4,
+                  flexWrap: "wrap",
+                }}
+              >
+                <Button
+                  onClick={() => {
+                    setPositionForm(emptyPosition);
+
+                    setPositionOpen(true);
+                  }}
+                  sx={heroSecondaryButtonSx}
+                >
+                  Lavozim qo‘shish
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    setProfileForm({
+                      ...emptyProfile,
+                      hired_at: today(),
+                    });
+
+                    setProfileOpen(true);
+                  }}
+                  sx={heroSecondaryButtonSx}
+                >
+                  Xodim biriktirish
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    setAgreementForm({
+                      ...emptyAgreement,
+
+                      effective_from: today(),
+                    });
+
+                    setAgreementOpen(true);
+                  }}
+                  sx={heroPrimaryButtonSx}
+                >
+                  + Kelishuv qo‘shish
+                </Button>
+              </Stack>
+            )}
+          </Box>
+
+          <Box
+            sx={{
+              display: "grid",
+
+              gridTemplateColumns: {
+                xs: "1fr",
+
+                sm: "repeat(2,minmax(0,1fr))",
+
+                lg: "repeat(4,minmax(0,1fr))",
+              },
+
+              gap: 1.3,
+            }}
+          >
+            <HeroMetric
+              label="Xodimlar"
+              value={`${number(employees.length)} ta`}
+              helper="Korxona xodimlari"
+              tone="blue"
+            />
+
+            <HeroMetric
+              label="Lavozimlar"
+              value={`${number(positions.length)} ta`}
+              helper="Tizimdagi lavozimlar"
+              tone="amber"
+            />
+
+            <HeroMetric
+              label="Faol kelishuv"
+              value={`${number(employeeStats.activeAgreements)} ta`}
+              helper="Ish haqi kelishuvlari"
+              tone="green"
+            />
+
+            <HeroMetric
+              label="Bo‘limlar"
+              value={`${number(departments.length)} ta`}
+              helper={`${employeeStats.monthlyAgreements} oylik, ${employeeStats.weeklyAgreements} haftalik`}
+              tone="red"
+            />
+          </Box>
+        </Box>
+      </Box>
+
+      <Card
+        sx={{
+          mb: 2,
+          p: 2,
+          flexShrink: 0,
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+
+            alignItems: {
+              xs: "stretch",
+              md: "center",
+            },
+
+            justifyContent: "space-between",
+
+            flexDirection: {
+              xs: "column",
+              md: "row",
+            },
+
+            gap: 1.4,
+          }}
+        >
+          <Box>
+            <Typography
+              sx={{
+                color: "#0f172a",
+                fontSize: 14,
+                fontWeight: 950,
+              }}
+            >
+              Xodimlarni qidirish
+            </Typography>
+
+            <Typography
+              sx={{
+                mt: 0.4,
+                color: "#94a3b8",
+                fontSize: 9.5,
+              }}
+            >
+              Ism, username, lavozim, bo‘lim yoki hisob turi bo‘yicha qidiring
             </Typography>
           </Box>
-          <TextField
-            size="small"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Xodim, lavozim yoki bo'lim..."
-            inputProps={{ "aria-label": "Xodimlarni qidirish" }}
-            sx={{ ...fieldSx, width: { xs: "100%", sm: 310 } }}
-          />
-        </Box>
-        {loading ? (
-          <Box className="flex h-full items-center justify-center">
-            <CircularProgress />
-          </Box>
-        ) : (
-          <Box sx={{ minHeight: 0, height: "100%", overflow: "auto" }}>
-            <Table
-              stickyHeader
+
+          <Stack
+            direction={{
+              xs: "column",
+              sm: "row",
+            }}
+            spacing={1}
+            sx={{
+              width: {
+                xs: "100%",
+                md: "auto",
+              },
+            }}
+          >
+            <TextField
+              size="small"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Xodim, lavozim yoki bo‘lim..."
+              inputProps={{
+                "aria-label": "Xodimlarni qidirish",
+              }}
               sx={{
-                minWidth: 950,
-                "& .MuiTableCell-root": { borderColor: "var(--aa-border)" },
-                "& .MuiTableHead-root .MuiTableCell-root": {
-                  bgcolor: "var(--aa-surface-muted)",
-                  color: "var(--aa-text-secondary)",
-                  fontSize: 11.5,
-                  fontWeight: 850,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.045em",
-                  py: 1.35,
-                },
-                "& .MuiTableBody-root .MuiTableRow-root:hover": {
-                  bgcolor: "var(--aa-surface-hover)",
+                width: {
+                  xs: "100%",
+                  sm: 330,
                 },
               }}
+            />
+
+            {query && (
+              <Button variant="outlined" onClick={() => setQuery("")} sx={secondaryButtonSx}>
+                Tozalash
+              </Button>
+            )}
+
+            <Button variant="outlined" onClick={load} disabled={loading} sx={secondaryButtonSx}>
+              Yangilash
+            </Button>
+          </Stack>
+        </Box>
+      </Card>
+
+      <Card
+        sx={{
+          minHeight: 0,
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Box
+          sx={{
+            px: 2.4,
+            py: 1.9,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 2,
+            borderBottom: "1px solid #edf0f3",
+          }}
+        >
+          <Box>
+            <Typography
+              sx={{
+                color: "#0f172a",
+                fontSize: 15,
+                fontWeight: 950,
+              }}
             >
-              <TableHead>
+              Xodimlar ro‘yxati
+            </Typography>
+
+            <Typography
+              sx={{
+                mt: 0.45,
+                color: "#94a3b8",
+                fontSize: 10.5,
+              }}
+            >
+              Xodim, lavozim, bo‘lim va ish haqi kelishuvi
+            </Typography>
+          </Box>
+
+          <Chip
+            size="small"
+            label={`${number(visibleEmployees.length)} ta`}
+            sx={{
+              height: 25,
+              color: "#991b1b",
+              fontSize: 9.5,
+              fontWeight: 900,
+
+              backgroundColor: "rgba(153,27,27,.07)",
+            }}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            minHeight: 0,
+            flex: 1,
+            overflow: "auto",
+          }}
+        >
+          <Table
+            stickyHeader
+            sx={{
+              minWidth: canManage ? 1160 : 1040,
+
+              "& th": {
+                py: 1.55,
+                color: "#94a3b8",
+                fontSize: 9.5,
+                fontWeight: 900,
+                letterSpacing: ".045em",
+                textTransform: "uppercase",
+                backgroundColor: "#fafbfc",
+                borderColor: "#edf0f3",
+              },
+
+              "& td": {
+                py: 1.4,
+                color: "#64748b",
+                fontSize: 10.5,
+                borderColor: "#edf0f3",
+              },
+
+              "& tbody tr:hover": {
+                backgroundColor: "rgba(153,27,27,.025)",
+              },
+            }}
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell>Xodim</TableCell>
+
+                <TableCell>Tizim roli</TableCell>
+
+                <TableCell>Lavozim</TableCell>
+
+                <TableCell>Bo‘lim</TableCell>
+
+                <TableCell>Ish haqi turi</TableCell>
+
+                <TableCell>Kelishuv qiymati</TableCell>
+
+                <TableCell>To‘lov davri</TableCell>
+
+                <TableCell>Ishga kirgan</TableCell>
+
+                {canManage && <TableCell align="right">Amal</TableCell>}
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {loading ? (
                 <TableRow>
-                  <TableCell>Hodim</TableCell>
-                  <TableCell>Tizim ruxsati</TableCell>
-                  <TableCell>Lavozim</TableCell>
-                  <TableCell>Bo'lim</TableCell>
-                  <TableCell>Hisob turi</TableCell>
-                  <TableCell>Kelishuv summasi</TableCell>
-                  <TableCell>Davr</TableCell>
-                  {canManage && <TableCell align="right">Amal</TableCell>}
+                  <TableCell colSpan={canManage ? 9 : 8} align="center" sx={{ py: 8 }}>
+                    <CircularProgress
+                      size={30}
+                      sx={{
+                        color: "#991b1b",
+                      }}
+                    />
+                  </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {visibleEmployees.length ? (
-                  visibleEmployees.map((employee) => (
-                    <TableRow key={employee.id} hover>
-                      <TableCell>
-                        <Box className="flex items-center gap-3">
-                          <Avatar
+              ) : visibleEmployees.length ? (
+                visibleEmployees.map((employee) => (
+                  <TableRow key={employee.id} hover>
+                    <TableCell>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1.4,
+                        }}
+                      >
+                        <Avatar
+                          src={getImageUrl(employee.user_image)}
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            flexShrink: 0,
+                            color: "#ffffff",
+                            fontSize: 13,
+                            fontWeight: 950,
+
+                            background: "linear-gradient(135deg,#7f1d1d,#c81e2a)",
+
+                            border: "3px solid #ffffff",
+
+                            boxShadow: "0 8px 20px rgba(127,29,29,.16)",
+                          }}
+                        >
+                          {getInitials(employee)}
+                        </Avatar>
+
+                        <Box
+                          sx={{
+                            minWidth: 0,
+                          }}
+                        >
+                          <Typography
+                            noWrap
                             sx={{
-                              width: 42,
-                              height: 42,
-                              bgcolor: "var(--aa-brand-50)",
-                              color: "var(--aa-brand-700)",
-                              border: "1px solid var(--aa-brand-100)",
+                              maxWidth: 210,
+                              color: "#334155",
+                              fontSize: 12.5,
                               fontWeight: 900,
                             }}
                           >
-                            {employee.first_name?.[0]}
-                          </Avatar>
-                          <Box>
-                            <Typography
-                              sx={{ fontWeight: 850, color: "var(--aa-text)" }}
-                            >
-                              {employee.first_name} {employee.last_name}
-                            </Typography>
-                            <Typography
-                              sx={{
-                                mt: 0.15,
-                                color: "var(--aa-text-secondary)",
-                                fontSize: 12.5,
-                                fontWeight: 650,
-                              }}
-                            >
-                              @{employee.username}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          size="small"
-                          label={employee.role}
-                          sx={{
-                            borderRadius: "var(--aa-radius-pill)",
-                            bgcolor: "var(--aa-surface-muted)",
-                            color: "var(--aa-text-secondary)",
-                            fontWeight: 800,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>{employee.position_name}</TableCell>
-                      <TableCell>{employee.department_name || "-"}</TableCell>
-                      <TableCell>
-                        {employee.agreement
-                          ? typeLabels[employee.agreement.payment_type]
-                          : "Kelishuv yo'q"}
-                      </TableCell>
-                      <TableCell>
-                        {employee.agreement
-                          ? money(
-                              employee.agreement.fixed_amount ||
-                                employee.agreement.daily_rate,
-                            )
-                          : "-"}
-                      </TableCell>
-                      <TableCell>
-                        {employee.agreement
-                          ? periodLabels[employee.agreement.payment_period]
-                          : "-"}
-                      </TableCell>
-                      {canManage && (
-                        <TableCell align="right">
-                          <Button
-                            size="small"
-                            variant="outlined"
+                            {getFullName(employee)}
+                          </Typography>
+
+                          <Typography
+                            noWrap
                             sx={{
-                              borderRadius: "var(--aa-radius-sm)",
-                              fontWeight: 800,
-                            }}
-                            onClick={() => {
-                              setAgreementForm({
-                                ...emptyAgreement,
-                                employee_id: employee.id,
-                              });
-                              setAgreementOpen(true);
+                              maxWidth: 210,
+                              mt: 0.4,
+                              color: "#94a3b8",
+                              fontSize: 9.5,
                             }}
                           >
-                            Yangi kelishuv
-                          </Button>
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={canManage ? 8 : 7} align="center">
-                      {query
-                        ? "Qidiruv bo'yicha xodim topilmadi"
-                        : "Hodim profillari hali yaratilmagan"}
+                            @{employee.username || "username"}
+                          </Typography>
+                        </Box>
+                      </Box>
                     </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </Box>
-        )}
-      </Paper>
 
-      <Dialog
+                    <TableCell>
+                      <RoleChip role={employee.role} />
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography
+                        sx={{
+                          color: "#334155",
+                          fontSize: 10.5,
+                          fontWeight: 900,
+                        }}
+                      >
+                        {employee.position_name || "-"}
+                      </Typography>
+
+                      {employee.position_description && (
+                        <Typography
+                          sx={{
+                            mt: 0.35,
+                            maxWidth: 200,
+                            color: "#94a3b8",
+                            fontSize: 9,
+                            lineHeight: 1.45,
+                          }}
+                        >
+                          {employee.position_description}
+                        </Typography>
+                      )}
+                    </TableCell>
+
+                    <TableCell>
+                      <Chip
+                        size="small"
+                        label={employee.department_name || "Bo‘limsiz"}
+                        sx={{
+                          height: 25,
+                          color: "#1d4ed8",
+                          fontSize: 9.5,
+                          fontWeight: 900,
+
+                          backgroundColor: "rgba(37,99,235,.08)",
+
+                          border: "1px solid rgba(37,99,235,.16)",
+                        }}
+                      />
+                    </TableCell>
+
+                    <TableCell>
+                      <AgreementChip agreement={employee.agreement} />
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography
+                        sx={{
+                          maxWidth: 210,
+                          color: employee.agreement ? "#15803d" : "#94a3b8",
+
+                          fontSize: 10.5,
+                          fontWeight: 950,
+                          lineHeight: 1.55,
+                        }}
+                      >
+                        {getAgreementValue(employee.agreement)}
+                      </Typography>
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography
+                        sx={{
+                          color: "#475569",
+                          fontSize: 10.5,
+                          fontWeight: 850,
+                        }}
+                      >
+                        {employee.agreement
+                          ? periodLabels[employee.agreement.payment_period] || "-"
+                          : "-"}
+                      </Typography>
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography
+                        sx={{
+                          color: "#475569",
+                          fontSize: 10.5,
+                          fontWeight: 850,
+                        }}
+                      >
+                        {date(employee.hired_at)}
+                      </Typography>
+                    </TableCell>
+
+                    {canManage && (
+                      <TableCell align="right">
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => openAgreement(employee)}
+                          sx={tableActionSx}
+                        >
+                          Yangi kelishuv
+                        </Button>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={canManage ? 9 : 8}
+                    align="center"
+                    sx={{
+                      py: 8,
+                      color: "#94a3b8",
+                      fontWeight: 850,
+                    }}
+                  >
+                    {query
+                      ? "Qidiruv bo‘yicha xodim topilmadi"
+                      : "Xodim profillari hali yaratilmagan"}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </Box>
+      </Card>
+
+      <PremiumDialog
         open={positionOpen}
         onClose={close}
-        fullWidth
-        maxWidth="sm"
-        {...dialogProps}
+        title="Yangi lavozim"
+        subtitle="Lavozim nomi, bo‘limi va tavsifini kiriting"
+        actions={
+          <>
+            <Button onClick={close} disabled={saving} sx={dialogCancelSx}>
+              Bekor qilish
+            </Button>
+
+            <Button
+              variant="contained"
+              disabled={saving}
+              onClick={savePosition}
+              sx={dialogPrimarySx}
+            >
+              {saving ? "Saqlanmoqda..." : "Lavozimni saqlash"}
+            </Button>
+          </>
+        }
       >
-        <DialogTitle
-          sx={{
-            px: 3,
-            py: 2.2,
-            fontSize: 21,
-            fontWeight: 900,
-            borderBottom: "1px solid var(--aa-border)",
-          }}
-        >
-          Lavozim qo'shish
-        </DialogTitle>
-        <DialogContent sx={{ px: 3, py: 2.5 }}>
-          <Stack spacing={2} className="pt-2">
-            <TextField
-              label="Lavozim nomi"
-              sx={fieldSx}
-              value={positionForm.name}
-              onChange={(e) =>
-                setPositionForm((p) => ({ ...p, name: e.target.value }))
-              }
-            />
+        <Stack spacing={2}>
+          <TextField
+            required
+            label="Lavozim nomi"
+            value={positionForm.name}
+            onChange={(event) =>
+              setPositionForm((previous) => ({
+                ...previous,
+
+                name: event.target.value,
+              }))
+            }
+          />
+
+          <TextField
+            select
+            label="Bo‘lim"
+            value={positionForm.department_id}
+            onChange={(event) =>
+              setPositionForm((previous) => ({
+                ...previous,
+
+                department_id: event.target.value,
+              }))
+            }
+          >
+            <MenuItem value="">Bo‘limsiz</MenuItem>
+
+            {departments.map((department) => (
+              <MenuItem key={department.id} value={department.id}>
+                {department.name}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            multiline
+            minRows={3}
+            label="Lavozim tavsifi"
+            value={positionForm.description}
+            onChange={(event) =>
+              setPositionForm((previous) => ({
+                ...previous,
+
+                description: event.target.value,
+              }))
+            }
+          />
+        </Stack>
+      </PremiumDialog>
+
+      <PremiumDialog
+        open={profileOpen}
+        onClose={close}
+        title="Xodimga lavozim biriktirish"
+        subtitle="Tizim foydalanuvchisini korxona xodimi sifatida ro‘yxatdan o‘tkazing"
+        actions={
+          <>
+            <Button onClick={close} disabled={saving} sx={dialogCancelSx}>
+              Bekor qilish
+            </Button>
+
+            <Button
+              variant="contained"
+              disabled={saving}
+              onClick={saveProfile}
+              sx={dialogPrimarySx}
+            >
+              {saving ? "Biriktirilmoqda..." : "Xodimni biriktirish"}
+            </Button>
+          </>
+        }
+      >
+        <Stack spacing={2}>
+          <TextField
+            select
+            required
+            label="Xodim"
+            value={profileForm.user_id}
+            onChange={(event) =>
+              setProfileForm((previous) => ({
+                ...previous,
+
+                user_id: event.target.value,
+              }))
+            }
+            helperText={
+              availableUsers.length
+                ? "Korxona xodimi sifatida ro‘yxatdan o‘tmagan foydalanuvchilar"
+                : "Biriktirilmagan foydalanuvchi topilmadi"
+            }
+          >
+            {availableUsers.map((user) => (
+              <MenuItem key={user.id} value={user.id}>
+                {user.first_name} {user.last_name} — {roleLabels[user.role] || user.role}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            select
+            required
+            label="Lavozim"
+            value={profileForm.position_id}
+            onChange={(event) =>
+              setProfileForm((previous) => ({
+                ...previous,
+
+                position_id: event.target.value,
+              }))
+            }
+          >
+            {positions
+              .filter((position) => position.is_active !== false)
+              .map((position) => (
+                <MenuItem key={position.id} value={position.id}>
+                  {position.name}
+                  {position.department_name ? ` — ${position.department_name}` : ""}
+                </MenuItem>
+              ))}
+          </TextField>
+
+          <TextField
+            type="date"
+            label="Ishga kirgan sana"
+            value={profileForm.hired_at}
+            onChange={(event) =>
+              setProfileForm((previous) => ({
+                ...previous,
+
+                hired_at: event.target.value,
+              }))
+            }
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
+            }}
+          />
+
+          <TextField
+            multiline
+            minRows={3}
+            label="Izoh"
+            value={profileForm.note}
+            onChange={(event) =>
+              setProfileForm((previous) => ({
+                ...previous,
+
+                note: event.target.value,
+              }))
+            }
+          />
+        </Stack>
+      </PremiumDialog>
+
+      <PremiumDialog
+        open={agreementOpen}
+        onClose={close}
+        title="Ish haqi kelishuvi"
+        subtitle="Xodimning maosh turi, stavkasi va to‘lov davrini belgilang"
+        maxWidth="md"
+        actions={
+          <>
+            <Button onClick={close} disabled={saving} sx={dialogCancelSx}>
+              Bekor qilish
+            </Button>
+
+            <Button
+              variant="contained"
+              disabled={saving}
+              onClick={saveAgreement}
+              sx={dialogPrimarySx}
+            >
+              {saving ? "Saqlanmoqda..." : "Kelishuvni saqlash"}
+            </Button>
+          </>
+        }
+      >
+        <Stack spacing={2.1}>
+          <Box
+            sx={{
+              display: "grid",
+
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2,minmax(0,1fr))",
+              },
+
+              gap: 1.6,
+            }}
+          >
             <TextField
               select
-              label="Bo'lim"
-              sx={fieldSx}
-              value={positionForm.department_id}
-              onChange={(e) =>
-                setPositionForm((p) => ({
-                  ...p,
-                  department_id: e.target.value,
+              required
+              label="Xodim"
+              value={agreementForm.employee_id}
+              onChange={(event) =>
+                setAgreementForm((previous) => ({
+                  ...previous,
+
+                  employee_id: event.target.value,
                 }))
               }
             >
-              <MenuItem value="">Bo'limsiz</MenuItem>
-              {departments.map((d) => (
-                <MenuItem key={d.id} value={d.id}>
-                  {d.name}
+              {employees.map((employee) => (
+                <MenuItem key={employee.id} value={employee.id}>
+                  {getFullName(employee)} — {employee.position_name || "Lavozimsiz"}
                 </MenuItem>
               ))}
             </TextField>
+
             <TextField
-              multiline
-              minRows={2}
-              label="Tavsif"
-              sx={fieldSx}
-              value={positionForm.description}
-              onChange={(e) =>
-                setPositionForm((p) => ({ ...p, description: e.target.value }))
+              select
+              required
+              label="Ish haqi turi"
+              value={agreementForm.payment_type}
+              onChange={(event) =>
+                setAgreementForm((previous) => ({
+                  ...previous,
+
+                  payment_type: event.target.value,
+                }))
               }
+            >
+              {Object.entries(typeLabels).map(([value, label]) => (
+                <MenuItem key={value} value={value}>
+                  {label}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <TextField
+              type="number"
+              label="Doimiy summa"
+              value={agreementForm.fixed_amount}
+              onChange={(event) =>
+                setAgreementForm((previous) => ({
+                  ...previous,
+
+                  fixed_amount: event.target.value,
+                }))
+              }
+              disabled={!["fixed_salary", "mixed"].includes(agreementForm.payment_type)}
+              inputProps={{
+                min: 0,
+                step: 1000,
+              }}
             />
-          </Stack>
-        </DialogContent>
-        <DialogActions
-          sx={{ px: 3, py: 2, borderTop: "1px solid var(--aa-border)" }}
-        >
-          <Button onClick={close} sx={{ fontWeight: 800 }}>
-            Bekor qilish
-          </Button>
-          <Button
-            variant="contained"
-            disabled={saving}
-            onClick={savePosition}
-            sx={{
-              borderRadius: "var(--aa-radius-md)",
-              bgcolor: "var(--aa-brand-700)",
-              fontWeight: 850,
-            }}
-          >
-            Saqlash
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
-        open={profileOpen}
-        onClose={close}
-        fullWidth
-        maxWidth="sm"
-        {...dialogProps}
-      >
-        <DialogTitle
-          sx={{
-            px: 3,
-            py: 2.2,
-            fontSize: 21,
-            fontWeight: 900,
-            borderBottom: "1px solid var(--aa-border)",
-          }}
-        >
-          Hodimga lavozim biriktirish
-        </DialogTitle>
-        <DialogContent sx={{ px: 3, py: 2.5 }}>
-          <Stack spacing={2} className="pt-2">
+
+            <TextField
+              type="number"
+              label="Kunlik stavka"
+              value={agreementForm.daily_rate}
+              onChange={(event) =>
+                setAgreementForm((previous) => ({
+                  ...previous,
+
+                  daily_rate: event.target.value,
+                }))
+              }
+              disabled={!["daily_rate", "mixed"].includes(agreementForm.payment_type)}
+              inputProps={{
+                min: 0,
+                step: 1000,
+              }}
+            />
+
+            <TextField
+              type="number"
+              label="Foiz"
+              value={agreementForm.commission_percent}
+              onChange={(event) =>
+                setAgreementForm((previous) => ({
+                  ...previous,
+
+                  commission_percent: event.target.value,
+                }))
+              }
+              disabled={!["commission", "mixed"].includes(agreementForm.payment_type)}
+              inputProps={{
+                min: 0,
+                max: 100,
+                step: 0.1,
+              }}
+              helperText="Foizli yoki aralash kelishuv uchun"
+            />
+
             <TextField
               select
-              label="Hodim"
-              sx={fieldSx}
-              value={profileForm.user_id}
-              onChange={(e) =>
-                setProfileForm((p) => ({ ...p, user_id: e.target.value }))
+              label="To‘lov davri"
+              value={agreementForm.payment_period}
+              onChange={(event) =>
+                setAgreementForm((previous) => ({
+                  ...previous,
+
+                  payment_period: event.target.value,
+                }))
               }
             >
-              {users
-                .filter(
-                  (u) =>
-                    !employees.some((e) => Number(e.user_id) === Number(u.id)),
-                )
-                .map((u) => (
-                  <MenuItem key={u.id} value={u.id}>
-                    {u.first_name} {u.last_name} ({u.role})
-                  </MenuItem>
-                ))}
+              <MenuItem value="weekly">Haftalik</MenuItem>
+
+              <MenuItem value="monthly">Oylik</MenuItem>
             </TextField>
-            <TextField
-              select
-              label="Lavozim"
-              sx={fieldSx}
-              value={profileForm.position_id}
-              onChange={(e) =>
-                setProfileForm((p) => ({ ...p, position_id: e.target.value }))
-              }
-            >
-              {positions
-                .filter((p) => p.is_active)
-                .map((p) => (
-                  <MenuItem key={p.id} value={p.id}>
-                    {p.name}
-                  </MenuItem>
-                ))}
-            </TextField>
+
             <TextField
               type="date"
-              label="Ishga kirgan sana"
-              sx={fieldSx}
-              value={profileForm.hired_at}
-              onChange={(e) =>
-                setProfileForm((p) => ({ ...p, hired_at: e.target.value }))
+              label="Amal qilish sanasi"
+              value={agreementForm.effective_from}
+              onChange={(event) =>
+                setAgreementForm((previous) => ({
+                  ...previous,
+
+                  effective_from: event.target.value,
+                }))
               }
-              slotProps={{ inputLabel: { shrink: true } }}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
             />
-          </Stack>
-        </DialogContent>
-        <DialogActions
-          sx={{ px: 3, py: 2, borderTop: "1px solid var(--aa-border)" }}
-        >
-          <Button onClick={close} sx={{ fontWeight: 800 }}>
-            Bekor qilish
-          </Button>
-          <Button
-            variant="contained"
-            disabled={saving}
-            onClick={saveProfile}
+          </Box>
+
+          <Box
             sx={{
-              borderRadius: "var(--aa-radius-md)",
-              bgcolor: "var(--aa-brand-700)",
-              fontWeight: 850,
+              p: 1.6,
+              borderRadius: "17px",
+              border: "1px solid #e7ebf0",
+              backgroundColor: "#f8fafc",
             }}
           >
-            Biriktirish
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
-        open={agreementOpen}
-        onClose={close}
-        fullWidth
-        maxWidth="md"
-        {...dialogProps}
-      >
-        <DialogTitle
-          sx={{
-            px: 3,
-            py: 2.2,
-            fontSize: 21,
-            fontWeight: 900,
-            borderBottom: "1px solid var(--aa-border)",
-          }}
-        >
-          Ish haqi kelishuvi
-        </DialogTitle>
-        <DialogContent sx={{ px: 3, py: 2.5 }}>
-          <Stack spacing={2} className="pt-2">
-            <Box className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <TextField
-                select
-                label="Hodim"
-                sx={fieldSx}
-                value={agreementForm.employee_id}
-                onChange={(e) =>
-                  setAgreementForm((p) => ({
-                    ...p,
-                    employee_id: e.target.value,
-                  }))
-                }
-              >
-                {employees.map((e) => (
-                  <MenuItem key={e.id} value={e.id}>
-                    {e.first_name} {e.last_name} — {e.position_name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                select
-                label="Hisob turi"
-                sx={fieldSx}
-                value={agreementForm.payment_type}
-                onChange={(e) =>
-                  setAgreementForm((p) => ({
-                    ...p,
-                    payment_type: e.target.value,
-                  }))
-                }
-              >
-                {Object.entries(typeLabels).map(([value, label]) => (
-                  <MenuItem key={value} value={value}>
-                    {label}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                type="number"
-                label="Doimiy summa"
-                sx={fieldSx}
-                value={agreementForm.fixed_amount}
-                onChange={(e) =>
-                  setAgreementForm((p) => ({
-                    ...p,
-                    fixed_amount: e.target.value,
-                  }))
-                }
-              />
-              <TextField
-                type="number"
-                label="Kunlik stavka"
-                sx={fieldSx}
-                value={agreementForm.daily_rate}
-                onChange={(e) =>
-                  setAgreementForm((p) => ({
-                    ...p,
-                    daily_rate: e.target.value,
-                  }))
-                }
-              />
-              <TextField
-                type="number"
-                label="Foiz"
-                sx={fieldSx}
-                value={agreementForm.commission_percent}
-                onChange={(e) =>
-                  setAgreementForm((p) => ({
-                    ...p,
-                    commission_percent: e.target.value,
-                  }))
-                }
-              />
-              <TextField
-                select
-                label="To'lov davri"
-                sx={fieldSx}
-                value={agreementForm.payment_period}
-                onChange={(e) =>
-                  setAgreementForm((p) => ({
-                    ...p,
-                    payment_period: e.target.value,
-                  }))
-                }
-              >
-                <MenuItem value="weekly">Haftalik</MenuItem>
-                <MenuItem value="monthly">Oylik</MenuItem>
-              </TextField>
-              <TextField
-                type="date"
-                label="Amal qilish sanasi"
-                sx={fieldSx}
-                value={agreementForm.effective_from}
-                onChange={(e) =>
-                  setAgreementForm((p) => ({
-                    ...p,
-                    effective_from: e.target.value,
-                  }))
-                }
-                slotProps={{ inputLabel: { shrink: true } }}
-              />
-            </Box>
-            <TextField
-              multiline
-              minRows={2}
-              label="Izoh"
-              sx={fieldSx}
-              value={agreementForm.note}
-              onChange={(e) =>
-                setAgreementForm((p) => ({ ...p, note: e.target.value }))
-              }
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions
-          sx={{ px: 3, py: 2, borderTop: "1px solid var(--aa-border)" }}
-        >
-          <Button onClick={close} sx={{ fontWeight: 800 }}>
-            Bekor qilish
-          </Button>
-          <Button
-            variant="contained"
-            disabled={saving}
-            onClick={saveAgreement}
-            sx={{
-              borderRadius: "var(--aa-radius-md)",
-              bgcolor: "var(--aa-brand-700)",
-              fontWeight: 850,
-            }}
-          >
-            Kelishuvni saqlash
-          </Button>
-        </DialogActions>
-      </Dialog>
+            <Typography
+              sx={{
+                color: "#94a3b8",
+                fontSize: 9.5,
+                fontWeight: 800,
+              }}
+            >
+              KELISHUV KO‘RINISHI
+            </Typography>
+
+            <Typography
+              sx={{
+                mt: 0.6,
+                color: "#334155",
+                fontSize: 13,
+                fontWeight: 950,
+              }}
+            >
+              {typeLabels[agreementForm.payment_type] || "-"} ·{" "}
+              {periodLabels[agreementForm.payment_period] || "-"}
+            </Typography>
+
+            <Typography
+              sx={{
+                mt: 0.45,
+                color: "#15803d",
+                fontSize: 11,
+                fontWeight: 900,
+              }}
+            >
+              {getAgreementValue(agreementForm)}
+            </Typography>
+          </Box>
+
+          <TextField
+            multiline
+            minRows={3}
+            label="Izoh"
+            value={agreementForm.note}
+            onChange={(event) =>
+              setAgreementForm((previous) => ({
+                ...previous,
+
+                note: event.target.value,
+              }))
+            }
+          />
+        </Stack>
+      </PremiumDialog>
     </Box>
   );
 };
+
+const heroPrimaryButtonSx = {
+  minHeight: 43,
+  px: 2.2,
+  color: "#ffffff !important",
+  borderRadius: "13px",
+  fontSize: 11,
+  fontWeight: 900,
+  textTransform: "none",
+
+  background: "linear-gradient(135deg,#991b1b,#dc2626)",
+
+  boxShadow: "0 12px 26px rgba(127,29,29,.30)",
+
+  "&:hover": {
+    background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+  },
+};
+
+const heroSecondaryButtonSx = {
+  minHeight: 43,
+  px: 1.9,
+
+  color: "rgba(255,255,255,.72) !important",
+
+  borderRadius: "13px",
+
+  border: "1px solid rgba(255,255,255,.10)",
+
+  backgroundColor: "rgba(255,255,255,.055)",
+
+  fontSize: 10.5,
+  fontWeight: 900,
+  textTransform: "none",
+
+  "&:hover": {
+    backgroundColor: "rgba(255,255,255,.10)",
+  },
+};
+
+const secondaryButtonSx = {
+  minHeight: 40,
+  px: 1.8,
+  color: "#64748b",
+  borderRadius: "11px",
+  borderColor: "#dce3ea",
+  fontSize: 10.5,
+  fontWeight: 900,
+  textTransform: "none",
+  backgroundColor: "#ffffff",
+
+  "&:hover": {
+    color: "#991b1b",
+
+    borderColor: "rgba(153,27,27,.22)",
+
+    backgroundColor: "rgba(153,27,27,.04)",
+  },
+};
+
+const tableActionSx = {
+  borderRadius: "9px",
+  fontSize: 9.5,
+  fontWeight: 900,
+  textTransform: "none",
+};
+
+const dialogCancelSx = {
+  color: "#64748b",
+  borderRadius: "11px",
+  fontWeight: 850,
+  textTransform: "none",
+};
+
+const dialogPrimarySx = {
+  minWidth: 125,
+  minHeight: 40,
+  px: 2,
+  color: "#ffffff",
+  borderRadius: "11px",
+  fontSize: 10.5,
+  fontWeight: 900,
+  textTransform: "none",
+
+  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+
+  boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+
+  "&:hover": {
+    background: "linear-gradient(135deg,#681818,#991b1b)",
+  },
+};
+
+const employeesPageStyles = `
+  .crm-page .employees-hero {
+    color: #ffffff !important;
+    background-color: #0d1117 !important;
+    background-image:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(220,38,38,.34),
+        transparent 30%
+      ),
+      linear-gradient(
+        145deg,
+        #0d1117,
+        #171117 52%,
+        #3a121a
+      ) !important;
+  }
+
+  .employees-dialog-title {
+    color: #ffffff !important;
+    background-color: #0d1117 !important;
+    background-image:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(220,38,38,.28),
+        transparent 36%
+      ),
+      linear-gradient(
+        135deg,
+        #11151c,
+        #321319
+      ) !important;
+  }
+`;
 
 export default Employees;

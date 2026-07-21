@@ -1,544 +1,315 @@
-﻿import { Box, Button, Container, Divider, Grid, Paper, Stack, Typography } from "@mui/material";
+﻿import {
+  Box,
+  Button,
+  Chip,
+  Container,
+  Divider,
+  Grid,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+
 import mrLogo from "../../images/mr-logo.png";
 
-const brand = {
-  red: "#971d21",
-  redDark: "#761518",
-  ink: "#07070b",
-  panel: "#0f172a",
-  text: "#0f172a",
-  muted: "#64748b",
-  line: "#e6edf5",
-  soft: "#f7f9fc",
-  soft2: "#eef4fb",
-  gold: "#d8a23a",
-  green: "#10b981",
-  blue: "#2563eb",
-  violet: "#7c3aed",
-  white: "#ffffff",
-};
-
-const smooth = [0.22, 1, 0.36, 1];
+const ease = [0.22, 1, 0.36, 1];
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 46 },
+  hidden: { opacity: 0, y: 36 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, ease: smooth },
-  },
-};
-
-const fadeLeft = {
-  hidden: { opacity: 0, x: -40 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.8, ease: smooth },
-  },
-};
-
-const fadeRight = {
-  hidden: { opacity: 0, x: 40 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.8, ease: smooth },
-  },
-};
-
-const zoomIn = {
-  hidden: { opacity: 0, scale: 0.94, y: 34 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: { duration: 0.8, ease: smooth },
+    transition: { duration: 0.72, ease },
   },
 };
 
 const stagger = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.08 },
+    transition: {
+      staggerChildren: 0.08,
+    },
   },
 };
 
-const summaryCards = [
-  {
-    label: "Jami savdo",
-    value: "7,700,000 so'm",
-    caption: "3 ta savdo",
-    color: brand.blue,
-  },
-  {
-    label: "Mijozlardan tushum",
-    value: "5,500,000 so'm",
-    caption: "Qarz: 2,200,000 so'm",
-    color: brand.green,
-  },
-  {
-    label: "Tayyor mahsulot",
-    value: "1,000 ta",
-    caption: "Bu oy tayyorlangan",
-    color: brand.violet,
-  },
-  {
-    label: "Kutilayotgan to'lov",
-    value: "2,200,000 so'm",
-    caption: "Mijozlar qarzi",
-    color: brand.gold,
-  },
+const metrics = [
+  ["Jami savdo", "7,7 mln", "3 ta savdo", "blue"],
+  ["Tushum", "5,5 mln", "Mijozlardan", "green"],
+  ["Tayyor mahsulot", "1 000 ta", "Joriy oy", "violet"],
+  ["Mijozlar qarzi", "2,2 mln", "Kutilayotgan to‘lov", "amber"],
 ];
 
-const modules = [
+const features = [
   {
+    no: "01",
     title: "Mijoz savdosi",
-    text: "Mijoz bir vaqtda bir nechta mahsulot oladi. Tizim jami summa, to'langan pul va qolgan qarzni avtomatik chiqaradi.",
-    metric: "Qarz nazorati",
+    text: "Bir savdoda bir nechta mahsulot kiriting. Jami summa, to‘langan pul va qolgan qarz avtomatik hisoblanadi.",
+    tag: "Savdo va qarzdorlik",
   },
   {
+    no: "02",
     title: "Ishlab chiqarish",
-    text: "Kroy, tikuv, kosib va qadoqlash bo'limlarida qaysi ishchi qancha mahsulot qilgani aniq yoziladi.",
-    metric: "Bo'lim kesimi",
+    text: "Kroy, tikuv, kosib va qadoqlash bo‘limlarida har bir ishchining bajargan ishini aniq kuzating.",
+    tag: "Bo‘lim va ishchi kesimi",
+    dark: true,
   },
   {
+    no: "03",
     title: "Ish haqi va avans",
-    text: "Payshanba oylik berishda yangi ish haqi, oldingi qoldiq, avans va beriladigan summa ko'rinadi.",
-    metric: "Haftalik hisob",
+    text: "Yangi ish haqi, avans, oldingi qoldiq va xodimga beriladigan yakuniy summani bitta joyda ko‘ring.",
+    tag: "Haftalik hisob",
   },
   {
+    no: "04",
     title: "Homashyo xaridi",
-    text: "Ta'minotchidan nima keldi, nechta keldi, nech puldan keldi va qancha qarz qoldi, hammasi saqlanadi.",
-    metric: "Xarid va qarz",
+    text: "Ta’minotchidan kelgan homashyo, tannarx, to‘langan summa va qolgan qarzni nazorat qiling.",
+    tag: "Xarid va ta’minotchi",
   },
   {
-    title: "Korxonalar boshqaruvi",
-    text: "Bir nechta korxona alohida yuradi. Har birida alohida foydalanuvchi, obuna va ma'lumotlar bo'ladi.",
-    metric: "Korxona nazorati",
+    no: "05",
+    title: "Ombor nazorati",
+    text: "Homashyo va tayyor mahsulot qoldig‘i, minimal miqdor, kirim-chiqim hamda inventarizatsiyani boshqaring.",
+    tag: "Qoldiq va harakat",
+    dark: true,
   },
   {
-    title: "Xavfsizlik",
-    text: "Tasdiqlash, faol qurilmalar va amallar tarixi orqali rahbar nazorati kuchayadi.",
-    metric: "Ikki bosqichli kirish",
+    no: "06",
+    title: "Ruxsat va xavfsizlik",
+    text: "Administratorlar faqat rahbar ruxsat bergan bo‘limlarni ko‘radi. Muhim amallar tarixda saqlanadi.",
+    tag: "Nazorat va audit",
   },
-];
-
-const plans = [
-  { name: "Plus", price: "299,000", workers: 15, clients: 20, admins: 2 },
-  { name: "Pro", price: "399,000", workers: 30, clients: 40, admins: 4, featured: true },
-  { name: "Business", price: "499,000", workers: 60, clients: 80, admins: 10 },
-  { name: "Enterprise", price: "699,000", workers: 100, clients: 150, admins: 20 },
 ];
 
 const process = [
-  "Mahsulot, bo'lim narxi va hodimlar kiritiladi",
-  "Ishchi bajargan ishlar hisobotga yoziladi",
-  "Mijozga bir nechta mahsulot sotiladi",
-  "Homashyo xaridi va ta'minotchi qarzi qayd qilinadi",
-  "Rahbar bosh sahifada umumiy holatni ko'radi",
+  ["Tizimni sozlang", "Mahsulotlar, bo‘lim narxlari, xodimlar va omborlarni kiriting."],
+  [
+    "Kundalik ishni yozing",
+    "Savdo, ishlab chiqarish, xarid, to‘lov va qoldiq harakatlarini kiriting.",
+  ],
+  [
+    "Hisobni tizimga topshiring",
+    "Qarz, oylik, avans, tannarx va moliyaviy natija avtomatik hisoblanadi.",
+  ],
+  [
+    "Rahbar sifatida nazorat qiling",
+    "Bosh sahifada asosiy ko‘rsatkichlar va muhim ogohlantirishlarni ko‘ring.",
+  ],
+];
+
+const plans = [
+  ["Plus", "299 000", 15, 20, 2, "Kichik ishlab chiqarish jamoalari uchun."],
+  ["Pro", "399 000", 30, 40, 4, "O‘sayotgan korxonalar uchun eng maqbul reja.", true],
+  ["Business", "499 000", 60, 80, 10, "Bir nechta bo‘limi bor yirik korxonalar uchun."],
+  [
+    "Enterprise",
+    "699 000",
+    100,
+    150,
+    20,
+    "Katta jamoa va keng nazorat talab qiladigan bizneslar uchun.",
+  ],
+];
+
+const proof = [
+  "Savdo va mijoz qarzi",
+  "Ishchi mehnati va oylik",
+  "Homashyo va ta’minotchi qarzi",
+  "Ombor va inventarizatsiya",
 ];
 
 const adPoints = [
-  "Mijozga qancha sotildi, qancha pul tushdi va qancha qarz qoldi",
-  "Ishchi qaysi bo'limda qancha mahsulot qildi va qancha ish haqi oldi",
-  "Homashyo kimdan olindi, qancha to'landi va ta'minotchiga qancha qarz bor",
-  "Adminlar faqat rahbar ruxsat bergan bo'limlarni boshqaradi",
+  "Mijozga qancha sotildi, qancha pul tushdi va qancha qarz qoldi.",
+  "Ishchi qaysi bo‘limda qancha mahsulot qildi va qancha ish haqi oldi.",
+  "Homashyo kimdan olindi, qancha to‘landi va ta’minotchiga qancha qarz bor.",
+  "Adminlar faqat rahbar ruxsat bergan bo‘limlarni boshqaradi.",
 ];
 
-function LogoMark({ dark = false, size = 48 }) {
+const scrollTo = (id) => {
+  document.getElementById(id)?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+};
+
+function Logo({ size = 42 }) {
   return (
     <Box
       component={motion.div}
-      whileHover={{ rotate: -4, scale: 1.05 }}
-      transition={{ type: "spring", stiffness: 300, damping: 18 }}
+      whileHover={{
+        rotate: -4,
+        scale: 1.05,
+      }}
+      transition={{
+        type: "spring",
+        stiffness: 300,
+        damping: 18,
+      }}
+      className="lp-logo"
       sx={{
         width: size,
         height: size,
-        borderRadius: "16px",
-        border: dark ? "1px solid rgba(255,255,255,.16)" : `1px solid ${brand.line}`,
-        bgcolor: dark ? "rgba(255,255,255,.96)" : "#fff",
-        display: "grid",
-        placeItems: "center",
-        overflow: "hidden",
-        boxShadow: dark ? "0 16px 40px rgba(255,255,255,.08)" : "0 14px 34px rgba(15,23,42,.07)",
       }}
     >
-      <Box
-        component="img"
-        src={mrLogo}
-        alt="MR belgisi"
-        sx={{ width: "76%", height: "76%", objectFit: "contain" }}
-      />
+      <Box component="img" src={mrLogo} alt="MR belgisi" />
     </Box>
   );
 }
 
-function SectionTitle({ label, title, text, center = false }) {
+function Eyebrow({ children, center = false, dark = false }) {
+  return (
+    <Box className={`lp-eyebrow ${center ? "center" : ""} ${dark ? "dark" : ""}`}>
+      <span />
+
+      <Typography>{children}</Typography>
+    </Box>
+  );
+}
+
+function SectionHead({ eyebrow, title, text, center = false }) {
   return (
     <Box
       component={motion.div}
       variants={fadeUp}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.25 }}
-      sx={{
-        maxWidth: center ? 860 : 760,
-        mx: center ? "auto" : 0,
-        textAlign: center ? "center" : "left",
+      viewport={{
+        once: true,
+        amount: 0.25,
       }}
+      className={`lp-section-head ${center ? "center" : ""}`}
     >
-      <Typography sx={{ color: brand.red, fontWeight: 950 }}>{label}</Typography>
+      <Eyebrow center={center}>{eyebrow}</Eyebrow>
 
-      <Typography
-        sx={{
-          mt: 1,
-          fontSize: { xs: 34, md: 56 },
-          lineHeight: { xs: "42px", md: "64px" },
-          fontWeight: 950,
-          letterSpacing: "-.05em",
-        }}
-      >
-        {title}
-      </Typography>
+      <Typography component="h2">{title}</Typography>
 
-      <Typography
-        sx={{
-          mt: 1.5,
-          color: brand.muted,
-          fontSize: 18,
-          lineHeight: "30px",
-          fontWeight: 650,
-        }}
-      >
-        {text}
-      </Typography>
+      <Typography component="p">{text}</Typography>
     </Box>
   );
 }
 
-function MetricCard({ item, index }) {
+function PreviewMetric({ item }) {
+  const [label, value, helper, tone] = item;
+
   return (
-    <Paper
-      component={motion.div}
-      variants={zoomIn}
-      whileHover={{ y: -8, scale: 1.02 }}
-      elevation={0}
-      sx={{
-        p: 2.4,
-        border: index === 0 ? "1px solid rgba(151,29,33,.26)" : `1px solid ${brand.line}`,
-        borderRadius: "24px !important",
-        bgcolor: index === 0 ? brand.red : "#fff",
-        color: index === 0 ? "#fff" : brand.text,
-        height: "100%",
-        boxShadow:
-          index === 0 ? "0 24px 60px rgba(151,29,33,.22)" : "0 16px 42px rgba(15,23,42,.06)",
-      }}
-    >
-      <Stack direction="row" justifyContent="space-between" spacing={2}>
-        <Box>
-          <Typography
-            sx={{
-              color: index === 0 ? "rgba(255,255,255,.72)" : brand.muted,
-              fontSize: 13,
-              fontWeight: 850,
-            }}
-          >
-            {item.label}
-          </Typography>
+    <Box className={`lp-preview-metric ${tone}`}>
+      <Box className="lp-preview-metric-icon">{label.charAt(0)}</Box>
 
-          <Typography
-            sx={{
-              mt: 0.8,
-              fontSize: { xs: 22, md: 25 },
-              fontWeight: 950,
-              letterSpacing: "-.03em",
-            }}
-          >
-            {item.value}
-          </Typography>
+      <Typography className="lp-preview-metric-label">{label}</Typography>
 
-          <Typography
-            sx={{
-              mt: 0.4,
-              color: index === 0 ? "rgba(255,255,255,.68)" : brand.muted,
-              fontSize: 13,
-              fontWeight: 700,
-            }}
-          >
-            {item.caption}
-          </Typography>
-        </Box>
+      <Typography className="lp-preview-metric-value">{value}</Typography>
 
-        <Box
-          component={motion.div}
-          animate={{ y: [0, -4, 0] }}
-          transition={{ duration: 2.8, repeat: Infinity, delay: index * 0.2 }}
-          sx={{
-            width: 42,
-            height: 42,
-            borderRadius: "14px",
-            bgcolor: index === 0 ? "rgba(255,255,255,.16)" : item.color,
-            color: "#fff",
-            display: "grid",
-            placeItems: "center",
-            fontWeight: 950,
-            boxShadow: index === 0 ? "none" : `0 14px 28px ${item.color}33`,
-          }}
-        >
-          {item.label[0]}
-        </Box>
-      </Stack>
-    </Paper>
+      <Typography className="lp-preview-metric-helper">{helper}</Typography>
+    </Box>
   );
 }
 
-function DashboardMockup() {
+function DashboardPreview() {
+  const bars = [
+    ["Yan", 28],
+    ["Fev", 42],
+    ["Mar", 38],
+    ["Apr", 61],
+    ["May", 73],
+    ["Iyun", 92],
+  ];
+
   return (
     <Paper
       component={motion.div}
-      initial={{ opacity: 0, y: 70, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 1, delay: 0.4, ease: smooth }}
-      elevation={0}
-      sx={{
-        borderRadius: "36px !important",
-        overflow: "hidden",
-        bgcolor: "#f8fafc",
-        border: "1px solid rgba(255,255,255,.24)",
-        boxShadow: "0 50px 130px rgba(0,0,0,.38)",
+      initial={{
+        opacity: 0,
+        y: 60,
+        scale: 0.96,
       }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        scale: 1,
+      }}
+      transition={{
+        duration: 0.9,
+        delay: 0.28,
+        ease,
+      }}
+      elevation={0}
+      className="lp-preview"
     >
-      <Box
-        sx={{
-          px: { xs: 2, md: 2.8 },
-          py: 2,
-          bgcolor: "#fff",
-          borderBottom: `1px solid ${brand.line}`,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: 2,
-        }}
-      >
-        <Stack direction="row" spacing={1.4} alignItems="center">
-          <LogoMark size={42} />
+      <Box className="lp-preview-top">
+        <Stack direction="row" spacing={1.1} alignItems="center">
+          <Logo size={36} />
+
           <Box>
-            <Typography sx={{ color: brand.text, fontWeight: 950 }}>
-              Al-amin CRM bosh sahifa
-            </Typography>
-            <Typography sx={{ color: brand.muted, fontSize: 12, fontWeight: 700 }}>
-              Rahbar uchun asosiy ko'rsatkichlar
-            </Typography>
+            <Typography className="lp-preview-title">Al Amin CRM</Typography>
+
+            <Typography className="lp-preview-subtitle">Rahbar bosh sahifasi</Typography>
           </Box>
         </Stack>
 
-        <Stack direction="row" spacing={1} sx={{ display: { xs: "none", md: "flex" } }}>
-          {["Bu oy", "O'tgan oy", "Ko'rish"].map((item, index) => (
-            <Box
-              key={item}
-              sx={{
-                px: 1.4,
-                py: 0.8,
-                borderRadius: "999px",
-                border: `1px solid ${brand.line}`,
-                color: index === 2 ? "#fff" : brand.text,
-                bgcolor: index === 2 ? brand.red : "#fff",
-                fontSize: 12,
-                fontWeight: 900,
-              }}
-            >
-              {item}
-            </Box>
-          ))}
-        </Stack>
+        <Chip size="small" label="Joriy oy" className="lp-period-chip" />
       </Box>
 
-      <Box sx={{ p: { xs: 2, md: 3 } }}>
-        <Grid
-          component={motion.div}
-          variants={stagger}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          container
-          spacing={2}
-        >
-          {summaryCards.map((item, index) => (
-            <Grid item xs={12} sm={6} md={3} key={item.label}>
-              <MetricCard item={item} index={index} />
-            </Grid>
+      <Box className="lp-preview-content">
+        <Box className="lp-preview-metrics">
+          {metrics.map((item) => (
+            <PreviewMetric key={item[0]} item={item} />
           ))}
-        </Grid>
+        </Box>
 
-        <Grid container spacing={2} sx={{ mt: 0.5 }}>
-          <Grid item xs={12} lg={5}>
-            <Paper
-              component={motion.div}
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.25 }}
-              elevation={0}
-              sx={{
-                p: 2.5,
-                height: 290,
-                border: `1px solid ${brand.line}`,
-                borderRadius: "24px !important",
-                bgcolor: "#fff",
-                boxShadow: "0 16px 40px rgba(15,23,42,.05)",
-              }}
-            >
+        <Grid container spacing={1.2} sx={{ mt: 0.2 }}>
+          <Grid item xs={12} md={7}>
+            <Paper elevation={0} className="lp-preview-card">
               <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ color: brand.text, fontWeight: 950 }}>
-                  Savdo va ishlab chiqarish
-                </Typography>
+                <Box>
+                  <Typography className="lp-preview-card-title">Savdo dinamikasi</Typography>
 
-                <Typography
-                  sx={{
-                    px: 1.2,
-                    py: 0.4,
-                    borderRadius: 999,
-                    bgcolor: "#eef2ff",
-                    color: brand.text,
-                    fontSize: 12,
-                    fontWeight: 900,
-                  }}
-                >
-                  Oy kesimi
-                </Typography>
+                  <Typography className="lp-preview-card-helper">So‘nggi 6 oy</Typography>
+                </Box>
+
+                <Typography className="lp-growth">+18.4%</Typography>
               </Stack>
 
-              <Stack direction="row" alignItems="end" spacing={2.5} sx={{ height: 202, mt: 2 }}>
-                {[
-                  ["Savdo", "7.7 mln", 154, brand.blue],
-                  ["Xarid", "750 ming", 66, brand.gold],
-                  ["Tayyor", "1,000 ta", 112, brand.green],
-                ].map(([label, value, height, color], index) => (
-                  <Box key={label} sx={{ flex: 1, textAlign: "center" }}>
+              <Stack direction="row" alignItems="flex-end" spacing={1.2} className="lp-bars">
+                {bars.map(([label, height], index) => (
+                  <Box key={label} className="lp-bar-column">
                     <Box
                       component={motion.div}
                       initial={{ height: 0 }}
                       whileInView={{ height }}
                       viewport={{ once: true }}
-                      transition={{ duration: 0.85, delay: index * 0.12, ease: smooth }}
-                      sx={{
-                        width: "58%",
-                        mx: "auto",
-                        borderRadius: "18px 18px 0 0",
-                        bgcolor: color,
+                      transition={{
+                        duration: 0.8,
+                        delay: index * 0.08,
+                        ease,
                       }}
+                      className={`lp-bar ${index === bars.length - 1 ? "active" : ""}`}
                     />
-                    <Typography sx={{ mt: 1, color: brand.text, fontWeight: 900 }}>
-                      {label}
-                    </Typography>
-                    <Typography sx={{ color: brand.muted, fontSize: 13, fontWeight: 800 }}>
-                      {value}
-                    </Typography>
+
+                    <Typography>{label}</Typography>
                   </Box>
                 ))}
               </Stack>
             </Paper>
           </Grid>
 
-          <Grid item xs={12} md={6} lg={4}>
-            <Paper
-              component={motion.div}
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.25 }}
-              elevation={0}
-              sx={{
-                p: 2.5,
-                height: 290,
-                border: `1px solid ${brand.line}`,
-                borderRadius: "24px !important",
-                bgcolor: "#fff",
-                boxShadow: "0 16px 40px rgba(15,23,42,.05)",
-              }}
-            >
-              <Typography sx={{ color: brand.text, fontWeight: 950 }}>Bo'limlar kesimi</Typography>
+          <Grid item xs={12} md={5}>
+            <Paper elevation={0} className="lp-preview-card">
+              <Typography className="lp-preview-card-title">Muhim nazorat</Typography>
 
-              {[
-                ["Kosib", 100, 18],
-                ["Tikuv", 435, 48],
-                ["Qadoqlash", 1000, 100],
-              ].map(([label, value, width], index) => (
-                <Box key={label} sx={{ mt: 2.5 }}>
-                  <Stack direction="row" justifyContent="space-between">
-                    <Typography sx={{ color: brand.text, fontWeight: 850 }}>{label}</Typography>
-                    <Typography sx={{ color: brand.muted, fontWeight: 850 }}>{value}</Typography>
-                  </Stack>
+              <Stack spacing={0.9} sx={{ mt: 1.3 }}>
+                {[
+                  ["Mijozlardan olinadi", "2,2 mln so‘m", "red"],
+                  ["Ta’minotchiga qarz", "1,25 mln so‘m", "amber"],
+                  ["Berilmagan oylik", "225 ming so‘m", "blue"],
+                ].map(([label, value, tone]) => (
+                  <Box key={label} className={`lp-debt-row ${tone}`}>
+                    <Typography>{label}</Typography>
 
-                  <Box sx={{ mt: 0.8, height: 8, borderRadius: 999, bgcolor: "#edf2f7" }}>
-                    <Box
-                      component={motion.div}
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${width}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.8, delay: index * 0.15, ease: smooth }}
-                      sx={{
-                        height: "100%",
-                        borderRadius: 999,
-                        bgcolor: index === 2 ? brand.red : brand.violet,
-                      }}
-                    />
+                    <Typography>{value}</Typography>
                   </Box>
-                </Box>
-              ))}
-            </Paper>
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={3}>
-            <Paper
-              component={motion.div}
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.25 }}
-              elevation={0}
-              sx={{
-                p: 2.5,
-                height: 290,
-                border: `1px solid ${brand.line}`,
-                borderRadius: "24px !important",
-                bgcolor: "#fff",
-                boxShadow: "0 16px 40px rgba(15,23,42,.05)",
-              }}
-            >
-              <Typography sx={{ color: brand.text, fontWeight: 950 }}>Muhim nazorat</Typography>
-
-              {[
-                ["Mijozlardan olinadi", "2,200,000 so'm"],
-                ["Ta'minotchiga qarz", "1,250,000 so'm"],
-                ["Berilmagan ish haqi", "225,000 so'm"],
-              ].map(([label, value], index) => (
-                <Box
-                  key={label}
-                  component={motion.div}
-                  initial={{ opacity: 0, x: 26 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.55, delay: index * 0.12 }}
-                  sx={{
-                    mt: 1.5,
-                    p: 1.4,
-                    borderRadius: "16px",
-                    bgcolor: "#f8fafc",
-                    border: `1px solid ${brand.line}`,
-                  }}
-                >
-                  <Typography sx={{ color: brand.text, fontSize: 13, fontWeight: 850 }}>
-                    {label}
-                  </Typography>
-                  <Typography sx={{ mt: 0.3, color: brand.red, fontSize: 13, fontWeight: 950 }}>
-                    {value}
-                  </Typography>
-                </Box>
-              ))}
+                ))}
+              </Stack>
             </Paper>
           </Grid>
         </Grid>
@@ -547,162 +318,86 @@ function DashboardMockup() {
   );
 }
 
-function ModuleCard({ item, index }) {
-  const dark = index === 1 || index === 4;
-
+function FeatureCard({ item }) {
   return (
     <Grid item xs={12} md={6} xl={4} sx={{ display: "flex" }}>
       <Paper
         component={motion.div}
-        variants={zoomIn}
-        whileHover={{ y: -10, scale: 1.015 }}
-        elevation={0}
-        sx={{
-          p: 3.2,
-          flex: 1,
-          minHeight: 290,
-          borderRadius: "30px !important",
-          border: dark ? "1px solid rgba(255,255,255,.10)" : `1px solid ${brand.line}`,
-          bgcolor: dark ? brand.panel : "#fff",
-          color: dark ? "#fff" : brand.text,
-          boxShadow: dark ? "0 28px 80px rgba(15,23,42,.22)" : "0 18px 50px rgba(15,23,42,.06)",
-          position: "relative",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
+        variants={fadeUp}
+        whileHover={{
+          y: -8,
+          scale: 1.012,
         }}
+        elevation={0}
+        className={`lp-feature ${item.dark ? "dark" : ""}`}
       >
-        <Box
-          component={motion.div}
-          animate={{
-            scale: [1, 1.14, 1],
-            opacity: dark ? [0.08, 0.16, 0.08] : [0.06, 0.12, 0.06],
-          }}
-          transition={{ duration: 4.8, repeat: Infinity, delay: index * 0.2 }}
-          sx={{
-            position: "absolute",
-            width: 180,
-            height: 180,
-            right: -72,
-            top: -72,
-            borderRadius: "50%",
-            bgcolor: dark ? "#fff" : brand.red,
-          }}
-        />
+        <Box>
+          <Typography className="lp-feature-number">{item.no}</Typography>
 
-        <Box sx={{ position: "relative" }}>
-          <Typography sx={{ color: dark ? "#fca5a5" : brand.red, fontSize: 13, fontWeight: 950 }}>
-            {String(index + 1).padStart(2, "0")}
-          </Typography>
+          <Typography className="lp-feature-title">{item.title}</Typography>
 
-          <Typography
-            sx={{
-              mt: 1.8,
-              fontSize: 23,
-              fontWeight: 950,
-              letterSpacing: "-.03em",
-            }}
-          >
-            {item.title}
-          </Typography>
-
-          <Typography
-            sx={{
-              mt: 1.3,
-              color: dark ? "rgba(255,255,255,.64)" : brand.muted,
-              lineHeight: "27px",
-              fontWeight: 650,
-            }}
-          >
-            {item.text}
-          </Typography>
+          <Typography className="lp-feature-text">{item.text}</Typography>
         </Box>
 
-        <Box
-          sx={{
-            mt: 2.8,
-            display: "inline-flex",
-            width: "fit-content",
-            px: 1.4,
-            py: 0.8,
-            borderRadius: 999,
-            bgcolor: dark ? "rgba(255,255,255,.10)" : "#f8fafc",
-            border: dark ? "1px solid rgba(255,255,255,.12)" : `1px solid ${brand.line}`,
-            color: dark ? "#fff" : brand.text,
-            fontSize: 12,
-            fontWeight: 900,
-            position: "relative",
-          }}
-        >
-          {item.metric}
-        </Box>
+        <Chip size="small" label={item.tag} className="lp-feature-chip" />
       </Paper>
     </Grid>
   );
 }
 
-function PlanCard({ plan }) {
+function PlanCard({ item, onStart }) {
+  const [name, price, workers, clients, admins, text, featured] = item;
+
   return (
     <Grid item xs={12} sm={6} lg={3} sx={{ display: "flex" }}>
       <Paper
         component={motion.div}
-        variants={zoomIn}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        whileHover={{ y: -10, scale: 1.015 }}
-        elevation={0}
-        sx={{
-          p: 3,
-          flex: 1,
-          borderRadius: "30px !important",
-          border: plan.featured ? `2px solid ${brand.red}` : `1px solid ${brand.line}`,
-          bgcolor: "#fff",
-          boxShadow: plan.featured
-            ? "0 28px 80px rgba(151,29,33,.16)"
-            : "0 18px 50px rgba(15,23,42,.06)",
+        variants={fadeUp}
+        whileHover={{
+          y: -8,
+          scale: 1.012,
         }}
+        elevation={0}
+        className={`lp-plan ${featured ? "featured" : ""}`}
       >
-        <Typography
-          sx={{ color: plan.featured ? brand.red : brand.text, fontSize: 20, fontWeight: 950 }}
-        >
-          {plan.name}
-        </Typography>
+        {featured && <Chip size="small" label="Eng maqbul" className="lp-plan-badge" />}
 
-        <Typography
-          sx={{
-            mt: 1.5,
-            fontSize: 34,
-            fontWeight: 950,
-            letterSpacing: "-.04em",
-          }}
-        >
-          {plan.price}
-        </Typography>
+        <Typography className="lp-plan-name">{name}</Typography>
 
-        <Typography sx={{ color: brand.muted, fontWeight: 800 }}>
-          {plan.price === "Kelishiladi" ? "maxsus reja" : "so'm / oy"}
-        </Typography>
+        <Stack direction="row" alignItems="baseline" spacing={0.7} sx={{ mt: 1.4 }}>
+          <Typography className="lp-plan-price">{price}</Typography>
 
-        <Divider sx={{ my: 2.2 }} />
-
-        <Stack spacing={0.7}>
-          <Typography sx={{ fontWeight: 900 }}>{plan.workers} ta ishchi</Typography>
-          <Typography sx={{ fontWeight: 900 }}>{plan.clients} ta mijoz</Typography>
-          <Typography sx={{ fontWeight: 900 }}>{plan.admins} ta admin</Typography>
+          <Typography className="lp-plan-period">so‘m / oy</Typography>
         </Stack>
 
-        <Typography
-          sx={{
-            mt: 1,
-            color: brand.muted,
-            lineHeight: "25px",
-            fontWeight: 650,
-          }}
+        <Typography className="lp-plan-text">{text}</Typography>
+
+        <Divider sx={{ my: 1.8 }} />
+
+        <Stack spacing={0.9}>
+          {[
+            `${workers} ta ishchi`,
+            `${clients} ta mijoz`,
+            `${admins} ta administrator`,
+            "Savdo va qarzdorlik",
+            "Ombor va moliya",
+          ].map((value) => (
+            <Stack key={value} direction="row" spacing={1} alignItems="center">
+              <span className="lp-check" />
+
+              <Typography className="lp-plan-feature">{value}</Typography>
+            </Stack>
+          ))}
+        </Stack>
+
+        <Button
+          fullWidth
+          variant={featured ? "contained" : "outlined"}
+          onClick={onStart}
+          className={`lp-plan-button ${featured ? "featured" : ""}`}
         >
-          Savdo, oylik, qarzlar, xavfsizlik, amallar tarixi va platforma nazorati.
-        </Typography>
+          Boshlash
+        </Button>
       </Paper>
     </Grid>
   );
@@ -710,808 +405,1831 @@ function PlanCard({ plan }) {
 
 export default function LandingPage() {
   const navigate = useNavigate();
+
   const { scrollYProgress } = useScroll();
 
-  const heroY = useTransform(scrollYProgress, [0, 0.24], [0, -70]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.24], [1, 0.28]);
+  const heroY = useTransform(scrollYProgress, [0, 0.22], [0, -50]);
+
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.22], [1, 0.44]);
+
   const logoY = useTransform(scrollYProgress, [0, 0.28], [0, 80]);
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        bgcolor: brand.soft,
-        color: brand.text,
-        overflowX: "hidden",
-        overflowY: "visible",
-      }}
-    >
-      <Box
-        sx={{
-          position: "sticky",
-          top: 0,
-          zIndex: 20,
-          bgcolor: "rgba(255,255,255,.82)",
-          backdropFilter: "blur(18px)",
-          borderBottom: `1px solid ${brand.line}`,
-        }}
-      >
+    <Box className="landing-page">
+      <style>{landingStyles}</style>
+
+      <Box component="header" className="lp-header">
         <Container maxWidth="xl">
-          <Box
-            sx={{
-              minHeight: 76,
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr auto", md: "240px 1fr 260px" },
-              alignItems: "center",
-              gap: 2,
-            }}
-          >
-            <Stack direction="row" spacing={1.4} alignItems="center">
-              <LogoMark size={44} />
+          <Box className="lp-header-inner">
+            <Stack direction="row" spacing={1.1} alignItems="center">
+              <Logo size={40} />
+
               <Box>
-                <Typography sx={{ color: brand.text, fontWeight: 950, fontSize: 20 }}>
-                  Al-amin CRM
-                </Typography>
-                <Typography sx={{ color: brand.muted, fontSize: 12, fontWeight: 750 }}>
-                  Asoschi MR
-                </Typography>
+                <Typography className="lp-brand-name">AL AMIN CRM</Typography>
+
+                <Typography className="lp-brand-subtitle">POYABZAL BOSHQARUVI</Typography>
               </Box>
             </Stack>
 
-            <Stack
-              direction="row"
-              spacing={4}
-              justifyContent="center"
-              alignItems="center"
-              sx={{ display: { xs: "none", md: "flex" } }}
-            >
-              <Button
-                onClick={() =>
-                  document.getElementById("modules")?.scrollIntoView({ behavior: "smooth" })
-                }
-                sx={{ color: brand.text, fontWeight: 900, textTransform: "none" }}
-              >
-                Imkoniyatlar
-              </Button>
-
-              <Button
-                onClick={() =>
-                  document.getElementById("plans")?.scrollIntoView({ behavior: "smooth" })
-                }
-                sx={{ color: brand.text, fontWeight: 900, textTransform: "none" }}
-              >
-                Narxlar
-              </Button>
-
-              <Button
-                onClick={() =>
-                  document.getElementById("telegram-ad")?.scrollIntoView({ behavior: "smooth" })
-                }
-                sx={{ color: brand.text, fontWeight: 900, textTransform: "none" }}
-              >
-                Reklama
-              </Button>
+            <Stack direction="row" spacing={2.5} className="lp-nav">
+              {[
+                ["Imkoniyatlar", "modules"],
+                ["Ishlash tartibi", "process"],
+                ["Narxlar", "plans"],
+                ["Bog‘lanish", "telegram-ad"],
+              ].map(([label, id]) => (
+                <Button key={id} onClick={() => scrollTo(id)}>
+                  {label}
+                </Button>
+              ))}
             </Stack>
 
-            <Stack
-              direction="row"
-              spacing={1}
-              justifyContent={{ xs: "flex-end", md: "flex-end" }}
-              alignItems="center"
-            >
-              <Button
-                variant="outlined"
-                onClick={() => navigate("/login")}
-                sx={{
-                  borderColor: brand.line,
-                  color: brand.text,
-                  borderRadius: "16px",
-                  px: 2.7,
-                  py: 1.2,
-                  fontWeight: 900,
-                  textTransform: "none",
-                  minWidth: 92,
-                }}
-              >
+            <Stack direction="row" spacing={0.8} justifyContent="flex-end">
+              <Button variant="outlined" onClick={() => navigate("/login")} className="lp-login">
                 Kirish
               </Button>
 
               <Button
                 variant="contained"
                 onClick={() => navigate("/register")}
-                sx={{
-                  bgcolor: brand.red,
-                  borderRadius: "16px",
-                  px: 2.8,
-                  py: 1.2,
-                  fontWeight: 950,
-                  textTransform: "none",
-                  minWidth: 148,
-                  boxShadow: "0 16px 38px rgba(151,29,33,.24)",
-                  "&:hover": { bgcolor: brand.redDark },
-                }}
+                className="lp-start"
               >
-                Sinab ko'rish
+                Boshlash
               </Button>
             </Stack>
           </Box>
         </Container>
       </Box>
 
-      <Box
-        sx={{
-          position: "relative",
-          minHeight: "calc(100vh - 76px)",
-          py: { xs: 8, md: 10 },
-          bgcolor: brand.ink,
-          color: "#fff",
-          overflow: "hidden",
-          background:
-            "radial-gradient(circle at 18% 18%, rgba(151,29,33,.36), transparent 28%), radial-gradient(circle at 88% 70%, rgba(216,162,58,.14), transparent 30%), linear-gradient(135deg,#050507 0%,#09090b 52%,#111827 100%)",
-        }}
-      >
-        <Box
-          component={motion.img}
-          src={mrLogo}
-          alt="MR belgisi"
-          style={{ y: logoY }}
-          animate={{ rotate: [0, 2, 0], scale: [1, 1.04, 1] }}
-          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-          sx={{
-            position: "absolute",
-            right: { xs: -150, md: -45 },
-            top: { xs: 120, md: 45 },
-            width: { xs: 380, md: 650 },
-            opacity: 0.055,
-            filter: "invert(1)",
-            pointerEvents: "none",
-          }}
-        />
+      <Box component="main">
+        <Box component="section" className="lp-hero">
+          <Box
+            component={motion.img}
+            src={mrLogo}
+            alt=""
+            aria-hidden="true"
+            style={{ y: logoY }}
+            animate={{
+              rotate: [0, 2, 0],
+              scale: [1, 1.035, 1],
+            }}
+            transition={{
+              duration: 7,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="lp-hero-watermark"
+          />
 
-        <Container maxWidth="xl" sx={{ position: "relative" }}>
-          <Grid container spacing={5} alignItems="center">
-            <Grid item xs={12} md={6}>
-              <Box
-                component={motion.div}
-                style={{ y: heroY, opacity: heroOpacity }}
-                variants={stagger}
-                initial="hidden"
-                animate="visible"
-              >
-                <Stack
+          <Container maxWidth="xl" className="lp-hero-container">
+            <Grid
+              container
+              spacing={{
+                xs: 5,
+                lg: 7,
+              }}
+              alignItems="center"
+            >
+              <Grid item xs={12} lg={6}>
+                <Box
+                  component={motion.div}
+                  style={{
+                    y: heroY,
+                    opacity: heroOpacity,
+                  }}
+                  variants={stagger}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <Box component={motion.div} variants={fadeUp}>
+                    <Eyebrow dark>Poyabzal korxonalari uchun</Eyebrow>
+                  </Box>
+
+                  <Typography component={motion.h1} variants={fadeUp} className="lp-hero-title">
+                    Korxona hisobini <span>tartibli</span>, nazoratni esa aniq qiling.
+                  </Typography>
+
+                  <Typography component={motion.p} variants={fadeUp} className="lp-hero-text">
+                    Savdo, mijoz qarzi, ishlab chiqarish, ish haqi, avans, homashyo, ombor va moliya
+                    — barchasi Al Amin CRM ichida.
+                  </Typography>
+
+                  <Stack
+                    component={motion.div}
+                    variants={fadeUp}
+                    direction={{
+                      xs: "column",
+                      sm: "row",
+                    }}
+                    spacing={1.2}
+                    sx={{ mt: 3.2 }}
+                  >
+                    <Button
+                      variant="contained"
+                      onClick={() => navigate("/register")}
+                      className="lp-primary"
+                    >
+                      Korxonani ulash
+                    </Button>
+
+                    <Button
+                      variant="outlined"
+                      onClick={() => scrollTo("modules")}
+                      className="lp-light"
+                    >
+                      Imkoniyatlarni ko‘rish
+                    </Button>
+                  </Stack>
+
+                  <Box component={motion.div} variants={fadeUp} className="lp-proof">
+                    {proof.map((item) => (
+                      <Stack key={item} direction="row" spacing={1} alignItems="center">
+                        <span />
+
+                        <Typography>{item}</Typography>
+                      </Stack>
+                    ))}
+                  </Box>
+                </Box>
+              </Grid>
+
+              <Grid item xs={12} lg={6}>
+                <DashboardPreview />
+              </Grid>
+            </Grid>
+          </Container>
+        </Box>
+
+        <Box className="lp-trust-strip">
+          <Container maxWidth="xl">
+            <Box className="lp-trust-grid">
+              {[
+                ["Savdo", "Bir nechta mahsulotli savdo"],
+                ["Ishlab chiqarish", "Bo‘lim va ishchi kesimi"],
+                ["Moliya", "Qarz, oylik va xarajat"],
+                ["Xavfsizlik", "Ruxsat va amallar tarixi"],
+              ].map(([title, text]) => (
+                <Box key={title}>
+                  <Typography>{title}</Typography>
+
+                  <Typography>{text}</Typography>
+                </Box>
+              ))}
+            </Box>
+          </Container>
+        </Box>
+
+        <Box id="modules" component="section" className="lp-section lp-soft">
+          <Container maxWidth="xl">
+            <SectionHead
+              eyebrow="Tizim imkoniyatlari"
+              title="Korxona pulini, ishini va qarzini bitta joyda ko‘ring."
+              text="Ko‘p daftar, alohida Excel va eslab qolishga tayanadigan hisob o‘rniga barcha jarayonlar o‘zaro bog‘langan tizimda yuradi."
+            />
+
+            <Grid
+              component={motion.div}
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{
+                once: true,
+                amount: 0.1,
+              }}
+              container
+              spacing={2.2}
+              sx={{ mt: 3.5 }}
+            >
+              {features.map((item) => (
+                <FeatureCard key={item.title} item={item} />
+              ))}
+            </Grid>
+          </Container>
+        </Box>
+
+        <Box id="process" component="section" className="lp-section lp-white">
+          <Container maxWidth="xl">
+            <Grid container spacing={2.5} alignItems="stretch">
+              <Grid item xs={12} md={5}>
+                <Paper
                   component={motion.div}
                   variants={fadeUp}
-                  direction="row"
-                  spacing={1.4}
-                  alignItems="center"
-                  sx={{ mb: 3 }}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{
+                    once: true,
+                    amount: 0.25,
+                  }}
+                  elevation={0}
+                  className="lp-process-intro"
                 >
-                  <LogoMark dark size={58} />
+                  <Eyebrow dark>Ishlash tartibi</Eyebrow>
+
+                  <Typography component="h2">Siz ma’lumot kiritasiz, tizim hisoblaydi.</Typography>
+
+                  <Typography component="p">
+                    Har bir savdo, ish hisoboti, xarid va to‘lov boshqa ko‘rsatkichlar bilan
+                    avtomatik bog‘lanadi.
+                  </Typography>
+
                   <Box>
-                    <Typography sx={{ color: "#fff", fontSize: 24, fontWeight: 950 }}>
-                      Al-amin CRM
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "rgba(255,255,255,.6)",
-                        fontSize: 13,
-                        fontWeight: 800,
-                      }}
-                    >
-                      MR asos solgan boshqaruv tizimi
+                    <Typography>Natija</Typography>
+
+                    <Typography>
+                      Rahbar kamroq vaqt hisob tekshiradi va ko‘proq vaqt qaror qabul qiladi.
                     </Typography>
                   </Box>
-                </Stack>
+                </Paper>
+              </Grid>
 
-                <Typography
-                  component={motion.h1}
-                  variants={fadeUp}
-                  sx={{
-                    maxWidth: 790,
-                    fontSize: { xs: 46, sm: 62, md: 78 },
-                    lineHeight: { xs: "54px", sm: "70px", md: "86px" },
-                    fontWeight: 950,
-                    letterSpacing: "-.055em",
-                  }}
-                >
-                  Poyabzal korxonasi hisobini premium darajada boshqaring
-                </Typography>
-
-                <Typography
-                  component={motion.p}
-                  variants={fadeUp}
-                  sx={{
-                    mt: 2.5,
-                    maxWidth: 700,
-                    color: "rgba(255,255,255,.68)",
-                    fontSize: { xs: 16, md: 20 },
-                    lineHeight: "32px",
-                    fontWeight: 650,
-                  }}
-                >
-                  Savdo, mijoz qarzi, ishchi mehnati, oylik, avans, homashyo xaridi va rahbar
-                  nazorati bitta chiroyli bosh sahifada jamlanadi.
-                </Typography>
-
-                <Stack
+              <Grid item xs={12} md={7}>
+                <Paper
                   component={motion.div}
-                  variants={fadeUp}
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={1.5}
-                  sx={{ mt: 4 }}
-                >
-                  <Button
-                    variant="contained"
-                    onClick={() => navigate("/register")}
-                    sx={{
-                      px: 4,
-                      py: 1.5,
-                      borderRadius: "999px",
-                      bgcolor: brand.red,
-                      fontWeight: 950,
-                      textTransform: "none",
-                      "&:hover": { bgcolor: brand.redDark },
-                    }}
-                  >
-                    Korxona uchun boshlash
-                  </Button>
-
-                  <Button
-                    variant="outlined"
-                    onClick={() =>
-                      document.getElementById("logo-sample")?.scrollIntoView({ behavior: "smooth" })
-                    }
-                    sx={{
-                      px: 4,
-                      py: 1.5,
-                      borderRadius: "999px",
-                      color: "#fff",
-                      borderColor: "rgba(255,255,255,.24)",
-                      fontWeight: 950,
-                      textTransform: "none",
-                      "&:hover": {
-                        borderColor: "#fff",
-                        bgcolor: "rgba(255,255,255,.08)",
-                      },
-                    }}
-                  >
-                    Belgi namunasi
-                  </Button>
-                </Stack>
-
-                <Stack
-                  component={motion.div}
-                  variants={fadeUp}
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={2}
-                  sx={{ mt: 4, color: "rgba(255,255,255,.72)" }}
-                >
-                  {["Tasdiqlash", "Amallar tarixi", "Obuna nazorati"].map((item) => (
-                    <Typography key={item} sx={{ fontSize: 13, fontWeight: 900 }}>
-                      {item}
-                    </Typography>
-                  ))}
-                </Stack>
-              </Box>
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <DashboardMockup />
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
-
-      <Box id="logo-sample" sx={{ py: { xs: 8, md: 11 }, bgcolor: "#fff" }}>
-        <Container maxWidth="xl">
-          <Grid container spacing={3} alignItems="stretch">
-            <Grid item xs={12} md={5}>
-              <Paper
-                component={motion.div}
-                variants={fadeLeft}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.25 }}
-                elevation={0}
-                sx={{
-                  height: "100%",
-                  p: { xs: 3, md: 4 },
-                  borderRadius: "34px !important",
-                  border: `1px solid ${brand.line}`,
-                  bgcolor: brand.ink,
-                  color: "#fff",
-                  position: "relative",
-                  overflow: "hidden",
-                  boxShadow: "0 28px 80px rgba(15,23,42,.18)",
-                }}
-              >
-                <Box
-                  component={motion.img}
-                  src={mrLogo}
-                  alt="MR belgisi"
-                  animate={{ y: [0, -12, 0], scale: [1, 1.04, 1] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  sx={{
-                    width: "72%",
-                    maxWidth: 360,
-                    display: "block",
-                    mx: "auto",
-                    mt: 2,
-                    filter: "invert(1)",
+                  variants={stagger}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{
+                    once: true,
+                    amount: 0.2,
                   }}
-                />
-                <Typography
-                  sx={{
-                    mt: 3,
-                    textAlign: "center",
-                    color: "rgba(255,255,255,.72)",
-                    fontWeight: 850,
-                  }}
+                  elevation={0}
+                  className="lp-process-list"
                 >
-                  Asoschi belgisi: MR
-                </Typography>
-              </Paper>
-            </Grid>
-
-            <Grid item xs={12} md={7}>
-              <Paper
-                component={motion.div}
-                variants={fadeRight}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.25 }}
-                elevation={0}
-                sx={{
-                  height: "100%",
-                  p: { xs: 3, md: 4 },
-                  borderRadius: "34px !important",
-                  border: `1px solid ${brand.line}`,
-                  bgcolor: "#fff",
-                  boxShadow: "0 22px 70px rgba(15,23,42,.08)",
-                }}
-              >
-                <Typography sx={{ color: brand.red, fontWeight: 950 }}>Brend namunasi</Typography>
-
-                <Typography
-                  sx={{
-                    mt: 1,
-                    fontSize: { xs: 36, md: 60 },
-                    lineHeight: { xs: "44px", md: "68px" },
-                    fontWeight: 950,
-                    letterSpacing: "-.05em",
-                  }}
-                >
-                  Al-amin CRM
-                </Typography>
-
-                <Typography
-                  sx={{
-                    mt: 1.5,
-                    maxWidth: 700,
-                    color: brand.muted,
-                    fontSize: 18,
-                    lineHeight: "30px",
-                    fontWeight: 650,
-                  }}
-                >
-                  Asosiy signal shu bo'ladi: MR belgisi, Al-amin CRM nomi va poyabzal korxonasining
-                  real hisob-kitobini boshqaradigan premium tizim.
-                </Typography>
-
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.4} sx={{ mt: 3 }}>
-                  {["Al-amin CRM", "Poyabzal tizimi", "Korxona nazorati"].map((item) => (
+                  {process.map(([title, text], index) => (
                     <Box
-                      key={item}
                       component={motion.div}
-                      whileHover={{ y: -5 }}
-                      sx={{
-                        px: 1.7,
-                        py: 1,
-                        borderRadius: "999px",
-                        border: `1px solid ${brand.line}`,
-                        fontWeight: 900,
-                        width: "fit-content",
-                      }}
+                      variants={fadeUp}
+                      className="lp-process-row"
+                      key={title}
                     >
-                      {item}
+                      <Box className={index === 0 ? "active" : ""}>
+                        {String(index + 1).padStart(2, "0")}
+                      </Box>
+
+                      <Box>
+                        <Typography>{title}</Typography>
+
+                        <Typography>{text}</Typography>
+                      </Box>
                     </Box>
                   ))}
-                </Stack>
-              </Paper>
+                </Paper>
+              </Grid>
             </Grid>
-          </Grid>
-        </Container>
-      </Box>
+          </Container>
+        </Box>
 
-      <Box id="modules" sx={{ py: { xs: 8, md: 11 }, bgcolor: brand.soft }}>
-        <Container maxWidth="xl">
-          <SectionTitle
-            label="Tizim imkoniyatlari"
-            title="Rahbar bitta qarashda korxona pulini, ishini va qarzini ko'radi"
-            text="Sahifalar ko'p bo'lishi mumkin, lekin maqsad bitta: hisob-kitob adashmasin va qaror tez chiqsin."
-          />
+        <Box id="plans" component="section" className="lp-section lp-plans-section">
+          <Container maxWidth="xl">
+            <SectionHead
+              eyebrow="Obuna rejalari"
+              title="Korxona hajmiga mos rejani tanlang."
+              text="Har bir tarif ishchi, mijoz va administratorlar uchun alohida limit beradi. Korxona egasi — super administrator limitga kirmaydi."
+              center
+            />
 
-          <Grid
-            component={motion.div}
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.12 }}
-            container
-            spacing={3}
-            sx={{ mt: 4 }}
-          >
-            {modules.map((item, index) => (
-              <ModuleCard key={item.title} item={item} index={index} />
-            ))}
-          </Grid>
-        </Container>
-      </Box>
-
-      <Box sx={{ py: { xs: 8, md: 11 }, bgcolor: "#fff" }}>
-        <Container maxWidth="xl">
-          <Grid container spacing={3} alignItems="stretch">
-            <Grid item xs={12} md={4}>
-              <Paper
-                component={motion.div}
-                variants={fadeLeft}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.25 }}
-                elevation={0}
-                sx={{
-                  p: 3.5,
-                  height: "100%",
-                  borderRadius: "34px !important",
-                  border: `1px solid ${brand.line}`,
-                  bgcolor: brand.panel,
-                  color: "#fff",
-                  boxShadow: "0 28px 80px rgba(15,23,42,.18)",
-                }}
-              >
-                <Typography sx={{ color: "rgba(255,255,255,.58)", fontWeight: 900 }}>
-                  Ish jarayoni
-                </Typography>
-
-                <Typography
-                  sx={{
-                    mt: 1,
-                    fontSize: { xs: 32, md: 44 },
-                    lineHeight: { xs: "40px", md: "52px" },
-                    fontWeight: 950,
-                    letterSpacing: "-.045em",
-                  }}
-                >
-                  Kiritasiz, tizim hisoblaydi
-                </Typography>
-
-                <Typography
-                  sx={{
-                    mt: 2,
-                    color: "rgba(255,255,255,.64)",
-                    lineHeight: "28px",
-                    fontWeight: 650,
-                  }}
-                >
-                  Al-amin CRM har bir yozuvni bosh sahifa, qarzdorlik, ish haqi va amallar tarixi
-                  bilan bog'laydi.
-                </Typography>
-              </Paper>
+            <Grid
+              component={motion.div}
+              variants={stagger}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{
+                once: true,
+                amount: 0.12,
+              }}
+              container
+              spacing={2.2}
+              sx={{ mt: 3.5 }}
+            >
+              {plans.map((item) => (
+                <PlanCard key={item[0]} item={item} onStart={() => navigate("/register")} />
+              ))}
             </Grid>
+          </Container>
+        </Box>
 
-            <Grid item xs={12} md={8}>
-              <Paper
-                component={motion.div}
-                variants={fadeRight}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.25 }}
-                elevation={0}
-                sx={{
-                  p: { xs: 2.5, md: 3.5 },
-                  borderRadius: "34px !important",
-                  border: `1px solid ${brand.line}`,
-                  bgcolor: "#fff",
-                  boxShadow: "0 22px 70px rgba(15,23,42,.07)",
-                }}
-              >
-                {process.map((item, index, arr) => (
-                  <Box key={item}>
-                    <Stack direction="row" spacing={2} alignItems="center" sx={{ py: 2.2 }}>
-                      <Box
-                        component={motion.div}
-                        initial={{ scale: 0 }}
-                        whileInView={{ scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: index * 0.1, ease: smooth }}
-                        sx={{
-                          width: 42,
-                          height: 42,
-                          borderRadius: "15px",
-                          bgcolor: index === 0 ? brand.red : "#f1f5f9",
-                          color: index === 0 ? "#fff" : brand.red,
-                          display: "grid",
-                          placeItems: "center",
-                          fontWeight: 950,
-                        }}
-                      >
-                        {index + 1}
-                      </Box>
+        <Box id="telegram-ad" component="section" className="lp-section lp-white">
+          <Container maxWidth="xl">
+            <Grid container spacing={2.5} alignItems="stretch">
+              <Grid item xs={12} md={5}>
+                <Paper
+                  component={motion.div}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{
+                    once: true,
+                    amount: 0.25,
+                  }}
+                  elevation={0}
+                  className="lp-ad-dark"
+                >
+                  <Box>
+                    <Typography className="lp-ad-label">Poyabzal biznesi uchun</Typography>
 
-                      <Typography sx={{ fontSize: 17, fontWeight: 900 }}>{item}</Typography>
-                    </Stack>
+                    <Typography component="h2">
+                      Hisobdagi chalkashlikni bitta tizim bilan tugating.
+                    </Typography>
 
-                    {index !== arr.length - 1 && <Divider />}
+                    <Typography component="p">
+                      Savdo, qarz, oylik, homashyo va omborni bir joyda boshqaring.
+                    </Typography>
                   </Box>
-                ))}
-              </Paper>
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
 
-      <Box id="plans" sx={{ py: { xs: 8, md: 11 }, bgcolor: brand.soft2 }}>
-        <Container maxWidth="xl">
-          <SectionTitle
-            label="Obuna rejalari"
-            title="Korxona hajmiga qarab tanlanadi"
-            text="Har bir reja ishchi, mijoz va adminlar uchun alohida limit beradi. Korxona egasi — super admin limitga kirmaydi."
-            center
-          />
+                  <Box id="logo-sample">
+                    <Box component="img" src={mrLogo} alt="MR belgisi" />
 
-          <Grid container spacing={3} sx={{ mt: 4 }}>
-            {plans.map((plan) => (
-              <PlanCard key={plan.name} plan={plan} />
-            ))}
-          </Grid>
-        </Container>
-      </Box>
+                    <Typography>Asoschi belgisi • MR</Typography>
+                  </Box>
+                </Paper>
+              </Grid>
 
-      <Box id="telegram-ad" sx={{ py: { xs: 8, md: 11 }, bgcolor: "#fff" }}>
-        <Container maxWidth="xl">
-          <Grid container spacing={3} alignItems="stretch">
-            <Grid item xs={12} md={5}>
-              <Paper
-                component={motion.div}
-                variants={fadeLeft}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.25 }}
-                elevation={0}
-                sx={{
-                  height: "100%",
-                  p: { xs: 3, md: 4 },
-                  borderRadius: "34px !important",
-                  border: `1px solid ${brand.line}`,
-                  bgcolor: brand.red,
-                  color: "#fff",
-                  boxShadow: "0 28px 80px rgba(151,29,33,.20)",
-                }}
-              >
-                <Typography sx={{ color: "rgba(255,255,255,.72)", fontWeight: 900 }}>
-                  Telegram reklama
-                </Typography>
-
-                <Typography
-                  sx={{
-                    mt: 1,
-                    fontSize: { xs: 32, md: 48 },
-                    lineHeight: { xs: "40px", md: "56px" },
-                    fontWeight: 950,
-                    letterSpacing: "-.045em",
+              <Grid item xs={12} md={7}>
+                <Paper
+                  component={motion.div}
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{
+                    once: true,
+                    amount: 0.25,
                   }}
+                  elevation={0}
+                  className="lp-ad-light"
                 >
-                  Poyabzal rahbariga bittada tushadigan taklif
-                </Typography>
+                  <Eyebrow>Qo‘qon poyabzal korxonalari uchun</Eyebrow>
 
-                <Typography
-                  sx={{
-                    mt: 2,
-                    color: "rgba(255,255,255,.72)",
-                    lineHeight: "28px",
-                    fontWeight: 650,
-                  }}
-                >
-                  Reklama matni hisob-kitobdagi og'riqni ko'rsatadi: savdo, qarz, ish haqi, homashyo
-                  va admin nazorati bitta joyda.
-                </Typography>
-              </Paper>
-            </Grid>
+                  <Typography component="h2">
+                    Al Amin CRM — savdo, ishlab chiqarish, oylik va qarzdorlikni tartibga soladigan
+                    tizim.
+                  </Typography>
 
-            <Grid item xs={12} md={7}>
-              <Paper
-                component={motion.div}
-                variants={fadeRight}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.25 }}
-                elevation={0}
-                sx={{
-                  height: "100%",
-                  p: { xs: 3, md: 4 },
-                  borderRadius: "34px !important",
-                  border: `1px solid ${brand.line}`,
-                  bgcolor: "#fff",
-                  boxShadow: "0 22px 70px rgba(15,23,42,.08)",
-                }}
-              >
-                <Typography sx={{ color: brand.red, fontWeight: 950 }}>
-                  Qo'qon charm poyabzal guruhi uchun
-                </Typography>
+                  <Grid container spacing={1.2} sx={{ mt: 2.2 }}>
+                    {adPoints.map((item, index) => (
+                      <Grid item xs={12} sm={6} key={item}>
+                        <Box className="lp-ad-point">
+                          <Box>{String(index + 1).padStart(2, "0")}</Box>
 
-                <Typography
-                  sx={{
-                    mt: 1.4,
-                    color: brand.text,
-                    fontSize: { xs: 24, md: 32 },
-                    lineHeight: { xs: "32px", md: "42px" },
-                    fontWeight: 950,
-                    letterSpacing: "-.035em",
-                  }}
-                >
-                  Al-amin CRM - poyabzal korxonalarida savdo, ishlab chiqarish, oylik va
-                  qarzdorlikni tartibga soladigan tizim.
-                </Typography>
+                          <Typography>{item}</Typography>
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
 
-                <Grid container spacing={1.5} sx={{ mt: 3 }}>
-                  {adPoints.map((item) => (
-                    <Grid item xs={12} sm={6} key={item}>
-                      <Box
-                        component={motion.div}
-                        whileHover={{ y: -4 }}
-                        sx={{
-                          p: 1.7,
-                          minHeight: 92,
-                          borderRadius: "18px",
-                          border: `1px solid ${brand.line}`,
-                          bgcolor: "#f8fafc",
-                          fontWeight: 850,
-                          lineHeight: "24px",
-                        }}
-                      >
-                        {item}
-                      </Box>
-                    </Grid>
-                  ))}
-                </Grid>
-
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.4} sx={{ mt: 3 }}>
-                  <Button
-                    variant="contained"
-                    onClick={() => navigate("/register")}
-                    sx={{
-                      px: 3.4,
-                      py: 1.4,
-                      borderRadius: "999px",
-                      bgcolor: brand.red,
-                      fontWeight: 950,
-                      textTransform: "none",
-                      "&:hover": { bgcolor: brand.redDark },
+                  <Stack
+                    direction={{
+                      xs: "column",
+                      sm: "row",
                     }}
+                    spacing={1}
+                    sx={{ mt: 2.5 }}
                   >
-                    Korxonani ulash
-                  </Button>
+                    <Button
+                      variant="contained"
+                      onClick={() => navigate("/register")}
+                      className="lp-primary"
+                    >
+                      Ro‘yxatdan o‘tish
+                    </Button>
 
-                  <Button
-                    variant="outlined"
-                    onClick={() => navigate("/login")}
-                    sx={{
-                      px: 3.4,
-                      py: 1.4,
-                      borderRadius: "999px",
-                      borderColor: brand.line,
-                      color: brand.text,
-                      fontWeight: 950,
-                      textTransform: "none",
-                    }}
-                  >
-                    Demo ko'rish
-                  </Button>
-                </Stack>
-              </Paper>
+                    <Button
+                      variant="outlined"
+                      onClick={() => navigate("/login")}
+                      className="lp-outline"
+                    >
+                      Tizimga kirish
+                    </Button>
+                  </Stack>
+                </Paper>
+              </Grid>
             </Grid>
-          </Grid>
-        </Container>
-      </Box>
+          </Container>
+        </Box>
 
-      <Box sx={{ py: { xs: 8, md: 11 }, bgcolor: brand.ink, color: "#fff" }}>
-        <Container maxWidth="xl">
-          <Paper
-            component={motion.div}
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.25 }}
-            elevation={0}
-            sx={{
-              p: { xs: 4, md: 6 },
-              borderRadius: "42px !important",
-              bgcolor: "#fff",
-              color: brand.text,
-              border: `1px solid ${brand.line}`,
-              boxShadow: "0 40px 120px rgba(0,0,0,.30)",
-              textAlign: "center",
-            }}
-          >
-            <Box sx={{ maxWidth: 980, mx: "auto" }}>
-              <Typography
-                sx={{
-                  fontSize: { xs: 34, md: 62 },
-                  lineHeight: { xs: "42px", md: "70px" },
-                  fontWeight: 950,
-                  letterSpacing: "-.055em",
-                }}
-              >
-                Al-amin CRM bilan korxonangiz hisobini tartibga keltiring
-              </Typography>
+        <Box component="section" className="lp-final-section">
+          <Container maxWidth="xl">
+            <Paper
+              component={motion.div}
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{
+                once: true,
+                amount: 0.25,
+              }}
+              elevation={0}
+              className="lp-final-card"
+            >
+              <Eyebrow dark center>
+                Ishni bugun boshlang
+              </Eyebrow>
 
-              <Typography
-                sx={{
-                  mt: 1.8,
-                  color: brand.muted,
-                  fontSize: 18,
-                  lineHeight: "31px",
-                  fontWeight: 650,
-                }}
-              >
-                Poyabzal ishlab chiqarishdagi real ish jarayoni: ishchi, mahsulot, homashyo, mijoz,
-                qarz va oylik bir tizimda boshqariladi.
+              <Typography component="h2">Korxonangiz hisobini tartibga keltiring.</Typography>
+
+              <Typography component="p">
+                Ishchi, mahsulot, homashyo, mijoz, qarz, oylik va ombor bitta boshqaruv tizimida
+                ishlasin.
               </Typography>
 
               <Stack
-                direction={{ xs: "column", sm: "row" }}
-                spacing={1.4}
+                direction={{
+                  xs: "column",
+                  sm: "row",
+                }}
+                spacing={1.1}
                 justifyContent="center"
-                sx={{ mt: 4 }}
+                sx={{ mt: 3.2 }}
               >
                 <Button
                   variant="contained"
                   onClick={() => navigate("/register")}
-                  sx={{
-                    px: 4.2,
-                    py: 1.6,
-                    borderRadius: "999px",
-                    bgcolor: brand.red,
-                    fontWeight: 950,
-                    textTransform: "none",
-                    boxShadow: "0 16px 34px rgba(151,29,33,.22)",
-                    "&:hover": { bgcolor: brand.redDark },
-                  }}
+                  className="lp-primary"
                 >
-                  Ro'yxatdan o'tish
+                  Korxonani ulash
                 </Button>
 
-                <Button
-                  variant="outlined"
-                  onClick={() => navigate("/login")}
-                  sx={{
-                    px: 4.2,
-                    py: 1.6,
-                    borderRadius: "999px",
-                    borderColor: brand.line,
-                    color: brand.text,
-                    fontWeight: 950,
-                    textTransform: "none",
-                  }}
-                >
-                  Kirish
+                <Button variant="outlined" onClick={() => navigate("/login")} className="lp-light">
+                  Tizimga kirish
                 </Button>
               </Stack>
-            </Box>
-          </Paper>
+            </Paper>
+          </Container>
+        </Box>
+      </Box>
 
-          <Typography
-            sx={{
-              mt: 4,
-              textAlign: "center",
-              color: "rgba(255,255,255,.58)",
-              fontWeight: 750,
-            }}
-          >
-            2026 Al-amin CRM. Asoschi MR. Poyabzal korxonalari uchun boshqaruv tizimi.
-          </Typography>
+      <Box component="footer" className="lp-footer">
+        <Container maxWidth="xl">
+          <Box className="lp-footer-inner">
+            <Stack direction="row" spacing={1.1} alignItems="center">
+              <Logo size={38} />
+
+              <Box>
+                <Typography>AL AMIN CRM</Typography>
+
+                <Typography>Poyabzal korxonalari uchun boshqaruv tizimi</Typography>
+              </Box>
+            </Stack>
+
+            <Typography>© {new Date().getFullYear()} Al Amin CRM. Asoschi MR.</Typography>
+          </Box>
         </Container>
       </Box>
     </Box>
   );
 }
+
+const landingStyles = `
+  .landing-page {
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: #0f172a;
+    background: #f5f7fa;
+    scroll-behavior: smooth;
+  }
+
+  .landing-page * {
+    box-sizing: border-box;
+  }
+
+  .landing-page .MuiButton-root,
+  .landing-page .MuiChip-root {
+    font-family: inherit;
+  }
+
+  .lp-logo {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 1px solid #e4e9ef;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow:
+      0 12px 30px rgba(15,23,42,.08);
+  }
+
+  .lp-logo img {
+    width: 76%;
+    height: 76%;
+    object-fit: contain;
+  }
+
+  .lp-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    border-bottom:
+      1px solid rgba(226,232,240,.82);
+    background:
+      rgba(255,255,255,.88);
+    backdrop-filter: blur(18px);
+  }
+
+  .lp-header-inner {
+    min-height: 72px;
+    display: grid;
+    grid-template-columns:
+      240px 1fr 270px;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .lp-brand-name {
+    color: #0f172a;
+    font-size: 14px !important;
+    font-weight: 950 !important;
+  }
+
+  .lp-brand-subtitle {
+    margin-top: 1px !important;
+    color: #94a3b8;
+    font-size: 8px !important;
+    font-weight: 800 !important;
+    letter-spacing: .08em;
+  }
+
+  .lp-nav {
+    justify-content: center;
+  }
+
+  .lp-nav .MuiButton-root {
+    color: #475569;
+    font-size: 10.5px;
+    font-weight: 900;
+    text-transform: none;
+  }
+
+  .lp-nav .MuiButton-root:hover {
+    color: #991b1b;
+    background: transparent;
+  }
+
+  .lp-login,
+  .lp-outline {
+    min-height: 44px;
+    padding: 0 22px !important;
+    color: #334155 !important;
+    border-color: #dce3ea !important;
+    border-radius: 13px !important;
+    background: #fff !important;
+    font-size: 10.5px !important;
+    font-weight: 900 !important;
+    text-transform: none !important;
+  }
+
+  .lp-login:hover,
+  .lp-outline:hover {
+    color: #991b1b !important;
+    border-color:
+      rgba(153,27,27,.24) !important;
+    background:
+      rgba(153,27,27,.04) !important;
+  }
+
+  .lp-start,
+  .lp-primary {
+    min-height: 48px;
+    padding: 0 30px !important;
+    color: #fff !important;
+    border-radius: 14px !important;
+    background:
+      linear-gradient(
+        135deg,
+        #7f1d1d,
+        #b91c1c 58%,
+        #dc2626
+      ) !important;
+    box-shadow:
+      0 14px 30px
+      rgba(127,29,29,.22) !important;
+    font-size: 11.5px !important;
+    font-weight: 950 !important;
+    text-transform: none !important;
+  }
+
+  .lp-start {
+    min-height: 44px;
+  }
+
+  .lp-start:hover,
+  .lp-primary:hover {
+    background:
+      linear-gradient(
+        135deg,
+        #681818,
+        #991b1b 58%,
+        #b91c1c
+      ) !important;
+  }
+
+  .lp-light {
+    min-height: 48px;
+    padding: 0 30px !important;
+    color: #fff !important;
+    border:
+      1px solid
+      rgba(255,255,255,.13) !important;
+    border-radius: 14px !important;
+    background:
+      rgba(255,255,255,.055) !important;
+    font-size: 11.5px !important;
+    font-weight: 950 !important;
+    text-transform: none !important;
+  }
+
+  .lp-light:hover {
+    border-color:
+      rgba(255,255,255,.25) !important;
+    background:
+      rgba(255,255,255,.10) !important;
+  }
+
+  .lp-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+
+  .lp-eyebrow.center {
+    justify-content: center;
+  }
+
+  .lp-eyebrow > span {
+    width: 26px;
+    height: 2px;
+    border-radius: 99px;
+    background:
+      linear-gradient(
+        90deg,
+        #fb7185,
+        #ef4444
+      );
+  }
+
+  .lp-eyebrow .MuiTypography-root {
+    color: #991b1b;
+    font-size: 9.5px;
+    font-weight: 950;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+
+  .lp-eyebrow.dark
+    .MuiTypography-root {
+    color: #fecdd3 !important;
+  }
+
+  .lp-hero {
+    position: relative;
+    min-height:
+      calc(100vh - 72px);
+    padding: 72px 0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    color: #fff;
+    background:
+      radial-gradient(
+        circle at 15% 12%,
+        rgba(220,38,38,.31),
+        transparent 29%
+      ),
+      radial-gradient(
+        circle at 88% 78%,
+        rgba(127,29,29,.18),
+        transparent 30%
+      ),
+      linear-gradient(
+        145deg,
+        #080c12,
+        #111117 53%,
+        #351218
+      );
+  }
+
+  .lp-hero-watermark {
+    position: absolute;
+    right: -70px;
+    top: 18px;
+    width: 700px;
+    opacity: .035;
+    filter: invert(1);
+    pointer-events: none;
+  }
+
+  .lp-hero-container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .lp-hero-title {
+    max-width: 760px;
+    margin-top: 20px !important;
+    color: #fff !important;
+    font-size:
+      clamp(
+        42px,
+        5.1vw,
+        67px
+      ) !important;
+    line-height: 1.03 !important;
+    font-weight: 950 !important;
+    letter-spacing: -.06em !important;
+  }
+
+  .lp-hero-title span {
+    color: #fca5a5;
+  }
+
+  .lp-hero-text {
+    max-width: 650px;
+    margin-top: 22px !important;
+    color:
+      rgba(255,255,255,.48) !important;
+    font-size: 16px !important;
+    line-height: 1.85 !important;
+  }
+
+  .lp-proof {
+    max-width: 620px;
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+    gap: 10px;
+  }
+
+  .lp-proof span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow:
+      0 0 0 5px
+      rgba(74,222,128,.08);
+  }
+
+  .lp-proof .MuiTypography-root {
+    color:
+      rgba(255,255,255,.55) !important;
+    font-size: 9.5px;
+    font-weight: 850;
+  }
+
+  .lp-preview {
+    overflow: hidden;
+    border:
+      1px solid
+      rgba(255,255,255,.11);
+    border-radius: 27px !important;
+    background: #f8fafc !important;
+    box-shadow:
+      0 45px 120px
+      rgba(0,0,0,.40) !important;
+  }
+
+  .lp-preview-top {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content:
+      space-between;
+    gap: 16px;
+    background: #fff;
+    border-bottom:
+      1px solid #e4e9ef;
+  }
+
+  .lp-preview-title {
+    color: #0f172a;
+    font-size: 10.5px !important;
+    font-weight: 950 !important;
+  }
+
+  .lp-preview-subtitle {
+    color: #94a3b8;
+    font-size: 8px !important;
+  }
+
+  .lp-period-chip {
+    height: 24px !important;
+    color: #991b1b !important;
+    background:
+      rgba(153,27,27,.07) !important;
+    font-size: 8.5px !important;
+    font-weight: 900 !important;
+  }
+
+  .lp-preview-content {
+    padding: 20px;
+  }
+
+  .lp-preview-metrics {
+    padding: 10px;
+    display: grid;
+    grid-template-columns:
+      repeat(4,minmax(0,1fr));
+    gap: 10px;
+    border-radius: 18px;
+    background:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(220,38,38,.24),
+        transparent 35%
+      ),
+      linear-gradient(
+        145deg,
+        #0d1117,
+        #221218
+      );
+  }
+
+  .lp-preview-metric {
+    min-width: 0;
+    padding: 14px;
+    border:
+      1px solid
+      rgba(255,255,255,.075);
+    border-radius: 15px;
+    background:
+      linear-gradient(
+        145deg,
+        rgba(255,255,255,.065),
+        rgba(255,255,255,.025)
+      );
+  }
+
+  .lp-preview-metric-icon {
+    width: 29px;
+    height: 29px;
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    font-size: 10px;
+    font-weight: 950;
+  }
+
+  .lp-preview-metric.blue
+    .lp-preview-metric-icon {
+    color: #bfdbfe;
+    border:
+      1px solid
+      rgba(96,165,250,.16);
+    background:
+      rgba(37,99,235,.15);
+  }
+
+  .lp-preview-metric.green
+    .lp-preview-metric-icon {
+    color: #bbf7d0;
+    border:
+      1px solid
+      rgba(74,222,128,.16);
+    background:
+      rgba(34,197,94,.14);
+  }
+
+  .lp-preview-metric.violet
+    .lp-preview-metric-icon {
+    color: #ddd6fe;
+    border:
+      1px solid
+      rgba(167,139,250,.16);
+    background:
+      rgba(139,92,246,.15);
+  }
+
+  .lp-preview-metric.amber
+    .lp-preview-metric-icon {
+    color: #fde68a;
+    border:
+      1px solid
+      rgba(251,191,36,.16);
+    background:
+      rgba(245,158,11,.15);
+  }
+
+  .lp-preview-metric-label {
+    margin-top: 10px !important;
+    color:
+      rgba(255,255,255,.42) !important;
+    font-size: 8.5px !important;
+    font-weight: 800 !important;
+  }
+
+  .lp-preview-metric-value {
+    margin-top: 4px !important;
+    color: #fff !important;
+    font-size: 15px !important;
+    font-weight: 950 !important;
+  }
+
+  .lp-preview-metric-helper {
+    margin-top: 3px !important;
+    color:
+      rgba(255,255,255,.27) !important;
+    font-size: 8px !important;
+  }
+
+  .lp-preview-card {
+    height: 220px;
+    padding: 17px;
+    border:
+      1px solid #e4e9ef;
+    border-radius: 17px !important;
+    background: #fff !important;
+  }
+
+  .lp-preview-card-title {
+    color: #0f172a;
+    font-size: 10px !important;
+    font-weight: 950 !important;
+  }
+
+  .lp-preview-card-helper {
+    margin-top: 2px !important;
+    color: #94a3b8;
+    font-size: 8px !important;
+  }
+
+  .lp-growth {
+    color: #15803d;
+    font-size: 9px !important;
+    font-weight: 950 !important;
+  }
+
+  .lp-bars {
+    height: 142px;
+    margin-top: 15px;
+  }
+
+  .lp-bar-column {
+    flex: 1;
+    text-align: center;
+  }
+
+  .lp-bar {
+    width: 62%;
+    margin: 0 auto;
+    border-radius:
+      8px 8px 2px 2px;
+    background:
+      linear-gradient(
+        180deg,
+        #cbd5e1,
+        #94a3b8
+      );
+  }
+
+  .lp-bar.active {
+    background:
+      linear-gradient(
+        180deg,
+        #dc2626,
+        #991b1b
+      );
+  }
+
+  .lp-bar-column
+    .MuiTypography-root {
+    margin-top: 6px;
+    color: #94a3b8;
+    font-size: 7.5px;
+  }
+
+  .lp-debt-row {
+    padding: 11px;
+    border:
+      1px solid #e4e9ef;
+    border-radius: 12px;
+    background: #f8fafc;
+  }
+
+  .lp-debt-row
+    .MuiTypography-root:first-child {
+    color: #64748b;
+    font-size: 8.2px;
+    font-weight: 800;
+  }
+
+  .lp-debt-row
+    .MuiTypography-root:last-child {
+    margin-top: 3px;
+    font-size: 10px;
+    font-weight: 950;
+  }
+
+  .lp-debt-row.red
+    .MuiTypography-root:last-child {
+    color: #991b1b;
+  }
+
+  .lp-debt-row.amber
+    .MuiTypography-root:last-child {
+    color: #b45309;
+  }
+
+  .lp-debt-row.blue
+    .MuiTypography-root:last-child {
+    color: #1d4ed8;
+  }
+
+  .lp-trust-strip {
+    padding: 22px 0;
+    border-bottom:
+      1px solid #e4e9ef;
+    background: #fff;
+  }
+
+  .lp-trust-grid {
+    display: grid;
+    grid-template-columns:
+      repeat(4,minmax(0,1fr));
+    gap: 10px;
+  }
+
+  .lp-trust-grid > div {
+    padding: 11px 15px;
+    text-align: center;
+  }
+
+  .lp-trust-grid
+    .MuiTypography-root:first-child {
+    color: #0f172a;
+    font-size: 10.5px;
+    font-weight: 950;
+  }
+
+  .lp-trust-grid
+    .MuiTypography-root:last-child {
+    margin-top: 2px;
+    color: #94a3b8;
+    font-size: 8.5px;
+  }
+
+  .lp-section {
+    padding: 88px 0;
+  }
+
+  .lp-soft {
+    background: #f5f7fa;
+  }
+
+  .lp-white {
+    background: #fff;
+  }
+
+  .lp-plans-section {
+    background: #f3f5f8;
+  }
+
+  .lp-section-head {
+    max-width: 760px;
+  }
+
+  .lp-section-head.center {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .lp-section-head h2 {
+    margin-top: 16px;
+    color: #0f172a;
+    font-size:
+      clamp(
+        34px,
+        4vw,
+        52px
+      );
+    line-height: 1.08;
+    font-weight: 950;
+    letter-spacing: -.05em;
+  }
+
+  .lp-section-head p {
+    margin-top: 16px;
+    color: #64748b;
+    font-size: 16px;
+    line-height: 1.8;
+    font-weight: 650;
+  }
+
+  .lp-feature {
+    position: relative;
+    flex: 1;
+    min-height: 260px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content:
+      space-between;
+    overflow: hidden;
+    border:
+      1px solid #e4e9ef;
+    border-radius: 24px !important;
+    background:
+      linear-gradient(
+        145deg,
+        #fff,
+        #fafbfc
+      ) !important;
+    box-shadow:
+      0 14px 40px
+      rgba(15,23,42,.05) !important;
+  }
+
+  .lp-feature.dark {
+    color: #fff;
+    border-color:
+      rgba(255,255,255,.075);
+    background:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(220,38,38,.25),
+        transparent 38%
+      ),
+      linear-gradient(
+        145deg,
+        #0d1117,
+        #211217
+      ) !important;
+    box-shadow:
+      0 24px 65px
+      rgba(15,23,42,.18) !important;
+  }
+
+  .lp-feature-number {
+    color: #991b1b;
+    font-size: 10px !important;
+    font-weight: 950 !important;
+    letter-spacing: .10em;
+  }
+
+  .lp-feature.dark
+    .lp-feature-number {
+    color: #fca5a5 !important;
+  }
+
+  .lp-feature-title {
+    margin-top: 14px !important;
+    color: #0f172a;
+    font-size: 21px !important;
+    font-weight: 950 !important;
+    letter-spacing: -.035em;
+  }
+
+  .lp-feature.dark
+    .lp-feature-title {
+    color: #fff !important;
+  }
+
+  .lp-feature-text {
+    margin-top: 11px !important;
+    color: #64748b;
+    font-size: 12px !important;
+    line-height: 1.75 !important;
+  }
+
+  .lp-feature.dark
+    .lp-feature-text {
+    color:
+      rgba(255,255,255,.52) !important;
+  }
+
+  .lp-feature-chip {
+    width: fit-content;
+    height: 27px !important;
+    margin-top: 22px;
+    color: #991b1b !important;
+    border:
+      1px solid
+      rgba(153,27,27,.13);
+    background:
+      rgba(153,27,27,.06) !important;
+    font-size: 9px !important;
+    font-weight: 900 !important;
+  }
+
+  .lp-feature.dark
+    .lp-feature-chip {
+    color: #fff !important;
+    border-color:
+      rgba(255,255,255,.10);
+    background:
+      rgba(255,255,255,.08) !important;
+  }
+
+  .lp-process-intro {
+    height: 100%;
+    min-height: 430px;
+    padding: 40px;
+    overflow: hidden;
+    border-radius: 26px !important;
+    color: #fff;
+    background:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(220,38,38,.27),
+        transparent 40%
+      ),
+      linear-gradient(
+        145deg,
+        #0d1117,
+        #231218
+      ) !important;
+    box-shadow:
+      0 24px 65px
+      rgba(15,23,42,.18) !important;
+  }
+
+  .lp-process-intro h2 {
+    margin-top: 18px;
+    color: #fff !important;
+    font-size:
+      clamp(
+        34px,
+        4vw,
+        48px
+      );
+    line-height: 1.08;
+    font-weight: 950;
+    letter-spacing: -.05em;
+  }
+
+  .lp-process-intro > p {
+    margin-top: 18px;
+    color:
+      rgba(255,255,255,.48) !important;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .lp-process-intro
+    > div:last-child {
+    margin-top: 30px;
+    padding: 16px;
+    border:
+      1px solid
+      rgba(255,255,255,.08);
+    border-radius: 16px;
+    background:
+      rgba(255,255,255,.045);
+  }
+
+  .lp-process-intro
+    > div:last-child
+    .MuiTypography-root:first-child {
+    color: #fff !important;
+    font-size: 10px;
+    font-weight: 900;
+  }
+
+  .lp-process-intro
+    > div:last-child
+    .MuiTypography-root:last-child {
+    margin-top: 4px;
+    color:
+      rgba(255,255,255,.40) !important;
+    font-size: 9.5px;
+    line-height: 1.6;
+  }
+
+  .lp-process-list {
+    height: 100%;
+    padding: 30px;
+    display: grid;
+    gap: 13px;
+    border:
+      1px solid #e4e9ef;
+    border-radius: 26px !important;
+    background: #fafbfc !important;
+    box-shadow:
+      0 14px 42px
+      rgba(15,23,42,.05) !important;
+  }
+
+  .lp-process-row {
+    display: grid;
+    grid-template-columns:
+      46px minmax(0,1fr);
+    gap: 13px;
+    align-items: start;
+  }
+
+  .lp-process-row
+    > div:first-child {
+    width: 43px;
+    height: 43px;
+    display: grid;
+    place-items: center;
+    color: #991b1b;
+    border:
+      1px solid
+      rgba(153,27,27,.12);
+    border-radius: 13px;
+    background:
+      rgba(153,27,27,.06);
+    font-size: 10px;
+    font-weight: 950;
+  }
+
+  .lp-process-row
+    > div:first-child.active {
+    color: #fff;
+    background:
+      linear-gradient(
+        135deg,
+        #7f1d1d,
+        #dc2626
+      );
+  }
+
+  .lp-process-row
+    > div:last-child {
+    padding: 16px;
+    border:
+      1px solid #e4e9ef;
+    border-radius: 16px;
+    background: #fff;
+  }
+
+  .lp-process-row
+    > div:last-child
+    .MuiTypography-root:first-child {
+    color: #0f172a;
+    font-size: 11.5px;
+    font-weight: 950;
+  }
+
+  .lp-process-row
+    > div:last-child
+    .MuiTypography-root:last-child {
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 10.5px;
+    line-height: 1.65;
+  }
+
+  .lp-plan {
+    position: relative;
+    flex: 1;
+    padding: 27px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border:
+      1px solid #e4e9ef;
+    border-radius: 24px !important;
+    background:
+      linear-gradient(
+        145deg,
+        #fff,
+        #fafbfc
+      ) !important;
+    box-shadow:
+      0 14px 40px
+      rgba(15,23,42,.05) !important;
+  }
+
+  .lp-plan.featured {
+    border-color:
+      rgba(153,27,27,.24);
+    background:
+      linear-gradient(
+        145deg,
+        rgba(153,27,27,.065),
+        #fff 45%
+      ) !important;
+    box-shadow:
+      0 24px 65px
+      rgba(153,27,27,.12) !important;
+  }
+
+  .lp-plan-badge {
+    position: absolute !important;
+    top: 16px;
+    right: 16px;
+    height: 25px !important;
+    color: #fff !important;
+    background: #991b1b !important;
+    font-size: 8.5px !important;
+    font-weight: 900 !important;
+  }
+
+  .lp-plan-name {
+    color: #0f172a;
+    font-size: 17px !important;
+    font-weight: 950 !important;
+  }
+
+  .lp-plan.featured
+    .lp-plan-name {
+    color: #991b1b;
+  }
+
+  .lp-plan-price {
+    color: #0f172a;
+    font-size: 29px !important;
+    font-weight: 950 !important;
+    letter-spacing: -.045em;
+  }
+
+  .lp-plan-period {
+    color: #94a3b8;
+    font-size: 9px !important;
+  }
+
+  .lp-plan-text {
+    min-height: 48px;
+    margin-top: 9px !important;
+    color: #64748b;
+    font-size: 10.5px !important;
+    line-height: 1.6 !important;
+  }
+
+  .lp-check {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #15803d;
+  }
+
+  .lp-plan.featured
+    .lp-check {
+    background: #991b1b;
+  }
+
+  .lp-plan-feature {
+    color: #64748b;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+  }
+
+  .lp-plan-button {
+    min-height: 42px;
+    margin-top: 23px !important;
+    border-color: #dce3ea !important;
+    border-radius: 12px !important;
+    color: #64748b !important;
+    font-size: 10.5px !important;
+    font-weight: 900 !important;
+    text-transform: none !important;
+  }
+
+  .lp-plan-button:hover {
+    color: #991b1b !important;
+    border-color:
+      rgba(153,27,27,.24) !important;
+    background:
+      rgba(153,27,27,.04) !important;
+  }
+
+  .lp-plan-button.featured {
+    color: #fff !important;
+    border: 0 !important;
+    background:
+      linear-gradient(
+        135deg,
+        #7f1d1d,
+        #b91c1c
+      ) !important;
+  }
+
+  .lp-ad-dark,
+  .lp-ad-light {
+    height: 100%;
+    min-height: 430px;
+    padding: 40px;
+    border-radius: 26px !important;
+  }
+
+  .lp-ad-dark {
+    display: flex;
+    flex-direction: column;
+    justify-content:
+      space-between;
+    overflow: hidden;
+    color: #fff;
+    background:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(255,255,255,.12),
+        transparent 35%
+      ),
+      linear-gradient(
+        145deg,
+        #7f1d1d,
+        #b91c1c 58%,
+        #dc2626
+      ) !important;
+    box-shadow:
+      0 24px 65px
+      rgba(153,27,27,.18) !important;
+  }
+
+  .lp-ad-label {
+    color:
+      rgba(255,255,255,.54) !important;
+    font-size: 9.5px !important;
+    font-weight: 900 !important;
+    letter-spacing: .10em;
+    text-transform: uppercase;
+  }
+
+  .lp-ad-dark h2 {
+    margin-top: 17px;
+    color: #fff !important;
+    font-size:
+      clamp(
+        34px,
+        4vw,
+        47px
+      );
+    line-height: 1.08;
+    font-weight: 950;
+    letter-spacing: -.05em;
+  }
+
+  .lp-ad-dark p {
+    margin-top: 17px;
+    color:
+      rgba(255,255,255,.52) !important;
+    font-size: 12.5px;
+    line-height: 1.8;
+  }
+
+  .lp-ad-dark img {
+    width: 120px;
+    max-height: 90px;
+    object-fit: contain;
+    filter: invert(1);
+    opacity: .92;
+  }
+
+  .lp-ad-dark
+    > div:last-child
+    .MuiTypography-root {
+    margin-top: 10px;
+    color:
+      rgba(255,255,255,.42) !important;
+    font-size: 8.5px;
+  }
+
+  .lp-ad-light {
+    border:
+      1px solid #e4e9ef;
+    background:
+      linear-gradient(
+        145deg,
+        #fff,
+        #fafbfc
+      ) !important;
+    box-shadow:
+      0 14px 42px
+      rgba(15,23,42,.06) !important;
+  }
+
+  .lp-ad-light h2 {
+    margin-top: 16px;
+    color: #0f172a;
+    font-size:
+      clamp(
+        27px,
+        3vw,
+        36px
+      );
+    line-height: 1.18;
+    font-weight: 950;
+    letter-spacing: -.04em;
+  }
+
+  .lp-ad-point {
+    height: 100%;
+    min-height: 100px;
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    border:
+      1px solid #e4e9ef;
+    border-radius: 16px;
+    background: #f8fafc;
+  }
+
+  .lp-ad-point > div {
+    width: 27px;
+    height: 27px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    color: #991b1b;
+    border-radius: 9px;
+    background:
+      rgba(153,27,27,.07);
+    font-size: 9px;
+    font-weight: 950;
+  }
+
+  .lp-ad-point
+    .MuiTypography-root {
+    color: #475569;
+    font-size: 10.5px;
+    line-height: 1.6;
+    font-weight: 750;
+  }
+
+  .lp-final-section {
+    padding: 88px 0;
+    color: #fff;
+    background:
+      radial-gradient(
+        circle at 15% 10%,
+        rgba(220,38,38,.24),
+        transparent 30%
+      ),
+      linear-gradient(
+        145deg,
+        #080c12,
+        #171117 56%,
+        #351218
+      );
+  }
+
+  .lp-final-card {
+    padding: 55px;
+    text-align: center;
+    border:
+      1px solid
+      rgba(255,255,255,.085);
+    border-radius: 28px !important;
+    background:
+      linear-gradient(
+        145deg,
+        rgba(255,255,255,.075),
+        rgba(255,255,255,.035)
+      ) !important;
+    backdrop-filter: blur(18px);
+    box-shadow:
+      0 30px 90px
+      rgba(0,0,0,.28) !important;
+  }
+
+  .lp-final-card h2 {
+    margin-top: 18px;
+    color: #fff !important;
+    font-size:
+      clamp(
+        35px,
+        4.5vw,
+        57px
+      );
+    line-height: 1.08;
+    font-weight: 950;
+    letter-spacing: -.055em;
+  }
+
+  .lp-final-card p {
+    max-width: 720px;
+    margin: 17px auto 0;
+    color:
+      rgba(255,255,255,.46) !important;
+    font-size: 13.5px;
+    line-height: 1.8;
+  }
+
+  .lp-footer {
+    padding: 35px 0;
+    color: #fff;
+    background: #070a0f;
+    border-top:
+      1px solid
+      rgba(255,255,255,.06);
+  }
+
+  .lp-footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content:
+      space-between;
+    gap: 20px;
+  }
+
+  .lp-footer .lp-logo {
+    border-color:
+      rgba(255,255,255,.10);
+  }
+
+  .lp-footer
+    .MuiTypography-root:first-child {
+    color: #fff !important;
+    font-size: 11px;
+    font-weight: 950;
+  }
+
+  .lp-footer
+    .MuiTypography-root:last-child {
+    margin-top: 2px;
+    color:
+      rgba(255,255,255,.30) !important;
+    font-size: 8.5px;
+  }
+
+  .lp-footer-inner
+    > .MuiTypography-root {
+    color:
+      rgba(255,255,255,.30) !important;
+    font-size: 9px !important;
+  }
+
+  @media (max-width: 899px) {
+    .lp-header-inner {
+      grid-template-columns:
+        1fr auto;
+    }
+
+    .lp-nav {
+      display: none !important;
+    }
+
+    .lp-hero-watermark {
+      right: -170px;
+      top: 85px;
+      width: 420px;
+    }
+
+    .lp-preview-metrics {
+      grid-template-columns:
+        repeat(2,minmax(0,1fr));
+    }
+
+    .lp-section,
+    .lp-final-section {
+      padding: 72px 0;
+    }
+  }
+
+  @media (max-width: 599px) {
+    .lp-brand-subtitle {
+      display: none;
+    }
+
+    .lp-login,
+    .lp-start {
+      min-width: 0 !important;
+      padding:
+        0 14px !important;
+      font-size:
+        9.5px !important;
+    }
+
+    .lp-hero {
+      padding: 64px 0;
+    }
+
+    .lp-hero-title {
+      font-size:
+        42px !important;
+      line-height:
+        1.08 !important;
+    }
+
+    .lp-hero-text {
+      font-size:
+        14px !important;
+    }
+
+    .lp-proof {
+      grid-template-columns: 1fr;
+    }
+
+    .lp-trust-grid {
+      grid-template-columns:
+        repeat(2,minmax(0,1fr));
+    }
+
+    .lp-section-head h2 {
+      font-size: 34px;
+    }
+
+    .lp-section-head p {
+      font-size: 14px;
+    }
+
+    .lp-feature,
+    .lp-process-intro,
+    .lp-process-list,
+    .lp-ad-dark,
+    .lp-ad-light {
+      padding: 24px;
+    }
+
+    .lp-final-card {
+      padding: 35px 24px;
+    }
+
+    .lp-footer-inner {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+`;

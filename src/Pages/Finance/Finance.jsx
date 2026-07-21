@@ -1,4 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   Alert,
   Box,
@@ -44,19 +49,36 @@ import {
   updatePayrollLine,
 } from "../../api/finance";
 
-const today = () => new Date().toISOString().slice(0, 10);
+const today = () =>
+  new Date().toISOString().slice(0, 10);
 
 const money = (value) =>
-  `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
+  `${new Intl.NumberFormat("uz-UZ").format(
+    Number(value || 0),
+  )} so'm`;
+
+const number = (value) =>
+  new Intl.NumberFormat("uz-UZ").format(
+    Number(value || 0),
+  );
 
 const date = (value) => {
   if (!value) return "-";
 
-  return new Intl.DateTimeFormat("uz-UZ", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).format(new Date(value));
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return "-";
+  }
+
+  return new Intl.DateTimeFormat(
+    "uz-UZ",
+    {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    },
+  ).format(parsed);
 };
 
 const tabItems = [
@@ -67,23 +89,42 @@ const tabItems = [
   ["profit", "Foyda-zarar"],
 ];
 
+const dialogTitles = {
+  payroll: "Yangi haftalik hisob",
+  line: "Ish haqi qatorini tahrirlash",
+  category: "Xarajat kategoriyasi",
+  expense: "Yangi xarajat",
+  account: "Yangi moliyaviy hisob",
+  transaction: "Kirim yoki chiqim",
+  return: "Mijoz qaytarishi",
+};
+
 const getLocalUser = () => {
   try {
-    return JSON.parse(localStorage.getItem("user") || "null");
+    return JSON.parse(
+      localStorage.getItem("user") ||
+        "null",
+    );
   } catch {
     return null;
   }
 };
 
-const Card = ({ children, sx = {} }) => (
+const Card = ({
+  children,
+  sx = {},
+}) => (
   <Paper
     elevation={0}
     sx={{
-      borderRadius: "var(--aa-radius-xl)",
-      border: "1px solid var(--aa-border)",
-      background: "var(--aa-surface)",
-      boxShadow: "var(--aa-shadow-xs)",
       overflow: "hidden",
+      borderRadius: "22px",
+      border: "1px solid #e4e9ef",
+      backgroundColor: "#ffffff",
+
+      boxShadow:
+        "0 14px 40px rgba(15,23,42,.045)",
+
       ...sx,
     }}
   >
@@ -91,127 +132,363 @@ const Card = ({ children, sx = {} }) => (
   </Paper>
 );
 
-const MiniStat = ({ label, value, tone = "default" }) => {
+const HeroMetric = ({
+  label,
+  value,
+  helper,
+  tone = "red",
+}) => {
   const tones = {
-    default: {
-      color: "var(--aa-text)",
-      bg: "var(--aa-surface-solid)",
-      border: "var(--aa-border)",
-    },
-    blue: {
-      color: "var(--aa-info)",
-      bg: "color-mix(in srgb, var(--aa-info) 8%, transparent)",
-      border: "color-mix(in srgb, var(--aa-info) 18%, transparent)",
-    },
-    green: {
-      color: "var(--aa-success)",
-      bg: "color-mix(in srgb, var(--aa-success) 9%, transparent)",
-      border: "color-mix(in srgb, var(--aa-success) 20%, transparent)",
-    },
-    red: {
-      color: "var(--aa-brand-700)",
-      bg: "var(--aa-brand-50)",
-      border: "var(--aa-brand-100)",
-    },
-    orange: {
-      color: "var(--aa-warning)",
-      bg: "color-mix(in srgb, var(--aa-warning) 10%, transparent)",
-      border: "color-mix(in srgb, var(--aa-warning) 22%, transparent)",
-    },
+    red: [
+      "#fecdd3",
+      "rgba(220,38,38,.15)",
+      "rgba(248,113,113,.15)",
+    ],
+
+    green: [
+      "#bbf7d0",
+      "rgba(34,197,94,.14)",
+      "rgba(74,222,128,.15)",
+    ],
+
+    blue: [
+      "#bfdbfe",
+      "rgba(37,99,235,.15)",
+      "rgba(96,165,250,.15)",
+    ],
+
+    amber: [
+      "#fde68a",
+      "rgba(245,158,11,.15)",
+      "rgba(251,191,36,.15)",
+    ],
+
+    violet: [
+      "#ddd6fe",
+      "rgba(139,92,246,.16)",
+      "rgba(167,139,250,.15)",
+    ],
   };
 
-  const current = tones[tone] || tones.default;
+  const current =
+    tones[tone] || tones.red;
 
   return (
     <Box
       sx={{
-        minWidth: 130,
-        px: 2,
-        py: 1.35,
-        borderRadius: "var(--aa-radius-lg)",
-        background: current.bg,
-        border: `1px solid ${current.border}`,
-        boxShadow: "var(--aa-shadow-xs)",
+        minWidth: 0,
+        minHeight: 126,
+        p: 1.8,
+        borderRadius: "18px",
+
+        border:
+          "1px solid rgba(255,255,255,.075)",
+
+        background:
+          "linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025))",
+
+        backdropFilter: "blur(16px)",
       }}
     >
+      <Box
+        sx={{
+          width: 34,
+          height: 34,
+          display: "grid",
+          placeItems: "center",
+          borderRadius: "11px",
+          color: current[0],
+
+          backgroundColor:
+            current[1],
+
+          border: `1px solid ${current[2]}`,
+
+          fontSize: 13,
+          fontWeight: 950,
+        }}
+      >
+        {label.charAt(0)}
+      </Box>
+
       <Typography
         sx={{
-          fontSize: 12,
-          fontWeight: 850,
-          color: "var(--aa-text-secondary)",
+          mt: 1.35,
+
+          color:
+            "rgba(255,255,255,.44) !important",
+
+          fontSize: 9.5,
+          fontWeight: 750,
         }}
       >
         {label}
       </Typography>
 
       <Typography
+        noWrap
         sx={{
-          mt: 0.35,
-          fontSize: 18,
+          mt: 0.6,
+
+          color:
+            "#ffffff !important",
+
+          fontSize: 17,
+          lineHeight: 1.2,
           fontWeight: 950,
-          color: current.color,
-          letterSpacing: "-0.04em",
-          whiteSpace: "nowrap",
+          letterSpacing: "-.035em",
         }}
       >
         {value}
+      </Typography>
+
+      <Typography
+        noWrap
+        sx={{
+          mt: 0.55,
+
+          color:
+            "rgba(255,255,255,.28) !important",
+
+          fontSize: 9,
+        }}
+      >
+        {helper}
       </Typography>
     </Box>
   );
 };
 
 const StatusChip = ({ status }) => {
-  const closed = status === "closed";
+  const closed =
+    status === "closed";
 
   return (
     <Chip
       size="small"
-      label={closed ? "Yopilgan" : "Ochiq"}
+      label={
+        closed
+          ? "Yopilgan"
+          : "Ochiq"
+      }
       sx={{
-        height: 26,
-        px: 0.35,
-        fontSize: 12,
+        height: 25,
+        px: 0.3,
+
+        color: closed
+          ? "#64748b"
+          : "#15803d",
+
+        fontSize: 9.5,
         fontWeight: 900,
-        color: closed ? "var(--aa-text-secondary)" : "var(--aa-success)",
-        background: closed
-          ? "var(--aa-surface-muted)"
-          : "color-mix(in srgb, var(--aa-success) 10%, transparent)",
+
+        backgroundColor: closed
+          ? "#f1f5f9"
+          : "rgba(34,197,94,.09)",
+
         border: closed
-          ? "1px solid var(--aa-border)"
-          : "1px solid color-mix(in srgb, var(--aa-success) 22%, transparent)",
+          ? "1px solid #e2e8f0"
+          : "1px solid rgba(34,197,94,.18)",
       }}
     />
   );
 };
 
 const TypeChip = ({ type }) => {
-  const income = type === "income";
+  const income =
+    type === "income";
 
   return (
     <Chip
       size="small"
-      label={income ? "Kirim" : "Chiqim"}
+      label={
+        income ? "Kirim" : "Chiqim"
+      }
       sx={{
-        height: 26,
-        px: 0.35,
-        fontSize: 12,
+        height: 25,
+        px: 0.3,
+
+        color: income
+          ? "#15803d"
+          : "#b91c1c",
+
+        fontSize: 9.5,
         fontWeight: 900,
-        color: income ? "var(--aa-success)" : "var(--aa-danger)",
-        background: income
-          ? "color-mix(in srgb, var(--aa-success) 10%, transparent)"
-          : "color-mix(in srgb, var(--aa-danger) 8%, transparent)",
+
+        backgroundColor: income
+          ? "rgba(34,197,94,.09)"
+          : "rgba(220,38,38,.08)",
+
         border: income
-          ? "1px solid color-mix(in srgb, var(--aa-success) 22%, transparent)"
-          : "1px solid color-mix(in srgb, var(--aa-danger) 18%, transparent)",
+          ? "1px solid rgba(34,197,94,.18)"
+          : "1px solid rgba(220,38,38,.18)",
       }}
     />
   );
 };
 
+const StatCard = ({
+  label,
+  value,
+  tone = "default",
+  helper,
+}) => {
+  const tones = {
+    default: [
+      "#334155",
+      "#ffffff",
+      "#e7ebf0",
+    ],
+
+    green: [
+      "#15803d",
+      "rgba(34,197,94,.07)",
+      "rgba(34,197,94,.17)",
+    ],
+
+    red: [
+      "#991b1b",
+      "rgba(153,27,27,.07)",
+      "rgba(153,27,27,.16)",
+    ],
+
+    blue: [
+      "#1d4ed8",
+      "rgba(37,99,235,.07)",
+      "rgba(37,99,235,.17)",
+    ],
+
+    amber: [
+      "#b45309",
+      "rgba(245,158,11,.09)",
+      "rgba(245,158,11,.19)",
+    ],
+
+    violet: [
+      "#6d28d9",
+      "rgba(139,92,246,.08)",
+      "rgba(139,92,246,.18)",
+    ],
+  };
+
+  const current =
+    tones[tone] || tones.default;
+
+  return (
+    <Box
+      sx={{
+        minWidth: 0,
+        p: 1.7,
+        borderRadius: "17px",
+
+        backgroundColor:
+          current[1],
+
+        border: `1px solid ${current[2]}`,
+      }}
+    >
+      <Typography
+        sx={{
+          color: "#94a3b8",
+          fontSize: 9.5,
+          fontWeight: 800,
+        }}
+      >
+        {label}
+      </Typography>
+
+      <Typography
+        noWrap
+        sx={{
+          mt: 0.6,
+          color: current[0],
+          fontSize: 16,
+          fontWeight: 950,
+          letterSpacing: "-.035em",
+        }}
+      >
+        {value}
+      </Typography>
+
+      {helper && (
+        <Typography
+          sx={{
+            mt: 0.45,
+            color: "#94a3b8",
+            fontSize: 9,
+            lineHeight: 1.5,
+          }}
+        >
+          {helper}
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
+const SectionHeader = ({
+  title,
+  subtitle,
+  actions,
+}) => (
+  <Box
+    sx={{
+      mb: 1.7,
+      display: "flex",
+
+      alignItems: {
+        xs: "flex-start",
+        sm: "center",
+      },
+
+      justifyContent:
+        "space-between",
+
+      flexDirection: {
+        xs: "column",
+        sm: "row",
+      },
+
+      gap: 1.4,
+    }}
+  >
+    <Box>
+      <Typography
+        sx={{
+          color: "#0f172a",
+          fontSize: 15,
+          fontWeight: 950,
+        }}
+      >
+        {title}
+      </Typography>
+
+      {subtitle && (
+        <Typography
+          sx={{
+            mt: 0.45,
+            color: "#94a3b8",
+            fontSize: 10,
+            lineHeight: 1.55,
+          }}
+        >
+          {subtitle}
+        </Typography>
+      )}
+    </Box>
+
+    {actions}
+  </Box>
+);
+
 const PremiumDialog = ({
   open,
   onClose,
   title,
+
+  subtitle =
+    "Moliyaviy ma’lumotlarni kiriting",
+
   children,
   actions,
   maxWidth = "sm",
@@ -223,37 +500,81 @@ const PremiumDialog = ({
     maxWidth={maxWidth}
     PaperProps={{
       sx: {
-        borderRadius: "var(--aa-radius-xl)",
-        border: "1px solid var(--aa-border)",
-        boxShadow: "var(--aa-shadow-lg)",
-        backgroundImage: "none",
         overflow: "hidden",
+        borderRadius: "23px",
+
+        border:
+          "1px solid rgba(148,163,184,.20)",
+
+        boxShadow:
+          "0 30px 80px rgba(15,23,42,.22)",
       },
     }}
   >
     <DialogTitle
+      className="finance-dialog-title"
       sx={{
         px: 3,
-        py: 2.2,
-        fontSize: 22,
-        fontWeight: 950,
-        color: "var(--aa-text)",
-        borderBottom: "1px solid var(--aa-border)",
-        background: "var(--aa-surface)",
+        py: 2.35,
+
+        color:
+          "#ffffff !important",
+
+        backgroundColor:
+          "#0d1117 !important",
+
+        backgroundImage:
+          "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
       }}
     >
-      {title}
+      <Typography
+        sx={{
+          color:
+            "#ffffff !important",
+
+          fontSize: 19,
+          fontWeight: 950,
+        }}
+      >
+        {title}
+      </Typography>
+
+      <Typography
+        sx={{
+          mt: 0.5,
+
+          color:
+            "rgba(255,255,255,.43) !important",
+
+          fontSize: 10.5,
+        }}
+      >
+        {subtitle}
+      </Typography>
     </DialogTitle>
 
-    <DialogContent sx={{ px: 3, py: 2.5 }}>{children}</DialogContent>
+    <DialogContent
+      sx={{
+        px: 3,
+
+        py:
+          "24px !important",
+      }}
+    >
+      {children}
+    </DialogContent>
 
     {actions && (
       <DialogActions
         sx={{
           px: 3,
-          py: 2,
-          borderTop: "1px solid var(--aa-border)",
-          background: "var(--aa-surface-muted)",
+          py: 2.1,
+
+          borderTop:
+            "1px solid #edf0f3",
+
+          backgroundColor:
+            "#fafbfc",
         }}
       >
         {actions}
@@ -262,64 +583,102 @@ const PremiumDialog = ({
   </Dialog>
 );
 
-const Grid = ({ heads, rows, onRow }) => (
+const Grid = ({
+  heads,
+  rows,
+  onRow,
+  minWidth = 820,
+}) => (
   <Card sx={{ boxShadow: "none" }}>
     <Box sx={{ overflowX: "auto" }}>
       <Table
         size="small"
         sx={{
-          minWidth: 820,
+          minWidth,
+
           "& th": {
-            py: 1.6,
-            fontSize: 12,
-            fontWeight: 950,
-            color: "var(--aa-text-secondary)",
+            py: 1.55,
+            color: "#94a3b8",
+            fontSize: 9.5,
+            fontWeight: 900,
+            letterSpacing: ".045em",
             textTransform: "uppercase",
-            letterSpacing: "0.03em",
-            background: "var(--aa-surface-muted)",
-            borderBottom: "1px solid var(--aa-border)",
+
+            backgroundColor:
+              "#fafbfc",
+
+            borderColor: "#edf0f3",
           },
+
           "& td": {
-            py: 1.5,
-            borderBottom: "1px solid var(--aa-border)",
-            fontWeight: 700,
-            color: "var(--aa-text-secondary)",
+            py: 1.4,
+            color: "#64748b",
+            fontSize: 10.5,
+            borderColor: "#edf0f3",
           },
+
           "& tbody tr:hover": {
-            background: onRow ? "var(--aa-surface-hover)" : "inherit",
+            backgroundColor: onRow
+              ? "rgba(153,27,27,.025)"
+              : "inherit",
           },
         }}
       >
         <TableHead>
           <TableRow>
             {heads.map((head) => (
-              <TableCell key={head}>{head}</TableCell>
+              <TableCell key={head}>
+                {head}
+              </TableCell>
             ))}
           </TableRow>
         </TableHead>
 
         <TableBody>
           {rows.length ? (
-            rows.map((row, index) => (
-              <TableRow
-                hover
-                key={index}
-                onClick={() => onRow?.(row._id)}
-                sx={{ cursor: onRow ? "pointer" : "default" }}
-              >
-                {row.cells.map((value, cellIndex) => (
-                  <TableCell key={cellIndex}>{value}</TableCell>
-                ))}
-              </TableRow>
-            ))
+            rows.map(
+              (row, index) => (
+                <TableRow
+                  hover={Boolean(onRow)}
+                  key={
+                    row._id || index
+                  }
+                  onClick={() =>
+                    onRow?.(row._id)
+                  }
+                  sx={{
+                    cursor: onRow
+                      ? "pointer"
+                      : "default",
+                  }}
+                >
+                  {row.cells.map(
+                    (
+                      value,
+                      cellIndex,
+                    ) => (
+                      <TableCell
+                        key={cellIndex}
+                      >
+                        {value}
+                      </TableCell>
+                    ),
+                  )}
+                </TableRow>
+              ),
+            )
           ) : (
             <TableRow>
               <TableCell
                 colSpan={heads.length}
                 align="center"
-                sx={{ py: 6, fontWeight: 850 }}
+                sx={{
+                  py: 7,
+                  color: "#94a3b8",
+                  fontWeight: 850,
+                }}
               >
-                Ma'lumot topilmadi
+                Ma’lumot topilmadi
               </TableCell>
             </TableRow>
           )}
@@ -329,49 +688,27 @@ const Grid = ({ heads, rows, onRow }) => (
   </Card>
 );
 
-const StatCard = ({ label, value, danger }) => (
-  <Box
-    sx={{
-      p: 2,
-      borderRadius: "var(--aa-radius-lg)",
-      background: danger
-        ? "color-mix(in srgb, var(--aa-danger) 7%, transparent)"
-        : "var(--aa-surface-solid)",
-      border: danger
-        ? "1px solid color-mix(in srgb, var(--aa-danger) 22%, transparent)"
-        : "1px solid var(--aa-border)",
-      boxShadow: "var(--aa-shadow-xs)",
-    }}
-  >
-    <Typography
-      sx={{ fontSize: 12, fontWeight: 850, color: "var(--aa-text-secondary)" }}
-    >
-      {label}
-    </Typography>
-
-    <Typography
-      sx={{
-        mt: 0.45,
-        fontSize: 18,
-        fontWeight: 950,
-        color: danger ? "var(--aa-danger)" : "var(--aa-text)",
-        letterSpacing: "-0.04em",
-      }}
-    >
-      {value}
-    </Typography>
-  </Box>
-);
-
 const Finance = () => {
   const auth = useAuth();
-  const currentUser = auth?.user || getLocalUser();
-  const canManage =
-    ["super_admin", "admin"].includes(currentUser?.role) &&
-    hasPermission(currentUser, "finance.manage");
 
-  const [tab, setTab] = useState("payroll");
-  const [loading, setLoading] = useState(true);
+  const currentUser =
+    auth?.user || getLocalUser();
+
+  const canManage =
+    ["super_admin", "admin"].includes(
+      currentUser?.role,
+    ) &&
+    hasPermission(
+      currentUser,
+      "finance.manage",
+    );
+
+  const [tab, setTab] =
+    useState("payroll");
+
+  const [loading, setLoading] =
+    useState(true);
+
   const [data, setData] = useState({
     periods: [],
     categories: [],
@@ -381,82 +718,197 @@ const Finance = () => {
     returns: [],
     sales: [],
     report: {},
+    expenseTotal: 0,
   });
-  const [detail, setDetail] = useState(null);
-  const [dialog, setDialog] = useState("");
-  const [form, setForm] = useState({});
-  const [saving, setSaving] = useState(false);
-  const [filters, setFilters] = useState({
-    date_from: `${today().slice(0, 7)}-01`,
-    date_to: today(),
-    limit: 100,
-    offset: 0,
-  });
+
+  const [detail, setDetail] =
+    useState(null);
+
+  const [dialog, setDialog] =
+    useState("");
+
+  const [form, setForm] =
+    useState({});
+
+  const [saving, setSaving] =
+    useState(false);
+
+  const [filters, setFilters] =
+    useState({
+      date_from: `${today().slice(
+        0,
+        7,
+      )}-01`,
+
+      date_to: today(),
+      limit: 100,
+      offset: 0,
+    });
 
   const load = useCallback(async () => {
     setLoading(true);
 
     try {
       if (tab === "payroll") {
-        const response = await getPayrollPeriods({ limit: 100, offset: 0 });
+        const response =
+          await getPayrollPeriods({
+            limit: 100,
+            offset: 0,
+          });
+
+        const responseData =
+          response?.data ||
+          response ||
+          {};
+
         setData((previous) => ({
           ...previous,
-          periods: response.data.payroll_periods || [],
+
+          periods:
+            responseData.payroll_periods ||
+            [],
         }));
       }
 
       if (tab === "expenses") {
-        const [categoriesRes, expensesRes, accountsRes] = await Promise.all([
+        const [
+          categoriesRes,
+          expensesRes,
+          accountsRes,
+        ] = await Promise.all([
           getExpenseCategories(),
+
           getExpenses(filters),
+
           getFinancialAccounts(),
         ]);
 
+        const categoriesData =
+          categoriesRes?.data ||
+          categoriesRes ||
+          {};
+
+        const expensesData =
+          expensesRes?.data ||
+          expensesRes ||
+          {};
+
+        const accountsData =
+          accountsRes?.data ||
+          accountsRes ||
+          {};
+
         setData((previous) => ({
           ...previous,
-          categories: categoriesRes.data.expense_categories || [],
-          expenses: expensesRes.data.expenses || [],
-          expenseTotal: expensesRes.data.total_amount || 0,
-          accounts: accountsRes.data.financial_accounts || [],
+
+          categories:
+            categoriesData.expense_categories ||
+            [],
+
+          expenses:
+            expensesData.expenses ||
+            [],
+
+          expenseTotal:
+            expensesData.total_amount ||
+            0,
+
+          accounts:
+            accountsData.financial_accounts ||
+            [],
         }));
       }
 
       if (tab === "accounts") {
-        const [accountsRes, transactionsRes] = await Promise.all([
+        const [
+          accountsRes,
+          transactionsRes,
+        ] = await Promise.all([
           getFinancialAccounts(),
+
           getCashTransactions(filters),
         ]);
 
+        const accountsData =
+          accountsRes?.data ||
+          accountsRes ||
+          {};
+
+        const transactionsData =
+          transactionsRes?.data ||
+          transactionsRes ||
+          {};
+
         setData((previous) => ({
           ...previous,
-          accounts: accountsRes.data.financial_accounts || [],
-          transactions: transactionsRes.data.cash_transactions || [],
+
+          accounts:
+            accountsData.financial_accounts ||
+            [],
+
+          transactions:
+            transactionsData.cash_transactions ||
+            [],
         }));
       }
 
       if (tab === "returns") {
-        const [returnsRes, salesRes] = await Promise.all([
+        const [
+          returnsRes,
+          salesRes,
+        ] = await Promise.all([
           getClientReturns(filters),
-          getClientSales({ limit: 100, offset: 0 }),
+
+          getClientSales({
+            limit: 100,
+            offset: 0,
+          }),
         ]);
+
+        const returnsData =
+          returnsRes?.data ||
+          returnsRes ||
+          {};
+
+        const salesData =
+          salesRes?.data ||
+          salesRes ||
+          {};
 
         setData((previous) => ({
           ...previous,
-          returns: returnsRes.data.client_returns || [],
-          sales: salesRes.data.client_sales || [],
+
+          returns:
+            returnsData.client_returns ||
+            [],
+
+          sales:
+            salesData.client_sales ||
+            [],
         }));
       }
 
       if (tab === "profit") {
-        const response = await getProfitLoss(filters);
+        const response =
+          await getProfitLoss(filters);
+
+        const responseData =
+          response?.data ||
+          response ||
+          {};
+
         setData((previous) => ({
           ...previous,
-          report: response.data.report || {},
+
+          report:
+            responseData.report || {},
         }));
       }
     } catch (error) {
       toast.error(
-        error?.response?.data?.message || "Ma'lumotlarni olishda xato.",
+        error?.response?.data
+          ?.message ||
+          "Ma’lumotlarni olishda xato.",
       );
     } finally {
       setLoading(false);
@@ -469,7 +921,10 @@ const Finance = () => {
 
   const open = (name, values) => {
     if (!canManage) {
-      toast.error("Sizda moliyaviy amallarni bajarish uchun ruxsat yo'q.");
+      toast.error(
+        "Sizda moliyaviy amallarni bajarish uchun ruxsat yo‘q.",
+      );
+
       return;
     }
 
@@ -482,181 +937,694 @@ const Finance = () => {
     setForm({});
   };
 
-  const field = (key) => (event) =>
-    setForm((previous) => ({ ...previous, [key]: event.target.value }));
+  const field =
+    (key) => (event) =>
+      setForm((previous) => ({
+        ...previous,
+
+        [key]:
+          event.target.value,
+      }));
 
   const save = async () => {
     if (!canManage) {
-      toast.error("Sizda moliyaviy amallarni bajarish uchun ruxsat yo'q.");
+      toast.error(
+        "Sizda moliyaviy amallarni bajarish uchun ruxsat yo‘q.",
+      );
+
       return;
     }
 
     setSaving(true);
 
     try {
-      if (dialog === "payroll") await createPayrollPeriod(form);
-
-      if (dialog === "line") {
-        await updatePayrollLine(form.id, {
-          daily_earnings: Number(form.daily_earnings || 0),
-          bonus: Number(form.bonus || 0),
-          advance_deduction: Number(form.advance_deduction || 0),
-          other_deduction: Number(form.other_deduction || 0),
-          cash_amount: Number(form.cash_amount || 0),
-          note: form.note || null,
-        });
+      if (dialog === "payroll") {
+        await createPayrollPeriod(
+          form,
+        );
       }
 
-      if (dialog === "category") await createExpenseCategory(form);
+      if (dialog === "line") {
+        await updatePayrollLine(
+          form.id,
+          {
+            daily_earnings: Number(
+              form.daily_earnings ||
+                0,
+            ),
+
+            bonus: Number(
+              form.bonus || 0,
+            ),
+
+            advance_deduction:
+              Number(
+                form.advance_deduction ||
+                  0,
+              ),
+
+            other_deduction:
+              Number(
+                form.other_deduction ||
+                  0,
+              ),
+
+            cash_amount: Number(
+              form.cash_amount || 0,
+            ),
+
+            note:
+              form.note || null,
+          },
+        );
+      }
+
+      if (dialog === "category") {
+        await createExpenseCategory(
+          form,
+        );
+      }
 
       if (dialog === "expense") {
         await createExpense({
           ...form,
-          category_id: Number(form.category_id),
-          account_id: form.account_id ? Number(form.account_id) : null,
-          amount: Number(form.amount),
+
+          category_id: Number(
+            form.category_id,
+          ),
+
+          account_id:
+            form.account_id
+              ? Number(
+                  form.account_id,
+                )
+              : null,
+
+          amount: Number(
+            form.amount,
+          ),
         });
       }
 
       if (dialog === "account") {
         await createFinancialAccount({
           ...form,
-          opening_balance: Number(form.opening_balance || 0),
+
+          opening_balance: Number(
+            form.opening_balance ||
+              0,
+          ),
         });
       }
 
-      if (dialog === "transaction") {
+      if (
+        dialog === "transaction"
+      ) {
         await createCashTransaction({
           ...form,
-          account_id: Number(form.account_id),
-          amount: Number(form.amount),
+
+          account_id: Number(
+            form.account_id,
+          ),
+
+          amount: Number(
+            form.amount,
+          ),
         });
       }
 
       if (dialog === "return") {
         await createClientReturn({
           ...form,
-          client_sale_id: Number(form.client_sale_id),
-          quantity: Number(form.quantity),
+
+          client_sale_id: Number(
+            form.client_sale_id,
+          ),
+
+          quantity: Number(
+            form.quantity,
+          ),
         });
       }
 
       toast.success("Saqlandi.");
+
       close();
+
       await load();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Saqlashda xato.");
+      toast.error(
+        error?.response?.data
+          ?.message ||
+          "Saqlashda xato.",
+      );
     } finally {
       setSaving(false);
     }
   };
 
-  const showPeriod = async (id) => {
-    try {
-      const response = await getPayrollPeriod(id);
-      setDetail(response.data);
-    } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "Haftalik hisob ochilmadi.",
-      );
-    }
-  };
+  const showPeriod =
+    async (id) => {
+      try {
+        const response =
+          await getPayrollPeriod(id);
+
+        setDetail(
+          response?.data ||
+            response ||
+            null,
+        );
+      } catch (error) {
+        toast.error(
+          error?.response?.data
+            ?.message ||
+            "Haftalik hisob ochilmadi.",
+        );
+      }
+    };
 
   const closePeriod = async () => {
     if (!canManage) {
-      toast.error("Sizda haftalik hisobni yopish uchun ruxsat yo'q.");
+      toast.error(
+        "Sizda haftalik hisobni yopish uchun ruxsat yo‘q.",
+      );
+
+      return;
+    }
+
+    if (
+      !detail?.payroll_period?.id
+    ) {
       return;
     }
 
     try {
-      const response = await closePayrollPeriod(detail.payroll_period.id);
-      setDetail(response.data);
-      load();
-      toast.success("Haftalik hisob yopildi.");
+      const response =
+        await closePayrollPeriod(
+          detail.payroll_period.id,
+        );
+
+      setDetail(
+        response?.data ||
+          response ||
+          null,
+      );
+
+      await load();
+
+      toast.success(
+        "Haftalik hisob yopildi.",
+      );
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Yopishda xato.");
+      toast.error(
+        error?.response?.data
+          ?.message ||
+          "Yopishda xato.",
+      );
     }
   };
 
-  const pageStats = {
-    payroll: [
-      ["Davrlar", data.periods?.length || 0, "blue"],
+  const heroMetrics = useMemo(() => {
+    if (tab === "payroll") {
+      const openPeriods = (
+        data.periods || []
+      ).filter(
+        (item) =>
+          item.status !== "closed",
+      ).length;
+
+      const earned = (
+        data.periods || []
+      ).reduce(
+        (sum, item) =>
+          sum +
+          Number(
+            item.total_earned || 0,
+          ),
+
+        0,
+      );
+
+      const cash = (
+        data.periods || []
+      ).reduce(
+        (sum, item) =>
+          sum +
+          Number(
+            item.cash_amount || 0,
+          ),
+
+        0,
+      );
+
+      return [
+        [
+          "Davrlar",
+
+          `${number(
+            data.periods?.length,
+          )} ta`,
+
+          "Haftalik hisoblar",
+
+          "blue",
+        ],
+
+        [
+          "Ochiq davr",
+
+          `${number(
+            openPeriods,
+          )} ta`,
+
+          "Yopilmagan hisoblar",
+
+          "green",
+        ],
+
+        [
+          "Hisoblangan",
+
+          money(earned),
+
+          "Davrlar bo‘yicha jami",
+
+          "amber",
+        ],
+
+        [
+          "Naqd berilgan",
+
+          money(cash),
+
+          "To‘langan ish haqi",
+
+          "red",
+        ],
+      ];
+    }
+
+    if (tab === "expenses") {
+      return [
+        [
+          "Jami xarajat",
+
+          money(
+            data.expenseTotal,
+          ),
+
+          "Tanlangan davr",
+
+          "red",
+        ],
+
+        [
+          "Xarajatlar",
+
+          `${number(
+            data.expenses?.length,
+          )} ta`,
+
+          "Kiritilgan yozuvlar",
+
+          "blue",
+        ],
+
+        [
+          "Kategoriyalar",
+
+          `${number(
+            data.categories?.length,
+          )} ta`,
+
+          "Xarajat guruhlari",
+
+          "amber",
+        ],
+
+        [
+          "Hisoblar",
+
+          `${number(
+            data.accounts?.length,
+          )} ta`,
+
+          "Moliyaviy manbalar",
+
+          "green",
+        ],
+      ];
+    }
+
+    if (tab === "accounts") {
+      const balance = (
+        data.accounts || []
+      ).reduce(
+        (sum, item) =>
+          sum +
+          Number(item.balance || 0),
+
+        0,
+      );
+
+      const income = (
+        data.transactions || []
+      )
+        .filter(
+          (item) =>
+            item.transaction_type ===
+            "income",
+        )
+        .reduce(
+          (sum, item) =>
+            sum +
+            Number(item.amount || 0),
+
+          0,
+        );
+
+      const expense = (
+        data.transactions || []
+      )
+        .filter(
+          (item) =>
+            item.transaction_type !==
+            "income",
+        )
+        .reduce(
+          (sum, item) =>
+            sum +
+            Number(item.amount || 0),
+
+          0,
+        );
+
+      return [
+        [
+          "Umumiy balans",
+          money(balance),
+          "Kassa va bank hisoblari",
+          "green",
+        ],
+
+        [
+          "Hisoblar",
+
+          `${number(
+            data.accounts?.length,
+          )} ta`,
+
+          "Faol moliyaviy hisoblar",
+
+          "blue",
+        ],
+
+        [
+          "Kirim",
+          money(income),
+          "Tanlangan davr",
+          "amber",
+        ],
+
+        [
+          "Chiqim",
+          money(expense),
+          "Tanlangan davr",
+          "red",
+        ],
+      ];
+    }
+
+    if (tab === "returns") {
+      const amount = (
+        data.returns || []
+      ).reduce(
+        (sum, item) =>
+          sum +
+          Number(item.amount || 0),
+
+        0,
+      );
+
+      const quantity = (
+        data.returns || []
+      ).reduce(
+        (sum, item) =>
+          sum +
+          Number(item.quantity || 0),
+
+        0,
+      );
+
+      return [
+        [
+          "Qaytarishlar",
+
+          `${number(
+            data.returns?.length,
+          )} ta`,
+
+          "Qaytarish yozuvlari",
+
+          "red",
+        ],
+
+        [
+          "Qaytarilgan summa",
+
+          money(amount),
+
+          "Mijozga qaytarilgan",
+
+          "amber",
+        ],
+
+        [
+          "Qaytarilgan miqdor",
+
+          number(quantity),
+
+          "Mahsulot birliklari",
+
+          "blue",
+        ],
+
+        [
+          "Savdolar",
+
+          `${number(
+            data.sales?.length,
+          )} ta`,
+
+          "Tanlash uchun savdolar",
+
+          "green",
+        ],
+      ];
+    }
+
+    const report =
+      data.report || {};
+
+    const totalCosts =
+      Number(
+        report.material_costs ||
+          0,
+      ) +
+      Number(
+        report.payroll_costs ||
+          0,
+      ) +
+      Number(
+        report.other_expenses ||
+          0,
+      );
+
+    return [
       [
-        "Ochiq",
-        data.periods?.filter((item) => item.status !== "closed").length || 0,
+        "Savdo",
+
+        money(report.sales),
+
+        "Yalpi savdo tushumi",
+
+        "blue",
+      ],
+
+      [
+        "Sof tushum",
+
+        money(
+          report.net_revenue,
+        ),
+
+        "Qaytarishlardan keyin",
+
         "green",
       ],
-    ],
-    expenses: [
-      ["Xarajat", money(data.expenseTotal), "red"],
-      ["Kategoriya", data.categories?.length || 0, "blue"],
-    ],
-    accounts: [
-      ["Hisoblar", data.accounts?.length || 0, "blue"],
-      ["Operatsiyalar", data.transactions?.length || 0, "green"],
-    ],
-    returns: [
-      ["Qaytarishlar", data.returns?.length || 0, "orange"],
-      ["Savdolar", data.sales?.length || 0, "blue"],
-    ],
-    profit: [
-      ["Sof tushum", money(data.report?.net_revenue), "green"],
+
       [
-        "Natija",
-        money(data.report?.operational_result),
-        Number(data.report?.operational_result) < 0 ? "red" : "blue",
+        "Jami xarajat",
+
+        money(totalCosts),
+
+        "Homashyo, oylik va boshqa",
+
+        "amber",
       ],
-    ],
-  };
+
+      [
+        "Operatsion natija",
+
+        money(
+          report.operational_result,
+        ),
+
+        "Tanlangan davr natijasi",
+
+        Number(
+          report.operational_result ||
+            0,
+        ) < 0
+          ? "red"
+          : "violet",
+      ],
+    ];
+  }, [data, tab]);
+
+  const tabTitle =
+    tabItems.find(
+      ([key]) => key === tab,
+    )?.[1] || "Moliya";
 
   return (
     <Box
+      className="crm-page finance-page"
       sx={{
         height: "100%",
         minHeight: 0,
         display: "flex",
         flexDirection: "column",
-        pb: 2,
-        color: "var(--aa-text)",
-        "& .MuiOutlinedInput-root": {
-          borderRadius: "var(--aa-radius-md)",
-          backgroundColor: "var(--aa-surface-solid)",
-        },
+        pb: 2.5,
       }}
     >
-      <Card sx={{ mb: 2.5, px: { xs: 2, md: 2.5 }, py: 2.2, flexShrink: 0 }}>
+      <style>{financePageStyles}</style>
+
+      <Box
+        component="section"
+        className="finance-hero"
+        sx={{
+          position: "relative",
+          isolation: "isolate",
+          mb: 2,
+
+          p: {
+            xs: 2.5,
+            md: 3,
+          },
+
+          overflow: "hidden",
+          color: "#ffffff",
+          borderRadius: "25px",
+
+          border:
+            "1px solid rgba(255,255,255,.075)",
+
+          backgroundColor:
+            "#0d1117 !important",
+
+          backgroundImage:
+            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
+
+          boxShadow:
+            "0 24px 60px rgba(15,23,42,.20)",
+
+          flexShrink: 0,
+
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            width: 390,
+            height: 390,
+            top: -275,
+            right: -210,
+            borderRadius: "50%",
+
+            border:
+              "1px solid rgba(248,113,113,.16)",
+
+            boxShadow:
+              "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+
+            pointerEvents: "none",
+          },
+        }}
+      >
         <Box
           sx={{
-            display: "flex",
-            alignItems: { xs: "flex-start", xl: "center" },
-            justifyContent: "space-between",
-            flexDirection: { xs: "column", xl: "row" },
-            gap: 2,
+            position: "relative",
+            zIndex: 1,
+            display: "grid",
+
+            gridTemplateColumns: {
+              xs: "1fr",
+              xl: ".78fr 1.22fr",
+            },
+
+            gap: 3,
+            alignItems: "center",
           }}
         >
           <Box>
-            <Chip
-              label="Al-amin CRM • moliya"
-              size="small"
+            <Box
               sx={{
-                mb: 1,
-                height: 25,
-                fontSize: 12,
-                fontWeight: 950,
-                color: "var(--aa-brand-700)",
-                background: "var(--aa-brand-50)",
-                border: "1px solid var(--aa-brand-100)",
-                borderRadius: "var(--aa-radius-pill)",
+                display: "flex",
+                alignItems: "center",
+                gap: 1.1,
               }}
-            />
+            >
+              <Box
+                sx={{
+                  width: 25,
+                  height: 2,
+                  borderRadius: 99,
+
+                  background:
+                    "linear-gradient(90deg,#fb7185,#ef4444)",
+                }}
+              />
+
+              <Typography
+                sx={{
+                  color:
+                    "#fecdd3 !important",
+
+                  fontSize: 10,
+                  fontWeight: 950,
+                  letterSpacing: ".13em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Korxona moliya markazi
+              </Typography>
+            </Box>
 
             <Typography
+              component="h1"
               sx={{
-                fontSize: { xs: 27, md: 33 },
+                mt: 1.5,
+
+                color:
+                  "#ffffff !important",
+
+                fontSize: {
+                  xs: 29,
+                  md: 36,
+                },
+
+                lineHeight: 1.08,
                 fontWeight: 950,
-                color: "var(--aa-text)",
-                letterSpacing: "-0.055em",
-                lineHeight: 1.05,
+                letterSpacing: "-.045em",
               }}
             >
               Moliya va hisob
@@ -664,98 +1632,242 @@ const Finance = () => {
 
             <Typography
               sx={{
-                mt: 0.7,
-                fontSize: 14,
-                fontWeight: 650,
-                color: "var(--aa-text-secondary)",
+                maxWidth: 560,
+                mt: 1.4,
+
+                color:
+                  "rgba(255,255,255,.45) !important",
+
+                fontSize: 12.5,
+                lineHeight: 1.75,
               }}
             >
-              Korxonaning pul, xarajat, oylik va foyda-zarar markazi.
+              Ish haqi, xarajatlar,
+              kassa, bank, qaytarishlar
+              va foyda-zarar
+              ko‘rsatkichlarini yagona
+              markazdan boshqaring.
             </Typography>
+
+            <Box
+              sx={{
+                mt: 2.2,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 1,
+                px: 1.4,
+                py: 0.85,
+                borderRadius: "12px",
+
+                border:
+                  "1px solid rgba(255,255,255,.09)",
+
+                backgroundColor:
+                  "rgba(255,255,255,.055)",
+              }}
+            >
+              <Typography
+                sx={{
+                  color:
+                    "rgba(255,255,255,.42) !important",
+
+                  fontSize: 9.5,
+                  fontWeight: 800,
+                }}
+              >
+                Faol bo‘lim
+              </Typography>
+
+              <Typography
+                sx={{
+                  color:
+                    "#ffffff !important",
+
+                  fontSize: 10.5,
+                  fontWeight: 950,
+                }}
+              >
+                {tabTitle}
+              </Typography>
+            </Box>
           </Box>
 
           <Box
             sx={{
               display: "grid",
+
               gridTemplateColumns: {
-                xs: "repeat(2, 1fr)",
-                sm: "repeat(2, auto)",
+                xs: "1fr",
+
+                sm: "repeat(2,minmax(0,1fr))",
+
+                lg: "repeat(4,minmax(0,1fr))",
               },
-              gap: 1.2,
-              width: { xs: "100%", xl: "auto" },
+
+              gap: 1.3,
             }}
           >
-            {(pageStats[tab] || []).map(([label, value, tone]) => (
-              <MiniStat key={label} label={label} value={value} tone={tone} />
-            ))}
+            {heroMetrics.map(
+              ([
+                label,
+                value,
+                helper,
+                tone,
+              ]) => (
+                <HeroMetric
+                  key={label}
+                  label={label}
+                  value={value}
+                  helper={helper}
+                  tone={tone}
+                />
+              ),
+            )}
           </Box>
         </Box>
-      </Card>
+      </Box>
 
-      <Card sx={{ mb: 2.5, p: 1.4, flexShrink: 0 }}>
+      <Card
+        sx={{
+          mb: 2,
+          p: 1.4,
+          flexShrink: 0,
+        }}
+      >
         <Box
           sx={{
             display: "flex",
-            alignItems: { xs: "stretch", lg: "center" },
-            justifyContent: "space-between",
-            flexDirection: { xs: "column", lg: "row" },
+
+            alignItems: {
+              xs: "stretch",
+              lg: "center",
+            },
+
+            justifyContent:
+              "space-between",
+
+            flexDirection: {
+              xs: "column",
+              lg: "row",
+            },
+
             gap: 1.4,
           }}
         >
-          <Box sx={{ display: "flex", gap: 1, overflowX: "auto", pb: 0.2 }}>
-            {tabItems.map(([key, label]) => (
-              <Button
-                key={key}
-                variant={tab === key ? "contained" : "outlined"}
-                onClick={() => setTab(key)}
-                sx={{
-                  height: 40,
-                  px: 2,
-                  borderRadius: "var(--aa-radius-md)",
-                  whiteSpace: "nowrap",
-                  textTransform: "none",
-                  fontWeight: 900,
-                  color: tab === key ? "#fff" : "var(--aa-text)",
-                  borderColor: "var(--aa-border-strong)",
-                  background:
-                    tab === key
-                      ? "var(--aa-brand-700)"
-                      : "var(--aa-surface-solid)",
-                  boxShadow: tab === key ? "var(--aa-shadow-sm)" : "none",
-                  "&:hover": {
-                    background:
-                      tab === key
-                        ? "var(--aa-brand-800)"
-                        : "var(--aa-surface-hover)",
-                  },
-                }}
-              >
-                {label}
-              </Button>
-            ))}
+          <Box
+            sx={{
+              display: "flex",
+              gap: 0.8,
+              overflowX: "auto",
+              pb: 0.2,
+            }}
+          >
+            {tabItems.map(
+              ([key, label]) => {
+                const active =
+                  tab === key;
+
+                return (
+                  <Button
+                    key={key}
+                    onClick={() => {
+                      setTab(key);
+                      setDetail(null);
+                    }}
+                    sx={{
+                      minHeight: 40,
+                      px: 1.8,
+                      flexShrink: 0,
+
+                      color: active
+                        ? "#ffffff"
+                        : "#64748b",
+
+                      borderRadius:
+                        "11px",
+
+                      border: active
+                        ? "1px solid rgba(153,27,27,.10)"
+                        : "1px solid #e1e7ed",
+
+                      fontSize: 10.5,
+                      fontWeight: 900,
+                      textTransform:
+                        "none",
+
+                      background: active
+                        ? "linear-gradient(135deg,#7f1d1d,#b91c1c)"
+                        : "#ffffff",
+
+                      boxShadow: active
+                        ? "0 8px 20px rgba(127,29,29,.18)"
+                        : "none",
+
+                      "&:hover": {
+                        color: active
+                          ? "#ffffff"
+                          : "#991b1b",
+
+                        borderColor:
+                          active
+                            ? "rgba(153,27,27,.10)"
+                            : "rgba(153,27,27,.22)",
+
+                        background:
+                          active
+                            ? "linear-gradient(135deg,#681818,#991b1b)"
+                            : "rgba(153,27,27,.04)",
+                      },
+                    }}
+                  >
+                    {label}
+                  </Button>
+                );
+              },
+            )}
           </Box>
 
           {tab !== "payroll" && (
             <Box
               sx={{
                 display: "grid",
-                gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "1fr 1fr",
+                },
+
                 gap: 1.2,
-                minWidth: { xs: "100%", sm: 340 },
+
+                minWidth: {
+                  xs: "100%",
+                  sm: 340,
+                },
               }}
             >
               <TextField
                 size="small"
                 type="date"
                 label="Dan"
-                value={filters.date_from}
-                onChange={(event) =>
-                  setFilters((previous) => ({
-                    ...previous,
-                    date_from: event.target.value,
-                  }))
+                value={
+                  filters.date_from
                 }
-                slotProps={{ inputLabel: { shrink: true } }}
+                onChange={(event) =>
+                  setFilters(
+                    (previous) => ({
+                      ...previous,
+
+                      date_from:
+                        event.target
+                          .value,
+                    }),
+                  )
+                }
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
               />
 
               <TextField
@@ -764,22 +1876,63 @@ const Finance = () => {
                 label="Gacha"
                 value={filters.date_to}
                 onChange={(event) =>
-                  setFilters((previous) => ({
-                    ...previous,
-                    date_to: event.target.value,
-                  }))
+                  setFilters(
+                    (previous) => ({
+                      ...previous,
+
+                      date_to:
+                        event.target
+                          .value,
+                    }),
+                  )
                 }
-                slotProps={{ inputLabel: { shrink: true } }}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
               />
             </Box>
           )}
         </Box>
       </Card>
 
-      <Box sx={{ minHeight: 0, flex: 1, overflow: "auto", pr: 0.5 }}>
+      <Box
+        sx={{
+          minHeight: 0,
+          flex: 1,
+          overflow: "auto",
+          pr: 0.4,
+        }}
+      >
         {loading ? (
-          <Box sx={{ minHeight: 300, display: "grid", placeItems: "center" }}>
-            <CircularProgress size={34} />
+          <Box
+            sx={{
+              minHeight: 330,
+              display: "grid",
+              placeItems: "center",
+            }}
+          >
+            <Box sx={{ textAlign: "center" }}>
+              <CircularProgress
+                size={32}
+                sx={{
+                  color: "#991b1b",
+                }}
+              />
+
+              <Typography
+                sx={{
+                  mt: 1.3,
+                  color: "#94a3b8",
+                  fontSize: 10.5,
+                  fontWeight: 800,
+                }}
+              >
+                Moliyaviy ma’lumotlar
+                yuklanmoqda...
+              </Typography>
+            </Box>
           </Box>
         ) : (
           <>
@@ -789,20 +1942,42 @@ const Finance = () => {
                 detail={detail}
                 show={showPeriod}
                 open={open}
-                closePeriod={closePeriod}
+                closePeriod={
+                  closePeriod
+                }
                 canManage={canManage}
               />
             )}
+
             {tab === "expenses" && (
-              <Expenses data={data} open={open} canManage={canManage} />
+              <Expenses
+                data={data}
+                open={open}
+                canManage={canManage}
+              />
             )}
+
             {tab === "accounts" && (
-              <Accounts data={data} open={open} canManage={canManage} />
+              <Accounts
+                data={data}
+                open={open}
+                canManage={canManage}
+              />
             )}
+
             {tab === "returns" && (
-              <Returns data={data} open={open} canManage={canManage} />
+              <Returns
+                data={data}
+                open={open}
+                canManage={canManage}
+              />
             )}
-            {tab === "profit" && <Profit report={data.report} />}
+
+            {tab === "profit" && (
+              <Profit
+                report={data.report}
+              />
+            )}
           </>
         )}
       </Box>
@@ -820,397 +1995,1008 @@ const Finance = () => {
   );
 };
 
-const Payroll = ({ data, detail, show, open, closePeriod, canManage }) => (
-  <Stack spacing={2.5}>
-    {canManage && (
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button
-          variant="contained"
-          onClick={() =>
-            open("payroll", {
-              period_from: "",
-              period_to: "",
-              payment_date: "",
-              note: "",
-            })
+const Payroll = ({
+  data,
+  detail,
+  show,
+  open,
+  closePeriod,
+  canManage,
+}) => {
+  const period =
+    detail?.payroll_period;
+
+  const lines =
+    detail?.payroll_lines || [];
+
+  const detailTotals = useMemo(
+    () => ({
+      piece: lines.reduce(
+        (sum, item) =>
+          sum +
+          Number(
+            item.piece_earnings ||
+              0,
+          ),
+
+        0,
+      ),
+
+      fixed: lines.reduce(
+        (sum, item) =>
+          sum +
+          Number(
+            item.fixed_earnings ||
+              0,
+          ),
+
+        0,
+      ),
+
+      bonus: lines.reduce(
+        (sum, item) =>
+          sum +
+          Number(item.bonus || 0),
+
+        0,
+      ),
+
+      cash: lines.reduce(
+        (sum, item) =>
+          sum +
+          Number(
+            item.cash_amount || 0,
+          ),
+
+        0,
+      ),
+    }),
+
+    [lines],
+  );
+
+  return (
+    <Stack spacing={2}>
+      <Card sx={{ p: 2.2 }}>
+        <SectionHeader
+          title="Haftalik ish haqi davrlari"
+          subtitle="Davr ustiga bosib hodimlar kesimidagi batafsil hisobni ko‘ring"
+          actions={
+            canManage ? (
+              <Button
+                variant="contained"
+                onClick={() =>
+                  open("payroll", {
+                    period_from: "",
+                    period_to: "",
+                    payment_date: "",
+                    note: "",
+                  })
+                }
+                sx={primaryButtonSx}
+              >
+                + Hafta ochish
+              </Button>
+            ) : null
           }
-          sx={{
-            minWidth: 135,
-            height: 42,
-            borderRadius: "var(--aa-radius-md)",
-            textTransform: "none",
-            fontWeight: 950,
-            background: "var(--aa-brand-700)",
-            boxShadow: "var(--aa-shadow-sm)",
-            "&:hover": { background: "var(--aa-brand-800)" },
-          }}
-        >
-          Hafta ochish
-        </Button>
-      </Box>
-    )}
+        />
+
+        <Grid
+          heads={[
+            "Davr",
+            "To‘lov kuni",
+            "Hisoblangan",
+            "Naqd",
+            "Holat",
+          ]}
+          onRow={show}
+          rows={(
+            data.periods || []
+          ).map((item) => ({
+            _id: item.id,
+
+            cells: [
+              <Typography
+                key={`period-${item.id}`}
+                sx={strongCellSx}
+              >
+                {date(
+                  item.period_from,
+                )}{" "}
+                —{" "}
+                {date(item.period_to)}
+              </Typography>,
+
+              date(
+                item.payment_date,
+              ),
+
+              <Typography
+                key={`earned-${item.id}`}
+                sx={greenCellSx}
+              >
+                {money(
+                  item.total_earned,
+                )}
+              </Typography>,
+
+              money(
+                item.cash_amount,
+              ),
+
+              <StatusChip
+                key={`period-status-${item.id}`}
+                status={item.status}
+              />,
+            ],
+          }))}
+        />
+      </Card>
+
+      {detail && (
+        <Card sx={{ p: 2.2 }}>
+          <SectionHeader
+            title="Haftalik hisob tafsiloti"
+            subtitle={`${date(
+              period?.period_from,
+            )} — ${date(
+              period?.period_to,
+            )} davri bo‘yicha hodimlar hisoboti`}
+            actions={
+              canManage &&
+              period?.status ===
+                "open" ? (
+                <Button
+                  variant="contained"
+                  onClick={closePeriod}
+                  sx={{
+                    ...primaryButtonSx,
+
+                    background:
+                      "linear-gradient(135deg,#15803d,#22c55e)",
+
+                    "&:hover": {
+                      background:
+                        "linear-gradient(135deg,#166534,#16a34a)",
+                    },
+                  }}
+                >
+                  Davrni yopish
+                </Button>
+              ) : (
+                <StatusChip
+                  status={
+                    period?.status
+                  }
+                />
+              )
+            }
+          />
+
+          <Box
+            sx={{
+              mb: 1.7,
+              display: "grid",
+
+              gridTemplateColumns: {
+                xs: "1fr",
+
+                sm: "repeat(2,minmax(0,1fr))",
+
+                lg: "repeat(4,minmax(0,1fr))",
+              },
+
+              gap: 1.2,
+            }}
+          >
+            <StatCard
+              label="Dona bo‘yicha"
+              value={money(
+                detailTotals.piece,
+              )}
+              tone="blue"
+            />
+
+            <StatCard
+              label="Doimiy ish haqi"
+              value={money(
+                detailTotals.fixed,
+              )}
+              tone="violet"
+            />
+
+            <StatCard
+              label="Bonuslar"
+              value={money(
+                detailTotals.bonus,
+              )}
+              tone="amber"
+            />
+
+            <StatCard
+              label="Naqd beriladi"
+              value={money(
+                detailTotals.cash,
+              )}
+              tone="green"
+            />
+          </Box>
+
+          <Grid
+            minWidth={1140}
+            heads={[
+              "Hodim",
+              "Dona",
+              "Doimiy",
+              "Kunlik",
+              "Bonus",
+              "Avans",
+              "Boshqa ushlanma",
+              "Naqd",
+              "Amal",
+            ]}
+            rows={lines.map(
+              (item) => ({
+                _id: item.id,
+
+                cells: [
+                  <Typography
+                    key={`worker-${item.id}`}
+                    sx={strongCellSx}
+                  >
+                    {item.first_name}{" "}
+                    {item.last_name}
+                  </Typography>,
+
+                  money(
+                    item.piece_earnings,
+                  ),
+
+                  money(
+                    item.fixed_earnings,
+                  ),
+
+                  money(
+                    item.daily_earnings,
+                  ),
+
+                  money(item.bonus),
+
+                  money(
+                    item.advance_deduction,
+                  ),
+
+                  money(
+                    item.other_deduction,
+                  ),
+
+                  <Typography
+                    key={`cash-${item.id}`}
+                    sx={greenCellSx}
+                  >
+                    {money(
+                      item.cash_amount,
+                    )}
+                  </Typography>,
+
+                  canManage &&
+                  period?.status ===
+                    "open" ? (
+                    <Button
+                      key={`edit-${item.id}`}
+                      size="small"
+                      variant="outlined"
+                      onClick={() =>
+                        open(
+                          "line",
+                          item,
+                        )
+                      }
+                      sx={
+                        tableActionSx
+                      }
+                    >
+                      O‘zgartirish
+                    </Button>
+                  ) : (
+                    "-"
+                  ),
+                ],
+              }),
+            )}
+          />
+        </Card>
+      )}
+    </Stack>
+  );
+};
+
+const Expenses = ({
+  data,
+  open,
+  canManage,
+}) => (
+  <Card sx={{ p: 2.2 }}>
+    <SectionHeader
+      title="Xarajatlar"
+      subtitle="Kategoriyalar, moliyaviy hisoblar va xarajat yozuvlari"
+      actions={
+        canManage ? (
+          <Stack
+            direction={{
+              xs: "column",
+              sm: "row",
+            }}
+            spacing={1}
+          >
+            <Button
+              variant="outlined"
+              onClick={() =>
+                open("category", {
+                  name: "",
+                  description: "",
+                })
+              }
+              sx={secondaryButtonSx}
+            >
+              Kategoriya qo‘shish
+            </Button>
+
+            <Button
+              variant="contained"
+              onClick={() =>
+                open("expense", {
+                  category_id: "",
+                  account_id: "",
+                  title: "",
+                  amount: "",
+                  spent_at: today(),
+                  note: "",
+                })
+              }
+              sx={primaryButtonSx}
+            >
+              + Xarajat qo‘shish
+            </Button>
+          </Stack>
+        ) : null
+      }
+    />
+
+    <Box
+      sx={{
+        mb: 1.7,
+        display: "grid",
+
+        gridTemplateColumns: {
+          xs: "1fr",
+
+          sm: "repeat(3,minmax(0,1fr))",
+        },
+
+        gap: 1.2,
+      }}
+    >
+      <StatCard
+        label="Davrdagi xarajat"
+        value={money(
+          data.expenseTotal,
+        )}
+        tone="red"
+      />
+
+      <StatCard
+        label="Xarajat yozuvlari"
+        value={`${number(
+          data.expenses?.length,
+        )} ta`}
+        tone="blue"
+      />
+
+      <StatCard
+        label="Kategoriyalar"
+        value={`${number(
+          data.categories?.length,
+        )} ta`}
+        tone="amber"
+      />
+    </Box>
 
     <Grid
-      heads={["Davr", "To'lov kuni", "Hisoblangan", "Naqd", "Holat"]}
-      onRow={show}
-      rows={data.periods.map((item) => ({
+      heads={[
+        "Nomi",
+        "Kategoriya",
+        "Hisob",
+        "Summa",
+        "Sana",
+      ]}
+      rows={(
+        data.expenses || []
+      ).map((item) => ({
         _id: item.id,
+
         cells: [
-          `${date(item.period_from)} - ${date(item.period_to)}`,
-          date(item.payment_date),
-          money(item.total_earned),
-          money(item.cash_amount),
-          <StatusChip key={`period-status-${item.id}`} status={item.status} />,
+          <Typography
+            key={`expense-${item.id}`}
+            sx={strongCellSx}
+          >
+            {item.title || "-"}
+          </Typography>,
+
+          item.category_name ||
+            "-",
+
+          item.account_name ||
+            "Hisobsiz",
+
+          <Typography
+            key={`expense-money-${item.id}`}
+            sx={redCellSx}
+          >
+            {money(item.amount)}
+          </Typography>,
+
+          date(item.spent_at),
         ],
       }))}
     />
+  </Card>
+);
 
-    {detail && (
+const Accounts = ({
+  data,
+  open,
+  canManage,
+}) => {
+  const totalBalance = (
+    data.accounts || []
+  ).reduce(
+    (sum, item) =>
+      sum +
+      Number(item.balance || 0),
+
+    0,
+  );
+
+  return (
+    <Stack spacing={2}>
       <Card sx={{ p: 2.2 }}>
+        <SectionHeader
+          title="Kassa va bank hisoblari"
+          subtitle="Moliyaviy hisoblar balansi va ulardagi kirim-chiqimlar"
+          actions={
+            canManage ? (
+              <Stack
+                direction={{
+                  xs: "column",
+                  sm: "row",
+                }}
+                spacing={1}
+              >
+                <Button
+                  variant="outlined"
+                  onClick={() =>
+                    open("account", {
+                      name: "",
+
+                      account_type:
+                        "cash",
+
+                      opening_balance:
+                        "",
+                    })
+                  }
+                  sx={
+                    secondaryButtonSx
+                  }
+                >
+                  Hisob yaratish
+                </Button>
+
+                <Button
+                  variant="contained"
+                  onClick={() =>
+                    open(
+                      "transaction",
+                      {
+                        account_id: "",
+
+                        transaction_type:
+                          "income",
+
+                        amount: "",
+
+                        transacted_at:
+                          today(),
+
+                        description: "",
+                      },
+                    )
+                  }
+                  sx={primaryButtonSx}
+                >
+                  + Kirim-chiqim
+                </Button>
+              </Stack>
+            ) : null
+          }
+        />
+
         <Box
           sx={{
-            mb: 2,
-            display: "flex",
-            alignItems: { xs: "flex-start", sm: "center" },
-            justifyContent: "space-between",
-            flexDirection: { xs: "column", sm: "row" },
-            gap: 1.5,
+            mb: 1.8,
+            display: "grid",
+
+            gridTemplateColumns: {
+              xs: "1fr",
+
+              sm: "repeat(2,minmax(0,1fr))",
+
+              lg: "repeat(4,minmax(0,1fr))",
+            },
+
+            gap: 1.2,
           }}
         >
-          <Box>
-            <Typography
-              sx={{ fontSize: 18, fontWeight: 950, color: "var(--aa-text)" }}
-            >
-              Haftalik ish haqi tafsiloti
-            </Typography>
-            <Typography
-              sx={{
-                mt: 0.4,
-                fontSize: 13.5,
-                fontWeight: 650,
-                color: "var(--aa-text-secondary)",
-              }}
-            >
-              Hodimlar bo'yicha hisoblangan va beriladigan summalar.
-            </Typography>
-          </Box>
+          <StatCard
+            label="Umumiy balans"
+            value={money(
+              totalBalance,
+            )}
+            tone="green"
+          />
 
-          {canManage && detail.payroll_period.status === "open" && (
-            <Button
-              variant="contained"
-              color="success"
-              onClick={closePeriod}
-              sx={{
-                borderRadius: "13px",
-                textTransform: "none",
-                fontWeight: 900,
-              }}
-            >
-              Davrni yopish
-            </Button>
-          )}
+          {(data.accounts || [])
+            .slice(0, 3)
+            .map((item, index) => (
+              <StatCard
+                key={item.id}
+                label={`${item.name} / ${
+                  item.account_type ||
+                  "hisob"
+                }`}
+                value={money(
+                  item.balance,
+                )}
+                tone={
+                  [
+                    "blue",
+                    "amber",
+                    "violet",
+                  ][index] ||
+                  "default"
+                }
+              />
+            ))}
         </Box>
 
         <Grid
           heads={[
-            "Hodim",
-            "Dona",
-            "Doimiy",
-            "Kunlik",
-            "Bonus",
-            "Avans",
-            "Boshqa ushlanma",
-            "Naqd",
-            "Amal",
+            "Hisob",
+            "Turi",
+            "Summa",
+            "Izoh",
+            "Sana",
           ]}
-          rows={detail.payroll_lines.map((item) => ({
+          rows={(
+            data.transactions || []
+          ).map((item) => ({
+            _id: item.id,
+
             cells: [
-              `${item.first_name} ${item.last_name}`,
-              money(item.piece_earnings),
-              money(item.fixed_earnings),
-              money(item.daily_earnings),
-              money(item.bonus),
-              money(item.advance_deduction),
-              money(item.other_deduction),
-              money(item.cash_amount),
-              canManage && detail.payroll_period.status === "open" ? (
-                <Button
-                  size="small"
-                  variant="outlined"
-                  onClick={() => open("line", item)}
-                  sx={{
-                    borderRadius: "10px",
-                    textTransform: "none",
-                    fontWeight: 900,
-                  }}
-                >
-                  O'zgartirish
-                </Button>
-              ) : (
-                "-"
+              <Typography
+                key={`account-${item.id}`}
+                sx={strongCellSx}
+              >
+                {item.account_name ||
+                  "-"}
+              </Typography>,
+
+              <TypeChip
+                key={`transaction-type-${item.id}`}
+                type={
+                  item.transaction_type
+                }
+              />,
+
+              <Typography
+                key={`transaction-money-${item.id}`}
+                sx={
+                  item.transaction_type ===
+                  "income"
+                    ? greenCellSx
+                    : redCellSx
+                }
+              >
+                {money(item.amount)}
+              </Typography>,
+
+              item.description ||
+                "-",
+
+              date(
+                item.transacted_at,
               ),
             ],
           }))}
         />
       </Card>
-    )}
-  </Stack>
-);
+    </Stack>
+  );
+};
 
-const Expenses = ({ data, open, canManage }) => (
-  <Stack spacing={2.5}>
-    <Box
-      sx={{
-        display: "grid",
-        gridTemplateColumns: { xs: "1fr", sm: "1fr auto auto" },
-        gap: 1.3,
-        alignItems: "stretch",
-      }}
-    >
-      <StatCard
-        label="Davrdagi xarajat"
-        value={money(data.expenseTotal)}
-        danger
+const Returns = ({
+  data,
+  open,
+  canManage,
+}) => {
+  const returnTotal = (
+    data.returns || []
+  ).reduce(
+    (sum, item) =>
+      sum +
+      Number(item.amount || 0),
+
+    0,
+  );
+
+  return (
+    <Card sx={{ p: 2.2 }}>
+      <SectionHeader
+        title="Mijoz qaytarishlari"
+        subtitle="Sotilgan mahsulotlarning qaytarilgan miqdori va summasi"
+        actions={
+          canManage ? (
+            <Button
+              variant="contained"
+              onClick={() =>
+                open("return", {
+                  client_sale_id: "",
+                  quantity: "",
+
+                  returned_at:
+                    today(),
+
+                  reason: "",
+                })
+              }
+              sx={primaryButtonSx}
+            >
+              + Qaytarish qo‘shish
+            </Button>
+          ) : null
+        }
       />
 
-      {canManage && (
-        <>
-          <Button
-            variant="outlined"
-            onClick={() => open("category", { name: "", description: "" })}
-            sx={{
-              height: 42,
-              borderRadius: "var(--aa-radius-md)",
-              textTransform: "none",
-              fontWeight: 900,
-              color: "var(--aa-text)",
-              borderColor: "var(--aa-border-strong)",
-              background: "var(--aa-surface-solid)",
-            }}
-          >
-            Kategoriya
-          </Button>
-
-          <Button
-            variant="contained"
-            onClick={() =>
-              open("expense", {
-                category_id: "",
-                account_id: "",
-                title: "",
-                amount: "",
-                spent_at: today(),
-                note: "",
-              })
-            }
-            sx={{
-              height: 42,
-              borderRadius: "var(--aa-radius-md)",
-              textTransform: "none",
-              fontWeight: 950,
-              background: "var(--aa-brand-700)",
-              "&:hover": { background: "var(--aa-brand-800)" },
-            }}
-          >
-            Xarajat qo'shish
-          </Button>
-        </>
-      )}
-    </Box>
-
-    <Grid
-      heads={["Nomi", "Kategoriya", "Hisob", "Summa", "Sana"]}
-      rows={data.expenses.map((item) => ({
-        cells: [
-          item.title,
-          item.category_name,
-          item.account_name || "-",
-          money(item.amount),
-          date(item.spent_at),
-        ],
-      }))}
-    />
-  </Stack>
-);
-
-const Accounts = ({ data, open, canManage }) => (
-  <Stack spacing={2.5}>
-    {canManage && (
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "flex-end",
+          mb: 1.7,
+          display: "grid",
+
+          gridTemplateColumns: {
+            xs: "1fr",
+
+            sm: "repeat(3,minmax(0,1fr))",
+          },
+
           gap: 1.2,
-          flexWrap: "wrap",
         }}
       >
-        <Button
-          variant="outlined"
-          onClick={() =>
-            open("account", {
-              name: "",
-              account_type: "cash",
-              opening_balance: "",
-            })
-          }
-          sx={{
-            height: 42,
-            borderRadius: "var(--aa-radius-md)",
-            textTransform: "none",
-            fontWeight: 900,
-            color: "var(--aa-text)",
-            borderColor: "var(--aa-border-strong)",
-            background: "var(--aa-surface-solid)",
-          }}
-        >
-          Hisob yaratish
-        </Button>
-
-        <Button
-          variant="contained"
-          onClick={() =>
-            open("transaction", {
-              account_id: "",
-              transaction_type: "income",
-              amount: "",
-              transacted_at: today(),
-              description: "",
-            })
-          }
-          sx={{
-            height: 42,
-            borderRadius: "var(--aa-radius-md)",
-            textTransform: "none",
-            fontWeight: 950,
-            background: "var(--aa-brand-700)",
-            "&:hover": { background: "var(--aa-brand-800)" },
-          }}
-        >
-          Kirim-chiqim
-        </Button>
-      </Box>
-    )}
-
-    <Box
-      sx={{
-        display: "grid",
-        gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" },
-        gap: 1.4,
-      }}
-    >
-      {data.accounts.map((item) => (
         <StatCard
-          key={item.id}
-          label={`${item.name} / ${item.account_type}`}
-          value={money(item.balance)}
+          label="Qaytarilgan summa"
+          value={money(
+            returnTotal,
+          )}
+          tone="red"
         />
-      ))}
-    </Box>
 
-    <Grid
-      heads={["Hisob", "Turi", "Summa", "Izoh", "Sana"]}
-      rows={data.transactions.map((item) => ({
-        cells: [
-          item.account_name,
-          <TypeChip
-            key={`transaction-type-${item.id}`}
-            type={item.transaction_type}
-          />,
-          money(item.amount),
-          item.description || "-",
-          date(item.transacted_at),
-        ],
-      }))}
-    />
-  </Stack>
-);
+        <StatCard
+          label="Qaytarishlar"
+          value={`${number(
+            data.returns?.length,
+          )} ta`}
+          tone="amber"
+        />
 
-const Returns = ({ data, open, canManage }) => (
-  <Stack spacing={2.5}>
-    {canManage && (
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button
-          variant="contained"
-          onClick={() =>
-            open("return", {
-              client_sale_id: "",
-              quantity: "",
-              returned_at: today(),
-              reason: "",
-            })
-          }
+        <StatCard
+          label="Mavjud savdolar"
+          value={`${number(
+            data.sales?.length,
+          )} ta`}
+          tone="blue"
+        />
+      </Box>
+
+      <Grid
+        heads={[
+          "Mijoz",
+          "Mahsulot",
+          "Miqdor",
+          "Summa",
+          "Sabab",
+          "Sana",
+        ]}
+        rows={(
+          data.returns || []
+        ).map((item) => ({
+          _id: item.id,
+
+          cells: [
+            <Typography
+              key={`client-${item.id}`}
+              sx={strongCellSx}
+            >
+              {item.client_name ||
+                "-"}
+            </Typography>,
+
+            item.product_name ||
+              "-",
+
+            number(item.quantity),
+
+            <Typography
+              key={`return-money-${item.id}`}
+              sx={redCellSx}
+            >
+              {money(item.amount)}
+            </Typography>,
+
+            item.reason || "-",
+
+            date(item.returned_at),
+          ],
+        }))}
+      />
+    </Card>
+  );
+};
+
+const Profit = ({
+  report = {},
+}) => {
+  const totalCosts =
+    Number(
+      report.material_costs || 0,
+    ) +
+    Number(
+      report.payroll_costs || 0,
+    ) +
+    Number(
+      report.other_expenses || 0,
+    );
+
+  const positive =
+    Number(
+      report.operational_result ||
+        0,
+    ) >= 0;
+
+  return (
+    <Stack spacing={2}>
+      <Alert
+        severity="info"
+        sx={{
+          borderRadius: "16px",
+
+          border:
+            "1px solid rgba(37,99,235,.14)",
+
+          fontSize: 10.5,
+          fontWeight: 750,
+        }}
+      >
+        Ombor tannarxi to‘liq
+        ulanmaguncha bu ko‘rsatkich
+        operatsion natija hisoblanadi.
+      </Alert>
+
+      <Card sx={{ p: 2.2 }}>
+        <SectionHeader
+          title="Foyda va zarar hisoboti"
+          subtitle="Savdo tushumi, qaytarishlar va asosiy xarajatlar bo‘yicha natija"
+        />
+
+        <Box
           sx={{
-            height: 42,
-            borderRadius: "var(--aa-radius-md)",
-            textTransform: "none",
-            fontWeight: 950,
-            background: "var(--aa-brand-700)",
-            "&:hover": { background: "var(--aa-brand-800)" },
+            display: "grid",
+
+            gridTemplateColumns: {
+              xs: "1fr",
+
+              sm: "repeat(2,minmax(0,1fr))",
+
+              xl: "repeat(4,minmax(0,1fr))",
+            },
+
+            gap: 1.3,
           }}
         >
-          Qaytarish qo'shish
-        </Button>
-      </Box>
-    )}
+          <StatCard
+            label="Savdo"
+            value={money(
+              report.sales,
+            )}
+            tone="blue"
+          />
 
-    <Grid
-      heads={["Mijoz", "Mahsulot", "Miqdor", "Summa", "Sabab", "Sana"]}
-      rows={data.returns.map((item) => ({
-        cells: [
-          item.client_name,
-          item.product_name,
-          item.quantity,
-          money(item.amount),
-          item.reason || "-",
-          date(item.returned_at),
-        ],
-      }))}
-    />
-  </Stack>
-);
+          <StatCard
+            label="Qaytarish"
+            value={money(
+              report.returns,
+            )}
+            tone="red"
+          />
 
-const Profit = ({ report }) => (
-  <Stack spacing={2.5}>
-    <Alert severity="info" sx={{ borderRadius: "16px", fontWeight: 700 }}>
-      Ombor tannarxi ulanmaguncha bu operatsion natija hisoblanadi.
-    </Alert>
+          <StatCard
+            label="Sof tushum"
+            value={money(
+              report.net_revenue,
+            )}
+            tone="green"
+          />
 
-    <Box
-      sx={{
-        display: "grid",
-        gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" },
-        gap: 1.4,
-      }}
-    >
-      <StatCard label="Savdo" value={money(report.sales)} />
-      <StatCard label="Qaytarish" value={money(report.returns)} danger />
-      <StatCard label="Sof tushum" value={money(report.net_revenue)} />
-      <StatCard label="Homashyo" value={money(report.material_costs)} danger />
-      <StatCard label="Ish haqi" value={money(report.payroll_costs)} danger />
-      <StatCard
-        label="Boshqa xarajat"
-        value={money(report.other_expenses)}
-        danger
-      />
-      <StatCard
-        label="Operatsion natija"
-        value={money(report.operational_result)}
-        danger={Number(report.operational_result) < 0}
-      />
-    </Box>
-  </Stack>
-);
+          <StatCard
+            label="Jami xarajat"
+            value={money(totalCosts)}
+            tone="amber"
+          />
 
-const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
+          <StatCard
+            label="Homashyo"
+            value={money(
+              report.material_costs,
+            )}
+            tone="violet"
+          />
+
+          <StatCard
+            label="Ish haqi"
+            value={money(
+              report.payroll_costs,
+            )}
+            tone="red"
+          />
+
+          <StatCard
+            label="Boshqa xarajat"
+            value={money(
+              report.other_expenses,
+            )}
+            tone="amber"
+          />
+
+          <StatCard
+            label="Operatsion natija"
+            value={money(
+              report.operational_result,
+            )}
+            tone={
+              positive
+                ? "green"
+                : "red"
+            }
+          />
+        </Box>
+
+        <Box
+          sx={{
+            mt: 2,
+
+            p: {
+              xs: 2,
+              md: 2.5,
+            },
+
+            borderRadius: "20px",
+            color: "#ffffff",
+
+            background: positive
+              ? "linear-gradient(135deg,#14532d,#15803d)"
+              : "linear-gradient(135deg,#450a0a,#991b1b)",
+
+            boxShadow: positive
+              ? "0 18px 42px rgba(21,128,61,.18)"
+              : "0 18px 42px rgba(153,27,27,.18)",
+          }}
+        >
+          <Typography
+            sx={{
+              color:
+                "rgba(255,255,255,.58) !important",
+
+              fontSize: 9.5,
+              fontWeight: 850,
+              textTransform: "uppercase",
+              letterSpacing: ".08em",
+            }}
+          >
+            Yakuniy operatsion natija
+          </Typography>
+
+          <Typography
+            sx={{
+              mt: 0.8,
+
+              color:
+                "#ffffff !important",
+
+              fontSize: {
+                xs: 27,
+                md: 34,
+              },
+
+              fontWeight: 950,
+              letterSpacing: "-.05em",
+            }}
+          >
+            {money(
+              report.operational_result,
+            )}
+          </Typography>
+
+          <Typography
+            sx={{
+              mt: 0.65,
+
+              color:
+                "rgba(255,255,255,.55) !important",
+
+              fontSize: 10.5,
+            }}
+          >
+            {positive
+              ? "Tanlangan davr bo‘yicha ijobiy moliyaviy natija."
+              : "Tanlangan davr bo‘yicha xarajatlar tushumdan yuqori."}
+          </Typography>
+        </Box>
+      </Card>
+    </Stack>
+  );
+};
+
+const EntryDialog = ({
+  name,
+  form,
+  field,
+  close,
+  save,
+  saving,
+  data,
+}) => {
   if (!name) return null;
 
-  const input = (key, label, type = "text") => (
+  const input = (
+    key,
+    label,
+    type = "text",
+    extra = {},
+  ) => (
     <TextField
       type={type}
       label={label}
       value={form[key] ?? ""}
       onChange={field(key)}
-      slotProps={type === "date" ? { inputLabel: { shrink: true } } : undefined}
+      slotProps={
+        type === "date"
+          ? {
+              inputLabel: {
+                shrink: true,
+              },
+
+              htmlInput:
+                extra.htmlInput,
+            }
+          : extra.htmlInput
+            ? {
+                htmlInput:
+                  extra.htmlInput,
+              }
+            : undefined
+      }
+      multiline={extra.multiline}
+      minRows={extra.minRows}
+      helperText={extra.helperText}
     />
   );
 
@@ -1219,10 +3005,33 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
   if (name === "payroll") {
     fields = (
       <>
-        {input("period_from", "Dan", "date")}
-        {input("period_to", "Gacha", "date")}
-        {input("payment_date", "To'lov sanasi", "date")}
-        {input("note", "Izoh")}
+        {input(
+          "period_from",
+          "Davr boshidan",
+          "date",
+        )}
+
+        {input(
+          "period_to",
+          "Davr oxirigacha",
+          "date",
+        )}
+
+        {input(
+          "payment_date",
+          "To‘lov sanasi",
+          "date",
+        )}
+
+        {input(
+          "note",
+          "Izoh",
+          "text",
+          {
+            multiline: true,
+            minRows: 3,
+          },
+        )}
       </>
     );
   }
@@ -1230,11 +3039,75 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
   if (name === "line") {
     fields = (
       <>
-        {input("daily_earnings", "Kunlik", "number")}
-        {input("bonus", "Bonus", "number")}
-        {input("advance_deduction", "Avansdan ushlash", "number")}
-        {input("other_deduction", "Boshqa ushlanma", "number")}
-        {input("cash_amount", "Naqd beriladi", "number")}
+        {input(
+          "daily_earnings",
+          "Kunlik",
+          "number",
+          {
+            htmlInput: {
+              min: 0,
+              step: 1000,
+            },
+          },
+        )}
+
+        {input(
+          "bonus",
+          "Bonus",
+          "number",
+          {
+            htmlInput: {
+              min: 0,
+              step: 1000,
+            },
+          },
+        )}
+
+        {input(
+          "advance_deduction",
+          "Avansdan ushlash",
+          "number",
+          {
+            htmlInput: {
+              min: 0,
+              step: 1000,
+            },
+          },
+        )}
+
+        {input(
+          "other_deduction",
+          "Boshqa ushlanma",
+          "number",
+          {
+            htmlInput: {
+              min: 0,
+              step: 1000,
+            },
+          },
+        )}
+
+        {input(
+          "cash_amount",
+          "Naqd beriladi",
+          "number",
+          {
+            htmlInput: {
+              min: 0,
+              step: 1000,
+            },
+          },
+        )}
+
+        {input(
+          "note",
+          "Izoh",
+          "text",
+          {
+            multiline: true,
+            minRows: 3,
+          },
+        )}
       </>
     );
   }
@@ -1242,8 +3115,20 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
   if (name === "category") {
     fields = (
       <>
-        {input("name", "Kategoriya nomi")}
-        {input("description", "Izoh")}
+        {input(
+          "name",
+          "Kategoriya nomi",
+        )}
+
+        {input(
+          "description",
+          "Izoh",
+          "text",
+          {
+            multiline: true,
+            minRows: 3,
+          },
+        )}
       </>
     );
   }
@@ -1254,34 +3139,84 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
         <TextField
           select
           label="Kategoriya"
-          value={form.category_id || ""}
-          onChange={field("category_id")}
+          value={
+            form.category_id || ""
+          }
+          onChange={field(
+            "category_id",
+          )}
         >
-          {data.categories.map((item) => (
-            <MenuItem key={item.id} value={item.id}>
-              {item.name}
-            </MenuItem>
-          ))}
+          {(data.categories || []).map(
+            (item) => (
+              <MenuItem
+                key={item.id}
+                value={item.id}
+              >
+                {item.name}
+              </MenuItem>
+            ),
+          )}
         </TextField>
 
         <TextField
           select
-          label="Hisob"
-          value={form.account_id || ""}
-          onChange={field("account_id")}
+          label="Moliyaviy hisob"
+          value={
+            form.account_id || ""
+          }
+          onChange={field(
+            "account_id",
+          )}
         >
-          <MenuItem value="">Hisobsiz</MenuItem>
-          {data.accounts.map((item) => (
-            <MenuItem key={item.id} value={item.id}>
-              {item.name}
-            </MenuItem>
-          ))}
+          <MenuItem value="">
+            Hisobsiz
+          </MenuItem>
+
+          {(data.accounts || []).map(
+            (item) => (
+              <MenuItem
+                key={item.id}
+                value={item.id}
+              >
+                {item.name} —{" "}
+                {money(item.balance)}
+              </MenuItem>
+            ),
+          )}
         </TextField>
 
-        {input("title", "Xarajat nomi")}
-        {input("amount", "Summa", "number")}
-        {input("spent_at", "Sana", "date")}
-        {input("note", "Izoh")}
+        {input(
+          "title",
+          "Xarajat nomi",
+        )}
+
+        {input(
+          "amount",
+          "Summa",
+          "number",
+          {
+            htmlInput: {
+              min: 0,
+              step: 1000,
+            },
+          },
+        )}
+
+        {input(
+          "spent_at",
+          "Sana",
+          "date",
+        )}
+
+        {input(
+          "note",
+          "Izoh",
+          "text",
+          {
+            multiline: true,
+            minRows: 3,
+          },
+        )}
       </>
     );
   }
@@ -1289,20 +3224,46 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
   if (name === "account") {
     fields = (
       <>
-        {input("name", "Hisob nomi")}
+        {input(
+          "name",
+          "Hisob nomi",
+        )}
 
         <TextField
           select
-          label="Turi"
-          value={form.account_type || "cash"}
-          onChange={field("account_type")}
+          label="Hisob turi"
+          value={
+            form.account_type ||
+            "cash"
+          }
+          onChange={field(
+            "account_type",
+          )}
         >
-          <MenuItem value="cash">Naqd</MenuItem>
-          <MenuItem value="card">Karta</MenuItem>
-          <MenuItem value="bank">Bank</MenuItem>
+          <MenuItem value="cash">
+            Naqd
+          </MenuItem>
+
+          <MenuItem value="card">
+            Karta
+          </MenuItem>
+
+          <MenuItem value="bank">
+            Bank
+          </MenuItem>
         </TextField>
 
-        {input("opening_balance", "Boshlang'ich balans", "number")}
+        {input(
+          "opening_balance",
+          "Boshlang‘ich balans",
+          "number",
+          {
+            htmlInput: {
+              min: 0,
+              step: 1000,
+            },
+          },
+        )}
       </>
     );
   }
@@ -1313,29 +3274,73 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
         <TextField
           select
           label="Hisob"
-          value={form.account_id || ""}
-          onChange={field("account_id")}
+          value={
+            form.account_id || ""
+          }
+          onChange={field(
+            "account_id",
+          )}
         >
-          {data.accounts.map((item) => (
-            <MenuItem key={item.id} value={item.id}>
-              {item.name}
-            </MenuItem>
-          ))}
+          {(data.accounts || []).map(
+            (item) => (
+              <MenuItem
+                key={item.id}
+                value={item.id}
+              >
+                {item.name} —{" "}
+                {money(item.balance)}
+              </MenuItem>
+            ),
+          )}
         </TextField>
 
         <TextField
           select
-          label="Turi"
-          value={form.transaction_type || "income"}
-          onChange={field("transaction_type")}
+          label="Operatsiya turi"
+          value={
+            form.transaction_type ||
+            "income"
+          }
+          onChange={field(
+            "transaction_type",
+          )}
         >
-          <MenuItem value="income">Kirim</MenuItem>
-          <MenuItem value="expense">Chiqim</MenuItem>
+          <MenuItem value="income">
+            Kirim
+          </MenuItem>
+
+          <MenuItem value="expense">
+            Chiqim
+          </MenuItem>
         </TextField>
 
-        {input("amount", "Summa", "number")}
-        {input("transacted_at", "Sana", "date")}
-        {input("description", "Izoh")}
+        {input(
+          "amount",
+          "Summa",
+          "number",
+          {
+            htmlInput: {
+              min: 0,
+              step: 1000,
+            },
+          },
+        )}
+
+        {input(
+          "transacted_at",
+          "Sana",
+          "date",
+        )}
+
+        {input(
+          "description",
+          "Izoh",
+          "text",
+          {
+            multiline: true,
+            minRows: 3,
+          },
+        )}
       </>
     );
   }
@@ -1346,20 +3351,66 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
         <TextField
           select
           label="Savdo"
-          value={form.client_sale_id || ""}
-          onChange={field("client_sale_id")}
+          value={
+            form.client_sale_id ||
+            ""
+          }
+          onChange={field(
+            "client_sale_id",
+          )}
         >
-          {data.sales.map((item) => (
-            <MenuItem key={item.id} value={item.id}>
-              {item.client_name} / {item.product_name} / qolgan{" "}
-              {Number(item.quantity) - Number(item.returned_quantity || 0)}
-            </MenuItem>
-          ))}
+          {(data.sales || []).map(
+            (item) => {
+              const remaining =
+                Number(
+                  item.quantity || 0,
+                ) -
+                Number(
+                  item.returned_quantity ||
+                    0,
+                );
+
+              return (
+                <MenuItem
+                  key={item.id}
+                  value={item.id}
+                >
+                  {item.client_name} /{" "}
+                  {item.product_name} /
+                  qolgan {remaining}
+                </MenuItem>
+              );
+            },
+          )}
         </TextField>
 
-        {input("quantity", "Qaytarilgan miqdor", "number")}
-        {input("returned_at", "Sana", "date")}
-        {input("reason", "Sabab")}
+        {input(
+          "quantity",
+          "Qaytarilgan miqdor",
+          "number",
+          {
+            htmlInput: {
+              min: 0,
+              step: 1,
+            },
+          },
+        )}
+
+        {input(
+          "returned_at",
+          "Sana",
+          "date",
+        )}
+
+        {input(
+          "reason",
+          "Sabab",
+          "text",
+          {
+            multiline: true,
+            minRows: 3,
+          },
+        )}
       </>
     );
   }
@@ -1368,17 +3419,22 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
     <PremiumDialog
       open
       onClose={close}
-      title="Ma'lumot kiritish"
-      maxWidth="sm"
+      title={
+        dialogTitles[name] ||
+        "Ma’lumot kiritish"
+      }
+      maxWidth={
+        name === "line" ||
+        name === "expense"
+          ? "md"
+          : "sm"
+      }
       actions={
         <>
           <Button
             onClick={close}
-            sx={{
-              borderRadius: "12px",
-              textTransform: "none",
-              fontWeight: 850,
-            }}
+            disabled={saving}
+            sx={dialogCancelSx}
           >
             Bekor qilish
           </Button>
@@ -1387,23 +3443,168 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
             variant="contained"
             disabled={saving}
             onClick={save}
-            sx={{
-              minWidth: 110,
-              borderRadius: "12px",
-              textTransform: "none",
-              fontWeight: 900,
-              background: "var(--aa-brand-700)",
-              "&:hover": { background: "var(--aa-brand-800)" },
-            }}
+            sx={dialogPrimarySx}
           >
-            {saving ? "Saqlanmoqda..." : "Saqlash"}
+            {saving
+              ? "Saqlanmoqda..."
+              : "Saqlash"}
           </Button>
         </>
       }
     >
-      <Box sx={{ display: "grid", gap: 1.5 }}>{fields}</Box>
+      <Box
+        sx={{
+          display: "grid",
+
+          gridTemplateColumns:
+            name === "line" ||
+            name === "expense"
+              ? {
+                  xs: "1fr",
+
+                  sm: "repeat(2,minmax(0,1fr))",
+                }
+              : "1fr",
+
+          gap: 1.6,
+        }}
+      >
+        {fields}
+      </Box>
     </PremiumDialog>
   );
 };
+
+const primaryButtonSx = {
+  minHeight: 40,
+  px: 2,
+  color: "#ffffff",
+  borderRadius: "11px",
+  fontSize: 10.5,
+  fontWeight: 900,
+  textTransform: "none",
+
+  background:
+    "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+
+  boxShadow:
+    "0 10px 24px rgba(127,29,29,.18)",
+
+  "&:hover": {
+    background:
+      "linear-gradient(135deg,#681818,#991b1b)",
+  },
+};
+
+const secondaryButtonSx = {
+  minHeight: 40,
+  px: 1.8,
+  color: "#64748b",
+  borderRadius: "11px",
+  borderColor: "#dce3ea",
+  fontSize: 10.5,
+  fontWeight: 900,
+  textTransform: "none",
+  backgroundColor: "#ffffff",
+
+  "&:hover": {
+    color: "#991b1b",
+
+    borderColor:
+      "rgba(153,27,27,.22)",
+
+    backgroundColor:
+      "rgba(153,27,27,.04)",
+  },
+};
+
+const tableActionSx = {
+  borderRadius: "9px",
+  fontSize: 9.5,
+  fontWeight: 900,
+  textTransform: "none",
+};
+
+const dialogCancelSx = {
+  color: "#64748b",
+  borderRadius: "11px",
+  fontWeight: 850,
+  textTransform: "none",
+};
+
+const dialogPrimarySx = {
+  minWidth: 110,
+  minHeight: 40,
+  px: 2,
+  color: "#ffffff",
+  borderRadius: "11px",
+  fontSize: 10.5,
+  fontWeight: 900,
+  textTransform: "none",
+
+  background:
+    "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+
+  boxShadow:
+    "0 10px 24px rgba(127,29,29,.18)",
+
+  "&:hover": {
+    background:
+      "linear-gradient(135deg,#681818,#991b1b)",
+  },
+};
+
+const strongCellSx = {
+  color: "#334155",
+  fontSize: 10.5,
+  fontWeight: 900,
+};
+
+const greenCellSx = {
+  color: "#15803d",
+  fontSize: 10.5,
+  fontWeight: 950,
+};
+
+const redCellSx = {
+  color: "#b91c1c",
+  fontSize: 10.5,
+  fontWeight: 950,
+};
+
+const financePageStyles = `
+  .crm-page .finance-hero {
+    color: #ffffff !important;
+    background-color: #0d1117 !important;
+    background-image:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(220,38,38,.34),
+        transparent 30%
+      ),
+      linear-gradient(
+        145deg,
+        #0d1117,
+        #171117 52%,
+        #3a121a
+      ) !important;
+  }
+
+  .finance-dialog-title {
+    color: #ffffff !important;
+    background-color: #0d1117 !important;
+    background-image:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(220,38,38,.28),
+        transparent 36%
+      ),
+      linear-gradient(
+        135deg,
+        #11151c,
+        #321319
+      ) !important;
+  }
+`;
 
 export default Finance;

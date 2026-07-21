@@ -47,16 +47,25 @@ const getLocalUser = () => {
 
 const getImageUrl = (imagePath) => {
   if (!imagePath) return undefined;
-  if (imagePath.startsWith("http")) return imagePath;
+
+  if (imagePath.startsWith("http")) {
+    return imagePath;
+  }
 
   const baseUrl = String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+
   return `${baseUrl}${imagePath.startsWith("/") ? imagePath : `/${imagePath}`}`;
 };
 
 const formatMoney = (value) => {
-  if (value === null || value === undefined || value === "") return "-";
-  return `${new Intl.NumberFormat("uz-UZ").format(Number(value))} so'm`;
+  if (value === null || value === undefined || value === "") {
+    return "-";
+  }
+
+  return `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
 };
+
+const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const formatDate = (value) => {
   if (!value) return "-";
@@ -84,18 +93,19 @@ const normalizeDepartmentPrices = (prices = []) =>
   prices.map((item) => ({
     id: item.id,
     department_id: item.department_id,
+
     department_name: item.department_name || item.name || "Bo'lim",
+
     department_code: item.department_code || item.code || "",
+
     price_per_unit: item.price_per_unit ?? "",
+
     is_active: item.is_active ?? true,
   }));
 
 const buildDepartmentPriceRows = (departments = [], prices = []) => {
   const existingPrices = new Map(
-    normalizeDepartmentPrices(prices).map((price) => [
-      Number(price.department_id),
-      price,
-    ]),
+    normalizeDepartmentPrices(prices).map((price) => [Number(price.department_id), price]),
   );
 
   const departmentRows = departments.map((department) => {
@@ -104,32 +114,35 @@ const buildDepartmentPriceRows = (departments = [], prices = []) => {
     return {
       id: existing?.id,
       department_id: department.id,
+
       department_name: department.name || existing?.department_name || "Bo'lim",
+
       department_code: department.code || existing?.department_code || "",
+
       price_per_unit: existing?.price_per_unit ?? "",
+
       is_active: existing?.is_active ?? true,
     };
   });
 
-  if (departmentRows.length) return departmentRows;
-  return normalizeDepartmentPrices(prices);
+  return departmentRows.length ? departmentRows : normalizeDepartmentPrices(prices);
 };
 
 const getInitial = (value) =>
-  String(value || "Z")
+  String(value || "M")
     .trim()
     .slice(0, 1)
     .toUpperCase();
 
-const Card = ({ children, sx = {} }) => (
+const Surface = ({ children, sx = {} }) => (
   <Paper
     elevation={0}
     sx={{
-      borderRadius: "var(--aa-radius-xl)",
-      border: "1px solid var(--aa-border)",
-      background: "var(--aa-surface)",
-      boxShadow: "var(--aa-shadow-sm)",
       overflow: "hidden",
+      borderRadius: "22px",
+      border: "1px solid #e4e9ef",
+      backgroundColor: "#ffffff",
+      boxShadow: "0 14px 40px rgba(15,23,42,.045)",
       ...sx,
     }}
   >
@@ -137,29 +150,148 @@ const Card = ({ children, sx = {} }) => (
   </Paper>
 );
 
-const InfoItem = ({ label, value }) => (
+const HeroMetric = ({ label, value, helper, tone = "red" }) => {
+  const tones = {
+    red: {
+      color: "#fecdd3",
+      background: "rgba(220,38,38,.15)",
+      border: "rgba(248,113,113,.15)",
+    },
+
+    green: {
+      color: "#bbf7d0",
+      background: "rgba(34,197,94,.14)",
+      border: "rgba(74,222,128,.15)",
+    },
+
+    amber: {
+      color: "#fde68a",
+      background: "rgba(245,158,11,.15)",
+      border: "rgba(251,191,36,.15)",
+    },
+
+    violet: {
+      color: "#ddd6fe",
+      background: "rgba(139,92,246,.16)",
+      border: "rgba(167,139,250,.15)",
+    },
+  };
+
+  const current = tones[tone] || tones.red;
+
+  return (
+    <Box
+      sx={{
+        minWidth: 0,
+        minHeight: 126,
+        p: 1.8,
+        borderRadius: "18px",
+
+        border: "1px solid rgba(255,255,255,.075)",
+
+        background: "linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025))",
+
+        backdropFilter: "blur(16px)",
+      }}
+    >
+      <Box
+        sx={{
+          width: 34,
+          height: 34,
+          display: "grid",
+          placeItems: "center",
+          borderRadius: "11px",
+          color: current.color,
+
+          backgroundColor: current.background,
+
+          border: `1px solid ${current.border}`,
+
+          fontSize: 13,
+          fontWeight: 950,
+        }}
+      >
+        {label.charAt(0)}
+      </Box>
+
+      <Typography
+        sx={{
+          mt: 1.4,
+
+          color: "rgba(255,255,255,.44) !important",
+
+          fontSize: 9.5,
+          fontWeight: 750,
+        }}
+      >
+        {label}
+      </Typography>
+
+      <Typography
+        noWrap
+        sx={{
+          mt: 0.6,
+
+          color: "#ffffff !important",
+
+          fontSize: 18,
+          lineHeight: 1.2,
+          fontWeight: 950,
+          letterSpacing: "-.035em",
+        }}
+      >
+        {value}
+      </Typography>
+
+      <Typography
+        noWrap
+        sx={{
+          mt: 0.55,
+
+          color: "rgba(255,255,255,.28) !important",
+
+          fontSize: 9,
+        }}
+      >
+        {helper}
+      </Typography>
+    </Box>
+  );
+};
+
+const InfoItem = ({ label, value, accent = false }) => (
   <Box
     sx={{
-      p: 1.7,
-      borderRadius: "var(--aa-radius-lg)",
-      background: "var(--aa-surface-solid)",
-      border: "1px solid var(--aa-border)",
-      boxShadow: "var(--aa-shadow-xs)",
+      minWidth: 0,
+      p: 1.65,
+      borderRadius: "16px",
+
+      border: accent ? "1px solid rgba(153,27,27,.14)" : "1px solid #e7ebf0",
+
+      background: accent
+        ? "linear-gradient(145deg,rgba(153,27,27,.055),#ffffff)"
+        : "linear-gradient(145deg,#ffffff,#f8fafc)",
     }}
   >
     <Typography
-      sx={{ fontSize: 12, fontWeight: 850, color: "var(--aa-text-secondary)" }}
+      sx={{
+        color: "#94a3b8",
+        fontSize: 9.5,
+        fontWeight: 750,
+      }}
     >
       {label}
     </Typography>
 
     <Typography
+      noWrap
       sx={{
-        mt: 0.6,
-        fontSize: 15,
+        mt: 0.65,
+
+        color: accent ? "#991b1b" : "#334155",
+
+        fontSize: 12,
         fontWeight: 900,
-        color: "var(--aa-text)",
-        wordBreak: "break-word",
       }}
     >
       {value || "-"}
@@ -167,77 +299,166 @@ const InfoItem = ({ label, value }) => (
   </Box>
 );
 
-const PriceCard = ({ label, value, tone = "blue" }) => {
+const PricePanel = ({ label, value, tone = "green", helper }) => {
   const tones = {
-    blue: {
-      bg: "rgba(37, 99, 235, 0.08)",
-      color: "#2563eb",
-      border: "rgba(37, 99, 235, 0.16)",
-    },
     green: {
-      bg: "rgba(34, 197, 94, 0.1)",
       color: "#15803d",
-      border: "rgba(34, 197, 94, 0.22)",
+      background: "rgba(34,197,94,.08)",
+      border: "rgba(34,197,94,.18)",
     },
+
+    blue: {
+      color: "#1d4ed8",
+      background: "rgba(37,99,235,.07)",
+      border: "rgba(37,99,235,.17)",
+    },
+
     red: {
-      bg: "rgba(139, 1, 1, 0.08)",
-      color: "#8b0101",
-      border: "rgba(139, 1, 1, 0.18)",
+      color: "#991b1b",
+      background: "rgba(153,27,27,.07)",
+      border: "rgba(153,27,27,.16)",
     },
   };
 
-  const current = tones[tone] || tones.blue;
+  const current = tones[tone] || tones.green;
 
   return (
     <Box
       sx={{
+        minWidth: 0,
         p: 2,
         borderRadius: "18px",
-        background: current.bg,
+
         border: `1px solid ${current.border}`,
+
+        background: current.background,
       }}
     >
       <Typography
         sx={{
-          fontSize: 13,
-          fontWeight: 850,
-          color: "var(--aa-text-secondary)",
+          color: "#64748b",
+          fontSize: 10,
+          fontWeight: 800,
         }}
       >
         {label}
       </Typography>
 
       <Typography
+        noWrap
         sx={{
-          mt: 0.7,
-          fontSize: 22,
-          fontWeight: 950,
+          mt: 0.8,
           color: current.color,
-          letterSpacing: "-0.04em",
+          fontSize: 21,
+          fontWeight: 950,
+          letterSpacing: "-.04em",
         }}
       >
         {value}
       </Typography>
+
+      {helper && (
+        <Typography
+          sx={{
+            mt: 0.6,
+            color: "#94a3b8",
+            fontSize: 9.5,
+          }}
+        >
+          {helper}
+        </Typography>
+      )}
     </Box>
   );
 };
 
-const StatusChip = ({ active }) => (
+const StatusChip = ({ active, dark = false }) => (
   <Chip
     size="small"
     label={active ? "Faol" : "Nofaol"}
     sx={{
       height: 27,
-      px: 0.4,
-      fontSize: 12,
-      fontWeight: 950,
-      color: active ? "var(--aa-success)" : "var(--aa-text-secondary)",
-      background: active ? "rgba(22, 137, 74, 0.1)" : "var(--aa-surface-muted)",
-      border: active
-        ? "1px solid rgba(22, 137, 74, 0.2)"
-        : "1px solid var(--aa-border)",
+      px: 0.3,
+
+      color: dark
+        ? active
+          ? "#bbf7d0 !important"
+          : "#fecaca !important"
+        : active
+          ? "#15803d"
+          : "#b91c1c",
+
+      fontSize: 9.5,
+      fontWeight: 900,
+
+      border: dark
+        ? active
+          ? "1px solid rgba(74,222,128,.16)"
+          : "1px solid rgba(248,113,113,.16)"
+        : active
+          ? "1px solid rgba(34,197,94,.18)"
+          : "1px solid rgba(220,38,38,.18)",
+
+      backgroundColor: dark
+        ? active
+          ? "rgba(34,197,94,.13) !important"
+          : "rgba(220,38,38,.13) !important"
+        : active
+          ? "rgba(34,197,94,.09)"
+          : "rgba(220,38,38,.08)",
     }}
   />
+);
+
+const SectionHeader = ({ title, subtitle, actions }) => (
+  <Box
+    sx={{
+      mb: 2.2,
+      display: "flex",
+
+      alignItems: {
+        xs: "flex-start",
+        sm: "center",
+      },
+
+      justifyContent: "space-between",
+
+      flexDirection: {
+        xs: "column",
+        sm: "row",
+      },
+
+      gap: 1.5,
+    }}
+  >
+    <Box>
+      <Typography
+        sx={{
+          color: "#0f172a",
+          fontSize: 16,
+          fontWeight: 950,
+          letterSpacing: "-.02em",
+        }}
+      >
+        {title}
+      </Typography>
+
+      {subtitle && (
+        <Typography
+          sx={{
+            mt: 0.55,
+            color: "#94a3b8",
+            fontSize: 10.5,
+            lineHeight: 1.55,
+          }}
+        >
+          {subtitle}
+        </Typography>
+      )}
+    </Box>
+
+    {actions}
+  </Box>
 );
 
 const Product = () => {
@@ -245,23 +466,36 @@ const Product = () => {
   const navigate = useNavigate();
 
   const auth = useAuth() || {};
+
   const currentUser = auth.user || getLocalUser();
+
   const canManagePrices =
-    MANAGER_ROLES.includes(currentUser?.role) &&
-    hasPermission(currentUser, "products.manage");
+    MANAGER_ROLES.includes(currentUser?.role) && hasPermission(currentUser, "products.manage");
 
   const [product, setProduct] = useState(null);
+
   const [selectedImage, setSelectedImage] = useState("");
+
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState("");
+
   const [priceRows, setPriceRows] = useState([]);
+
   const [priceSaving, setPriceSaving] = useState(false);
+
   const [departmentOpen, setDepartmentOpen] = useState(false);
+
   const [departmentSaving, setDepartmentSaving] = useState(false);
+
   const [departmentForm, setDepartmentForm] = useState(emptyDepartmentForm);
+
   const [completionDepartmentId, setCompletionDepartmentId] = useState("");
+
   const [recipeRows, setRecipeRows] = useState([]);
+
   const [rawMaterials, setRawMaterials] = useState([]);
+
   const [recipeSaving, setRecipeSaving] = useState(false);
 
   const images = useMemo(() => product?.images || [], [product?.images]);
@@ -273,6 +507,11 @@ const Product = () => {
 
   const activeImage = selectedImage || primaryImage?.image_url || "";
 
+  const profitAmount = useMemo(
+    () => Number(product?.sale_price || 0) - Number(product?.purchase_price || 0),
+    [product?.purchase_price, product?.sale_price],
+  );
+
   const fetchProduct = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -280,6 +519,7 @@ const Product = () => {
     try {
       const [{ data }, departmentsRes, recipeRes] = await Promise.all([
         getProduct(id),
+
         canManagePrices
           ? getDepartments({
               is_active: true,
@@ -287,38 +527,50 @@ const Product = () => {
               sort_by: "sort_order",
               sort_order: "asc",
             })
-          : Promise.resolve({ data: { departments: [] } }),
+          : Promise.resolve({
+              data: {
+                departments: [],
+              },
+            }),
+
         canManagePrices
           ? getProductRecipe(id)
           : Promise.resolve({
-              data: { recipe: { materials: [] }, raw_materials: [] },
+              data: {
+                recipe: {
+                  materials: [],
+                },
+                raw_materials: [],
+              },
             }),
       ]);
+
       const receivedProduct = data?.product || data?.found_product || data;
+
       const departments = departmentsRes.data?.departments || [];
 
       setProduct(receivedProduct);
-      setPriceRows(
-        buildDepartmentPriceRows(
-          departments,
-          receivedProduct?.department_prices || [],
-        ),
-      );
+
+      setPriceRows(buildDepartmentPriceRows(departments, receivedProduct?.department_prices || []));
+
       setSelectedImage(
         receivedProduct?.images?.find((image) => image.is_primary)?.image_url ||
           receivedProduct?.images?.[0]?.image_url ||
           "",
       );
-      setCompletionDepartmentId(
-        recipeRes.data?.recipe?.completion_department_id || "",
-      );
+
+      setCompletionDepartmentId(recipeRes.data?.recipe?.completion_department_id || "");
+
       setRecipeRows(
-        (recipeRes.data?.recipe?.materials || []).map((material) => ({
-          row_id: material.id || `${material.raw_material_id}-${Date.now()}`,
+        (recipeRes.data?.recipe?.materials || []).map((material, index) => ({
+          row_id: material.id || `${material.raw_material_id}-${index}`,
+
           raw_material_id: material.raw_material_id,
+
           quantity_per_pair: material.quantity_per_pair,
         })),
       );
+
       setRawMaterials(recipeRes.data?.raw_materials || []);
     } catch (requestError) {
       const status = requestError?.response?.status;
@@ -343,10 +595,13 @@ const Product = () => {
   }, [fetchProduct]);
 
   const handlePriceChange = (departmentId, value) => {
-    setPriceRows((prev) =>
-      prev.map((row) =>
+    setPriceRows((current) =>
+      current.map((row) =>
         Number(row.department_id) === Number(departmentId)
-          ? { ...row, price_per_unit: value }
+          ? {
+              ...row,
+              price_per_unit: value,
+            }
           : row,
       ),
     );
@@ -354,32 +609,39 @@ const Product = () => {
 
   const openDepartmentModal = () => {
     setDepartmentForm(emptyDepartmentForm);
+
     setDepartmentOpen(true);
   };
 
   const closeDepartmentModal = () => {
     if (departmentSaving) return;
+
     setDepartmentOpen(false);
   };
 
   const handleDepartmentChange = (field) => (event) => {
     const value = event.target.value;
 
-    setDepartmentForm((prev) => ({
-      ...prev,
+    setDepartmentForm((current) => ({
+      ...current,
       [field]: value,
-      ...(field === "name" && !prev.code
-        ? { code: makeDepartmentCode(value) }
+
+      ...(field === "name" && !current.code
+        ? {
+            code: makeDepartmentCode(value),
+          }
         : {}),
     }));
   };
 
   const handleCreateDepartment = async () => {
     const name = departmentForm.name.trim();
+
     const code = makeDepartmentCode(departmentForm.code || departmentForm.name);
 
     if (!name) {
       toast.error("Bo'lim nomini kiriting.");
+
       return;
     }
 
@@ -389,60 +651,75 @@ const Product = () => {
       const { data } = await createDepartment({
         name,
         code,
+
         description: departmentForm.description.trim() || null,
+
         is_active: true,
       });
+
       const department = data?.new_department || data?.department || data;
 
-      setPriceRows((prev) => [
-        ...prev,
+      setPriceRows((current) => [
+        ...current,
+
         {
           department_id: department.id,
+
           department_name: department.name,
+
           department_code: department.code,
+
           price_per_unit: "",
+
           is_active: department.is_active ?? true,
         },
       ]);
 
       toast.success("Bo'lim yaratildi. Endi narx kiriting.");
+
       setDepartmentOpen(false);
+
       setDepartmentForm(emptyDepartmentForm);
     } catch (requestError) {
-      toast.error(
-        requestError?.response?.data?.message || "Bo'lim yaratishda xatolik.",
-      );
+      toast.error(requestError?.response?.data?.message || "Bo'lim yaratishda xatolik.");
     } finally {
       setDepartmentSaving(false);
     }
   };
 
   const handleSavePrices = async () => {
-    if (!product?.id || !priceRows.length) return;
+    if (!product?.id || !priceRows.length) {
+      return;
+    }
 
     setPriceSaving(true);
 
     try {
       const prices = priceRows.map((row) => ({
         department_id: row.department_id,
+
         price_per_unit: Number(row.price_per_unit || 0),
+
         is_active: row.is_active ?? true,
       }));
 
       const { data } = await saveProductDepartmentPrices(product.id, prices);
+
       const updatedPrices = data?.department_prices || data?.prices || [];
 
       if (updatedPrices.length) {
         setPriceRows(normalizeDepartmentPrices(updatedPrices));
-        setProduct((prev) => ({ ...prev, department_prices: updatedPrices }));
+
+        setProduct((current) => ({
+          ...current,
+
+          department_prices: updatedPrices,
+        }));
       }
 
       toast.success("Bo'lim narxlari saqlandi.");
     } catch (requestError) {
-      toast.error(
-        requestError?.response?.data?.message ||
-          "Bo'lim narxlarini saqlashda xatolik.",
-      );
+      toast.error(requestError?.response?.data?.message || "Bo'lim narxlarini saqlashda xatolik.");
     } finally {
       setPriceSaving(false);
     }
@@ -451,6 +728,7 @@ const Product = () => {
   const addRecipeRow = () => {
     setRecipeRows((current) => [
       ...current,
+
       {
         row_id: `${Date.now()}-${Math.random()}`,
         raw_material_id: "",
@@ -462,7 +740,12 @@ const Product = () => {
   const updateRecipeRow = (rowId, field, value) => {
     setRecipeRows((current) =>
       current.map((row) =>
-        row.row_id === rowId ? { ...row, [field]: value } : row,
+        row.row_id === rowId
+          ? {
+              ...row,
+              [field]: value,
+            }
+          : row,
       ),
     );
   };
@@ -475,52 +758,61 @@ const Product = () => {
     const validRows = recipeRows.filter(
       (row) => row.raw_material_id && Number(row.quantity_per_pair) > 0,
     );
+
     if (completionDepartmentId && validRows.length !== recipeRows.length) {
-      toast.error(
-        "Har bir homashyo va 1 par uchun sarf miqdorini to'g'ri kiriting.",
-      );
+      toast.error("Har bir homashyo va 1 par uchun sarf miqdorini to'g'ri kiriting.");
+
       return;
     }
+
     if (completionDepartmentId && !validRows.length) {
       toast.error("Kamida bitta homashyo qo'shing.");
+
       return;
     }
+
     if (!completionDepartmentId && recipeRows.length) {
-      toast.error(
-        "Yakunlovchi bo'limni tanlang yoki retsept qatorlarini o'chiring.",
-      );
+      toast.error("Yakunlovchi bo'limni tanlang yoki retsept qatorlarini o'chiring.");
+
       return;
     }
+
     const ids = validRows.map((row) => Number(row.raw_material_id));
+
     if (new Set(ids).size !== ids.length) {
       toast.error("Bitta homashyoni retseptga ikki marta qo'shib bo'lmaydi.");
+
       return;
     }
 
     setRecipeSaving(true);
+
     try {
       const { data } = await saveProductRecipe(product.id, {
-        completion_department_id: completionDepartmentId
-          ? Number(completionDepartmentId)
-          : null,
+        completion_department_id: completionDepartmentId ? Number(completionDepartmentId) : null,
+
         items: validRows.map((row) => ({
           raw_material_id: Number(row.raw_material_id),
+
           quantity_per_pair: Number(row.quantity_per_pair),
         })),
       });
+
       setCompletionDepartmentId(data.recipe?.completion_department_id || "");
+
       setRecipeRows(
         (data.recipe?.materials || []).map((material) => ({
           row_id: material.id,
+
           raw_material_id: material.raw_material_id,
+
           quantity_per_pair: material.quantity_per_pair,
         })),
       );
+
       toast.success("Mahsulot retsepti saqlandi.");
     } catch (requestError) {
-      toast.error(
-        requestError?.response?.data?.message || "Retseptni saqlashda xatolik.",
-      );
+      toast.error(requestError?.response?.data?.message || "Retseptni saqlashda xatolik.");
     } finally {
       setRecipeSaving(false);
     }
@@ -528,8 +820,48 @@ const Product = () => {
 
   if (loading) {
     return (
-      <Box sx={{ minHeight: 380, display: "grid", placeItems: "center" }}>
-        <CircularProgress size={34} />
+      <Box
+        sx={{
+          minHeight: 430,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 2,
+        }}
+      >
+        <Box
+          sx={{
+            width: 72,
+            height: 72,
+            display: "grid",
+            placeItems: "center",
+            borderRadius: "22px",
+
+            border: "1px solid rgba(153,27,27,.10)",
+
+            backgroundColor: "rgba(153,27,27,.05)",
+          }}
+        >
+          <CircularProgress
+            size={34}
+            thickness={4.5}
+            sx={{
+              color: "#991b1b",
+            }}
+          />
+        </Box>
+
+        <Typography
+          sx={{
+            color: "#94a3b8",
+            fontSize: 12.5,
+            fontWeight: 750,
+          }}
+        >
+          Mahsulot ma'lumotlari yuklanmoqda...
+        </Typography>
       </Box>
     );
   }
@@ -541,13 +873,13 @@ const Product = () => {
 
         <Button
           variant="outlined"
+          onClick={() => navigate("/products")}
           sx={{
             mt: 2,
             borderRadius: "12px",
             fontWeight: 900,
             textTransform: "none",
           }}
-          onClick={() => navigate("/products")}
         >
           Mahsulotlarga qaytish
         </Button>
@@ -555,478 +887,671 @@ const Product = () => {
     );
   }
 
-  if (!product) return <Alert severity="warning">Mahsulot topilmadi.</Alert>;
+  if (!product) {
+    return <Alert severity="warning">Mahsulot topilmadi.</Alert>;
+  }
 
   return (
     <Box
+      className="crm-page product-detail-page"
       sx={{
         width: "100%",
         maxWidth: "100%",
+        height: "100%",
         minHeight: 0,
-        pb: 3,
+        pr: 0.5,
+        pb: 4,
+        overflowY: "auto",
       }}
     >
-      <Card sx={{ p: { xs: 2, md: 2.5 } }}>
+      <style>{productPageStyles}</style>
+
+      <Box
+        component="section"
+        className="product-profile-hero"
+        sx={{
+          position: "relative",
+          isolation: "isolate",
+          mb: 2.5,
+
+          p: {
+            xs: 2.5,
+            md: 3,
+          },
+
+          overflow: "hidden",
+          color: "#ffffff",
+          borderRadius: "25px",
+
+          border: "1px solid rgba(255,255,255,.075)",
+
+          backgroundColor: "#0d1117 !important",
+
+          backgroundImage:
+            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
+
+          boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            width: 390,
+            height: 390,
+            top: -275,
+            right: -210,
+            borderRadius: "50%",
+
+            border: "1px solid rgba(248,113,113,.16)",
+
+            boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+
+            pointerEvents: "none",
+          },
+        }}
+      >
         <Box
           sx={{
-            display: "flex",
-            alignItems: { xs: "flex-start", md: "center" },
-            justifyContent: "space-between",
-            flexDirection: { xs: "column", md: "row" },
-            gap: 2,
-            mb: 2.5,
-          }}
-        >
-          <Box sx={{ minWidth: 0 }}>
-            <Chip
-              label="Al-amin CRM • mahsulot profili"
-              size="small"
-              sx={{
-                mb: 1,
-                height: 25,
-                fontSize: 12,
-                fontWeight: 950,
-                color: "var(--aa-brand-800)",
-                background: "var(--aa-brand-50)",
-                border: "1px solid var(--aa-brand-200)",
-              }}
-            />
-
-            <Typography
-              sx={{
-                fontSize: { xs: 25, md: 32 },
-                fontWeight: 950,
-                color: "var(--aa-text)",
-                letterSpacing: "-0.055em",
-                lineHeight: 1.08,
-                wordBreak: "break-word",
-              }}
-            >
-              {product.name || "Nomsiz mahsulot"}
-            </Typography>
-
-            <Typography
-              sx={{
-                mt: 0.7,
-                fontSize: 14,
-                fontWeight: 700,
-                color: "var(--aa-text-secondary)",
-              }}
-            >
-              {product.category_name || "Kategoriyasiz"} /{" "}
-              {product.unit || "par"}
-            </Typography>
-          </Box>
-
-          <Button
-            variant="outlined"
-            onClick={() => navigate("/products")}
-            sx={{
-              minWidth: 105,
-              height: 40,
-              borderRadius: "13px",
-              borderColor: "var(--aa-border-strong)",
-              color: "var(--aa-text)",
-              fontWeight: 900,
-              textTransform: "none",
-              background: "var(--aa-surface)",
-              flexShrink: 0,
-              "&:hover": {
-                borderColor: "var(--aa-brand-800)",
-                background: "var(--aa-brand-50)",
-              },
-            }}
-          >
-            Orqaga
-          </Button>
-        </Box>
-
-        <Box
-          sx={{
+            position: "relative",
+            zIndex: 1,
             display: "grid",
-            gridTemplateColumns: { xs: "1fr", lg: "340px 1fr" },
-            gap: 2.3,
-            alignItems: "start",
+
+            gridTemplateColumns: {
+              xs: "1fr",
+              xl: ".82fr 1.18fr",
+            },
+
+            gap: 3,
+            alignItems: "center",
           }}
         >
           <Box>
             <Box
               sx={{
-                height: { xs: 260, sm: 310, lg: 320 },
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                overflow: "hidden",
-                borderRadius: "var(--aa-radius-xl)",
-                border: "1px solid var(--aa-border)",
-                background: "var(--aa-surface-muted)",
+                gap: 1.1,
               }}
             >
-              {activeImage ? (
-                <img
-                  src={getImageUrl(activeImage)}
-                  alt={product.name}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    display: "block",
-                  }}
-                />
-              ) : (
-                <Avatar
-                  variant="rounded"
-                  sx={{
-                    width: 110,
-                    height: 110,
-                    borderRadius: "26px",
-                    fontSize: 44,
-                    fontWeight: 950,
-                    bgcolor: "var(--aa-brand-800)",
-                    color: "#fff",
-                    boxShadow: "var(--aa-shadow-md)",
-                  }}
-                >
-                  {getInitial(product.name)}
-                </Avatar>
-              )}
+              <Box
+                sx={{
+                  width: 25,
+                  height: 2,
+                  borderRadius: 99,
+
+                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                }}
+              />
+
+              <Typography
+                sx={{
+                  color: "#fecdd3 !important",
+
+                  fontSize: 10,
+                  fontWeight: 950,
+                  letterSpacing: ".13em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Mahsulot boshqaruvi
+              </Typography>
             </Box>
 
-            {images.length > 0 ? (
-              <Box
-                sx={{
-                  mt: 1.3,
-                  display: "grid",
-                  gridTemplateColumns: "repeat(4, 1fr)",
-                  gap: 1,
-                }}
-              >
-                {images.slice(0, 8).map((image) => {
-                  const selected = activeImage === image.image_url;
+            <Box
+              sx={{
+                mt: 1.6,
+                display: "flex",
 
-                  return (
-                    <Button
-                      key={image.id}
-                      variant="outlined"
-                      onClick={() => setSelectedImage(image.image_url)}
-                      sx={{
-                        height: 66,
-                        minWidth: 0,
-                        p: 0,
-                        overflow: "hidden",
-                        borderRadius: "14px",
-                        borderWidth: selected ? 2 : 1,
-                        borderColor: selected
-                          ? "var(--aa-brand-800)"
-                          : "var(--aa-border)",
-                        boxShadow: selected ? "var(--aa-shadow-sm)" : "none",
-                      }}
-                    >
-                      <img
-                        src={getImageUrl(image.image_url)}
-                        alt={product.name}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          display: "block",
-                        }}
-                      />
-                    </Button>
-                  );
-                })}
-              </Box>
-            ) : (
-              <Box
+                alignItems: {
+                  xs: "flex-start",
+                  sm: "center",
+                },
+
+                flexDirection: {
+                  xs: "column",
+                  sm: "row",
+                },
+
+                gap: 1.8,
+              }}
+            >
+              <Avatar
+                src={getImageUrl(primaryImage?.image_url)}
+                variant="rounded"
                 sx={{
-                  mt: 1.3,
-                  p: 1.6,
-                  borderRadius: "16px",
-                  background: "var(--aa-surface-muted)",
-                  border: "1px dashed var(--aa-border-strong)",
-                  textAlign: "center",
+                  width: 76,
+                  height: 76,
+                  flexShrink: 0,
+                  color: "#ffffff",
+                  fontSize: 26,
+                  fontWeight: 950,
+                  borderRadius: "20px",
+
+                  border: "4px solid rgba(255,255,255,.11)",
+
+                  background: "linear-gradient(135deg,#7f1d1d,#dc2626)",
+
+                  boxShadow: "0 17px 38px rgba(127,29,29,.30)",
                 }}
               >
-                <Typography
+                {getInitial(product.name)}
+              </Avatar>
+
+              <Box sx={{ minWidth: 0 }}>
+                <Box
                   sx={{
-                    fontSize: 13.5,
-                    fontWeight: 750,
-                    color: "var(--aa-text-secondary)",
+                    display: "flex",
+                    gap: 1,
+                    flexWrap: "wrap",
                   }}
                 >
-                  Mahsulot rasmi yuklanmagan.
+                  <StatusChip active={product.is_active} dark />
+
+                  {product.sku && (
+                    <Chip size="small" label={`SKU: ${product.sku}`} sx={darkChipSx} />
+                  )}
+                </Box>
+
+                <Typography
+                  component="h1"
+                  sx={{
+                    mt: 1.2,
+
+                    color: "#ffffff !important",
+
+                    fontSize: {
+                      xs: 28,
+                      md: 37,
+                    },
+
+                    lineHeight: 1.06,
+                    fontWeight: 950,
+                    letterSpacing: "-.05em",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {product.name || "Nomsiz mahsulot"}
+                </Typography>
+
+                <Typography
+                  sx={{
+                    mt: 0.9,
+
+                    color: "rgba(255,255,255,.45) !important",
+
+                    fontSize: 11.5,
+                    lineHeight: 1.65,
+                  }}
+                >
+                  {product.category_name || "Kategoriyasiz"} · {product.unit || "par"}
+                  {product.model ? ` · ${product.model}` : ""}
                 </Typography>
               </Box>
+            </Box>
+
+            <Button
+              onClick={() => navigate("/products")}
+              sx={{
+                mt: 2.4,
+                minHeight: 41,
+                px: 2,
+
+                color: "#ffffff !important",
+
+                borderRadius: "12px",
+
+                border: "1px solid rgba(255,255,255,.10)",
+
+                backgroundColor: "rgba(255,255,255,.055)",
+
+                fontSize: 11,
+                fontWeight: 900,
+                textTransform: "none",
+
+                "&:hover": {
+                  backgroundColor: "rgba(255,255,255,.10)",
+                },
+              }}
+            >
+              ← Mahsulotlarga qaytish
+            </Button>
+          </Box>
+
+          <Box
+            sx={{
+              display: "grid",
+
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2,minmax(0,1fr))",
+                lg: "repeat(4,minmax(0,1fr))",
+              },
+
+              gap: 1.3,
+            }}
+          >
+            <HeroMetric
+              label="Sotuv narxi"
+              value={formatMoney(product.sale_price)}
+              helper="Mijozga sotiladigan narx"
+              tone="green"
+            />
+
+            {canManagePrices && (
+              <HeroMetric
+                label="Xarid narxi"
+                value={formatMoney(product.purchase_price)}
+                helper="Mahsulot tannarxi"
+                tone="violet"
+              />
+            )}
+
+            <HeroMetric
+              label="Bo‘limlar"
+              value={formatNumber(priceRows.length)}
+              helper="Narx biriktirilgan bo‘limlar"
+              tone="amber"
+            />
+
+            <HeroMetric
+              label="Retsept"
+              value={`${formatNumber(recipeRows.length)} ta`}
+              helper="Biriktirilgan homashyolar"
+              tone="red"
+            />
+          </Box>
+        </Box>
+      </Box>
+
+      <Box
+        sx={{
+          mb: 2.5,
+          display: "grid",
+
+          gridTemplateColumns: {
+            xs: "1fr",
+
+            xl: "390px minmax(0,1fr)",
+          },
+
+          gap: 2,
+          alignItems: "start",
+        }}
+      >
+        <Surface sx={{ p: 2 }}>
+          <SectionHeader
+            title="Mahsulot rasmlari"
+            subtitle={`${formatNumber(images.length)} ta rasm mavjud`}
+          />
+
+          <Box
+            sx={{
+              height: {
+                xs: 285,
+                sm: 345,
+              },
+
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              overflow: "hidden",
+              borderRadius: "19px",
+
+              border: "1px solid #e7ebf0",
+
+              background:
+                "radial-gradient(circle at 100% 0%,rgba(153,27,27,.06),transparent 34%),linear-gradient(145deg,#f8fafc,#ffffff)",
+            }}
+          >
+            {activeImage ? (
+              <Box
+                component="img"
+                src={getImageUrl(activeImage)}
+                alt={product.name}
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            ) : (
+              <Avatar
+                variant="rounded"
+                sx={{
+                  width: 112,
+                  height: 112,
+                  borderRadius: "28px",
+                  color: "#ffffff",
+                  fontSize: 42,
+                  fontWeight: 950,
+
+                  background: "linear-gradient(135deg,#7f1d1d,#dc2626)",
+
+                  boxShadow: "0 18px 40px rgba(127,29,29,.20)",
+                }}
+              >
+                {getInitial(product.name)}
+              </Avatar>
             )}
           </Box>
 
-          <Box sx={{ minWidth: 0 }}>
+          {images.length ? (
             <Box
               sx={{
-                display: "flex",
-                alignItems: "center",
-                flexWrap: "wrap",
+                mt: 1.3,
+                display: "grid",
+
+                gridTemplateColumns: "repeat(4,minmax(0,1fr))",
+
                 gap: 1,
-                mb: 1.7,
               }}
             >
-              <StatusChip active={product.is_active} />
+              {images.slice(0, 8).map((image) => {
+                const selected = activeImage === image.image_url;
 
-              {product.sku && (
-                <Chip
-                  size="small"
-                  label={`SKU: ${product.sku}`}
-                  sx={{
-                    height: 27,
-                    px: 0.4,
-                    fontSize: 12,
-                    fontWeight: 900,
-                    color: "var(--aa-text)",
-                    background: "var(--aa-surface-muted)",
-                    border: "1px solid var(--aa-border)",
-                  }}
-                />
-              )}
+                return (
+                  <Button
+                    key={image.id}
+                    onClick={() => setSelectedImage(image.image_url)}
+                    sx={{
+                      height: 68,
+                      minWidth: 0,
+                      p: 0,
+                      overflow: "hidden",
+                      borderRadius: "14px",
 
-              {product.model && (
-                <Chip
-                  size="small"
-                  label={`Model: ${product.model}`}
-                  sx={{
-                    height: 27,
-                    px: 0.4,
-                    fontSize: 12,
-                    fontWeight: 900,
-                    color: "var(--aa-text)",
-                    background: "var(--aa-surface-muted)",
-                    border: "1px solid var(--aa-border)",
-                  }}
-                />
-              )}
+                      border: selected ? "2px solid #991b1b" : "1px solid #e4e9ef",
+
+                      boxShadow: selected ? "0 9px 22px rgba(153,27,27,.14)" : "none",
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={getImageUrl(image.image_url)}
+                      alt={product.name}
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </Button>
+                );
+              })}
             </Box>
-
+          ) : (
             <Box
               sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "1fr",
-                  sm: canManagePrices ? "1fr 1fr" : "1fr",
-                },
-                gap: 1.4,
-                mb: 1.8,
+                mt: 1.3,
+                p: 1.6,
+                textAlign: "center",
+                borderRadius: "15px",
+
+                border: "1px dashed #cbd5e1",
+
+                backgroundColor: "#f8fafc",
               }}
             >
-              {canManagePrices && (
-                <PriceCard
-                  label="Xarid narxi"
-                  value={formatMoney(product.purchase_price)}
-                  tone="blue"
-                />
-              )}
-
-              <PriceCard
-                label="Sotuv narxi"
-                value={formatMoney(product.sale_price)}
-                tone="green"
-              />
-            </Box>
-
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "1fr",
-                  sm: "repeat(2, 1fr)",
-                  xl: "repeat(4, 1fr)",
-                },
-                gap: 1.2,
-              }}
-            >
-              <InfoItem label="ID" value={product.id} />
-              <InfoItem label="Rang" value={product.color} />
-              <InfoItem label="Kategoriya" value={product.category_name} />
-              <InfoItem label="Birlik" value={product.unit} />
-              <InfoItem
-                label="Yaratilgan vaqt"
-                value={formatDate(product.created_at)}
-              />
-              <InfoItem
-                label="Yangilangan vaqt"
-                value={formatDate(product.updated_at)}
-              />
-            </Box>
-
-            <Box
-              sx={{
-                mt: 1.8,
-                p: 2,
-                borderRadius: "18px",
-                background: "var(--aa-surface-muted)",
-                border: "1px solid var(--aa-border)",
-              }}
-            >
-              <Typography
-                sx={{ fontSize: 14, fontWeight: 900, color: "var(--aa-text)" }}
-              >
-                Tavsif
-              </Typography>
-
               <Typography
                 sx={{
-                  mt: 0.7,
-                  fontSize: 14,
-                  fontWeight: 650,
-                  color: "var(--aa-text-secondary)",
-                  lineHeight: 1.6,
-                  wordBreak: "break-word",
+                  color: "#94a3b8",
+                  fontSize: 11,
+                  fontWeight: 750,
                 }}
               >
-                {product.description || "Tavsif kiritilmagan."}
+                Mahsulot rasmi yuklanmagan.
               </Typography>
             </Box>
-          </Box>
-        </Box>
-      </Card>
+          )}
+        </Surface>
 
-      {canManagePrices && (
-        <Card sx={{ mt: 2.5, p: { xs: 2, md: 2.5 } }}>
+        <Surface sx={{ p: 2.4 }}>
+          <SectionHeader
+            title="Mahsulot ma’lumotlari"
+            subtitle="Narx, kategoriya va tizimdagi asosiy ma’lumotlar"
+            actions={<StatusChip active={product.is_active} />}
+          />
+
           <Box
             sx={{
-              mb: 2,
-              display: "flex",
-              alignItems: { xs: "flex-start", sm: "center" },
-              justifyContent: "space-between",
-              flexDirection: { xs: "column", sm: "row" },
-              gap: 1.5,
+              display: "grid",
+
+              gridTemplateColumns: {
+                xs: "1fr",
+
+                sm: canManagePrices ? "repeat(3,minmax(0,1fr))" : "1fr",
+              },
+
+              gap: 1.3,
             }}
           >
-            <Box>
-              <Typography
-                sx={{ fontSize: 18, fontWeight: 950, color: "var(--aa-text)" }}
-              >
-                Bo'lim narxlari
-              </Typography>
+            {canManagePrices && (
+              <PricePanel
+                label="Xarid narxi"
+                value={formatMoney(product.purchase_price)}
+                helper="Mahsulot tannarxi"
+                tone="blue"
+              />
+            )}
 
-              <Typography
-                sx={{
-                  mt: 0.5,
-                  fontSize: 13.5,
-                  fontWeight: 650,
-                  color: "var(--aa-text-secondary)",
-                }}
-              >
-                Har bir bo'lim uchun bitta mahsulotga to'lanadigan ish haqi.
-              </Typography>
-            </Box>
+            <PricePanel
+              label="Sotuv narxi"
+              value={formatMoney(product.sale_price)}
+              helper="Mijozga sotish narxi"
+              tone="green"
+            />
 
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
-              <Button
-                variant="outlined"
-                onClick={openDepartmentModal}
-                sx={{
-                  minWidth: 135,
-                  height: 40,
-                  borderRadius: "13px",
-                  textTransform: "none",
-                  fontWeight: 900,
-                }}
-              >
-                Bo'lim qo'shish
-              </Button>
-
-              <Button
-                variant="contained"
-                onClick={handleSavePrices}
-                disabled={priceSaving || !priceRows.length}
-                sx={{
-                  minWidth: 165,
-                  height: 40,
-                  borderRadius: "13px",
-                  textTransform: "none",
-                  fontWeight: 950,
-                  background:
-                    "linear-gradient(135deg, var(--aa-brand-800), var(--aa-brand-600))",
-                  boxShadow: "var(--aa-shadow-sm)",
-                  "&:hover": {
-                    background:
-                      "linear-gradient(135deg, var(--aa-brand-900), var(--aa-brand-700))",
-                  },
-                }}
-              >
-                {priceSaving ? "Saqlanmoqda..." : "Narxlarni saqlash"}
-              </Button>
-            </Stack>
+            {canManagePrices && (
+              <PricePanel
+                label="Narx farqi"
+                value={formatMoney(profitAmount)}
+                helper="Sotuv va xarid narxi farqi"
+                tone={profitAmount >= 0 ? "green" : "red"}
+              />
+            )}
           </Box>
+
+          <Box
+            sx={{
+              mt: 1.6,
+              display: "grid",
+
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2,minmax(0,1fr))",
+                lg: "repeat(3,minmax(0,1fr))",
+              },
+
+              gap: 1.2,
+            }}
+          >
+            <InfoItem label="Mahsulot ID" value={`#${product.id}`} accent />
+
+            <InfoItem label="SKU" value={product.sku} />
+
+            <InfoItem label="Model" value={product.model} />
+
+            <InfoItem label="Kategoriya" value={product.category_name} />
+
+            <InfoItem label="Rang" value={product.color} />
+
+            <InfoItem label="O‘lchov birligi" value={product.unit} />
+
+            <InfoItem label="Yaratilgan" value={formatDate(product.created_at)} />
+
+            <InfoItem label="Yangilangan" value={formatDate(product.updated_at)} />
+          </Box>
+
+          <Box
+            sx={{
+              mt: 1.6,
+              p: 2,
+              borderRadius: "18px",
+
+              border: "1px solid #e7ebf0",
+
+              background:
+                "radial-gradient(circle at 100% 0%,rgba(153,27,27,.055),transparent 32%),linear-gradient(145deg,#ffffff,#f8fafc)",
+            }}
+          >
+            <Typography
+              sx={{
+                color: "#334155",
+                fontSize: 12,
+                fontWeight: 950,
+              }}
+            >
+              Mahsulot tavsifi
+            </Typography>
+
+            <Typography
+              sx={{
+                mt: 0.8,
+                color: "#64748b",
+                fontSize: 11,
+                lineHeight: 1.75,
+                wordBreak: "break-word",
+              }}
+            >
+              {product.description || "Tavsif kiritilmagan."}
+            </Typography>
+          </Box>
+        </Surface>
+      </Box>
+
+      {canManagePrices && (
+        <Surface
+          sx={{
+            mb: 2.5,
+            p: 2.4,
+          }}
+        >
+          <SectionHeader
+            title="Bo‘lim narxlari"
+            subtitle="Har bir ishlab chiqarish bo‘limi uchun bir birlik mahsulot ish haqi"
+            actions={
+              <Stack
+                direction={{
+                  xs: "column",
+                  sm: "row",
+                }}
+                spacing={1}
+              >
+                <Button variant="outlined" onClick={openDepartmentModal} sx={secondaryButtonSx}>
+                  + Bo‘lim qo‘shish
+                </Button>
+
+                <Button
+                  variant="contained"
+                  onClick={handleSavePrices}
+                  disabled={priceSaving || !priceRows.length}
+                  sx={primaryButtonSx}
+                >
+                  {priceSaving ? "Saqlanmoqda..." : "Narxlarni saqlash"}
+                </Button>
+              </Stack>
+            }
+          />
 
           {priceRows.length ? (
             <Box
               sx={{
                 display: "grid",
+
                 gridTemplateColumns: {
                   xs: "1fr",
-                  sm: "repeat(2, 1fr)",
-                  xl: "repeat(3, 1fr)",
+                  sm: "repeat(2,minmax(0,1fr))",
+                  xl: "repeat(3,minmax(0,1fr))",
                 },
+
                 gap: 1.3,
               }}
             >
-              {priceRows.map((row) => (
+              {priceRows.map((row, index) => (
                 <Box
                   key={row.department_id}
                   sx={{
-                    p: 1.6,
-                    borderRadius: "var(--aa-radius-lg)",
-                    background: "var(--aa-surface-solid)",
-                    border: "1px solid var(--aa-border)",
-                    boxShadow: "var(--aa-shadow-xs)",
+                    position: "relative",
+                    overflow: "hidden",
+                    p: 1.8,
+                    borderRadius: "18px",
+
+                    border: "1px solid #e7ebf0",
+
+                    background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+
+                    "&::after": {
+                      content: '""',
+                      position: "absolute",
+                      width: 95,
+                      height: 95,
+                      top: -55,
+                      right: -45,
+                      borderRadius: "50%",
+
+                      backgroundColor: "rgba(153,27,27,.045)",
+                    },
                   }}
                 >
-                  <Stack spacing={1.4}>
+                  <Box
+                    sx={{
+                      position: "relative",
+                      zIndex: 1,
+                      mb: 1.4,
+                      display: "flex",
+                      alignItems: "flex-start",
+
+                      justifyContent: "space-between",
+
+                      gap: 1.5,
+                    }}
+                  >
                     <Box
                       sx={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        justifyContent: "space-between",
-                        gap: 1.5,
+                        minWidth: 0,
                       }}
                     >
-                      <Box>
-                        <Typography
-                          sx={{
-                            fontSize: 15,
-                            fontWeight: 950,
-                            color: "var(--aa-text)",
-                          }}
-                        >
-                          {row.department_name}
-                        </Typography>
+                      <Typography
+                        noWrap
+                        sx={{
+                          color: "#334155",
 
-                        <Typography
-                          sx={{
-                            mt: 0.3,
-                            fontSize: 13,
-                            fontWeight: 650,
-                            color: "var(--aa-text-secondary)",
-                          }}
-                        >
-                          {row.department_code || "Kod kiritilmagan"}
-                        </Typography>
-                      </Box>
+                          fontSize: 12.5,
 
-                      <StatusChip active={row.is_active} />
+                          fontWeight: 950,
+                        }}
+                      >
+                        {index + 1}. {row.department_name}
+                      </Typography>
+
+                      <Typography
+                        noWrap
+                        sx={{
+                          mt: 0.4,
+                          color: "#94a3b8",
+
+                          fontSize: 9.5,
+                        }}
+                      >
+                        {row.department_code || "Kod kiritilmagan"}
+                      </Typography>
                     </Box>
 
-                    <TextField
-                      label="Ish haqi"
-                      type="number"
-                      size="small"
-                      value={row.price_per_unit}
-                      onChange={(event) =>
-                        handlePriceChange(row.department_id, event.target.value)
-                      }
-                      InputProps={{ inputProps: { min: 0, step: 100 } }}
-                    />
-                  </Stack>
+                    <StatusChip active={row.is_active} />
+                  </Box>
+
+                  <TextField
+                    fullWidth
+                    label="Bir birlik uchun ish haqi"
+                    type="number"
+                    size="small"
+                    value={row.price_per_unit}
+                    onChange={(event) => handlePriceChange(row.department_id, event.target.value)}
+                    inputProps={{
+                      min: 0,
+                      step: 100,
+                    }}
+                    helperText="Masalan: 5000"
+                  />
                 </Box>
               ))}
             </Box>
@@ -1035,87 +1560,60 @@ const Product = () => {
               severity="info"
               action={
                 <Button color="info" size="small" onClick={openDepartmentModal}>
-                  Bo'lim qo'shish
+                  Bo‘lim qo‘shish
                 </Button>
               }
+              sx={{
+                borderRadius: "15px",
+              }}
             >
-              Narx belgilash uchun avval ishlab chiqarish bo'limlarini yarating.
+              Narx belgilash uchun avval ishlab chiqarish bo‘limlarini yarating.
             </Alert>
           )}
-        </Card>
+        </Surface>
       )}
 
       {canManagePrices && (
-        <Card sx={{ mt: 2.5, p: { xs: 2, md: 2.5 } }}>
-          <Box
+        <Surface sx={{ p: 2.4 }}>
+          <SectionHeader
+            title="Ishlab chiqarish retsepti"
+            subtitle="Bir par mahsulot uchun sarflanadigan homashyolar va yakunlovchi bo‘lim"
+            actions={
+              <Button
+                variant="contained"
+                onClick={handleSaveRecipe}
+                disabled={recipeSaving}
+                sx={primaryButtonSx}
+              >
+                {recipeSaving ? "Saqlanmoqda..." : "Retseptni saqlash"}
+              </Button>
+            }
+          />
+
+          <Alert
+            severity="info"
             sx={{
-              display: "flex",
-              alignItems: { xs: "flex-start", md: "center" },
-              justifyContent: "space-between",
-              flexDirection: { xs: "column", md: "row" },
-              gap: 1.5,
               mb: 2,
+              borderRadius: "15px",
+
+              border: "1px solid rgba(37,99,235,.14)",
             }}
           >
-            <Box>
-              <Typography
-                sx={{ fontSize: 18, fontWeight: 950, color: "var(--aa-text)" }}
-              >
-                Ishlab chiqarish retsepti
-              </Typography>
-              <Typography
-                sx={{
-                  mt: 0.5,
-                  fontSize: 13.5,
-                  fontWeight: 650,
-                  color: "var(--aa-text-secondary)",
-                }}
-              >
-                1 par mahsulot uchun ketadigan homashyolarni va yakunlovchi
-                bo'limni belgilang.
-              </Typography>
-            </Box>
-
-            <Button
-              variant="contained"
-              onClick={handleSaveRecipe}
-              disabled={recipeSaving}
-              sx={{
-                minWidth: 160,
-                height: 40,
-                borderRadius: "13px",
-                textTransform: "none",
-                fontWeight: 950,
-                background:
-                  "linear-gradient(135deg, var(--aa-brand-800), var(--aa-brand-600))",
-                boxShadow: "var(--aa-shadow-sm)",
-                "&:hover": {
-                  background:
-                    "linear-gradient(135deg, var(--aa-brand-900), var(--aa-brand-700))",
-                },
-              }}
-            >
-              {recipeSaving ? "Saqlanmoqda..." : "Retseptni saqlash"}
-            </Button>
-          </Box>
-
-          <Alert severity="info" sx={{ mb: 2, borderRadius: "14px" }}>
-            Ishchi tanlangan yakunlovchi bo'limda ish topshirganda tayyor
-            mahsulot omboriga par qo'shiladi va retseptdagi homashyolar
-            avtomatik kamayadi. Boshqa bo'limlardagi ishlar ombor qoldig'ini
-            o'zgartirmaydi.
+            Ishchi yakunlovchi bo‘limda ish topshirganda tayyor mahsulot omboriga qo‘shiladi va
+            retseptdagi homashyolar avtomatik kamayadi.
           </Alert>
 
           <TextField
             select
             fullWidth
-            label="Yakunlovchi bo'lim"
+            label="Yakunlovchi bo‘lim"
             value={completionDepartmentId}
             onChange={(event) => setCompletionDepartmentId(event.target.value)}
-            helperText="Mahsulot to'liq tayyor bo'lib omborga topshiriladigan bo'lim."
+            helperText="Mahsulot to‘liq tayyor bo‘lib omborga topshiriladigan bo‘lim."
             sx={{ mb: 2 }}
           >
-            <MenuItem value="">Avtomatik ombor hisobi o'chirilgan</MenuItem>
+            <MenuItem value="">Avtomatik ombor hisobi o‘chirilgan</MenuItem>
+
             {priceRows.map((row) => (
               <MenuItem key={row.department_id} value={row.department_id}>
                 {row.department_name}
@@ -1126,8 +1624,7 @@ const Product = () => {
           <Stack spacing={1.3}>
             {recipeRows.map((row, index) => {
               const selectedMaterial = rawMaterials.find(
-                (material) =>
-                  Number(material.id) === Number(row.raw_material_id),
+                (material) => Number(material.id) === Number(row.raw_material_id),
               );
 
               return (
@@ -1135,15 +1632,20 @@ const Product = () => {
                   key={row.row_id}
                   sx={{
                     display: "grid",
+
                     gridTemplateColumns: {
                       xs: "1fr",
-                      md: "minmax(220px, 1fr) 220px auto",
+
+                      md: "minmax(220px,1fr) 220px auto",
                     },
+
                     gap: 1.2,
                     p: 1.5,
-                    borderRadius: "var(--aa-radius-lg)",
-                    border: "1px solid var(--aa-border)",
-                    background: "var(--aa-surface-solid)",
+                    borderRadius: "17px",
+
+                    border: "1px solid #e7ebf0",
+
+                    background: "linear-gradient(145deg,#ffffff,#f8fafc)",
                   }}
                 >
                   <TextField
@@ -1152,20 +1654,18 @@ const Product = () => {
                     label={`Homashyo ${index + 1}`}
                     value={row.raw_material_id}
                     onChange={(event) =>
-                      updateRecipeRow(
-                        row.row_id,
-                        "raw_material_id",
-                        event.target.value,
-                      )
+                      updateRecipeRow(row.row_id, "raw_material_id", event.target.value)
                     }
                   >
                     <MenuItem value="">Tanlang</MenuItem>
+
                     {rawMaterials.map((material) => {
                       const selectedElsewhere = recipeRows.some(
                         (other) =>
                           other.row_id !== row.row_id &&
                           Number(other.raw_material_id) === Number(material.id),
                       );
+
                       return (
                         <MenuItem
                           key={material.id}
@@ -1184,13 +1684,12 @@ const Product = () => {
                     label={`1 par uchun (${selectedMaterial?.unit || "miqdor"})`}
                     value={row.quantity_per_pair}
                     onChange={(event) =>
-                      updateRecipeRow(
-                        row.row_id,
-                        "quantity_per_pair",
-                        event.target.value,
-                      )
+                      updateRecipeRow(row.row_id, "quantity_per_pair", event.target.value)
                     }
-                    inputProps={{ min: 0.001, step: 0.001 }}
+                    inputProps={{
+                      min: 0.001,
+                      step: 0.001,
+                    }}
                   />
 
                   <Button
@@ -1200,39 +1699,72 @@ const Product = () => {
                     sx={{
                       minWidth: 96,
                       borderRadius: "11px",
+
                       textTransform: "none",
+
                       fontWeight: 850,
                     }}
                   >
-                    O'chirish
+                    O‘chirish
                   </Button>
                 </Box>
               );
             })}
           </Stack>
 
-          <Button
-            variant="outlined"
-            onClick={addRecipeRow}
-            disabled={
-              !rawMaterials.length || recipeRows.length >= rawMaterials.length
-            }
+          <Box
             sx={{
               mt: 1.5,
-              borderRadius: "12px",
-              textTransform: "none",
-              fontWeight: 900,
+              display: "flex",
+
+              alignItems: {
+                xs: "stretch",
+                sm: "center",
+              },
+
+              justifyContent: "space-between",
+
+              flexDirection: {
+                xs: "column",
+                sm: "row",
+              },
+
+              gap: 1.2,
             }}
           >
-            Homashyo qo'shish
-          </Button>
+            <Button
+              variant="outlined"
+              onClick={addRecipeRow}
+              disabled={!rawMaterials.length || recipeRows.length >= rawMaterials.length}
+              sx={secondaryButtonSx}
+            >
+              + Homashyo qo‘shish
+            </Button>
+
+            <Typography
+              sx={{
+                color: "#94a3b8",
+                fontSize: 10,
+                fontWeight: 750,
+              }}
+            >
+              {formatNumber(recipeRows.length)} / {formatNumber(rawMaterials.length)} ta homashyo
+              tanlangan
+            </Typography>
+          </Box>
 
           {!rawMaterials.length && (
-            <Alert severity="warning" sx={{ mt: 1.5, borderRadius: "14px" }}>
+            <Alert
+              severity="warning"
+              sx={{
+                mt: 1.5,
+                borderRadius: "15px",
+              }}
+            >
               Retsept tuzish uchun avval homashyo yarating.
             </Alert>
           )}
-        </Card>
+        </Surface>
       )}
 
       <Dialog
@@ -1242,30 +1774,69 @@ const Product = () => {
         maxWidth="sm"
         PaperProps={{
           sx: {
-            borderRadius: "var(--aa-radius-xl)",
-            border: "1px solid var(--aa-border)",
-            boxShadow: "var(--aa-shadow-lg)",
             overflow: "hidden",
+            borderRadius: "23px",
+
+            border: "1px solid rgba(148,163,184,.20)",
+
+            boxShadow: "0 30px 80px rgba(15,23,42,.22)",
           },
         }}
       >
         <DialogTitle
+          className="product-dialog-title"
           sx={{
             px: 3,
-            py: 2.2,
-            fontWeight: 950,
-            color: "var(--aa-text)",
-            borderBottom: "1px solid var(--aa-border)",
+            py: 2.35,
+
+            color: "#ffffff !important",
+
+            backgroundColor: "#0d1117 !important",
+
+            backgroundImage:
+              "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
           }}
         >
-          Bo'lim qo'shish
+          <Typography
+            sx={{
+              color: "#ffffff !important",
+
+              fontSize: 19,
+              fontWeight: 950,
+            }}
+          >
+            Yangi bo‘lim qo‘shish
+          </Typography>
+
+          <Typography
+            sx={{
+              mt: 0.5,
+
+              color: "rgba(255,255,255,.43) !important",
+
+              fontSize: 10.5,
+            }}
+          >
+            Ishlab chiqarish bo‘limi ma’lumotlarini kiriting
+          </Typography>
         </DialogTitle>
-        <DialogContent sx={{ px: 3, py: 2.5 }}>
-          <Stack spacing={2} sx={{ pt: 1 }}>
+
+        <DialogContent
+          sx={{
+            px: 3,
+            py: 2.7,
+          }}
+        >
+          <Stack
+            spacing={2}
+            sx={{
+              pt: 0.5,
+            }}
+          >
             <TextField
               autoFocus
               required
-              label="Bo'lim nomi"
+              label="Bo‘lim nomi"
               value={departmentForm.name}
               onChange={handleDepartmentChange("name")}
               placeholder="Masalan: Tikuv"
@@ -1273,7 +1844,7 @@ const Product = () => {
 
             <TextField
               required
-              label="Bo'lim kodi"
+              label="Bo‘lim kodi"
               value={departmentForm.code}
               onChange={handleDepartmentChange("code")}
               helperText="Faqat lotin harflari, raqam va _ belgisi. Masalan: tikuv"
@@ -1289,35 +1860,127 @@ const Product = () => {
             />
           </Stack>
         </DialogContent>
+
         <DialogActions
           sx={{
             px: 3,
-            py: 2,
-            borderTop: "1px solid var(--aa-border)",
-            background: "var(--aa-surface-muted)",
+            py: 2.1,
+
+            borderTop: "1px solid #edf0f3",
+
+            backgroundColor: "#fafbfc",
           }}
         >
-          <Button onClick={closeDepartmentModal} disabled={departmentSaving}>
+          <Button
+            onClick={closeDepartmentModal}
+            disabled={departmentSaving}
+            sx={{
+              color: "#64748b",
+              fontWeight: 850,
+              textTransform: "none",
+            }}
+          >
             Bekor qilish
           </Button>
+
           <Button
             variant="contained"
             onClick={handleCreateDepartment}
             disabled={departmentSaving}
-            sx={{
-              borderRadius: "12px",
-              textTransform: "none",
-              fontWeight: 900,
-              background:
-                "linear-gradient(135deg, var(--aa-brand-800), var(--aa-brand-600))",
-            }}
+            sx={primaryButtonSx}
           >
-            {departmentSaving ? "Saqlanmoqda..." : "Saqlash"}
+            {departmentSaving ? "Saqlanmoqda..." : "Bo‘limni saqlash"}
           </Button>
         </DialogActions>
       </Dialog>
     </Box>
   );
 };
+
+const darkChipSx = {
+  height: 27,
+
+  color: "rgba(255,255,255,.66) !important",
+
+  fontSize: 9.5,
+  fontWeight: 900,
+
+  border: "1px solid rgba(255,255,255,.09)",
+
+  backgroundColor: "rgba(255,255,255,.055) !important",
+};
+
+const secondaryButtonSx = {
+  minHeight: 40,
+  px: 1.8,
+  color: "#64748b",
+  borderRadius: "12px",
+  borderColor: "#dce3ea",
+  fontSize: 10.5,
+  fontWeight: 900,
+  textTransform: "none",
+  backgroundColor: "#ffffff",
+
+  "&:hover": {
+    color: "#991b1b",
+
+    borderColor: "rgba(153,27,27,.22)",
+
+    backgroundColor: "rgba(153,27,27,.04)",
+  },
+};
+
+const primaryButtonSx = {
+  minHeight: 40,
+  px: 2,
+  color: "#ffffff",
+  borderRadius: "12px",
+  fontSize: 10.5,
+  fontWeight: 900,
+  textTransform: "none",
+
+  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+
+  boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+
+  "&:hover": {
+    background: "linear-gradient(135deg,#681818,#991b1b)",
+  },
+};
+
+const productPageStyles = `
+  .crm-page .product-profile-hero {
+    color: #ffffff !important;
+    background-color: #0d1117 !important;
+    background-image:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(220,38,38,.34),
+        transparent 30%
+      ),
+      linear-gradient(
+        145deg,
+        #0d1117,
+        #171117 52%,
+        #3a121a
+      ) !important;
+  }
+
+  .product-dialog-title {
+    color: #ffffff !important;
+    background-color: #0d1117 !important;
+    background-image:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(220,38,38,.28),
+        transparent 36%
+      ),
+      linear-gradient(
+        135deg,
+        #11151c,
+        #321319
+      ) !important;
+  }
+`;
 
 export default Product;
