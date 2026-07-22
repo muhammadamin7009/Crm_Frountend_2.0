@@ -19,6 +19,9 @@ import {
   Typography,
 } from "@mui/material";
 
+import SharedHeroMetric from "../../Components/UI/HeroMetric";
+import ActiveStatusChip from "../../Components/UI/ActiveStatusChip";
+
 import {
   getProduct,
   getProductRecipe,
@@ -150,115 +153,9 @@ const Surface = ({ children, sx = {} }) => (
   </Paper>
 );
 
-const HeroMetric = ({ label, value, helper, tone = "red" }) => {
-  const tones = {
-    red: {
-      color: "#fecdd3",
-      background: "rgba(220,38,38,.15)",
-      border: "rgba(248,113,113,.15)",
-    },
-
-    green: {
-      color: "#bbf7d0",
-      background: "rgba(34,197,94,.14)",
-      border: "rgba(74,222,128,.15)",
-    },
-
-    amber: {
-      color: "#fde68a",
-      background: "rgba(245,158,11,.15)",
-      border: "rgba(251,191,36,.15)",
-    },
-
-    violet: {
-      color: "#ddd6fe",
-      background: "rgba(139,92,246,.16)",
-      border: "rgba(167,139,250,.15)",
-    },
-  };
-
-  const current = tones[tone] || tones.red;
-
-  return (
-    <Box
-      sx={{
-        minWidth: 0,
-        minHeight: 126,
-        p: 1.8,
-        borderRadius: "18px",
-
-        border: "1px solid rgba(255,255,255,.075)",
-
-        background: "linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025))",
-
-        backdropFilter: "blur(16px)",
-      }}
-    >
-      <Box
-        sx={{
-          width: 34,
-          height: 34,
-          display: "grid",
-          placeItems: "center",
-          borderRadius: "11px",
-          color: current.color,
-
-          backgroundColor: current.background,
-
-          border: `1px solid ${current.border}`,
-
-          fontSize: 13,
-          fontWeight: 950,
-        }}
-      >
-        {label.charAt(0)}
-      </Box>
-
-      <Typography
-        sx={{
-          mt: 1.4,
-
-          color: "rgba(255,255,255,.44) !important",
-
-          fontSize: 9.5,
-          fontWeight: 750,
-        }}
-      >
-        {label}
-      </Typography>
-
-      <Typography
-        noWrap
-        sx={{
-          mt: 0.6,
-
-          color: "#ffffff !important",
-
-          fontSize: 18,
-          lineHeight: 1.2,
-          fontWeight: 950,
-          letterSpacing: "-.035em",
-        }}
-      >
-        {value}
-      </Typography>
-
-      <Typography
-        noWrap
-        sx={{
-          mt: 0.55,
-
-          color: "rgba(255,255,255,.28) !important",
-
-          fontSize: 9,
-        }}
-      >
-        {helper}
-      </Typography>
-    </Box>
-  );
-};
-
+const HeroMetric = (props) => (
+  <SharedHeroMetric {...props} labelSx={{ mt: 1.4 }} />
+);
 const InfoItem = ({ label, value, accent = false }) => (
   <Box
     sx={{
@@ -372,44 +269,7 @@ const PricePanel = ({ label, value, tone = "green", helper }) => {
   );
 };
 
-const StatusChip = ({ active, dark = false }) => (
-  <Chip
-    size="small"
-    label={active ? "Faol" : "Nofaol"}
-    sx={{
-      height: 27,
-      px: 0.3,
-
-      color: dark
-        ? active
-          ? "#bbf7d0 !important"
-          : "#fecaca !important"
-        : active
-          ? "#15803d"
-          : "#b91c1c",
-
-      fontSize: 9.5,
-      fontWeight: 900,
-
-      border: dark
-        ? active
-          ? "1px solid rgba(74,222,128,.16)"
-          : "1px solid rgba(248,113,113,.16)"
-        : active
-          ? "1px solid rgba(34,197,94,.18)"
-          : "1px solid rgba(220,38,38,.18)",
-
-      backgroundColor: dark
-        ? active
-          ? "rgba(34,197,94,.13) !important"
-          : "rgba(220,38,38,.13) !important"
-        : active
-          ? "rgba(34,197,94,.09)"
-          : "rgba(220,38,38,.08)",
-    }}
-  />
-);
-
+const StatusChip = (props) => <ActiveStatusChip {...props} height={27} px={0.3} />;
 const SectionHeader = ({ title, subtitle, actions }) => (
   <Box
     sx={{

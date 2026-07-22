@@ -65,20 +65,6 @@ const fieldSx = {
   },
 };
 
-const readonlyFieldSx = {
-  ...fieldSx,
-
-  "& .MuiOutlinedInput-root": {
-    ...fieldSx["& .MuiOutlinedInput-root"],
-    background: "linear-gradient(135deg,#f8fafc,#ffffff)",
-  },
-
-  "& .MuiOutlinedInput-input": {
-    color: "#172033",
-    fontWeight: 800,
-  },
-};
-
 const primaryButtonSx = {
   minHeight: 58,
   borderRadius: "15px",
@@ -124,7 +110,7 @@ const Login = () => {
   const [code, setCode] = useState("");
   const [setupResult, setSetupResult] = useState(null);
   const [branding, setBranding] = useState(null);
-  const [brandingLoading, setBrandingLoading] = useState(false);
+  const [, setBrandingLoading] = useState(false);
 
   const {
     register,

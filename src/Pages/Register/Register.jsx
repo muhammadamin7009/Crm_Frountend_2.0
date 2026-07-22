@@ -56,20 +56,6 @@ const fieldSx = {
   },
 };
 
-const readonlyFieldSx = {
-  ...fieldSx,
-
-  "& .MuiOutlinedInput-root": {
-    ...fieldSx["& .MuiOutlinedInput-root"],
-    background: "linear-gradient(135deg,#f8fafc 0%,#ffffff 100%)",
-  },
-
-  "& .MuiOutlinedInput-input": {
-    color: "#172033",
-    fontWeight: 800,
-  },
-};
-
 const primaryButtonSx = {
   minHeight: 58,
   borderRadius: "15px",
@@ -187,7 +173,7 @@ const Register = () => {
 
   const [loading, setLoading] = useState(false);
   const [branding, setBranding] = useState(null);
-  const [brandingLoading, setBrandingLoading] = useState(false);
+  const [, setBrandingLoading] = useState(false);
 
   const {
     register,
@@ -252,7 +238,7 @@ const Register = () => {
     `${String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "")}/api/${slug}`;
 
   const onSubmit = async (submittedValues) => {
-    const { company_slug, confirm_password, ...values } = submittedValues;
+    const { company_slug, confirm_password: _confirmPassword, ...values } = submittedValues;
 
     setLoading(true);
 

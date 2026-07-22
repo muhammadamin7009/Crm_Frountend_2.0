@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  Avatar,
   Box,
-  Button,
   Chip,
   CircularProgress,
   Paper,
@@ -16,12 +14,8 @@ import {
 } from "@mui/material";
 import { toast } from "react-toastify";
 import { useAuth } from "../../Context/AuthContext";
-import { getUsers } from "../../api/getUsers";
-import { getProducts } from "../../api/products";
 import { getWorkerOutputs, getWorkerOutputsSummary } from "../../api/workerOutputs";
 import { getWorkerBalance } from "../../api/workerPayments";
-import { getClientBalance, getClientSales, getClientSalesSummary } from "../../api/clientSales";
-import { getMaterialPurchases, getSupplierBalance } from "../../api/materialPurchases";
 import AdminOverview from "./AdminOverview";
 import ClientDashboard from "./ClientDashboard";
 import { hasPermission } from "../../utils/permissions";
@@ -78,12 +72,6 @@ const StatCard = ({ label, value, helper }) => (
       </Typography>
     )}
   </Paper>
-);
-
-const EmptyState = ({ text }) => (
-  <Box className="flex min-h-40 items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50">
-    <Typography className="text-slate-500">{text}</Typography>
-  </Box>
 );
 
 const workerCardTones = {

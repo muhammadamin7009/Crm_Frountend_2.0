@@ -6,12 +6,7 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   MenuItem,
-  Paper,
   Stack,
   Table,
   TableBody,
@@ -22,6 +17,11 @@ import {
   Typography,
 } from "@mui/material";
 
+import SharedHeroMetric from "../../Components/UI/HeroMetric";
+import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
+import BalanceBox from "../../Components/UI/BalanceBox";
+
+import Card from "../../Components/UI/AppCard";
 import { useAuth } from "../../Context/AuthContext";
 import CrmPagination from "../../Components/Common/CrmPagination";
 import { hasPermission } from "../../utils/permissions";
@@ -112,78 +112,9 @@ const initial = (value) =>
     .slice(0, 1)
     .toUpperCase();
 
-const Card = ({ children, sx = {} }) => (
-  <Paper
-    elevation={0}
-    sx={{
-      overflow: "hidden",
-      borderRadius: "22px",
-      border: "1px solid #e4e9ef",
-      backgroundColor: "#fff",
-      boxShadow: "0 14px 40px rgba(15,23,42,.045)",
-      ...sx,
-    }}
-  >
-    {children}
-  </Paper>
+const HeroMetric = (props) => (
+  <SharedHeroMetric {...props} valueSx={{ fontSize: 17, color: "#fff !important" }} />
 );
-
-const HeroMetric = ({ label, value, helper, tone = "red" }) => {
-  const tones = {
-    red: ["#fecdd3", "rgba(220,38,38,.15)", "rgba(248,113,113,.15)"],
-    green: ["#bbf7d0", "rgba(34,197,94,.14)", "rgba(74,222,128,.15)"],
-    blue: ["#bfdbfe", "rgba(37,99,235,.15)", "rgba(96,165,250,.15)"],
-    amber: ["#fde68a", "rgba(245,158,11,.15)", "rgba(251,191,36,.15)"],
-    gray: ["#e2e8f0", "rgba(148,163,184,.14)", "rgba(203,213,225,.13)"],
-  };
-
-  const current = tones[tone] || tones.red;
-
-  return (
-    <Box
-      sx={{
-        minWidth: 0,
-        minHeight: 126,
-        p: 1.8,
-        borderRadius: "18px",
-
-        border: "1px solid rgba(255,255,255,.075)",
-
-        background: "linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025))",
-
-        backdropFilter: "blur(16px)",
-      }}
-    >
-      <Box
-        sx={{
-          width: 34,
-          height: 34,
-          display: "grid",
-          placeItems: "center",
-          borderRadius: "11px",
-          color: current[0],
-          backgroundColor: current[1],
-          border: `1px solid ${current[2]}`,
-          fontSize: 13,
-          fontWeight: 950,
-        }}
-      >
-        {label.charAt(0)}
-      </Box>
-
-      <Typography sx={heroLabelSx}>{label}</Typography>
-
-      <Typography noWrap sx={heroValueSx}>
-        {value}
-      </Typography>
-
-      <Typography noWrap sx={heroHelperSx}>
-        {helper}
-      </Typography>
-    </Box>
-  );
-};
-
 const PaymentTypeChip = ({ type }) => {
   const styles = {
     salary: ["#15803d", "rgba(34,197,94,.10)", "rgba(34,197,94,.20)"],
@@ -211,118 +142,8 @@ const PaymentTypeChip = ({ type }) => {
   );
 };
 
-const BalanceBox = ({ label, value, tone = "default" }) => {
-  const tones = {
-    default: ["#334155", "#fff", "#e7ebf0"],
 
-    green: ["#15803d", "rgba(34,197,94,.07)", "rgba(34,197,94,.17)"],
-
-    red: ["#991b1b", "rgba(153,27,27,.07)", "rgba(153,27,27,.16)"],
-
-    blue: ["#1d4ed8", "rgba(37,99,235,.07)", "rgba(37,99,235,.17)"],
-
-    amber: ["#b45309", "rgba(245,158,11,.09)", "rgba(245,158,11,.19)"],
-  };
-
-  const current = tones[tone] || tones.default;
-
-  return (
-    <Box
-      sx={{
-        minWidth: 0,
-        p: 1.5,
-        borderRadius: "15px",
-        backgroundColor: current[1],
-        border: `1px solid ${current[2]}`,
-      }}
-    >
-      <Typography
-        sx={{
-          color: "#94a3b8",
-          fontSize: 9.5,
-          fontWeight: 800,
-        }}
-      >
-        {label}
-      </Typography>
-
-      <Typography
-        noWrap
-        sx={{
-          mt: 0.55,
-          color: current[0],
-          fontSize: 13,
-          fontWeight: 950,
-        }}
-      >
-        {value}
-      </Typography>
-    </Box>
-  );
-};
-
-const PremiumDialog = ({
-  open,
-  onClose,
-  title,
-  subtitle = "Oylik va avans ma’lumotlarini boshqarish",
-  children,
-  actions,
-  maxWidth = "sm",
-}) => (
-  <Dialog
-    open={open}
-    onClose={onClose}
-    fullWidth
-    maxWidth={maxWidth}
-    PaperProps={{
-      sx: {
-        overflow: "hidden",
-        borderRadius: "23px",
-
-        border: "1px solid rgba(148,163,184,.20)",
-
-        boxShadow: "0 30px 80px rgba(15,23,42,.22)",
-      },
-    }}
-  >
-    <DialogTitle className="worker-payments-dialog-title" sx={dialogTitleSx}>
-      <Typography
-        sx={{
-          color: "#fff !important",
-          fontSize: 19,
-          fontWeight: 950,
-        }}
-      >
-        {title}
-      </Typography>
-
-      <Typography
-        sx={{
-          mt: 0.5,
-
-          color: "rgba(255,255,255,.43) !important",
-
-          fontSize: 10.5,
-        }}
-      >
-        {subtitle}
-      </Typography>
-    </DialogTitle>
-
-    <DialogContent
-      sx={{
-        px: 3,
-        py: 2.7,
-      }}
-    >
-      {children}
-    </DialogContent>
-
-    {actions && <DialogActions sx={dialogActionsSx}>{actions}</DialogActions>}
-  </Dialog>
-);
-
+const PremiumDialog = (props) => <SharedPremiumDialog subtitle="Oylik va avans maвЂ™lumotlarini boshqarish" titleClassName="worker-payments-dialog-title" {...props} />;
 const WorkerPayments = () => {
   const auth = useAuth();
 
@@ -2061,31 +1882,6 @@ const WorkerPayments = () => {
   );
 };
 
-const heroLabelSx = {
-  mt: 1.35,
-
-  color: "rgba(255,255,255,.44) !important",
-
-  fontSize: 9.5,
-  fontWeight: 750,
-};
-
-const heroValueSx = {
-  mt: 0.6,
-  color: "#fff !important",
-  fontSize: 17,
-  lineHeight: 1.2,
-  fontWeight: 950,
-  letterSpacing: "-.035em",
-};
-
-const heroHelperSx = {
-  mt: 0.55,
-
-  color: "rgba(255,255,255,.28) !important",
-
-  fontSize: 9,
-};
 
 const eyebrowSx = {
   color: "#fecdd3 !important",
@@ -2286,26 +2082,7 @@ const deleteButtonSx = {
   textTransform: "none",
 };
 
-const dialogActionsSx = {
-  px: 3,
-  py: 2.1,
 
-  borderTop: "1px solid #edf0f3",
-
-  backgroundColor: "#fafbfc",
-};
-
-const dialogTitleSx = {
-  px: 3,
-  py: 2.35,
-
-  color: "#fff !important",
-
-  backgroundColor: "#0d1117 !important",
-
-  backgroundImage:
-    "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
-};
 
 const tableSx = {
   minWidth: 1120,

@@ -8,13 +8,8 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormControlLabel,
   MenuItem,
-  Paper,
   Stack,
   Switch,
   Tab,
@@ -28,6 +23,11 @@ import {
   Typography,
 } from "@mui/material";
 
+import SharedHeroMetric from "../../Components/UI/HeroMetric";
+import ActiveStatusChip from "../../Components/UI/ActiveStatusChip";
+import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
+
+import Card from "../../Components/UI/AppCard";
 import { useAuth } from "../../Context/AuthContext";
 import CrmPagination from "../../Components/Common/CrmPagination";
 import { hasPermission } from "../../utils/permissions";
@@ -110,228 +110,11 @@ const getInitial = (value) =>
     .slice(0, 1)
     .toUpperCase();
 
-const Card = ({ children, sx = {} }) => (
-  <Paper
-    elevation={0}
-    sx={{
-      overflow: "hidden",
-      borderRadius: "22px",
-      border: "1px solid #e4e9ef",
-      backgroundColor: "#ffffff",
-      boxShadow: "0 14px 40px rgba(15,23,42,.045)",
-      ...sx,
-    }}
-  >
-    {children}
-  </Paper>
+const HeroMetric = (props) => (
+  <SharedHeroMetric {...props} labelSx={{ mt: 1.4 }} />
 );
-
-const HeroMetric = ({ label, value, helper, tone = "red" }) => {
-  const tones = {
-    red: {
-      color: "#fecdd3",
-      background: "rgba(220,38,38,.15)",
-      border: "rgba(248,113,113,.15)",
-    },
-
-    green: {
-      color: "#bbf7d0",
-      background: "rgba(34,197,94,.14)",
-      border: "rgba(74,222,128,.15)",
-    },
-
-    amber: {
-      color: "#fde68a",
-      background: "rgba(245,158,11,.15)",
-      border: "rgba(251,191,36,.15)",
-    },
-
-    blue: {
-      color: "#bfdbfe",
-      background: "rgba(37,99,235,.15)",
-      border: "rgba(96,165,250,.15)",
-    },
-  };
-
-  const current = tones[tone] || tones.red;
-
-  return (
-    <Box
-      sx={{
-        minWidth: 0,
-        minHeight: 126,
-        p: 1.8,
-        borderRadius: "18px",
-        border: "1px solid rgba(255,255,255,.075)",
-        background: "linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025))",
-        backdropFilter: "blur(16px)",
-      }}
-    >
-      <Box
-        sx={{
-          width: 34,
-          height: 34,
-          display: "grid",
-          placeItems: "center",
-          borderRadius: "11px",
-          color: current.color,
-          backgroundColor: current.background,
-          border: `1px solid ${current.border}`,
-          fontSize: 13,
-          fontWeight: 950,
-        }}
-      >
-        {label.charAt(0)}
-      </Box>
-
-      <Typography
-        sx={{
-          mt: 1.4,
-          color: "rgba(255,255,255,.44) !important",
-          fontSize: 9.5,
-          fontWeight: 750,
-        }}
-      >
-        {label}
-      </Typography>
-
-      <Typography
-        noWrap
-        sx={{
-          mt: 0.6,
-          color: "#ffffff !important",
-          fontSize: 18,
-          lineHeight: 1.2,
-          fontWeight: 950,
-          letterSpacing: "-.035em",
-        }}
-      >
-        {value}
-      </Typography>
-
-      <Typography
-        noWrap
-        sx={{
-          mt: 0.55,
-          color: "rgba(255,255,255,.28) !important",
-          fontSize: 9,
-        }}
-      >
-        {helper}
-      </Typography>
-    </Box>
-  );
-};
-
-const StatusChip = ({ active, dark = false }) => (
-  <Chip
-    size="small"
-    label={active ? "Faol" : "Nofaol"}
-    sx={{
-      height: 26,
-      px: 0.35,
-      fontSize: 9.5,
-      fontWeight: 900,
-
-      color: dark
-        ? active
-          ? "#bbf7d0 !important"
-          : "#fecaca !important"
-        : active
-          ? "#15803d"
-          : "#b91c1c",
-
-      backgroundColor: dark
-        ? active
-          ? "rgba(34,197,94,.13) !important"
-          : "rgba(220,38,38,.13) !important"
-        : active
-          ? "rgba(34,197,94,.09)"
-          : "rgba(220,38,38,.08)",
-
-      border: dark
-        ? active
-          ? "1px solid rgba(74,222,128,.16)"
-          : "1px solid rgba(248,113,113,.16)"
-        : active
-          ? "1px solid rgba(34,197,94,.18)"
-          : "1px solid rgba(220,38,38,.18)",
-    }}
-  />
-);
-
-const PremiumDialog = ({
-  open,
-  onClose,
-  title,
-  subtitle = "Mahsulot ma’lumotlarini boshqarish",
-  children,
-  actions,
-  maxWidth = "md",
-}) => (
-  <Dialog
-    open={open}
-    onClose={onClose}
-    fullWidth
-    maxWidth={maxWidth}
-    PaperProps={{
-      sx: {
-        overflow: "hidden",
-        borderRadius: "23px",
-        border: "1px solid rgba(148,163,184,.20)",
-        boxShadow: "0 30px 80px rgba(15,23,42,.22)",
-      },
-    }}
-  >
-    <DialogTitle
-      className="products-dialog-title"
-      sx={{
-        px: 3,
-        py: 2.35,
-        color: "#ffffff !important",
-        backgroundColor: "#0d1117 !important",
-        backgroundImage:
-          "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
-      }}
-    >
-      <Typography
-        sx={{
-          color: "#ffffff !important",
-          fontSize: 19,
-          fontWeight: 950,
-        }}
-      >
-        {title}
-      </Typography>
-
-      <Typography
-        sx={{
-          mt: 0.5,
-          color: "rgba(255,255,255,.43) !important",
-          fontSize: 10.5,
-        }}
-      >
-        {subtitle}
-      </Typography>
-    </DialogTitle>
-
-    <DialogContent sx={{ px: 3, py: 2.7 }}>{children}</DialogContent>
-
-    {actions && (
-      <DialogActions
-        sx={{
-          px: 3,
-          py: 2.1,
-          borderTop: "1px solid #edf0f3",
-          backgroundColor: "#fafbfc",
-        }}
-      >
-        {actions}
-      </DialogActions>
-    )}
-  </Dialog>
-);
-
+const StatusChip = (props) => <ActiveStatusChip {...props} />;
+const PremiumDialog = (props) => <SharedPremiumDialog maxWidth="md" subtitle="Mahsulot maвЂ™lumotlarini boshqarish" titleClassName="products-dialog-title" {...props} />;
 const Products = () => {
   const navigate = useNavigate();
 

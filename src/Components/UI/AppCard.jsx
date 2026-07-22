@@ -5,10 +5,11 @@ const AppCard = ({ children, sx, ...props }) => (
     elevation={0}
     {...props}
     sx={{
-      border: "1px solid var(--aa-border)",
-      borderRadius: "var(--aa-radius-xl)",
-      background: "var(--aa-surface)",
-      boxShadow: "var(--aa-shadow-sm)",
+      overflow: "hidden",
+      borderRadius: "22px",
+      border: "1px solid #e4e9ef",
+      backgroundColor: "#ffffff",
+      boxShadow: "0 14px 40px rgba(15,23,42,.045)",
       ...sx,
     }}
   >

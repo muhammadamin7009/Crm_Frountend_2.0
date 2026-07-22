@@ -6,10 +6,6 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   MenuItem,
   Paper,
   Stack,
@@ -21,6 +17,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+
+import SharedHeroMetric from "../../Components/UI/HeroMetric";
+import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
+import SharedBalanceBox from "../../Components/UI/BalanceBox";
 
 import { useAuth } from "../../Context/AuthContext";
 import CrmPagination from "../../Components/Common/CrmPagination";
@@ -114,231 +114,14 @@ const Card = ({ children, sx = {} }) => (
   </Paper>
 );
 
-const MiniStat = ({ label, value, tone = "default", helper }) => {
-  const tones = {
-    default: {
-      color: "var(--aa-text)",
-      bg: "var(--aa-surface-solid)",
-      border: "var(--aa-border)",
-    },
-
-    blue: {
-      color: "var(--aa-info)",
-      bg: "rgba(24,119,210,.07)",
-      border: "rgba(24,119,210,.16)",
-    },
-
-    green: {
-      color: "#15803d",
-      bg: "rgba(34,197,94,.10)",
-      border: "rgba(34,197,94,.22)",
-    },
-
-    red: {
-      color: "var(--aa-brand-800)",
-      bg: "var(--aa-brand-50)",
-      border: "var(--aa-brand-100)",
-    },
-
-    orange: {
-      color: "#92400e",
-      bg: "rgba(245,158,11,.12)",
-      border: "rgba(245,158,11,.24)",
-    },
-  };
-
-  const current = tones[tone] || tones.default;
-
-  return (
-    <Box
-      sx={{
-        minWidth: 122,
-        px: 2,
-        py: 1.35,
-        borderRadius: "var(--aa-radius-lg)",
-        background: current.bg,
-        border: `1px solid ${current.border}`,
-        boxShadow: "var(--aa-shadow-xs)",
-      }}
-    >
-      <Typography
-        sx={{
-          fontSize: 11.5,
-          fontWeight: 800,
-          color: "var(--aa-text-tertiary)",
-        }}
-      >
-        {label}
-      </Typography>
-
-      <Typography
-        sx={{
-          mt: 0.35,
-          fontSize: 18,
-          fontWeight: 850,
-          color: current.color,
-          letterSpacing: "-0.04em",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {value}
-      </Typography>
-
-      {helper && (
-        <Typography
-          sx={{
-            mt: 0.35,
-            fontSize: 12,
-            fontWeight: 700,
-            color: "var(--aa-text-tertiary)",
-          }}
-        >
-          {helper}
-        </Typography>
-      )}
-    </Box>
-  );
-};
-
-const HeroMetric = ({ label, value, helper, tone = "red" }) => {
-  const tones = {
-    red: {
-      color: "#fecdd3",
-      backgroundColor: "rgba(220,38,38,.15)",
-      borderColor: "rgba(248,113,113,.14)",
-    },
-
-    green: {
-      color: "#bbf7d0",
-      backgroundColor: "rgba(34,197,94,.14)",
-      borderColor: "rgba(74,222,128,.14)",
-    },
-
-    amber: {
-      color: "#fde68a",
-      backgroundColor: "rgba(245,158,11,.15)",
-      borderColor: "rgba(251,191,36,.14)",
-    },
-
-    blue: {
-      color: "#bfdbfe",
-      backgroundColor: "rgba(37,99,235,.15)",
-      borderColor: "rgba(96,165,250,.14)",
-    },
-  };
-
-  const current = tones[tone] || tones.red;
-
-  return (
-    <Box
-      sx={{
-        minWidth: 0,
-        minHeight: 126,
-        p: 1.8,
-        borderRadius: "18px",
-        border: "1px solid rgba(255,255,255,.075)",
-        background: "linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025))",
-        backdropFilter: "blur(16px)",
-      }}
-    >
-      <Box
-        sx={{
-          width: 34,
-          height: 34,
-          display: "grid",
-          placeItems: "center",
-          borderRadius: "11px",
-          color: current.color,
-          backgroundColor: current.backgroundColor,
-          border: `1px solid ${current.borderColor}`,
-          fontSize: 13,
-          fontWeight: 950,
-        }}
-      >
-        {label.charAt(0)}
-      </Box>
-
-      <Typography
-        sx={{
-          mt: 1.4,
-          color: "rgba(255,255,255,.45) !important",
-          fontSize: 9.5,
-          fontWeight: 750,
-        }}
-      >
-        {label}
-      </Typography>
-
-      <Typography
-        noWrap
-        sx={{
-          mt: 0.6,
-          color: "#ffffff !important",
-          fontSize: 18,
-          lineHeight: 1.2,
-          fontWeight: 950,
-          letterSpacing: "-.035em",
-        }}
-      >
-        {value}
-      </Typography>
-
-      <Typography
-        noWrap
-        sx={{
-          mt: 0.55,
-          color: "rgba(255,255,255,.28) !important",
-          fontSize: 9,
-        }}
-      >
-        {helper}
-      </Typography>
-    </Box>
-  );
-};
-
-const BalanceBox = ({ label, value, tone = "default" }) => {
-  const colors = {
-    default: "var(--aa-text)",
-    blue: "var(--aa-info)",
-    green: "var(--aa-success)",
-    red: "var(--aa-brand-800)",
-    orange: "var(--aa-warning)",
-  };
-
-  return (
-    <Box
-      sx={{
-        p: 1.5,
-        borderRadius: "var(--aa-radius-lg)",
-        background: "#fff",
-        border: "1px solid var(--aa-border)",
-      }}
-    >
-      <Typography
-        sx={{
-          fontSize: 12,
-          fontWeight: 800,
-          color: "var(--aa-text-tertiary)",
-        }}
-      >
-        {label}
-      </Typography>
-
-      <Typography
-        sx={{
-          mt: 0.45,
-          fontSize: 15,
-          fontWeight: 850,
-          color: colors[tone] || colors.default,
-          letterSpacing: "-0.035em",
-        }}
-      >
-        {value}
-      </Typography>
-    </Box>
-  );
-};
+const HeroMetric = (props) => (
+  <SharedHeroMetric
+    {...props}
+    softToneBorder
+    labelSx={{ mt: 1.4, color: "rgba(255,255,255,.45) !important" }}
+  />
+);
+const BalanceBox = (props) => <SharedBalanceBox {...props} variant="surface" />;
 const DebtChip = ({ debt }) => {
   const hasDebt = Number(debt || 0) > 0;
 
@@ -365,88 +148,7 @@ const DebtChip = ({ debt }) => {
   );
 };
 
-const PremiumDialog = ({
-  open,
-  onClose,
-  title,
-  children,
-  actions,
-  maxWidth = "md",
-}) => (
-  <Dialog
-    open={open}
-    onClose={onClose}
-    fullWidth
-    maxWidth={maxWidth}
-    PaperProps={{
-      sx: {
-        overflow: "hidden",
-        borderRadius: "23px",
-        border:
-          "1px solid rgba(148,163,184,.20)",
-        boxShadow:
-          "0 30px 80px rgba(15,23,42,.22)",
-      },
-    }}
-  >
-    <DialogTitle
-      className="client-sales-dialog-title"
-      sx={{
-        px: 3,
-        py: 2.35,
-        color: "#ffffff !important",
-        backgroundColor:
-          "#0d1117 !important",
-        backgroundImage:
-          "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
-      }}
-    >
-      <Typography
-        sx={{
-          color: "#ffffff !important",
-          fontSize: 19,
-          fontWeight: 950,
-        }}
-      >
-        {title}
-      </Typography>
-
-      <Typography
-        sx={{
-          mt: 0.5,
-          color:
-            "rgba(255,255,255,.43) !important",
-          fontSize: 10.5,
-        }}
-      >
-        Savdo va hisob-kitob ma’lumotlari
-      </Typography>
-    </DialogTitle>
-
-    <DialogContent
-      sx={{
-        px: 3,
-        py: 2.7,
-      }}
-    >
-      {children}
-    </DialogContent>
-
-    {actions && (
-      <DialogActions
-        sx={{
-          px: 3,
-          py: 2.1,
-          borderTop: "1px solid #edf0f3",
-          backgroundColor: "#fafbfc",
-        }}
-      >
-        {actions}
-      </DialogActions>
-    )}
-  </Dialog>
-);
-
+const PremiumDialog = (props) => <SharedPremiumDialog maxWidth="md" subtitle="Savdo va hisob-kitob maвЂ™lumotlari" titleClassName="client-sales-dialog-title" {...props} />;
 const ClientSales = () => {
   const auth = useAuth();
 

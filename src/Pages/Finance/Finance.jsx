@@ -10,10 +10,6 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   MenuItem,
   Paper,
   Stack,
@@ -25,6 +21,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+
+import SharedHeroMetric from "../../Components/UI/HeroMetric";
+import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
 import { toast } from "react-toastify";
 
 import { useAuth } from "../../Context/AuthContext";
@@ -132,133 +131,9 @@ const Card = ({
   </Paper>
 );
 
-const HeroMetric = ({
-  label,
-  value,
-  helper,
-  tone = "red",
-}) => {
-  const tones = {
-    red: [
-      "#fecdd3",
-      "rgba(220,38,38,.15)",
-      "rgba(248,113,113,.15)",
-    ],
-
-    green: [
-      "#bbf7d0",
-      "rgba(34,197,94,.14)",
-      "rgba(74,222,128,.15)",
-    ],
-
-    blue: [
-      "#bfdbfe",
-      "rgba(37,99,235,.15)",
-      "rgba(96,165,250,.15)",
-    ],
-
-    amber: [
-      "#fde68a",
-      "rgba(245,158,11,.15)",
-      "rgba(251,191,36,.15)",
-    ],
-
-    violet: [
-      "#ddd6fe",
-      "rgba(139,92,246,.16)",
-      "rgba(167,139,250,.15)",
-    ],
-  };
-
-  const current =
-    tones[tone] || tones.red;
-
-  return (
-    <Box
-      sx={{
-        minWidth: 0,
-        minHeight: 126,
-        p: 1.8,
-        borderRadius: "18px",
-
-        border:
-          "1px solid rgba(255,255,255,.075)",
-
-        background:
-          "linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025))",
-
-        backdropFilter: "blur(16px)",
-      }}
-    >
-      <Box
-        sx={{
-          width: 34,
-          height: 34,
-          display: "grid",
-          placeItems: "center",
-          borderRadius: "11px",
-          color: current[0],
-
-          backgroundColor:
-            current[1],
-
-          border: `1px solid ${current[2]}`,
-
-          fontSize: 13,
-          fontWeight: 950,
-        }}
-      >
-        {label.charAt(0)}
-      </Box>
-
-      <Typography
-        sx={{
-          mt: 1.35,
-
-          color:
-            "rgba(255,255,255,.44) !important",
-
-          fontSize: 9.5,
-          fontWeight: 750,
-        }}
-      >
-        {label}
-      </Typography>
-
-      <Typography
-        noWrap
-        sx={{
-          mt: 0.6,
-
-          color:
-            "#ffffff !important",
-
-          fontSize: 17,
-          lineHeight: 1.2,
-          fontWeight: 950,
-          letterSpacing: "-.035em",
-        }}
-      >
-        {value}
-      </Typography>
-
-      <Typography
-        noWrap
-        sx={{
-          mt: 0.55,
-
-          color:
-            "rgba(255,255,255,.28) !important",
-
-          fontSize: 9,
-        }}
-      >
-        {helper}
-      </Typography>
-    </Box>
-  );
-};
-
+const HeroMetric = (props) => (
+  <SharedHeroMetric {...props} valueSx={{ fontSize: 17 }} />
+);
 const StatusChip = ({ status }) => {
   const closed =
     status === "closed";
@@ -481,108 +356,7 @@ const SectionHeader = ({
   </Box>
 );
 
-const PremiumDialog = ({
-  open,
-  onClose,
-  title,
-
-  subtitle =
-    "Moliyaviy ma’lumotlarni kiriting",
-
-  children,
-  actions,
-  maxWidth = "sm",
-}) => (
-  <Dialog
-    open={open}
-    onClose={onClose}
-    fullWidth
-    maxWidth={maxWidth}
-    PaperProps={{
-      sx: {
-        overflow: "hidden",
-        borderRadius: "23px",
-
-        border:
-          "1px solid rgba(148,163,184,.20)",
-
-        boxShadow:
-          "0 30px 80px rgba(15,23,42,.22)",
-      },
-    }}
-  >
-    <DialogTitle
-      className="finance-dialog-title"
-      sx={{
-        px: 3,
-        py: 2.35,
-
-        color:
-          "#ffffff !important",
-
-        backgroundColor:
-          "#0d1117 !important",
-
-        backgroundImage:
-          "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
-      }}
-    >
-      <Typography
-        sx={{
-          color:
-            "#ffffff !important",
-
-          fontSize: 19,
-          fontWeight: 950,
-        }}
-      >
-        {title}
-      </Typography>
-
-      <Typography
-        sx={{
-          mt: 0.5,
-
-          color:
-            "rgba(255,255,255,.43) !important",
-
-          fontSize: 10.5,
-        }}
-      >
-        {subtitle}
-      </Typography>
-    </DialogTitle>
-
-    <DialogContent
-      sx={{
-        px: 3,
-
-        py:
-          "24px !important",
-      }}
-    >
-      {children}
-    </DialogContent>
-
-    {actions && (
-      <DialogActions
-        sx={{
-          px: 3,
-          py: 2.1,
-
-          borderTop:
-            "1px solid #edf0f3",
-
-          backgroundColor:
-            "#fafbfc",
-        }}
-      >
-        {actions}
-      </DialogActions>
-    )}
-  </Dialog>
-);
-
+const PremiumDialog = (props) => <SharedPremiumDialog subtitle="Moliyaviy maвЂ™lumotlarni kiriting" titleClassName="finance-dialog-title" contentSx={{ py: "24px !important" }} {...props} />;
 const Grid = ({
   heads,
   rows,
@@ -2006,8 +1780,10 @@ const Payroll = ({
   const period =
     detail?.payroll_period;
 
-  const lines =
-    detail?.payroll_lines || [];
+  const lines = useMemo(
+    () => detail?.payroll_lines || [],
+    [detail?.payroll_lines],
+  );
 
   const detailTotals = useMemo(
     () => ({

@@ -1,47 +1,55 @@
-﻿import { Navigate, Route, Routes } from "react-router-dom";
-import Login from "../Pages/Login/Login";
-import Register from "../Pages/Register/Register";
+import { lazy, Suspense } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "../Layouts/Layout";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
-import Dashboard from "../Pages/Dashboard/Dashboard";
-import Users from "../Pages/User/Users";
-import User from "../Pages/User/User";
-import Products from "../Pages/Product/Products";
-import Product from "../Pages/Product/Product";
-import WorkerOutputs from "../Pages/WorkerOutput/WorkerOutputs";
-import WorkerPayments from "../Pages/WorkerPayment/WorkerPayments";
-import ClientSales from "../Pages/ClientSale/ClientSales";
-import MaterialPurchases from "../Pages/MaterialPurchase/MaterialPurchases";
-import Employees from "../Pages/Employee/Employees";
-import Finance from "../Pages/Finance/Finance";
-import PlatformLogin from "../Pages/Platform/PlatformLogin";
-import PlatformDashboard from "../Pages/Platform/PlatformDashboard";
-import AuditLogs from "../Pages/AuditLog/AuditLogs";
-import LandingPage from "../Pages/LandingPage/LandingPage";
-import Permissions from "../Pages/Permission/Permissions";
-import Inventory from "../Pages/Inventory/Inventory";
-import Expenses from "../Pages/Expense/Expenses";
-import Clients from "../Pages/Client/Clients";
+
+const Login = lazy(() => import("../Pages/Login/Login"));
+const Register = lazy(() => import("../Pages/Register/Register"));
+const Dashboard = lazy(() => import("../Pages/Dashboard/Dashboard"));
+const Users = lazy(() => import("../Pages/User/Users"));
+const User = lazy(() => import("../Pages/User/User"));
+const Products = lazy(() => import("../Pages/Product/Products"));
+const Product = lazy(() => import("../Pages/Product/Product"));
+const WorkerOutputs = lazy(() => import("../Pages/WorkerOutput/WorkerOutputs"));
+const WorkerPayments = lazy(() => import("../Pages/WorkerPayment/WorkerPayments"));
+const ClientSales = lazy(() => import("../Pages/ClientSale/ClientSales"));
+const MaterialPurchases = lazy(() => import("../Pages/MaterialPurchase/MaterialPurchases"));
+const Employees = lazy(() => import("../Pages/Employee/Employees"));
+const Finance = lazy(() => import("../Pages/Finance/Finance"));
+const PlatformLogin = lazy(() => import("../Pages/Platform/PlatformLogin"));
+const PlatformDashboard = lazy(() => import("../Pages/Platform/PlatformDashboard"));
+const AuditLogs = lazy(() => import("../Pages/AuditLog/AuditLogs"));
+const LandingPage = lazy(() => import("../Pages/LandingPage/LandingPage"));
+const Permissions = lazy(() => import("../Pages/Permission/Permissions"));
+const Inventory = lazy(() => import("../Pages/Inventory/Inventory"));
+const Expenses = lazy(() => import("../Pages/Expense/Expenses"));
+const Clients = lazy(() => import("../Pages/Client/Clients"));
+
+const page = (Component, props = {}) => (
+  <Suspense fallback={null}>
+    <Component {...props} />
+  </Suspense>
+);
 
 const AppRouter = () => {
   return (
     <Routes>
-      <Route path="/landing" element={<LandingPage />} />
-      <Route path="/platform/login" element={<PlatformLogin />} />
-      <Route path="/platform" element={<PlatformDashboard />} />
+      <Route path="/landing" element={page(LandingPage)} />
+      <Route path="/platform/login" element={page(PlatformLogin)} />
+      <Route path="/platform" element={page(PlatformDashboard)} />
 
       <Route element={<PublicRoute />}>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={page(Login)} />
+        <Route path="/register" element={page(Register)} />
       </Route>
 
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={page(Dashboard)} />
           <Route element={<ProtectedRoute allowedPermissions={["products.view"]} />}>
-            <Route path="/products" element={<Products />} />
-            <Route path="/products/:id" element={<Product />} />
+            <Route path="/products" element={page(Products)} />
+            <Route path="/products/:id" element={page(Product)} />
           </Route>
 
           <Route
@@ -52,7 +60,7 @@ const AppRouter = () => {
               />
             }
           >
-            <Route path="/users" element={<Users />} />
+            <Route path="/users" element={page(Users)} />
           </Route>
 
           <Route
@@ -63,8 +71,8 @@ const AppRouter = () => {
               />
             }
           >
-            <Route path="/clients" element={<Clients />} />
-            <Route path="/clients/:id" element={<User backTo="/clients" />} />
+            <Route path="/clients" element={page(Clients)} />
+            <Route path="/clients/:id" element={page(User, { backTo: "/clients" })} />
           </Route>
 
           <Route
@@ -75,7 +83,7 @@ const AppRouter = () => {
               />
             }
           >
-            <Route path="/worker-outputs" element={<WorkerOutputs />} />
+            <Route path="/worker-outputs" element={page(WorkerOutputs)} />
           </Route>
 
           <Route
@@ -86,7 +94,7 @@ const AppRouter = () => {
               />
             }
           >
-            <Route path="/worker-payments" element={<WorkerPayments />} />
+            <Route path="/worker-payments" element={page(WorkerPayments)} />
           </Route>
 
           <Route
@@ -97,7 +105,7 @@ const AppRouter = () => {
               />
             }
           >
-            <Route path="/employees" element={<Employees />} />
+            <Route path="/employees" element={page(Employees)} />
           </Route>
 
           <Route
@@ -108,11 +116,11 @@ const AppRouter = () => {
               />
             }
           >
-            <Route path="/users/:id" element={<User />} />
+            <Route path="/users/:id" element={page(User)} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={["super_admin"]} />}>
-            <Route path="/permissions" element={<Permissions />} />
+            <Route path="/permissions" element={page(Permissions)} />
           </Route>
 
           <Route
@@ -124,7 +132,7 @@ const AppRouter = () => {
               />
             }
           >
-            <Route path="/client-sales" element={<ClientSales />} />
+            <Route path="/client-sales" element={page(ClientSales)} />
           </Route>
 
           <Route
@@ -136,7 +144,7 @@ const AppRouter = () => {
               />
             }
           >
-            <Route path="/material-purchases" element={<MaterialPurchases />} />
+            <Route path="/material-purchases" element={page(MaterialPurchases)} />
           </Route>
 
           <Route
@@ -147,9 +155,9 @@ const AppRouter = () => {
               />
             }
           >
-            <Route path="/inventory" element={<Inventory />} />
-            <Route path="/inventory/warehouses/:warehouseId" element={<Inventory />} />
-            <Route path="/inventory/counts" element={<Inventory />} />
+            <Route path="/inventory" element={page(Inventory)} />
+            <Route path="/inventory/warehouses/:warehouseId" element={page(Inventory)} />
+            <Route path="/inventory/counts" element={page(Inventory)} />
           </Route>
           <Route
             element={
@@ -159,7 +167,7 @@ const AppRouter = () => {
               />
             }
           >
-            <Route path="/inventory/warehouses" element={<Inventory />} />
+            <Route path="/inventory/warehouses" element={page(Inventory)} />
           </Route>
 
           <Route
@@ -170,7 +178,7 @@ const AppRouter = () => {
               />
             }
           >
-            <Route path="/expenses" element={<Expenses />} />
+            <Route path="/expenses" element={page(Expenses)} />
           </Route>
 
           <Route
@@ -182,7 +190,7 @@ const AppRouter = () => {
               />
             }
           >
-            <Route path="/finance" element={<Finance />} />
+            <Route path="/finance" element={page(Finance)} />
           </Route>
 
           <Route
@@ -194,7 +202,7 @@ const AppRouter = () => {
               />
             }
           >
-            <Route path="/audit-logs" element={<AuditLogs />} />
+            <Route path="/audit-logs" element={page(AuditLogs)} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
