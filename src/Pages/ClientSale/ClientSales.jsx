@@ -148,7 +148,7 @@ const DebtChip = ({ debt }) => {
   );
 };
 
-const PremiumDialog = (props) => <SharedPremiumDialog maxWidth="md" subtitle="Savdo va hisob-kitob maвЂ™lumotlari" titleClassName="client-sales-dialog-title" {...props} />;
+const PremiumDialog = (props) => <SharedPremiumDialog maxWidth="md" subtitle="Savdo va hisob-kitob ma’lumotlari" titleClassName="client-sales-dialog-title" {...props} />;
 const ClientSales = () => {
   const auth = useAuth();
 

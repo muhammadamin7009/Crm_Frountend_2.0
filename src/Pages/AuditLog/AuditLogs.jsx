@@ -5,12 +5,10 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   MenuItem,
-  Stack,
   Table,
   TableBody,
   TableCell,
@@ -20,6 +18,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import {
+  CompatDialog as Dialog,
+  CompatStack as Stack,
+} from "../../Components/UI/MuiCompat";
 
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import { toast } from "react-toastify";

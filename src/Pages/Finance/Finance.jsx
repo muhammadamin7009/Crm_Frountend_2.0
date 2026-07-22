@@ -356,7 +356,7 @@ const SectionHeader = ({
   </Box>
 );
 
-const PremiumDialog = (props) => <SharedPremiumDialog subtitle="Moliyaviy maвЂ™lumotlarni kiriting" titleClassName="finance-dialog-title" contentSx={{ py: "24px !important" }} {...props} />;
+const PremiumDialog = (props) => <SharedPremiumDialog subtitle="Moliyaviy ma’lumotlarni kiriting" titleClassName="finance-dialog-title" contentSx={{ py: "24px !important" }} {...props} />;
 const Grid = ({
   heads,
   rows,

@@ -4,11 +4,13 @@
   Chip,
   Container,
   Divider,
-  Grid,
   Paper,
-  Stack,
   Typography,
 } from "@mui/material";
+import {
+  CompatGrid as Grid,
+  CompatStack as Stack,
+} from "../../Components/UI/MuiCompat";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 

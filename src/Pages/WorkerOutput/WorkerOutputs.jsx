@@ -14,9 +14,9 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
+import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
@@ -133,7 +133,7 @@ const DepartmentChip = ({ label }) => (
   />
 );
 
-const PremiumDialog = (props) => <SharedPremiumDialog maxWidth="md" subtitle="Ishlab chiqarish maвЂ™lumotlarini boshqarish" titleClassName="worker-output-dialog-title" {...props} />;
+const PremiumDialog = (props) => <SharedPremiumDialog maxWidth="md" subtitle="Ishlab chiqarish ma’lumotlarini boshqarish" titleClassName="worker-output-dialog-title" {...props} />;
 const WorkerOutputs = () => {
   const auth = useAuth();
   const currentUser = auth?.user || getLocalUser();

@@ -4,9 +4,9 @@ import {
   Checkbox,
   FormControlLabel,
   Paper,
-  TextField,
   Typography,
 } from "@mui/material";
+import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -212,7 +212,7 @@ const Login = () => {
 
       finishLogin(data);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Login xato");
+      toast.error(error?.response?.data?.message || "Tizimga kirishda xatolik yuz berdi.");
     } finally {
       setLoading(false);
     }

@@ -1,10 +1,10 @@
 import {
-  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Typography,
 } from "@mui/material";
+import { CompatDialog as Dialog } from "./MuiCompat";
 
 const PremiumDialog = ({
   open,

@@ -18,10 +18,10 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TextField,
   Tabs,
   Typography,
 } from "@mui/material";
+import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import ActiveStatusChip from "../../Components/UI/ActiveStatusChip";
@@ -114,7 +114,7 @@ const HeroMetric = (props) => (
   <SharedHeroMetric {...props} labelSx={{ mt: 1.4 }} />
 );
 const StatusChip = (props) => <ActiveStatusChip {...props} />;
-const PremiumDialog = (props) => <SharedPremiumDialog maxWidth="md" subtitle="Mahsulot maвЂ™lumotlarini boshqarish" titleClassName="products-dialog-title" {...props} />;
+const PremiumDialog = (props) => <SharedPremiumDialog maxWidth="md" subtitle="Mahsulot ma’lumotlarini boshqarish" titleClassName="products-dialog-title" {...props} />;
 const Products = () => {
   const navigate = useNavigate();
 

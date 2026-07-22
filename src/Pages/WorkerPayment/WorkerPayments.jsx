@@ -13,9 +13,9 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
+import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
@@ -143,7 +143,7 @@ const PaymentTypeChip = ({ type }) => {
 };
 
 
-const PremiumDialog = (props) => <SharedPremiumDialog subtitle="Oylik va avans maвЂ™lumotlarini boshqarish" titleClassName="worker-payments-dialog-title" {...props} />;
+const PremiumDialog = (props) => <SharedPremiumDialog subtitle="Oylik va avans ma’lumotlarini boshqarish" titleClassName="worker-payments-dialog-title" {...props} />;
 const WorkerPayments = () => {
   const auth = useAuth();
 

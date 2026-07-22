@@ -4,21 +4,23 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   MenuItem,
   Paper,
-  Stack,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
+import {
+  CompatDialog as Dialog,
+  CompatStack as Stack,
+  CompatTextField as TextField,
+} from "../../Components/UI/MuiCompat";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";

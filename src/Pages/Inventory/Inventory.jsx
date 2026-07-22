@@ -5,12 +5,10 @@ import {
   Card,
   Chip,
   CircularProgress,
-  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   MenuItem,
-  Stack,
   Tab,
   Table,
   TableBody,
@@ -21,6 +19,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import {
+  CompatDialog as Dialog,
+  CompatStack as Stack,
+} from "../../Components/UI/MuiCompat";
 
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import { useCallback, useEffect, useMemo, useState } from "react";

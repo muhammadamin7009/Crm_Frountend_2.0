@@ -8,16 +8,18 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   MenuItem,
   Paper,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
+import {
+  CompatDialog as Dialog,
+  CompatTextField as TextField,
+} from "../../Components/UI/MuiCompat";
 
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import ActiveStatusChip from "../../Components/UI/ActiveStatusChip";

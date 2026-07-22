@@ -12,9 +12,9 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
+import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -1643,7 +1643,7 @@ const AdminOverview = ({ user }) => {
             fontWeight: 750,
           }}
         >
-          Dashboard ma'lumotlari yuklanmoqda...
+          Bosh sahifa ma’lumotlari yuklanmoqda...
         </Typography>
       </Box>
     );

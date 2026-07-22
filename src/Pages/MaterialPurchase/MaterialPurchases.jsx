@@ -13,9 +13,9 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
+import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
@@ -139,7 +139,7 @@ const DebtChip = ({ value }) => {
   );
 };
 
-const PremiumDialog = (props) => <SharedPremiumDialog maxWidth="md" subtitle="Homashyo, taвЂ™minotchi va qarzdorlik maвЂ™lumotlari" titleClassName="material-purchases-dialog-title" {...props} />;
+const PremiumDialog = (props) => <SharedPremiumDialog maxWidth="md" subtitle="Homashyo, ta’minotchi va qarzdorlik ma’lumotlari" titleClassName="material-purchases-dialog-title" {...props} />;
 const MaterialPurchases = () => {
   const auth = useAuth();
 

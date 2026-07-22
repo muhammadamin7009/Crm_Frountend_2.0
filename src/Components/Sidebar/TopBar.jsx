@@ -4,21 +4,23 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
-  Drawer,
   List,
   ListItemButton,
   ListItemText,
   Menu,
   MenuItem,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
+import {
+  CompatDialog as Dialog,
+  CompatDrawer as Drawer,
+  CompatTextField as TextField,
+} from "../UI/MuiCompat";
 import {
   useCallback,
   useEffect,
