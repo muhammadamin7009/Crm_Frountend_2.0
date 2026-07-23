@@ -37,6 +37,7 @@ import {
 } from "../../api/clientSales";
 import { createClientPayment } from "../../api/clientPayments";
 import { getInventoryStock, getWarehouses } from "../../api/inventory";
+import { getFinancialAccounts } from "../../api/finance";
 
 const emptyForm = {
   client_id: "",
@@ -45,6 +46,7 @@ const emptyForm = {
   quantity: "",
   unit_price: "",
   paid_amount: "",
+  account_id: "",
   sold_at: new Date().toISOString().slice(0, 10),
   note: "",
   items: [
@@ -60,6 +62,7 @@ const emptyPaymentForm = {
   client_id: "",
   client_sale_id: "",
   amount: "",
+  account_id: "",
   paid_at: new Date().toISOString().slice(0, 10),
   note: "",
 };
@@ -164,6 +167,7 @@ const ClientSales = () => {
   const [clients, setClients] = useState([]);
   const [products, setProducts] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
+  const [accounts, setAccounts] = useState([]);
   const [inventoryStock, setInventoryStock] = useState([]);
   const [summary, setSummary] = useState([]);
 
@@ -334,7 +338,7 @@ const ClientSales = () => {
   }, [form.quantity, form.unit_price, form.paid_amount, form.items, selectedSale]);
   const fetchDictionaries = useCallback(async () => {
     try {
-      const [usersRes, productsRes, warehousesRes, stockRes] = await Promise.all([
+      const [usersRes, productsRes, warehousesRes, stockRes, accountsRes] = await Promise.all([
         getUsers({
           offset: 0,
           limit: 100,
@@ -356,6 +360,7 @@ const ClientSales = () => {
           item_type: "product",
           limit: 200,
         }),
+        getFinancialAccounts(),
       ]);
 
       setClients(
@@ -367,6 +372,7 @@ const ClientSales = () => {
       setWarehouses(warehousesRes.data.warehouses || []);
 
       setInventoryStock(stockRes.data.stock || []);
+      setAccounts(accountsRes.data.financial_accounts || []);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Mijoz va mahsulotlarni olishda xato.");
     }
@@ -610,6 +616,7 @@ const ClientSales = () => {
       quantity: sale.quantity ?? "",
       unit_price: sale.unit_price ?? "",
       paid_amount: sale.paid_amount ?? "",
+      account_id: "",
       sold_at: sale.sold_at ? String(sale.sold_at).slice(0, 10) : emptyForm.sold_at,
       note: sale.note || "",
       items: [],
@@ -829,6 +836,7 @@ const ClientSales = () => {
     quantity: Number(form.quantity),
     unit_price: Number(form.unit_price),
     paid_amount: Number(form.paid_amount || 0),
+    account_id: form.account_id ? Number(form.account_id) : undefined,
     sold_at: form.sold_at || undefined,
     note: form.note.trim() || null,
   });
@@ -837,6 +845,7 @@ const ClientSales = () => {
     client_id: Number(form.client_id),
     warehouse_id: Number(form.warehouse_id),
     paid_amount: Number(form.paid_amount || 0),
+    account_id: form.account_id ? Number(form.account_id) : undefined,
     sold_at: form.sold_at || undefined,
     note: form.note.trim() || null,
 
@@ -933,6 +942,8 @@ const ClientSales = () => {
         client_sale_id: Number(paymentForm.client_sale_id),
 
         amount: Number(paymentForm.amount),
+
+        account_id: paymentForm.account_id ? Number(paymentForm.account_id) : undefined,
 
         paid_at: paymentForm.paid_at || undefined,
 
@@ -2268,6 +2279,21 @@ const ClientSales = () => {
               },
             }}
           />
+          <TextField
+            select
+            fullWidth
+            label="Pul tushadigan hisob"
+            value={form.account_id}
+            onChange={handleFormChange("account_id")}
+            helperText="Tanlanmasa Asosiy kassa ishlatiladi"
+          >
+            <MenuItem value="">Asosiy kassa (avtomatik)</MenuItem>
+            {accounts.map((account) => (
+              <MenuItem key={account.id} value={account.id}>
+                {account.name} — {formatMoney(account.balance)}
+              </MenuItem>
+            ))}
+          </TextField>
           <Box
             sx={{
               display: "grid",
@@ -2470,6 +2496,22 @@ const ClientSales = () => {
               }}
             />
           </Box>
+
+          <TextField
+            select
+            fullWidth
+            label="Pul tushadigan hisob"
+            value={paymentForm.account_id}
+            onChange={handlePaymentChange("account_id")}
+            helperText="Tanlanmasa Asosiy kassa ishlatiladi"
+          >
+            <MenuItem value="">Asosiy kassa (avtomatik)</MenuItem>
+            {accounts.map((account) => (
+              <MenuItem key={account.id} value={account.id}>
+                {account.name} — {formatMoney(account.balance)}
+              </MenuItem>
+            ))}
+          </TextField>
 
           <Box
             sx={{

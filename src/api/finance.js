@@ -9,6 +9,8 @@ export const getExpenseCategories = () => api.get("/expense-categories");
 export const createExpenseCategory = (data) => api.post("/expense-categories", data);
 export const getExpenses = (params) => api.get("/expenses", { params });
 export const createExpense = (data) => api.post("/expenses", data);
+export const updateExpense = (id, data) => api.patch(`/expenses/${id}`, data);
+export const deleteExpense = (id) => api.delete(`/expenses/${id}`);
 export const getFinancialAccounts = () => api.get("/financial-accounts");
 export const createFinancialAccount = (data) => api.post("/financial-accounts", data);
 export const getCashTransactions = (params) => api.get("/cash-transactions", { params });

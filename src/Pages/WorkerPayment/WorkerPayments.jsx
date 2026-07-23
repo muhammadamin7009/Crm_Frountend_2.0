@@ -39,6 +39,7 @@ import {
   getWorkerAdvances,
   getWorkerAdvanceBalance,
 } from "../../api/workerAdvances";
+import { getFinancialAccounts } from "../../api/finance";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -47,6 +48,7 @@ const emptyForm = {
   amount: "",
   advance_deduction: "",
   payment_type: "salary",
+  account_id: "",
   paid_at: today(),
   period_from: "",
   period_to: "",
@@ -56,6 +58,7 @@ const emptyForm = {
 const emptyAdvanceForm = {
   worker_id: "",
   amount: "",
+  account_id: "",
   given_at: today(),
   note: "",
 };
@@ -166,6 +169,7 @@ const WorkerPayments = () => {
   });
 
   const [workers, setWorkers] = useState([]);
+  const [accounts, setAccounts] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -225,14 +229,18 @@ const WorkerPayments = () => {
 
   const fetchWorkers = useCallback(async () => {
     try {
-      const { data } = await getUsers({
-        offset: 0,
-        limit: 100,
-        sort_by: "created_at",
-        sort_order: "desc",
-      });
+      const [{ data }, accountsResponse] = await Promise.all([
+        getUsers({
+          offset: 0,
+          limit: 100,
+          sort_by: "created_at",
+          sort_order: "desc",
+        }),
+        getFinancialAccounts(),
+      ]);
 
       setWorkers((data.users || data.list || []).filter((user) => user.role === "worker"));
+      setAccounts(accountsResponse.data.financial_accounts || []);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Ishchilarni olishda xato.");
     }
@@ -436,6 +444,8 @@ const WorkerPayments = () => {
 
       payment_type: payment.payment_type || "salary",
 
+      account_id: "",
+
       paid_at: payment.paid_at ? String(payment.paid_at).slice(0, 10) : today(),
 
       period_from: payment.period_from ? String(payment.period_from).slice(0, 10) : "",
@@ -517,6 +527,8 @@ const WorkerPayments = () => {
     advance_deduction: Number(form.advance_deduction || 0),
 
     payment_type: form.payment_type,
+
+    account_id: form.account_id ? Number(form.account_id) : undefined,
 
     paid_at: form.paid_at || undefined,
 
@@ -600,6 +612,8 @@ const WorkerPayments = () => {
         worker_id: Number(advanceForm.worker_id),
 
         amount: Number(advanceForm.amount),
+
+        account_id: advanceForm.account_id ? Number(advanceForm.account_id) : undefined,
 
         given_at: advanceForm.given_at,
 
@@ -1573,6 +1587,21 @@ const WorkerPayments = () => {
             />
           </Box>
 
+          <TextField
+            select
+            label="Pul chiqadigan hisob"
+            value={form.account_id}
+            onChange={handleFormChange("account_id")}
+            helperText="Tanlanmasa Asosiy kassa ishlatiladi"
+          >
+            <MenuItem value="">Asosiy kassa (avtomatik)</MenuItem>
+            {accounts.map((account) => (
+              <MenuItem key={account.id} value={account.id}>
+                {account.name} — {money(account.balance)}
+              </MenuItem>
+            ))}
+          </TextField>
+
           {paymentExceedsBalance && (
             <Box
               sx={{
@@ -1633,6 +1662,23 @@ const WorkerPayments = () => {
               tone="amber"
             />
           </Box>
+
+          <TextField
+            select
+            label="Pul chiqadigan hisob"
+            value={advanceForm.account_id}
+            onChange={(event) =>
+              setAdvanceForm((previous) => ({ ...previous, account_id: event.target.value }))
+            }
+            helperText="Tanlanmasa Asosiy kassa ishlatiladi"
+          >
+            <MenuItem value="">Asosiy kassa (avtomatik)</MenuItem>
+            {accounts.map((account) => (
+              <MenuItem key={account.id} value={account.id}>
+                {account.name} — {money(account.balance)}
+              </MenuItem>
+            ))}
+          </TextField>
 
           <TextField
             fullWidth

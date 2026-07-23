@@ -630,6 +630,7 @@ const Finance = () => {
         const [
           returnsRes,
           salesRes,
+          accountsRes,
         ] = await Promise.all([
           getClientReturns(filters),
 
@@ -637,6 +638,8 @@ const Finance = () => {
             limit: 100,
             offset: 0,
           }),
+
+          getFinancialAccounts(),
         ]);
 
         const returnsData =
@@ -649,6 +652,11 @@ const Finance = () => {
           salesRes ||
           {};
 
+        const accountsData =
+          accountsRes?.data ||
+          accountsRes ||
+          {};
+
         setData((previous) => ({
           ...previous,
 
@@ -658,6 +666,10 @@ const Finance = () => {
 
           sales:
             salesData.client_sales ||
+            [],
+
+          accounts:
+            accountsData.financial_accounts ||
             [],
         }));
       }
@@ -838,6 +850,11 @@ const Finance = () => {
           quantity: Number(
             form.quantity,
           ),
+
+          refund_account_id:
+            form.refund_account_id
+              ? Number(form.refund_account_id)
+              : null,
         });
       }
 
@@ -2430,6 +2447,8 @@ const Returns = ({
                   client_sale_id: "",
                   quantity: "",
 
+                  refund_account_id: "",
+
                   returned_at:
                     today(),
 
@@ -2452,7 +2471,7 @@ const Returns = ({
           gridTemplateColumns: {
             xs: "1fr",
 
-            sm: "repeat(3,minmax(0,1fr))",
+            sm: "repeat(4,minmax(0,1fr))",
           },
 
           gap: 1.2,
@@ -2475,6 +2494,17 @@ const Returns = ({
         />
 
         <StatCard
+          label="Qaytarilgan pul"
+          value={money(
+            (data.returns || []).reduce(
+              (sum, item) => sum + Number(item.refund_amount || 0),
+              0,
+            ),
+          )}
+          tone="green"
+        />
+
+        <StatCard
           label="Mavjud savdolar"
           value={`${number(
             data.sales?.length,
@@ -2489,6 +2519,7 @@ const Returns = ({
           "Mahsulot",
           "Miqdor",
           "Summa",
+          "Pul qaytarildi",
           "Sabab",
           "Sana",
         ]}
@@ -2517,6 +2548,8 @@ const Returns = ({
             >
               {money(item.amount)}
             </Typography>,
+
+            money(item.refund_amount),
 
             item.reason || "-",
 
@@ -2562,9 +2595,8 @@ const Profit = ({
           fontWeight: 750,
         }}
       >
-        Ombor tannarxi to‘liq
-        ulanmaguncha bu ko‘rsatkich
-        operatsion natija hisoblanadi.
+        Homashyo tannarxi xaridlarning o‘rtacha narxi va ishlab chiqarishda real sarflangan
+        miqdor asosida hisoblanadi. Ish haqi faqat yopilgan davrlardan olinadi.
       </Alert>
 
       <Card sx={{ p: 2.2 }}>
@@ -2619,7 +2651,7 @@ const Profit = ({
           />
 
           <StatCard
-            label="Homashyo"
+            label="Sarflangan homashyo"
             value={money(
               report.material_costs,
             )}
@@ -3177,6 +3209,21 @@ const EntryDialog = ({
           "Sana",
           "date",
         )}
+
+        <TextField
+          select
+          label="Pul qaytariladigan hisob"
+          value={form.refund_account_id || ""}
+          onChange={field("refund_account_id")}
+          helperText="Qaytarish ortiqcha to‘lov hosil qilsa ishlatiladi"
+        >
+          <MenuItem value="">Avtomatik — Asosiy kassa</MenuItem>
+          {(data.accounts || []).map((item) => (
+            <MenuItem key={item.id} value={item.id}>
+              {item.name} — {money(item.balance)}
+            </MenuItem>
+          ))}
+        </TextField>
 
         {input(
           "reason",

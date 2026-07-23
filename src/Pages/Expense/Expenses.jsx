@@ -29,7 +29,13 @@ import { toast } from "react-toastify";
 
 import Card from "../../Components/UI/AppCard";
 import { useAuth } from "../../Context/AuthContext";
-import { createExpense, getExpenses, getFinancialAccounts } from "../../api/finance";
+import {
+  createExpense,
+  deleteExpense,
+  getExpenses,
+  getFinancialAccounts,
+  updateExpense,
+} from "../../api/finance";
 import { hasPermission } from "../../utils/permissions";
 
 const isoDate = (value = new Date()) => value.toISOString().slice(0, 10);
@@ -102,6 +108,12 @@ const Expenses = () => {
   const [saving, setSaving] = useState(false);
 
   const [open, setOpen] = useState(false);
+
+  const [selectedExpense, setSelectedExpense] = useState(null);
+
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const [deleting, setDeleting] = useState(false);
 
   const [form, setForm] = useState(emptyForm);
 
@@ -184,7 +196,20 @@ const Expenses = () => {
   };
 
   const openCreateModal = () => {
+    setSelectedExpense(null);
     setForm(emptyForm());
+    setOpen(true);
+  };
+
+  const openEditModal = (expense) => {
+    setSelectedExpense(expense);
+    setForm({
+      title: expense.title || "",
+      amount: expense.amount ?? "",
+      spent_at: expense.spent_at ? String(expense.spent_at).slice(0, 10) : isoDate(),
+      account_id: expense.account_id || "",
+      note: expense.note || "",
+    });
     setOpen(true);
   };
 
@@ -192,6 +217,7 @@ const Expenses = () => {
     if (saving) return;
 
     setOpen(false);
+    setSelectedExpense(null);
     setForm(emptyForm());
   };
 
@@ -224,7 +250,7 @@ const Expenses = () => {
     setSaving(true);
 
     try {
-      await createExpense({
+      const payload = {
         title: form.title.trim(),
 
         amount: Number(form.amount),
@@ -234,11 +260,18 @@ const Expenses = () => {
         account_id: form.account_id ? Number(form.account_id) : null,
 
         note: form.note.trim() || null,
-      });
+      };
 
-      toast.success("Xarajat saqlandi.");
+      if (selectedExpense) {
+        await updateExpense(selectedExpense.id, payload);
+      } else {
+        await createExpense(payload);
+      }
+
+      toast.success(selectedExpense ? "Xarajat yangilandi." : "Xarajat saqlandi.");
 
       setOpen(false);
+      setSelectedExpense(null);
       setForm(emptyForm());
 
       await load();
@@ -246,6 +279,22 @@ const Expenses = () => {
       toast.error(error?.response?.data?.message || "Xarajatni saqlab bo'lmadi.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const remove = async () => {
+    if (!selectedExpense) return;
+    setDeleting(true);
+    try {
+      await deleteExpense(selectedExpense.id);
+      toast.success("Xarajat o'chirildi, hisob balansi tiklandi.");
+      setDeleteOpen(false);
+      setSelectedExpense(null);
+      await load();
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Xarajatni o'chirib bo'lmadi.");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -721,6 +770,8 @@ const Expenses = () => {
                     <TableCell>Sana</TableCell>
 
                     <TableCell align="right">Summa</TableCell>
+
+                    {canManage && <TableCell align="right">Amallar</TableCell>}
                   </TableRow>
                 </TableHead>
 
@@ -867,6 +918,26 @@ const Expenses = () => {
                           - {money(item.amount)}
                         </Typography>
                       </TableCell>
+
+                      {canManage && (
+                        <TableCell align="right">
+                          <Stack direction="row" spacing={0.7} justifyContent="flex-end">
+                            <Button size="small" onClick={() => openEditModal(item)}>
+                              Tahrirlash
+                            </Button>
+                            <Button
+                              size="small"
+                              color="error"
+                              onClick={() => {
+                                setSelectedExpense(item);
+                                setDeleteOpen(true);
+                              }}
+                            >
+                              O'chirish
+                            </Button>
+                          </Stack>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
@@ -1063,7 +1134,7 @@ const Expenses = () => {
               fontWeight: 950,
             }}
           >
-            Yangi mayda xarajat
+            {selectedExpense ? "Xarajatni tahrirlash" : "Yangi mayda xarajat"}
           </Typography>
 
           <Typography
@@ -1267,7 +1338,30 @@ const Expenses = () => {
               },
             }}
           >
-            {saving ? "Saqlanmoqda..." : "Saqlash"}
+            {saving ? "Saqlanmoqda..." : selectedExpense ? "Yangilash" : "Saqlash"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={deleteOpen}
+        onClose={deleting ? undefined : () => setDeleteOpen(false)}
+        fullWidth
+        maxWidth="xs"
+      >
+        <DialogTitle>Xarajatni o'chirish</DialogTitle>
+        <DialogContent>
+          <Typography sx={{ pt: 1 }}>
+            <strong>{selectedExpense?.title || "Tanlangan xarajat"}</strong> o'chirilsinmi? Hisobdan
+            ayrilgan summa avtomatik tiklanadi.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button disabled={deleting} onClick={() => setDeleteOpen(false)}>
+            Bekor qilish
+          </Button>
+          <Button disabled={deleting} color="error" variant="contained" onClick={remove}>
+            {deleting ? "O'chirilmoqda..." : "O'chirish"}
           </Button>
         </DialogActions>
       </Dialog>

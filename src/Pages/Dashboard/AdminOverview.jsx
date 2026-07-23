@@ -25,6 +25,7 @@ import { getMaterialPurchases, getSupplierBalance } from "../../api/materialPurc
 import { getProducts } from "../../api/products";
 import { getWorkerOutputs, getWorkerOutputsSummary } from "../../api/workerOutputs";
 import { getWorkerBalance } from "../../api/workerPayments";
+import { getFinancialAccounts } from "../../api/finance";
 
 import AlertIcon from "../../images/ui-icons/alert.svg";
 import BoxIcon from "../../images/ui-icons/box.svg";
@@ -1214,6 +1215,7 @@ const AdminOverview = ({ user }) => {
     supplierPaid: 0,
     supplierDebt: 0,
     purchasesCount: 0,
+    cashBalance: 0,
   });
 
   const load = useCallback(async () => {
@@ -1268,6 +1270,7 @@ const AdminOverview = ({ user }) => {
         supplierMonthRes,
         supplierDebtRes,
         inventoryRes,
+        accountsRes,
         trendResponses,
       ] = await Promise.all([
         canViewUsers
@@ -1408,6 +1411,14 @@ const AdminOverview = ({ user }) => {
               },
             }),
 
+        canViewFinance
+          ? getFinancialAccounts()
+          : Promise.resolve({
+              data: {
+                financial_accounts: [],
+              },
+            }),
+
         trendPromise,
       ]);
 
@@ -1445,6 +1456,11 @@ const AdminOverview = ({ user }) => {
         supplierDebt: supplierDebtRes.data.debt_amount || 0,
 
         purchasesCount: purchasesRes.data.pageInfo?.total || 0,
+
+        cashBalance: (accountsRes.data.financial_accounts || []).reduce(
+          (sum, account) => sum + Number(account.balance || 0),
+          0,
+        ),
       });
 
       setClients(clientRes.data.summary || []);
@@ -1489,6 +1505,7 @@ const AdminOverview = ({ user }) => {
   }, [
     appliedRange,
     canViewInventory,
+    canViewFinance,
     canViewPayroll,
     canViewProducts,
     canViewProduction,
@@ -1518,10 +1535,6 @@ const AdminOverview = ({ user }) => {
       setSectionFilter("all");
     }
   }, [canViewProduction, hasClientAccounting, hasSupplierAccounting, sectionFilter]);
-
-  const obligations = Number(data.supplierDebt) + Number(data.salaryRemaining);
-
-  const balanceDifference = Number(data.clientDebt) - obligations;
 
   const attentionItems = useMemo(
     () =>
@@ -2576,7 +2589,7 @@ const AdminOverview = ({ user }) => {
                       fontWeight: 950,
                     }}
                   >
-                    Korxona balansi
+                    Moliyaviy holat
                   </Typography>
 
                   <Typography
@@ -2586,7 +2599,7 @@ const AdminOverview = ({ user }) => {
                       fontSize: 11.5,
                     }}
                   >
-                    Korxonaning umumiy moliyaviy va tizim holati
+                    Hisoblardagi real pul va asosiy majburiyatlar
                   </Typography>
                 </Box>
 
@@ -2643,12 +2656,12 @@ const AdminOverview = ({ user }) => {
                 />
 
                 <DarkBalanceItem
-                  icon={balanceDifference >= 0 ? "↑" : "↓"}
-                  iconTone={balanceDifference >= 0 ? "green" : "rose"}
-                  label="Balans farqi"
-                  value={money(balanceDifference)}
-                  valueColor={balanceDifference >= 0 ? "#86efac" : "#fda4af"}
-                  helper="Olinadigan va beriladigan mablag‘lar farqi"
+                  icon={Number(data.cashBalance) >= 0 ? "↑" : "↓"}
+                  iconTone={Number(data.cashBalance) >= 0 ? "green" : "rose"}
+                  label="Pul mablag‘lari"
+                  value={money(data.cashBalance)}
+                  valueColor={Number(data.cashBalance) >= 0 ? "#86efac" : "#fda4af"}
+                  helper="Kassa, karta va bank hisoblari jami"
                 />
               </Box>
             </Box>

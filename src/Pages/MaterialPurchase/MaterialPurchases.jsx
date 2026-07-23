@@ -20,6 +20,7 @@ import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
 import BalanceBox from "../../Components/UI/BalanceBox";
+import { getFinancialAccounts } from "../../api/finance";
 
 import Card from "../../Components/UI/AppCard";
 import {
@@ -44,6 +45,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 
 const emptyPurchase = {
   supplier_id: "",
+  account_id: "",
   purchased_at: today(),
   paid_amount: "",
   note: "",
@@ -72,6 +74,7 @@ const emptyMaterial = {
 
 const emptyPayment = {
   supplier_id: "",
+  account_id: "",
   amount: "",
   paid_at: today(),
   note: "",
@@ -156,6 +159,8 @@ const MaterialPurchases = () => {
   const [purchases, setPurchases] = useState([]);
 
   const [stockRows, setStockRows] = useState([]);
+
+  const [accounts, setAccounts] = useState([]);
 
   const [pageInfo, setPageInfo] = useState({
     total: 0,
@@ -271,7 +276,7 @@ const MaterialPurchases = () => {
 
   const fetchDictionaries = useCallback(async () => {
     try {
-      const [suppliersRes, materialsRes] = await Promise.all([
+      const [suppliersRes, materialsRes, accountsRes] = await Promise.all([
         getSuppliers({
           limit: 100,
         }),
@@ -279,6 +284,8 @@ const MaterialPurchases = () => {
         getRawMaterials({
           limit: 100,
         }),
+
+        getFinancialAccounts(),
       ]);
 
       const rows = suppliersRes.data.suppliers || [];
@@ -302,6 +309,8 @@ const MaterialPurchases = () => {
       setSuppliers(withBalances);
 
       setMaterials(materialsRes.data.raw_materials || []);
+
+      setAccounts(accountsRes.data.financial_accounts || []);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Ma'lumotlarni olishda xato.");
     }
@@ -665,6 +674,8 @@ const MaterialPurchases = () => {
 
         supplier_id: Number(purchaseForm.supplier_id),
 
+        account_id: purchaseForm.account_id ? Number(purchaseForm.account_id) : null,
+
         paid_amount: Number(purchaseForm.paid_amount || 0),
 
         note: purchaseForm.note.trim() || null,
@@ -703,6 +714,8 @@ const MaterialPurchases = () => {
         ...paymentForm,
 
         supplier_id: Number(paymentForm.supplier_id),
+
+        account_id: paymentForm.account_id ? Number(paymentForm.account_id) : null,
 
         amount: Number(paymentForm.amount),
 
@@ -1920,6 +1933,26 @@ const MaterialPurchases = () => {
             }}
           />
 
+          <TextField
+            select
+            label="Pul chiqadigan hisob"
+            value={purchaseForm.account_id}
+            onChange={(event) =>
+              setPurchaseForm((previous) => ({
+                ...previous,
+                account_id: event.target.value,
+              }))
+            }
+            helperText="Tanlanmasa Asosiy kassa ishlatiladi"
+          >
+            <MenuItem value="">Avtomatik — Asosiy kassa</MenuItem>
+            {accounts.map((account) => (
+              <MenuItem key={account.id} value={account.id}>
+                {account.name} — {money(account.balance)}
+              </MenuItem>
+            ))}
+          </TextField>
+
           <Box sx={balanceGridSx}>
             <BalanceBox label="Xarid" value={money(subtotal)} tone="blue" />
 
@@ -2335,6 +2368,26 @@ const MaterialPurchases = () => {
             {suppliers.map((supplier) => (
               <MenuItem key={supplier.id} value={supplier.id}>
                 {supplier.name} — qarz {money(supplier.current_debt)}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            select
+            label="Pul chiqadigan hisob"
+            value={paymentForm.account_id}
+            onChange={(event) =>
+              setPaymentForm((previous) => ({
+                ...previous,
+                account_id: event.target.value,
+              }))
+            }
+            helperText="Tanlanmasa Asosiy kassa ishlatiladi"
+          >
+            <MenuItem value="">Avtomatik — Asosiy kassa</MenuItem>
+            {accounts.map((account) => (
+              <MenuItem key={account.id} value={account.id}>
+                {account.name} — {money(account.balance)}
               </MenuItem>
             ))}
           </TextField>
