@@ -76,6 +76,12 @@ const menuGroups = [
     items: [
       {
         icon: CheckIcon,
+        label: "Zakaz ishlarim",
+        path: "/my-order-tasks",
+        allowedRoles: ["worker"],
+      },
+      {
+        icon: CheckIcon,
         label: "Ish hisoboti",
         path: "/worker-outputs",
         allowedRoles: ["super_admin", "admin", "worker"],
@@ -95,6 +101,13 @@ const menuGroups = [
     items: [
       {
         icon: TrendUpIcon,
+        label: "Zakazlar",
+        path: "/orders",
+        allowedRoles: ["super_admin", "admin"],
+        requiredPermission: "orders.view",
+      },
+      {
+        icon: TrendUpIcon,
         label: "Mijoz savdo",
         path: "/client-sales",
         allowedRoles: ["super_admin", "admin"],
@@ -103,7 +116,7 @@ const menuGroups = [
       },
       {
         icon: TrendDownIcon,
-        label: "Homashyo xaridi",
+        label: "Xomashyo xaridi",
         path: "/material-purchases",
         allowedRoles: ["super_admin", "admin"],
         requiredFeature: "supplier_accounting",
@@ -242,9 +255,9 @@ const Sidebar = () => {
     return [
       group("Asosiy", ["/"]),
 
-      group("Savdo", ["/clients", "/client-sales"]),
+      group("Savdo", ["/clients", "/orders", "/client-sales"]),
 
-      group("Ishlab chiqarish", ["/products", "/worker-outputs"]),
+      group("Ishlab chiqarish", ["/products", "/my-order-tasks", "/worker-outputs"]),
 
       inventoryGroup,
 
@@ -273,7 +286,7 @@ const Sidebar = () => {
   const companyLogo = getCompanyLogoUrl(user?.company_logo_url);
 
   return (
-    <aside className="hidden h-screen w-68 shrink-0 md:block">
+    <aside className="hidden h-screen w-68 shrink-0 lg:block">
       <Box
         sx={{
           position: "relative",

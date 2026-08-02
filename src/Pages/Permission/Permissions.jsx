@@ -35,7 +35,7 @@ const presets = [
     roles: ["admin"],
 
     description:
-      "Hodim, mahsulot va ish hisobotlarini yuritadi. Moliyaviy ma’lumotlar yopiq qoladi.",
+      "Xodim, mahsulot va ish hisobotlarini yuritadi. Moliyaviy ma’lumotlar yopiq qoladi.",
 
     permissions: [
       "dashboard.view",
@@ -57,10 +57,10 @@ const presets = [
   },
 
   {
-    label: "Homashyo admini",
+    label: "Xomashyo admini",
     roles: ["admin"],
 
-    description: "Ta’minotchi, homashyo xaridi va to‘lovlarini yuritadi.",
+    description: "Ta’minotchi, xomashyo xaridi va to‘lovlarini yuritadi.",
 
     permissions: ["dashboard.view", "material_purchases.view", "material_purchases.manage"],
   },
@@ -789,7 +789,7 @@ const Permissions = () => {
 
       <Box
         component="section"
-        className="permissions-hero"
+        className="crm-page-hero permissions-hero"
         sx={{
           position: "relative",
           isolation: "isolate",
@@ -1031,6 +1031,7 @@ const Permissions = () => {
         }}
       >
         <Card
+          className="crm-mobile-user-picker"
           sx={{
             p: 1.7,
 
@@ -1074,13 +1075,14 @@ const Permissions = () => {
             fullWidth
             size="small"
             label="Qidirish"
-            placeholder="Ism yoki username"
+            placeholder="Ism yoki foydalanuvchi nomi"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             sx={{ mb: 1.4 }}
           />
 
           <Stack
+            className="crm-mobile-user-list"
             spacing={1}
             sx={{
               maxHeight: {
@@ -1183,8 +1185,8 @@ const Permissions = () => {
                           fontSize: 8.8,
                         }}
                       >
-                        @{admin.username || "username"} · {number(admin.permissions?.length)} ta
-                        ruxsat
+                        @{admin.username || "foydalanuvchi"} · {number(admin.permissions?.length)}{" "}
+                        ta ruxsat
                       </Typography>
 
                       <Box sx={{ mt: 0.65 }}>
@@ -1308,13 +1310,14 @@ const Permissions = () => {
                         fontSize: 9.5,
                       }}
                     >
-                      @{selectedAdmin.username || "username"} · {number(selectedPermissions.length)}{" "}
-                      ta ruxsat tanlangan
+                      @{selectedAdmin.username || "foydalanuvchi"} ·{" "}
+                      {number(selectedPermissions.length)} ta ruxsat tanlangan
                     </Typography>
                   </Box>
                 </Box>
 
                 <Stack
+                  className="crm-mobile-action-strip"
                   direction={{
                     xs: "column",
                     sm: "row",

@@ -1,16 +1,5 @@
-﻿import {
-  Box,
-  Button,
-  Chip,
-  Container,
-  Divider,
-  Paper,
-  Typography,
-} from "@mui/material";
-import {
-  CompatGrid as Grid,
-  CompatStack as Stack,
-} from "../../Components/UI/MuiCompat";
+﻿import { Box, Button, Chip, Container, Divider, Paper, Typography } from "@mui/material";
+import { CompatGrid as Grid, CompatStack as Stack } from "../../Components/UI/MuiCompat";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
@@ -65,14 +54,14 @@ const features = [
   },
   {
     no: "04",
-    title: "Homashyo xaridi",
-    text: "Ta’minotchidan kelgan homashyo, tannarx, to‘langan summa va qolgan qarzni nazorat qiling.",
+    title: "Xomashyo xaridi",
+    text: "Ta’minotchidan kelgan xomashyo, tannarx, to‘langan summa va qolgan qarzni nazorat qiling.",
     tag: "Xarid va ta’minotchi",
   },
   {
     no: "05",
     title: "Ombor nazorati",
-    text: "Homashyo va tayyor mahsulot qoldig‘i, minimal miqdor, kirim-chiqim hamda inventarizatsiyani boshqaring.",
+    text: "Xomashyo va tayyor mahsulot qoldig‘i, minimal miqdor, kirim-chiqim hamda inventarizatsiyani boshqaring.",
     tag: "Qoldiq va harakat",
     dark: true,
   },
@@ -117,14 +106,14 @@ const plans = [
 const proof = [
   "Savdo va mijoz qarzi",
   "Ishchi mehnati va oylik",
-  "Homashyo va ta’minotchi qarzi",
+  "Xomashyo va ta’minotchi qarzi",
   "Ombor va inventarizatsiya",
 ];
 
 const adPoints = [
   "Mijozga qancha sotildi, qancha pul tushdi va qancha qarz qoldi.",
   "Ishchi qaysi bo‘limda qancha mahsulot qildi va qancha ish haqi oldi.",
-  "Homashyo kimdan olindi, qancha to‘landi va ta’minotchiga qancha qarz bor.",
+  "Xomashyo kimdan olindi, qancha to‘landi va ta’minotchiga qancha qarz bor.",
   "Adminlar faqat rahbar ruxsat bergan bo‘limlarni boshqaradi.",
 ];
 
@@ -512,7 +501,7 @@ export default function LandingPage() {
                   </Typography>
 
                   <Typography component={motion.p} variants={fadeUp} className="lp-hero-text">
-                    Savdo, mijoz qarzi, ishlab chiqarish, ish haqi, avans, homashyo, ombor va moliya
+                    Savdo, mijoz qarzi, ishlab chiqarish, ish haqi, avans, xomashyo, ombor va moliya
                     — barchasi Al Amin CRM ichida.
                   </Typography>
 
@@ -734,7 +723,7 @@ export default function LandingPage() {
                     </Typography>
 
                     <Typography component="p">
-                      Savdo, qarz, oylik, homashyo va omborni bir joyda boshqaring.
+                      Savdo, qarz, oylik, xomashyo va omborni bir joyda boshqaring.
                     </Typography>
                   </Box>
 
@@ -829,7 +818,7 @@ export default function LandingPage() {
               <Typography component="h2">Korxonangiz hisobini tartibga keltiring.</Typography>
 
               <Typography component="p">
-                Ishchi, mahsulot, homashyo, mijoz, qarz, oylik va ombor bitta boshqaruv tizimida
+                Ishchi, mahsulot, xomashyo, mijoz, qarz, oylik va ombor bitta boshqaruv tizimida
                 ishlasin.
               </Typography>
 

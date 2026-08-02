@@ -27,12 +27,11 @@ const HeroMetric = ({
   helperSx,
 }) => {
   const current = toneStyles[tone] || toneStyles.red;
-  const toneBorder = softToneBorder
-    ? softToneBorders[tone] || softToneBorders.red
-    : current[2];
+  const toneBorder = softToneBorder ? softToneBorders[tone] || softToneBorders.red : current[2];
 
   return (
     <Box
+      className="aa-mobile-compact-metric"
       sx={{
         minWidth: 0,
         minHeight: 126,

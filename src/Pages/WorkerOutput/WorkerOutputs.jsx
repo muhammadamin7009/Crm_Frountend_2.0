@@ -114,9 +114,7 @@ const getInitial = (value) =>
     .slice(0, 1)
     .toUpperCase();
 
-const HeroMetric = (props) => (
-  <SharedHeroMetric {...props} labelSx={{ mt: 1.4 }} />
-);
+const HeroMetric = (props) => <SharedHeroMetric {...props} labelSx={{ mt: 1.4 }} />;
 const DepartmentChip = ({ label }) => (
   <Chip
     size="small"
@@ -133,7 +131,14 @@ const DepartmentChip = ({ label }) => (
   />
 );
 
-const PremiumDialog = (props) => <SharedPremiumDialog maxWidth="md" subtitle="Ishlab chiqarish ma’lumotlarini boshqarish" titleClassName="worker-output-dialog-title" {...props} />;
+const PremiumDialog = (props) => (
+  <SharedPremiumDialog
+    maxWidth="md"
+    subtitle="Ishlab chiqarish ma’lumotlarini boshqarish"
+    titleClassName="worker-output-dialog-title"
+    {...props}
+  />
+);
 const WorkerOutputs = () => {
   const auth = useAuth();
   const currentUser = auth?.user || getLocalUser();
@@ -532,7 +537,7 @@ const WorkerOutputs = () => {
 
       <Box
         component="section"
-        className="worker-outputs-hero"
+        className="crm-page-hero worker-outputs-hero"
         sx={{
           position: "relative",
           isolation: "isolate",
@@ -729,6 +734,7 @@ const WorkerOutputs = () => {
       </Box>
 
       <Card
+        className="crm-sticky-filters"
         sx={{
           mb: 2,
           p: 2,
@@ -1059,7 +1065,7 @@ const WorkerOutputs = () => {
                               fontWeight: 700,
                             }}
                           >
-                            @{output.worker_username || "worker"}
+                            @{output.worker_username || "ishchi"}
                           </Typography>
                         </Box>
                       </Box>
@@ -1271,7 +1277,7 @@ const WorkerOutputs = () => {
             : batchProductsCompletingStock.length > 0) && (
             <Alert severity="success" sx={{ borderRadius: "14px" }}>
               Bu yakuniy ishlab chiqarish bosqichi. Saqlanganda tayyor mahsulot omboriga par
-              qo‘shiladi va retsept bo‘yicha homashyolar avtomatik kamayadi.
+              qo‘shiladi va retsept bo‘yicha xomashyolar avtomatik kamayadi.
             </Alert>
           )}
 

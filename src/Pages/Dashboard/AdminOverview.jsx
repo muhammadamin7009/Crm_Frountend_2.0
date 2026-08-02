@@ -174,11 +174,12 @@ const KpiCard = ({ label, value, helper, icon, tone = "red" }) => {
 
   return (
     <Paper
+      className="aa-dashboard-kpi"
       elevation={0}
       sx={{
         position: "relative",
-        minHeight: 145,
-        p: 2.5,
+        minHeight: { xs: 118, sm: 145 },
+        p: { xs: 2, sm: 2.5 },
         overflow: "hidden",
         borderRadius: "22px",
         border: "1px solid rgba(226,232,240,.9)",
@@ -253,6 +254,7 @@ const KpiCard = ({ label, value, helper, icon, tone = "red" }) => {
             borderRadius: "14px",
             background: colors.icon,
             boxShadow: `0 12px 26px ${colors.shadow}`,
+            order: { xs: -1, sm: 0 },
           }}
         >
           <Box
@@ -288,7 +290,7 @@ const KpiCard = ({ label, value, helper, icon, tone = "red" }) => {
 const Section = ({ title, subtitle, action, children, className = "" }) => (
   <Paper
     elevation={0}
-    className={className}
+    className={`aa-dashboard-section ${className}`}
     sx={{
       p: 2.5,
       overflow: "hidden",
@@ -1572,7 +1574,7 @@ const AdminOverview = ({ user }) => {
 
             value: money(data.salaryRemaining),
 
-            helper: "Hodimlarga to'lanishi kerak",
+            helper: "Xodimlarga to'lanishi kerak",
 
             path: "/worker-payments",
 
@@ -1581,7 +1583,7 @@ const AdminOverview = ({ user }) => {
 
         canViewPayroll &&
           Number(data.advances) > 0 && {
-            label: "Hodimlarning avansi",
+            label: "Xodimlarning avansi",
 
             value: money(data.advances),
 
@@ -1688,7 +1690,7 @@ const AdminOverview = ({ user }) => {
       },
 
     hasSupplierAccounting && {
-      label: "Homashyo xaridi",
+      label: "Xomashyo xaridi",
       value: data.purchases,
       color: "#ed921f",
     },
@@ -1716,18 +1718,19 @@ const AdminOverview = ({ user }) => {
     },
 
     purchases: {
-      title: "Homashyo xaridi dinamikasi",
-      subtitle: "Oxirgi 6 oydagi homashyo xaridlari summasi",
-      label: "Homashyo xaridi",
+      title: "Xomashyo xaridi dinamikasi",
+      subtitle: "Oxirgi 6 oydagi xomashyo xaridlari summasi",
+      label: "Xomashyo xaridi",
       color: "#ed921f",
     },
   }[trendMode];
 
   return (
-    <Box className="crm-page h-full overflow-auto pr-1">
+    <Box className="crm-page aa-dashboard-page h-full overflow-auto pr-1">
       <style>{dashboardStyles}</style>
 
       <Box
+        className="aa-dashboard-hero"
         sx={{
           mb: 2.5,
           p: {
@@ -1817,13 +1820,14 @@ const AdminOverview = ({ user }) => {
                 fontWeight: 850,
               }}
             >
-              {user?.first_name || "Admin"}
+              {user?.first_name || "Administrator"}
             </Box>
             . Sizga ochilgan bo'limlar bo'yicha tanlangan davr natijalari.
           </Typography>
         </Box>
 
         <Paper
+          className="aa-dashboard-date-filter"
           elevation={0}
           sx={{
             p: 1,
@@ -1919,13 +1923,14 @@ const AdminOverview = ({ user }) => {
       </Box>
 
       <Box
+        className="aa-dashboard-kpi-grid"
         sx={{
           mb: 2.5,
           display: "grid",
           gridTemplateColumns: {
-            xs: "1fr",
+            xs: "repeat(2,minmax(0,1fr))",
             sm: "repeat(2,minmax(0,1fr))",
-            xl: "repeat(5,minmax(0,1fr))",
+            xl: "repeat(6,minmax(0,1fr))",
           },
           gap: 2,
         }}
@@ -1962,7 +1967,7 @@ const AdminOverview = ({ user }) => {
 
         {hasSupplierAccounting && (
           <KpiCard
-            label="Homashyo xaridi"
+            label="Xomashyo xaridi"
             value={money(data.purchases)}
             helper={`${number(data.purchasesCount)} ta xarid · tanlangan davr`}
             icon={AlertIcon}
@@ -1977,6 +1982,16 @@ const AdminOverview = ({ user }) => {
             helper={`${number(inventory.summary.warehouses_count)} ta faol ombor`}
             icon={BoxIcon}
             tone="blue"
+          />
+        )}
+
+        {canViewFinance && (
+          <KpiCard
+            label="Kassa balansi"
+            value={money(data.cashBalance)}
+            helper="Faol moliyaviy hisoblar qoldig‘i"
+            icon={CoinsIcon}
+            tone="green"
           />
         )}
       </Box>
@@ -2215,6 +2230,7 @@ const AdminOverview = ({ user }) => {
           >
             {clients.length ? (
               <Box
+                className="aa-mobile-cards aa-client-summary-table"
                 sx={{
                   overflowX: "auto",
                 }}
@@ -2297,7 +2313,7 @@ const AdminOverview = ({ user }) => {
 
         {showSupplier && (
           <Section
-            title="Oxirgi homashyo xaridlari"
+            title="Oxirgi xomashyo xaridlari"
             subtitle="Yetkazib beruvchilardan olingan so‘nggi xaridlar"
             action={
               <LinkButton onClick={() => navigate("/material-purchases")}>Barchasi</LinkButton>
@@ -2305,6 +2321,7 @@ const AdminOverview = ({ user }) => {
           >
             {purchases.length ? (
               <Box
+                className="aa-mobile-cards aa-supplier-summary-table"
                 sx={{
                   overflowX: "auto",
                 }}
@@ -2356,7 +2373,7 @@ const AdminOverview = ({ user }) => {
                 </Table>
               </Box>
             ) : (
-              <Empty>Homashyo xaridlari topilmadi.</Empty>
+              <Empty>Xomashyo xaridlari topilmadi.</Empty>
             )}
           </Section>
         )}
@@ -2762,6 +2779,51 @@ const dashboardStyles = `
         #171117 52%,
         #3a121a 100%
       ) !important;
+  }
+
+  @media (max-width: 767px) {
+    .crm-page .aa-dashboard-hero {
+      margin-bottom: 12px !important;
+      padding: 16px 4px 8px !important;
+      overflow: visible !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .crm-page .aa-dashboard-hero h1 {
+      font-size: 25px !important;
+    }
+
+    .crm-page .aa-dashboard-date-filter {
+      width: 100%;
+      padding: 8px !important;
+      border-radius: 16px !important;
+    }
+
+    .crm-page .aa-dashboard-kpi-grid {
+      gap: 12px !important;
+      margin-bottom: 16px !important;
+    }
+
+    .crm-page .aa-dashboard-kpi {
+      border-radius: 18px !important;
+      box-shadow: 0 8px 25px rgba(15,23,42,.055) !important;
+    }
+
+    .crm-page .aa-dashboard-kpi:hover {
+      transform: none !important;
+    }
+
+    .crm-page .aa-dashboard-section {
+      padding: 18px 16px !important;
+      border-radius: 18px !important;
+    }
+
+    .crm-page .aa-dashboard-section > div:first-child {
+      margin-bottom: 18px !important;
+    }
   }
 `;
 

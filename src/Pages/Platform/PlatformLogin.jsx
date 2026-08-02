@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  InputAdornment,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Box, Button, CircularProgress, InputAdornment, Paper, Typography } from "@mui/material";
 import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -576,7 +569,7 @@ const PlatformLogin = () => {
                   value={form.username}
                   onChange={handleChange}
                   autoComplete="username"
-                  placeholder="Platform username"
+                  placeholder="Platforma foydalanuvchi nomi"
                   autoFocus
                   required
                   fullWidth

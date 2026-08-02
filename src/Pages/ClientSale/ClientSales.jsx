@@ -137,21 +137,22 @@ const DebtChip = ({ debt }) => {
         px: 0.35,
         fontSize: 12,
         fontWeight: 850,
-        color: hasDebt
-          ? "var(--aa-warning)"
-          : "var(--aa-success)",
-        background: hasDebt
-          ? "rgba(245,158,11,.12)"
-          : "rgba(34,197,94,.12)",
-        border: hasDebt
-          ? "1px solid rgba(245,158,11,.24)"
-          : "1px solid rgba(34,197,94,.24)",
+        color: hasDebt ? "var(--aa-warning)" : "var(--aa-success)",
+        background: hasDebt ? "rgba(245,158,11,.12)" : "rgba(34,197,94,.12)",
+        border: hasDebt ? "1px solid rgba(245,158,11,.24)" : "1px solid rgba(34,197,94,.24)",
       }}
     />
   );
 };
 
-const PremiumDialog = (props) => <SharedPremiumDialog maxWidth="md" subtitle="Savdo va hisob-kitob ma’lumotlari" titleClassName="client-sales-dialog-title" {...props} />;
+const PremiumDialog = (props) => (
+  <SharedPremiumDialog
+    maxWidth="md"
+    subtitle="Savdo va hisob-kitob ma’lumotlari"
+    titleClassName="client-sales-dialog-title"
+    {...props}
+  />
+);
 const ClientSales = () => {
   const auth = useAuth();
 
@@ -975,7 +976,7 @@ const ClientSales = () => {
       <style>{clientSalesStyles}</style>
       <Box
         component="section"
-        className="client-sales-hero"
+        className="crm-page-hero client-sales-hero"
         sx={{
           position: "relative",
           isolation: "isolate",
@@ -1142,6 +1143,7 @@ const ClientSales = () => {
         </Box>
       </Box>{" "}
       <Card
+        className="crm-sticky-filters"
         sx={{
           mb: 2,
 
@@ -1655,7 +1657,7 @@ const ClientSales = () => {
                               color: "var(--aa-text-tertiary)",
                             }}
                           >
-                            @{sale.client_username || "client"}
+                            @{sale.client_username || "mijoz"}
                           </Typography>
                         </Box>
                       </Box>

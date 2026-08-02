@@ -1159,7 +1159,7 @@ const User = ({ backTo = "/users" }) => {
 
       <Box
         component="section"
-        className="user-profile-hero"
+        className="crm-detail-hero user-profile-hero"
         sx={{
           position: "relative",
           isolation: "isolate",
@@ -1297,7 +1297,7 @@ const User = ({ backTo = "/users" }) => {
                   lineHeight: 1.65,
                 }}
               >
-                @{employee.username || "username"} · {roleName}
+                @{employee.username || "foydalanuvchi"} · {roleName}
               </Typography>
 
               <Typography

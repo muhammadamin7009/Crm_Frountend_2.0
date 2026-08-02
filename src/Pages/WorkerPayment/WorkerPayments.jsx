@@ -145,8 +145,13 @@ const PaymentTypeChip = ({ type }) => {
   );
 };
 
-
-const PremiumDialog = (props) => <SharedPremiumDialog subtitle="Oylik va avans ma’lumotlarini boshqarish" titleClassName="worker-payments-dialog-title" {...props} />;
+const PremiumDialog = (props) => (
+  <SharedPremiumDialog
+    subtitle="Oylik va avans ma’lumotlarini boshqarish"
+    titleClassName="worker-payments-dialog-title"
+    {...props}
+  />
+);
 const WorkerPayments = () => {
   const auth = useAuth();
 
@@ -666,7 +671,7 @@ const WorkerPayments = () => {
     >
       <style>{workerPaymentsStyles}</style>
 
-      <Box component="section" className="worker-payments-hero" sx={heroSx}>
+      <Box component="section" className="crm-page-hero worker-payments-hero" sx={heroSx}>
         <Box
           sx={{
             position: "relative",
@@ -799,6 +804,7 @@ const WorkerPayments = () => {
       </Box>
 
       <Card
+        className="crm-sticky-filters"
         sx={{
           mb: 2,
           p: 2,
@@ -1234,7 +1240,7 @@ const WorkerPayments = () => {
                               fontSize: 9.5,
                             }}
                           >
-                            @{payment.worker_username || "worker"}
+                            @{payment.worker_username || "ishchi"}
                           </Typography>
                         </Box>
                       </Box>
@@ -1928,7 +1934,6 @@ const WorkerPayments = () => {
   );
 };
 
-
 const eyebrowSx = {
   color: "#fecdd3 !important",
   fontSize: 10,
@@ -2127,8 +2132,6 @@ const deleteButtonSx = {
   fontWeight: 900,
   textTransform: "none",
 };
-
-
 
 const tableSx = {
   minWidth: 1120,

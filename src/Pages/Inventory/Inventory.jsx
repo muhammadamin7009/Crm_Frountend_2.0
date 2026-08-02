@@ -19,10 +19,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  CompatDialog as Dialog,
-  CompatStack as Stack,
-} from "../../Components/UI/MuiCompat";
+import { CompatDialog as Dialog, CompatStack as Stack } from "../../Components/UI/MuiCompat";
 
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -92,10 +89,10 @@ const movementLabels = {
   transfer_out: "Ko‘chirish chiqimi",
 };
 
-const itemTypeLabel = (type) => (type === "product" ? "Mahsulot" : "Homashyo");
+const itemTypeLabel = (type) => (type === "product" ? "Mahsulot" : "Xomashyo");
 
 const warehouseTypeLabel = (type) =>
-  type === "product" ? "Tayyor mahsulot" : type === "raw_material" ? "Homashyo" : "Aralash";
+  type === "product" ? "Tayyor mahsulot" : type === "raw_material" ? "Xomashyo" : "Aralash";
 
 const quantity = (value) =>
   Number(value || 0).toLocaleString("uz-UZ", {
@@ -288,6 +285,7 @@ const MetricCard = ({ label, value, hint, tone = "red" }) => {
 
   return (
     <Card
+      className="aa-mobile-compact-metric"
       elevation={0}
       sx={{
         ...surfaceCardSx,
@@ -1091,7 +1089,7 @@ const Inventory = () => {
 
       <Box
         component="section"
-        className="inventory-hero"
+        className="crm-page-hero inventory-hero"
         sx={{
           position: "relative",
           isolation: "isolate",
@@ -1317,6 +1315,7 @@ const Inventory = () => {
           </Box>
 
           <Box
+            className="crm-mobile-card-strip"
             sx={{
               display: "grid",
 
@@ -1406,6 +1405,7 @@ const Inventory = () => {
           </Box>
 
           <Box
+            className="crm-mobile-card-strip"
             sx={{
               display: "grid",
 
@@ -1651,6 +1651,7 @@ const Inventory = () => {
       {!isCountsPage && !isManagementPage && selectedWarehouse && (
         <>
           <Box
+            className="crm-mobile-card-strip"
             sx={{
               display: "grid",
 
@@ -1700,6 +1701,7 @@ const Inventory = () => {
             elevation={0}
             sx={{
               ...surfaceCardSx,
+              overflow: "visible",
             }}
           >
             <Box
@@ -1717,18 +1719,21 @@ const Inventory = () => {
             </Box>
 
             <Box
+              className="crm-sticky-filters"
               sx={{
                 display: "grid",
                 gridTemplateColumns: "1fr",
 
                 gap: 1.4,
                 p: 2,
+                borderRadius: 2,
+                backgroundColor: "#ffffff",
               }}
             >
               <TextField
                 size="small"
                 label="Ombordagi elementni qidirish"
-                placeholder="Mahsulot yoki homashyo nomi"
+                placeholder="Mahsulot yoki xomashyo nomi"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
               />
@@ -2587,7 +2592,7 @@ const Inventory = () => {
                 }))
               }
             >
-              <MenuItem value="raw_material">Homashyo</MenuItem>
+              <MenuItem value="raw_material">Xomashyo</MenuItem>
 
               <MenuItem value="product">Mahsulot</MenuItem>
             </TextField>
@@ -2967,7 +2972,7 @@ const Inventory = () => {
                 }))
               }
             >
-              <MenuItem value="raw_material">Homashyo</MenuItem>
+              <MenuItem value="raw_material">Xomashyo</MenuItem>
 
               <MenuItem value="product">Mahsulot</MenuItem>
             </TextField>
@@ -3112,7 +3117,7 @@ const Inventory = () => {
             >
               <MenuItem value="product">Tayyor mahsulot</MenuItem>
 
-              <MenuItem value="raw_material">Homashyo</MenuItem>
+              <MenuItem value="raw_material">Xomashyo</MenuItem>
 
               <MenuItem value="mixed">Aralash ombor</MenuItem>
             </TextField>

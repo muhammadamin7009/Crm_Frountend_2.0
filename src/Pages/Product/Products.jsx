@@ -110,11 +110,16 @@ const getInitial = (value) =>
     .slice(0, 1)
     .toUpperCase();
 
-const HeroMetric = (props) => (
-  <SharedHeroMetric {...props} labelSx={{ mt: 1.4 }} />
-);
+const HeroMetric = (props) => <SharedHeroMetric {...props} labelSx={{ mt: 1.4 }} />;
 const StatusChip = (props) => <ActiveStatusChip {...props} />;
-const PremiumDialog = (props) => <SharedPremiumDialog maxWidth="md" subtitle="Mahsulot ma’lumotlarini boshqarish" titleClassName="products-dialog-title" {...props} />;
+const PremiumDialog = (props) => (
+  <SharedPremiumDialog
+    maxWidth="md"
+    subtitle="Mahsulot ma’lumotlarini boshqarish"
+    titleClassName="products-dialog-title"
+    {...props}
+  />
+);
 const Products = () => {
   const navigate = useNavigate();
 
@@ -1242,7 +1247,7 @@ const Products = () => {
 
       <Box
         component="section"
-        className="products-hero"
+        className="crm-page-hero products-hero"
         sx={{
           position: "relative",
           isolation: "isolate",
@@ -1445,6 +1450,7 @@ const Products = () => {
       </Box>
 
       <Card
+        className="crm-sticky-filters"
         sx={{
           mb: 2,
           p: 2,

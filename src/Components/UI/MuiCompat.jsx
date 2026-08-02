@@ -16,27 +16,38 @@ const mergeSlotProps = (slotProps, compatibilitySlots) => {
   return result;
 };
 
-export const CompatTextField = forwardRef(function CompatTextField({
-  inputProps,
-  InputProps,
-  InputLabelProps,
-  SelectProps,
-  FormHelperTextProps,
-  slotProps,
-  ...props
-}, ref) {
+export const CompatTextField = forwardRef(function CompatTextField(
+  {
+    inputProps,
+    InputProps,
+    InputLabelProps,
+    SelectProps,
+    FormHelperTextProps,
+    slotProps,
+    ...props
+  },
+  ref,
+) {
+  const resolvedInputLabelProps =
+    props.type === "date"
+      ? {
+          shrink: true,
+          ...(InputLabelProps || {}),
+        }
+      : InputLabelProps;
+
   return (
-  <TextField
-    {...props}
-    ref={ref}
-    slotProps={mergeSlotProps(slotProps, {
-      htmlInput: inputProps,
-      input: InputProps,
-      inputLabel: InputLabelProps,
-      select: SelectProps,
-      formHelperText: FormHelperTextProps,
-    })}
-  />
+    <TextField
+      {...props}
+      ref={ref}
+      slotProps={mergeSlotProps(slotProps, {
+        htmlInput: inputProps,
+        input: InputProps,
+        inputLabel: resolvedInputLabelProps,
+        select: SelectProps,
+        formHelperText: FormHelperTextProps,
+      })}
+    />
   );
 });
 
@@ -87,19 +98,10 @@ export const CompatStack = forwardRef(function CompatStack(
   );
 });
 
-export const CompatGrid = forwardRef(function CompatGrid({
-  item: _item,
-  xs,
-  sm,
-  md,
-  lg,
-  xl,
-  alignItems,
-  justifyContent,
-  size,
-  sx,
-  ...props
-}, ref) {
+export const CompatGrid = forwardRef(function CompatGrid(
+  { item: _item, xs, sm, md, lg, xl, alignItems, justifyContent, size, sx, ...props },
+  ref,
+) {
   const responsiveSize = {
     ...(xs !== undefined ? { xs } : {}),
     ...(sm !== undefined ? { sm } : {}),

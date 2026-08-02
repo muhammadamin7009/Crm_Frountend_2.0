@@ -25,6 +25,8 @@ const Permissions = lazy(() => import("../Pages/Permission/Permissions"));
 const Inventory = lazy(() => import("../Pages/Inventory/Inventory"));
 const Expenses = lazy(() => import("../Pages/Expense/Expenses"));
 const Clients = lazy(() => import("../Pages/Client/Clients"));
+const Orders = lazy(() => import("../Pages/Order/Orders"));
+const MyOrderTasks = lazy(() => import("../Pages/Order/MyOrderTasks"));
 
 const page = (Component, props = {}) => (
   <Suspense fallback={null}>
@@ -61,6 +63,21 @@ const AppRouter = () => {
             }
           >
             <Route path="/users" element={page(Users)} />
+          </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={["worker"]} />}>
+            <Route path="/my-order-tasks" element={page(MyOrderTasks)} />
+          </Route>
+
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={["super_admin", "admin"]}
+                allowedPermissions={["orders.view"]}
+              />
+            }
+          >
+            <Route path="/orders" element={page(Orders)} />
           </Route>
 
           <Route

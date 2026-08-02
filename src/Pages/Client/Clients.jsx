@@ -198,6 +198,7 @@ const ClientMetric = ({ label, value, helper, tone = "red" }) => {
 
   return (
     <Box
+      className="aa-mobile-compact-metric"
       sx={{
         minWidth: 0,
         minHeight: 122,
@@ -638,6 +639,7 @@ const Clients = () => {
 
   return (
     <Box
+      className="clients-page"
       sx={{
         height: "100%",
         minHeight: 0,
@@ -649,6 +651,7 @@ const Clients = () => {
 
       <Box
         component="section"
+        className="crm-page-hero clients-hero"
         sx={{
           position: "relative",
           isolation: "isolate",
@@ -819,6 +822,7 @@ const Clients = () => {
       {/* Filtrlar */}
 
       <Paper
+        className="crm-sticky-filters"
         elevation={0}
         sx={{
           mb: 2,
@@ -847,7 +851,7 @@ const Clients = () => {
           <TextField
             size="small"
             label="Mijozni qidirish"
-            placeholder="Ism, telefon yoki username"
+            placeholder="Ism, telefon yoki foydalanuvchi nomi"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
@@ -1111,7 +1115,7 @@ const Clients = () => {
                             >
                               {client.is_deleted
                                 ? "O‘chirilgan"
-                                : `@${client.username || "username"}`}
+                                : `@${client.username || "foydalanuvchi"}`}
                             </Typography>
                           </Box>
                         </Box>

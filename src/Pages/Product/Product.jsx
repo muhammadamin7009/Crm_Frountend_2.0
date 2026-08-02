@@ -155,9 +155,7 @@ const Surface = ({ children, sx = {} }) => (
   </Paper>
 );
 
-const HeroMetric = (props) => (
-  <SharedHeroMetric {...props} labelSx={{ mt: 1.4 }} />
-);
+const HeroMetric = (props) => <SharedHeroMetric {...props} labelSx={{ mt: 1.4 }} />;
 const InfoItem = ({ label, value, accent = false }) => (
   <Box
     sx={{
@@ -622,13 +620,13 @@ const Product = () => {
     );
 
     if (completionDepartmentId && validRows.length !== recipeRows.length) {
-      toast.error("Har bir homashyo va 1 par uchun sarf miqdorini to'g'ri kiriting.");
+      toast.error("Har bir xomashyo va 1 par uchun sarf miqdorini to'g'ri kiriting.");
 
       return;
     }
 
     if (completionDepartmentId && !validRows.length) {
-      toast.error("Kamida bitta homashyo qo'shing.");
+      toast.error("Kamida bitta xomashyo qo'shing.");
 
       return;
     }
@@ -642,7 +640,7 @@ const Product = () => {
     const ids = validRows.map((row) => Number(row.raw_material_id));
 
     if (new Set(ids).size !== ids.length) {
-      toast.error("Bitta homashyoni retseptga ikki marta qo'shib bo'lmaydi.");
+      toast.error("Bitta xomashyoni retseptga ikki marta qo'shib bo'lmaydi.");
 
       return;
     }
@@ -770,7 +768,7 @@ const Product = () => {
 
       <Box
         component="section"
-        className="product-profile-hero"
+        className="crm-detail-hero product-profile-hero"
         sx={{
           position: "relative",
           isolation: "isolate",
@@ -1017,7 +1015,7 @@ const Product = () => {
             <HeroMetric
               label="Retsept"
               value={`${formatNumber(recipeRows.length)} ta`}
-              helper="Biriktirilgan homashyolar"
+              helper="Biriktirilgan xomashyolar"
               tone="red"
             />
           </Box>
@@ -1439,7 +1437,7 @@ const Product = () => {
         <Surface sx={{ p: 2.4 }}>
           <SectionHeader
             title="Ishlab chiqarish retsepti"
-            subtitle="Bir par mahsulot uchun sarflanadigan homashyolar va yakunlovchi bo‘lim"
+            subtitle="Bir par mahsulot uchun sarflanadigan xomashyolar va yakunlovchi bo‘lim"
             actions={
               <Button
                 variant="contained"
@@ -1462,7 +1460,7 @@ const Product = () => {
             }}
           >
             Ishchi yakunlovchi bo‘limda ish topshirganda tayyor mahsulot omboriga qo‘shiladi va
-            retseptdagi homashyolar avtomatik kamayadi.
+            retseptdagi xomashyolar avtomatik kamayadi.
           </Alert>
 
           <TextField
@@ -1513,7 +1511,7 @@ const Product = () => {
                   <TextField
                     select
                     size="small"
-                    label={`Homashyo ${index + 1}`}
+                    label={`Xomashyo ${index + 1}`}
                     value={row.raw_material_id}
                     onChange={(event) =>
                       updateRecipeRow(row.row_id, "raw_material_id", event.target.value)
@@ -1600,7 +1598,7 @@ const Product = () => {
               disabled={!rawMaterials.length || recipeRows.length >= rawMaterials.length}
               sx={secondaryButtonSx}
             >
-              + Homashyo qo‘shish
+              + Xomashyo qo‘shish
             </Button>
 
             <Typography
@@ -1610,7 +1608,7 @@ const Product = () => {
                 fontWeight: 750,
               }}
             >
-              {formatNumber(recipeRows.length)} / {formatNumber(rawMaterials.length)} ta homashyo
+              {formatNumber(recipeRows.length)} / {formatNumber(rawMaterials.length)} ta xomashyo
               tanlangan
             </Typography>
           </Box>
@@ -1623,7 +1621,7 @@ const Product = () => {
                 borderRadius: "15px",
               }}
             >
-              Retsept tuzish uchun avval homashyo yarating.
+              Retsept tuzish uchun avval xomashyo yarating.
             </Alert>
           )}
         </Surface>

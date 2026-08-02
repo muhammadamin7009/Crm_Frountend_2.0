@@ -166,9 +166,7 @@ const getInitial = (value) =>
     .slice(0, 1)
     .toUpperCase();
 
-const HeroMetric = (props) => (
-  <SharedHeroMetric {...props} valueSx={{ fontSize: 17 }} />
-);
+const HeroMetric = (props) => <SharedHeroMetric {...props} valueSx={{ fontSize: 17 }} />;
 const PlanChip = ({ code, name }) => {
   const styles = {
     business: ["#991b1b", "rgba(153,27,27,.08)", "rgba(153,27,27,.17)"],
@@ -336,7 +334,13 @@ const SummaryBox = ({ label, value, tone = "default" }) => {
   );
 };
 
-const PremiumDialog = (props) => <SharedPremiumDialog titleClassName="platform-dashboard-dialog-title" contentSx={{ py: "24px !important" }} {...props} />;
+const PremiumDialog = (props) => (
+  <SharedPremiumDialog
+    titleClassName="platform-dashboard-dialog-title"
+    contentSx={{ py: "24px !important" }}
+    {...props}
+  />
+);
 const PlatformDashboard = () => {
   const navigate = useNavigate();
 
@@ -720,7 +724,7 @@ const PlatformDashboard = () => {
       >
         <Box
           component="section"
-          className="platform-dashboard-hero"
+          className="crm-page-hero platform-dashboard-hero"
           sx={{
             position: "relative",
             isolation: "isolate",
@@ -906,7 +910,7 @@ const PlatformDashboard = () => {
                       fontWeight: 900,
                     }}
                   >
-                    {platformAdmin?.first_name || platformAdmin?.name || "Platform admin"}
+                    {platformAdmin?.first_name || platformAdmin?.name || "Platforma administratori"}
                   </Typography>
 
                   <Typography
@@ -971,6 +975,7 @@ const PlatformDashboard = () => {
         </Box>
 
         <Card
+          className="crm-sticky-filters"
           sx={{
             mb: 2,
             p: 2,
@@ -1369,7 +1374,7 @@ const PlatformDashboard = () => {
                             />
 
                             <UsageBar
-                              label="Admin"
+                              label="Administrator"
                               value={company.admins_count}
                               limit={company.max_admins}
                               tone="green"

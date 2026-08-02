@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../Components/Sidebar/Sidebar";
 import TopBar from "../Components/Sidebar/TopBar";
+import MobileNavigation from "../Components/Sidebar/MobileNavigation";
 
 function Layout() {
   return (
@@ -8,12 +9,13 @@ function Layout() {
       <Sidebar />
       <main className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
         <TopBar />
-        <div className="min-h-0 flex-1 overflow-hidden px-3 pb-3 sm:px-4 sm:pb-4 lg:px-6 lg:pb-6">
-          <div className="h-full overflow-auto rounded-[var(--aa-radius-xl)] p-0.5 sm:p-1">
+        <div className="app-main-content min-h-0 flex-1 overflow-hidden px-3 pb-3 sm:px-4 sm:pb-4 lg:px-6 lg:pb-6">
+          <div className="app-content-scroll h-full overflow-x-hidden overflow-y-auto rounded-[var(--aa-radius-xl)] p-0.5 sm:p-1">
             <Outlet />
           </div>
         </div>
       </main>
+      <MobileNavigation />
     </div>
   );
 }

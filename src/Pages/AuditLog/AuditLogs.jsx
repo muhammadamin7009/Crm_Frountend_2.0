@@ -18,10 +18,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  CompatDialog as Dialog,
-  CompatStack as Stack,
-} from "../../Components/UI/MuiCompat";
+import { CompatDialog as Dialog, CompatStack as Stack } from "../../Components/UI/MuiCompat";
 
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import { toast } from "react-toastify";
@@ -38,7 +35,7 @@ const actionNames = {
 };
 
 const entityNames = {
-  users: "Hodim",
+  users: "Xodim",
   products: "Mahsulot",
   categories: "Kategoriya",
   departments: "Bo‘lim",
@@ -47,9 +44,9 @@ const entityNames = {
   "worker-advances": "Avans",
   "client-sales": "Mijoz savdosi",
   "client-payments": "Mijoz to‘lovi",
-  "material-purchases": "Homashyo xaridi",
+  "material-purchases": "Xomashyo xaridi",
   suppliers: "Ta’minotchi",
-  employees: "Hodim profili",
+  employees: "Xodim profili",
   "payroll-periods": "Haftalik hisob",
   expenses: "Xarajat",
   warehouses: "Ombor",
@@ -372,7 +369,7 @@ const AuditLogs = () => {
 
       <Box
         component="section"
-        className="audit-logs-hero"
+        className="crm-page-hero audit-logs-hero"
         sx={{
           position: "relative",
           isolation: "isolate",
@@ -573,6 +570,7 @@ const AuditLogs = () => {
       </Box>
 
       <Card
+        className="crm-sticky-filters"
         sx={{
           mb: 2,
           p: 2,
@@ -862,7 +860,7 @@ const AuditLogs = () => {
                               fontSize: 9.5,
                             }}
                           >
-                            @{row.username || "unknown"}
+                            @{row.username || "noma’lum"}
                           </Typography>
                         </Box>
                       </Box>
@@ -1076,7 +1074,7 @@ const AuditLogs = () => {
                       fontSize: 10,
                     }}
                   >
-                    @{selectedLog.username || "unknown"} · {formatDate(selectedLog.created_at)}
+                    @{selectedLog.username || "noma’lum"} · {formatDate(selectedLog.created_at)}
                   </Typography>
                 </Box>
               </Box>
@@ -1105,15 +1103,15 @@ const AuditLogs = () => {
                   value={entityNames[selectedLog.entity_type] || selectedLog.entity_type || "-"}
                 />
 
-                <DetailItem label="Obyekt ID" value={selectedLog.entity_id || "-"} />
+                <DetailItem label="Yozuv raqami" value={selectedLog.entity_id || "-"} />
 
                 <DetailItem label="Natija kodi" value={selectedLog.status_code || "-"} />
 
                 <DetailItem label="IP manzil" value={selectedLog.ip || "-"} />
 
-                <DetailItem label="Audit ID" value={selectedLog.id || "-"} />
+                <DetailItem label="Audit raqami" value={selectedLog.id || "-"} />
 
-                <DetailItem label="Username" value={selectedLog.username || "-"} />
+                <DetailItem label="Foydalanuvchi nomi" value={selectedLog.username || "-"} />
 
                 <DetailItem label="Vaqt" value={formatDate(selectedLog.created_at)} />
               </Box>

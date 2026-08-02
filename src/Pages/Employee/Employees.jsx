@@ -244,7 +244,13 @@ const AgreementChip = ({ agreement }) => {
   );
 };
 
-const PremiumDialog = (props) => <SharedPremiumDialog titleClassName="employees-dialog-title" contentSx={{ py: "24px !important" }} {...props} />;
+const PremiumDialog = (props) => (
+  <SharedPremiumDialog
+    titleClassName="employees-dialog-title"
+    contentSx={{ py: "24px !important" }}
+    {...props}
+  />
+);
 const Employees = () => {
   const auth = useAuth();
 
@@ -570,7 +576,7 @@ const Employees = () => {
 
       <Box
         component="section"
-        className="employees-hero"
+        className="crm-page-hero employees-hero"
         sx={{
           position: "relative",
           isolation: "isolate",
@@ -797,6 +803,7 @@ const Employees = () => {
       </Box>
 
       <Card
+        className="crm-sticky-filters"
         sx={{
           mb: 2,
           p: 2,
@@ -840,7 +847,7 @@ const Employees = () => {
                 fontSize: 9.5,
               }}
             >
-              Ism, username, lavozim, bo‘lim yoki hisob turi bo‘yicha qidiring
+              Ism, foydalanuvchi nomi, lavozim, bo‘lim yoki hisob turi bo‘yicha qidiring
             </Typography>
           </Box>
 
@@ -1067,7 +1074,7 @@ const Employees = () => {
                               fontSize: 9.5,
                             }}
                           >
-                            @{employee.username || "username"}
+                            @{employee.username || "foydalanuvchi"}
                           </Typography>
                         </Box>
                       </Box>

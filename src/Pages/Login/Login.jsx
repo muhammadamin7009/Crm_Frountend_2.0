@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Checkbox, FormControlLabel, Paper, Typography } from "@mui/material";
 import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -655,7 +648,6 @@ const Login = () => {
                     })}
                     sx={fieldSx}
                   />
-
 
                   <TextField
                     fullWidth

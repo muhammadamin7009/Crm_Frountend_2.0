@@ -91,8 +91,7 @@ body {
   overflow-y: auto;
   color: var(--aa-text);
   background:
-    radial-gradient(circle at 78% -10%, rgba(143, 29, 32, 0.045), transparent 28%),
-    var(--aa-bg);
+    radial-gradient(circle at 78% -10%, rgba(143, 29, 32, 0.045), transparent 28%), var(--aa-bg);
 }
 
 button,
@@ -160,6 +159,299 @@ textarea,
   height: 100vh;
   overflow: hidden;
   background: transparent;
+}
+
+/* Barcha CRM sahifalari bitta vertikal scroll konteyneridan foydalanadi. */
+.app-content-scroll {
+  position: relative;
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
+
+.app-content-scroll > .crm-page,
+.app-content-scroll > .MuiBox-root.crm-page,
+.app-content-scroll > .clients-page {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow: visible !important;
+  padding-right: 0 !important;
+}
+
+.app-content-scroll
+  > :is(
+    .products-page,
+    .audit-logs-page,
+    .client-sales-page,
+    .employees-page,
+    .expenses-page,
+    .finance-page,
+    .material-purchases-page,
+    .worker-outputs-page,
+    .worker-payments-page
+  ) {
+  display: block !important;
+}
+
+/* Banner scroll bilan chiqadi, qidiruv va filtrlar yuqorida qoladi. */
+.crm-sticky-filters {
+  position: sticky !important;
+  top: 0;
+  z-index: 30;
+  isolation: isolate;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.1) !important;
+}
+
+.aa-mobile-bottom-nav,
+.aa-mobile-fab {
+  display: none !important;
+}
+
+@media (max-width: 1023px) {
+  .app-main-content {
+    padding-right: 10px !important;
+    padding-bottom: calc(102px + env(safe-area-inset-bottom)) !important;
+    padding-left: 10px !important;
+  }
+
+  .app-content-scroll {
+    border-radius: 0 !important;
+    scrollbar-gutter: auto;
+  }
+
+  .aa-mobile-bottom-nav {
+    position: fixed;
+    right: 10px;
+    bottom: calc(8px + env(safe-area-inset-bottom));
+    left: 10px;
+    z-index: 1200;
+
+    height: 76px;
+    padding: 7px 6px;
+
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    align-items: center;
+
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 24px;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    box-shadow: 0 18px 55px rgba(15, 23, 42, 0.16);
+
+    backdrop-filter: saturate(170%) blur(24px);
+    -webkit-backdrop-filter: saturate(170%) blur(24px);
+  }
+
+  .aa-mobile-bottom-item {
+    min-width: 0 !important;
+    height: 62px;
+
+    padding: 5px 2px !important;
+
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+
+    color: #6b7280 !important;
+
+    border-radius: 17px !important;
+
+    text-transform: none !important;
+
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .aa-mobile-bottom-item:hover {
+    background-color: rgba(143, 29, 32, 0.04) !important;
+  }
+
+  .aa-mobile-bottom-item:active {
+    transform: scale(0.96);
+  }
+
+  .aa-mobile-item-icon {
+    position: relative;
+
+    width: 27px;
+    height: 27px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 10px;
+
+    transition:
+      background-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .aa-mobile-item-icon img {
+    width: 20px;
+    height: 20px;
+
+    opacity: 0.62;
+
+    transition:
+      opacity 0.2s ease,
+      filter 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .aa-mobile-active-dot {
+    position: absolute;
+
+    right: -1px;
+    bottom: -1px;
+
+    width: 6px;
+    height: 6px;
+
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+
+    background-color: #b91c1c;
+  }
+
+  .aa-mobile-bottom-item > span {
+    max-width: 100%;
+
+    overflow: hidden;
+
+    font-size: 9.5px;
+    line-height: 1.1;
+    font-weight: 750;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .aa-mobile-bottom-item.active {
+    color: #991b1b !important;
+
+    background: linear-gradient(
+      145deg,
+      rgba(153, 27, 27, 0.075),
+      rgba(220, 38, 38, 0.035)
+    ) !important;
+  }
+
+  .aa-mobile-bottom-item.active .aa-mobile-item-icon {
+    background-color: rgba(153, 27, 27, 0.09);
+
+    box-shadow: 0 8px 18px rgba(153, 27, 27, 0.08);
+  }
+
+  .aa-mobile-bottom-item.active .aa-mobile-item-icon img {
+    opacity: 1;
+
+    transform: translateY(-1px);
+
+    filter: invert(16%) sepia(73%) saturate(2189%) hue-rotate(340deg) brightness(86%);
+  }
+
+  .aa-mobile-fab {
+    position: fixed !important;
+
+    right: 22px;
+    bottom: calc(98px + env(safe-area-inset-bottom));
+
+    z-index: 1201;
+
+    min-width: 58px !important;
+    width: 58px;
+    height: 58px;
+
+    padding: 0 !important;
+
+    display: grid !important;
+    place-items: center;
+
+    color: #ffffff !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 19px !important;
+
+    background: linear-gradient(145deg, #7f1d1d, #b91c1c 58%, #dc2626) !important;
+
+    box-shadow: 0 18px 36px rgba(143, 29, 32, 0.34) !important;
+
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .aa-mobile-fab span {
+    display: block;
+
+    transform: translateY(-1px);
+
+    font-size: 34px;
+    line-height: 1;
+    font-weight: 300;
+  }
+
+  .aa-mobile-fab:hover {
+    background: linear-gradient(145deg, #681818, #991b1b 58%, #b91c1c) !important;
+  }
+
+  .aa-mobile-fab:active {
+    transform: scale(0.94);
+
+    box-shadow: 0 12px 24px rgba(143, 29, 32, 0.28) !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .app-main-content {
+    padding-right: 7px !important;
+    padding-left: 7px !important;
+  }
+
+  .aa-mobile-bottom-nav {
+    right: 6px;
+    left: 6px;
+
+    height: 72px;
+
+    padding-right: 3px;
+    padding-left: 3px;
+
+    border-radius: 21px;
+  }
+
+  .aa-mobile-bottom-item {
+    height: 58px;
+  }
+
+  .aa-mobile-bottom-item > span {
+    font-size: 8.5px;
+  }
+
+  .aa-mobile-fab {
+    right: 16px;
+
+    bottom: calc(92px + env(safe-area-inset-bottom));
+
+    width: 54px;
+    height: 54px;
+    min-width: 54px !important;
+
+    border-radius: 17px !important;
+  }
+}
+
+@media (max-width: 899px) {
+  .crm-sticky-filters {
+    position: relative !important;
+  }
 }
 
 .glass-card,
@@ -518,12 +810,7 @@ textarea,
   height: 42%;
   opacity: 0.62;
   background:
-    linear-gradient(
-      155deg,
-      transparent 0 28%,
-      rgba(239, 68, 68, 0.2) 28.5% 29.5%,
-      transparent 30%
-    ),
+    linear-gradient(155deg, transparent 0 28%, rgba(239, 68, 68, 0.2) 28.5% 29.5%, transparent 30%),
     linear-gradient(
       25deg,
       transparent 0 44%,
@@ -564,7 +851,9 @@ textarea,
   min-height: 54px;
   border-radius: 12px !important;
   background: #fff;
-  transition: box-shadow 0.18s ease, background-color 0.18s ease;
+  transition:
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
 }
 
 .auth-form-panel .MuiOutlinedInput-root:hover {
@@ -615,6 +904,298 @@ textarea,
 }
 
 @media (max-width: 768px) {
+  /* Mobil sahifada asosiy ishga tezroq yetib borish uchun umumiy ixcham standart. */
+  .crm-page-hero,
+  .clients-page > .crm-page-hero {
+    min-height: 0 !important;
+    margin-bottom: 10px !important;
+    padding: 14px !important;
+    border-radius: 18px !important;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.12) !important;
+  }
+
+  .crm-page-hero > .MuiBox-root {
+    gap: 12px !important;
+  }
+
+  .crm-page-hero h1 {
+    margin-top: 8px !important;
+    font-size: 22px !important;
+    line-height: 1.12 !important;
+  }
+
+  .crm-page-hero h1 + p {
+    display: none !important;
+  }
+
+  .crm-page-hero .MuiStack-root {
+    margin-top: 12px !important;
+    padding-bottom: 2px;
+    flex-direction: row !important;
+    gap: 8px !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .crm-page-hero .MuiStack-root::-webkit-scrollbar {
+    display: none;
+  }
+
+  .crm-page-hero .MuiStack-root > .MuiButton-root {
+    min-height: 40px !important;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .crm-detail-hero {
+    padding: 15px !important;
+    border-radius: 18px !important;
+  }
+
+  .crm-detail-hero h1 {
+    font-size: 22px !important;
+  }
+
+  .crm-simple-page-header {
+    min-width: 0;
+    padding: 4px 2px !important;
+  }
+
+  .crm-simple-page-header > div:first-child {
+    min-width: 0;
+  }
+
+  .crm-simple-page-header h1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .crm-simple-page-header .MuiButton-root {
+    min-height: 40px;
+    padding-inline: 14px;
+    white-space: nowrap;
+  }
+
+  .crm-sticky-filters {
+    top: 0 !important;
+    margin-bottom: 10px !important;
+    padding: 10px !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.09) !important;
+  }
+
+  .crm-sticky-filters:has(> .MuiFormControl-root),
+  .crm-sticky-filters .MuiBox-root:has(> .MuiFormControl-root) {
+    display: flex !important;
+    max-width: 100%;
+    padding-bottom: 3px;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .crm-sticky-filters:has(> .MuiFormControl-root)::-webkit-scrollbar,
+  .crm-sticky-filters .MuiBox-root:has(> .MuiFormControl-root)::-webkit-scrollbar {
+    display: none;
+  }
+
+  .crm-sticky-filters:has(> .MuiFormControl-root) > .MuiFormControl-root,
+  .crm-sticky-filters .MuiBox-root:has(> .MuiFormControl-root) > .MuiFormControl-root {
+    min-width: 0;
+    flex: 0 0 min(72vw, 250px);
+    scroll-snap-align: start;
+  }
+
+  .crm-sticky-filters:has(> .MuiFormControl-root) > .MuiFormControl-root:first-child,
+  .crm-sticky-filters .MuiBox-root:has(> .MuiFormControl-root) > .MuiFormControl-root:first-child {
+    flex-basis: min(82vw, 320px);
+  }
+
+  .crm-sticky-filters .MuiButton-root {
+    min-height: 40px !important;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .crm-sticky-filters > .MuiBox-root > .MuiStack-root {
+    padding-bottom: 3px;
+    flex-direction: row !important;
+    gap: 8px !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .crm-sticky-filters > .MuiBox-root > .MuiStack-root::-webkit-scrollbar {
+    display: none;
+  }
+
+  .crm-mobile-secondary-section {
+    margin-bottom: 10px !important;
+    padding: 13px !important;
+  }
+
+  .crm-mobile-secondary-section > .MuiBox-root:first-child > div:first-child > p:last-child {
+    display: none;
+  }
+
+  .crm-mobile-card-strip {
+    display: flex !important;
+    max-width: 100%;
+    padding-bottom: 3px;
+    flex-flow: row nowrap !important;
+    gap: 9px !important;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .crm-mobile-card-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .crm-mobile-card-strip > * {
+    flex: 0 0 min(78vw, 290px);
+    scroll-snap-align: start;
+  }
+
+  .crm-mobile-user-picker {
+    padding: 12px !important;
+  }
+
+  .crm-mobile-user-picker > .MuiBox-root:first-child p:last-child {
+    display: none;
+  }
+
+  .crm-mobile-user-list {
+    max-height: none !important;
+    padding: 2px 0 3px !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+    overflow-x: auto;
+    overflow-y: hidden !important;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .crm-mobile-user-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .crm-mobile-user-list > .MuiButton-root {
+    min-width: min(72vw, 250px) !important;
+    flex: 0 0 min(72vw, 250px);
+    scroll-snap-align: start;
+  }
+
+  .crm-mobile-action-strip {
+    width: 100%;
+    padding-bottom: 3px;
+    flex-direction: row !important;
+    gap: 8px !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .crm-mobile-action-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .crm-mobile-action-strip > .MuiButton-root {
+    min-height: 40px;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .crm-page .MuiTableContainer-root,
+  .clients-page .MuiTableContainer-root,
+  .platform-dashboard-page .MuiTableContainer-root {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .crm-page .MuiBox-root:has(> .MuiTable-root),
+  .clients-page .MuiBox-root:has(> .MuiTable-root),
+  .platform-dashboard-page .MuiBox-root:has(> .MuiTable-root) {
+    max-width: 100%;
+    overflow-x: auto !important;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .crm-page .MuiTableCell-root,
+  .clients-page .MuiTableCell-root,
+  .platform-dashboard-page .MuiTableCell-root {
+    padding: 10px 12px !important;
+  }
+
+  .crm-page .MuiTable-root th:first-child,
+  .crm-page .MuiTable-root td:first-child,
+  .clients-page .MuiTable-root th:first-child,
+  .clients-page .MuiTable-root td:first-child,
+  .platform-dashboard-page .MuiTable-root th:first-child,
+  .platform-dashboard-page .MuiTable-root td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: #ffffff;
+    box-shadow: 8px 0 14px -14px rgba(15, 23, 42, 0.5);
+  }
+
+  .crm-page .MuiTable-root th:first-child,
+  .clients-page .MuiTable-root th:first-child,
+  .platform-dashboard-page .MuiTable-root th:first-child {
+    z-index: 3;
+    background: #f8fafc;
+  }
+
+  .aa-mobile-cards .MuiTable-root td:first-child {
+    position: static;
+    box-shadow: none;
+  }
+
+  .platform-dashboard-page .MuiCard-root {
+    min-height: 0 !important;
+  }
+
+  .crm-page .MuiInputBase-input,
+  .clients-page .MuiInputBase-input,
+  .platform-dashboard-page .MuiInputBase-input,
+  .MuiDialog-paper .MuiInputBase-input,
+  .crm-page .MuiSelect-select,
+  .clients-page .MuiSelect-select,
+  .platform-dashboard-page .MuiSelect-select,
+  .MuiDialog-paper .MuiSelect-select {
+    font-size: 16px !important;
+  }
+
+  .MuiDialog-paper {
+    width: calc(100% - 16px) !important;
+    max-height: calc(100dvh - 16px) !important;
+    margin: 8px !important;
+  }
+
+  .MuiDialog-paper > form {
+    min-height: 0;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .MuiDialogContent-root {
+    min-height: 0;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+  }
+
   .crm-page > .MuiBox-root:first-child,
   .crm-page > div:first-child {
     border-radius: var(--aa-radius-lg);
@@ -629,6 +1210,265 @@ textarea,
   .MuiDialog-paper {
     margin: 14px !important;
     border-radius: var(--aa-radius-xl) !important;
+  }
+
+  /* Dashboard mobile-first standard */
+  .aa-dashboard-page {
+    height: auto !important;
+    min-height: 100%;
+    padding-right: 0 !important;
+    overflow: visible !important;
+  }
+
+  .aa-dashboard-page .aa-dashboard-hero {
+    margin-bottom: 14px !important;
+    padding: 12px 4px 8px !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .aa-dashboard-page .aa-dashboard-hero h1 {
+    font-size: 25px !important;
+    line-height: 1.12 !important;
+  }
+
+  .aa-dashboard-page .aa-dashboard-hero > button {
+    width: 100%;
+  }
+
+  .aa-dashboard-page .aa-dashboard-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .aa-dashboard-page .aa-dashboard-kpi {
+    display: grid !important;
+    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: 12px;
+    align-content: center;
+    min-width: 0;
+    min-height: 126px !important;
+    padding: 15px 13px !important;
+    border-radius: 18px !important;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.055) !important;
+  }
+
+  .aa-dashboard-page .aa-dashboard-kpi:hover {
+    transform: none !important;
+  }
+
+  .aa-dashboard-page .aa-dashboard-kpi > div:first-child {
+    display: contents !important;
+  }
+
+  .aa-dashboard-page .aa-dashboard-kpi > div:first-child > div:first-child {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+  }
+
+  .aa-dashboard-page .aa-dashboard-kpi > div:first-child > div:last-child {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: center;
+    order: initial;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 14px !important;
+  }
+
+  .aa-dashboard-page .aa-dashboard-kpi > div:first-child p:first-child {
+    font-size: 10.5px !important;
+  }
+
+  .aa-dashboard-page .aa-dashboard-kpi > div:first-child p:last-child {
+    margin-top: 4px !important;
+    font-size: clamp(14px, 4.2vw, 18px) !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .aa-dashboard-page .aa-dashboard-kpi > p:last-child {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+    margin-top: 7px !important;
+    font-size: 9.5px !important;
+    line-height: 1.4 !important;
+  }
+
+  .aa-dashboard-page .aa-dashboard-section {
+    padding: 17px 14px !important;
+    border-radius: 18px !important;
+  }
+
+  .aa-dashboard-page .aa-dashboard-section > div:first-child {
+    margin-bottom: 16px !important;
+  }
+
+  .aa-dashboard-page .aa-mobile-cards {
+    overflow: visible !important;
+  }
+
+  .aa-dashboard-page .aa-mobile-cards table,
+  .aa-dashboard-page .aa-mobile-cards tbody {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .aa-dashboard-page .aa-mobile-cards thead {
+    display: none !important;
+  }
+
+  .aa-dashboard-page .aa-mobile-cards tbody {
+    display: grid !important;
+    gap: 10px;
+  }
+
+  .aa-dashboard-page .aa-mobile-cards tr {
+    display: block !important;
+    padding: 12px !important;
+    overflow: hidden;
+    border: 1px solid #e8edf2;
+    border-radius: 15px;
+    background: linear-gradient(145deg, #fff, #fafbfc);
+  }
+
+  .aa-dashboard-page .aa-mobile-cards td {
+    display: flex !important;
+    min-height: 31px;
+    padding: 6px 0 !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    border: 0 !important;
+    text-align: right;
+  }
+
+  .aa-dashboard-page .aa-mobile-cards td:first-child {
+    min-height: 42px;
+    margin-bottom: 5px;
+    padding: 0 0 10px !important;
+    border-bottom: 1px solid #edf0f3 !important;
+    text-align: left;
+  }
+
+  .aa-dashboard-page .aa-mobile-cards td:not(:first-child)::before {
+    flex-shrink: 0;
+    color: #94a3b8;
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .aa-client-summary-table td:nth-child(2)::before,
+  .aa-client-sales-table td:nth-child(4)::before {
+    content: "Jami";
+  }
+
+  .aa-client-summary-table td:nth-child(3)::before {
+    content: "To'langan";
+  }
+
+  .aa-client-summary-table td:nth-child(4)::before,
+  .aa-client-sales-table td:nth-child(5)::before {
+    content: "Qarz";
+  }
+
+  .aa-supplier-summary-table td:nth-child(2)::before,
+  .aa-client-sales-table td:nth-child(6)::before,
+  .aa-worker-output-table td:nth-child(5)::before {
+    content: "Sana";
+  }
+
+  .aa-supplier-summary-table td:nth-child(3)::before,
+  .aa-worker-output-table td:nth-child(4)::before {
+    content: "Summa";
+  }
+
+  .aa-supplier-summary-table td:nth-child(4)::before {
+    content: "Holat";
+  }
+
+  .aa-client-sales-table td:nth-child(2)::before,
+  .aa-worker-output-table td:nth-child(3)::before {
+    content: "Miqdor";
+  }
+
+  .aa-client-sales-table td:nth-child(3)::before {
+    content: "Narx";
+  }
+
+  .aa-worker-output-table td:nth-child(2)::before {
+    content: "Bo'lim";
+  }
+
+  /* Hero statistikalar mobile'da asosiy kontentni pastga surmasin. */
+  .MuiBox-root:has(> .aa-mobile-compact-metric),
+  .aa-mobile-metrics-row {
+    display: flex !important;
+    grid-template-columns: none !important;
+    gap: 10px !important;
+    max-width: 100%;
+    padding: 0 0 3px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .MuiBox-root:has(> .aa-mobile-compact-metric)::-webkit-scrollbar,
+  .aa-mobile-metrics-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .aa-mobile-compact-metric {
+    flex: 0 0 min(42vw, 170px) !important;
+    width: min(42vw, 170px) !important;
+    min-width: 138px !important;
+    min-height: 108px !important;
+    padding: 12px !important;
+    scroll-snap-align: start;
+    border-radius: 16px !important;
+  }
+
+  .aa-mobile-compact-metric > div:first-child {
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 10px !important;
+    font-size: 11px !important;
+  }
+
+  .aa-mobile-compact-metric > p:nth-of-type(1) {
+    margin-top: 9px !important;
+    overflow: hidden;
+    font-size: 8.5px !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .aa-mobile-compact-metric > p:nth-of-type(2) {
+    margin-top: 4px !important;
+    overflow: hidden;
+    font-size: 16px !important;
+    line-height: 1.15 !important;
+    text-overflow: ellipsis;
+  }
+
+  .aa-mobile-compact-metric > p:nth-of-type(3) {
+    margin-top: 4px !important;
+    overflow: hidden;
+    font-size: 8px !important;
+    text-overflow: ellipsis;
   }
 }
 

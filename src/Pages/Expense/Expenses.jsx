@@ -313,7 +313,7 @@ const Expenses = () => {
 
       <Box
         component="section"
-        className="expenses-hero"
+        className="crm-page-hero expenses-hero"
         sx={{
           position: "relative",
           isolation: "isolate",
@@ -513,6 +513,7 @@ const Expenses = () => {
       </Box>
 
       <Card
+        className="crm-sticky-filters"
         sx={{
           mb: 2,
           p: 2,

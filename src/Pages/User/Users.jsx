@@ -654,7 +654,7 @@ const Users = () => {
       <style>{usersPageStyles}</style>
 
       <Box
-        className="users-hero"
+        className="crm-page-hero users-hero"
         sx={{
           position: "relative",
           isolation: "isolate",
@@ -802,7 +802,7 @@ const Users = () => {
             />
 
             <HeroMetric
-              label="Super admin"
+              label="Super administrator"
               value={number(roleCounts.super_admin)}
               helper="To‘liq boshqaruv"
               tone="blue"
@@ -826,6 +826,7 @@ const Users = () => {
       </Box>
 
       <Paper
+        className="crm-sticky-filters"
         elevation={0}
         sx={{
           mb: 2,
@@ -1012,7 +1013,7 @@ const Users = () => {
                   </>
                 ) : (
                   <>
-                    <TableCell>Username</TableCell>
+                    <TableCell>Foydalanuvchi nomi</TableCell>
 
                     <TableCell>Telefon</TableCell>
                   </>

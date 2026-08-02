@@ -218,7 +218,9 @@ select {
 }
 
 .crm-page .MuiTableBody-root .MuiTableRow-root {
-  transition: background 0.18s ease, transform 0.18s ease;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
 }
 
 .crm-page .MuiTableBody-root .MuiTableRow-root:hover {

@@ -2,12 +2,12 @@ import { Box, Typography } from "@mui/material";
 
 const PageHeader = ({ eyebrow, title, description, actions }) => (
   <Box
+    className="crm-simple-page-header"
     sx={{
       display: "flex",
-      alignItems: { xs: "flex-start", md: "center" },
+      alignItems: "center",
       justifyContent: "space-between",
-      flexDirection: { xs: "column", md: "row" },
-      gap: 2,
+      gap: { xs: 1.2, md: 2 },
     }}
   >
     <Box>
@@ -29,7 +29,7 @@ const PageHeader = ({ eyebrow, title, description, actions }) => (
         component="h1"
         sx={{
           color: "var(--aa-text)",
-          fontSize: { xs: 26, md: 32 },
+          fontSize: { xs: 22, md: 32 },
           fontWeight: 850,
           letterSpacing: "-.04em",
           lineHeight: 1.08,
@@ -38,12 +38,19 @@ const PageHeader = ({ eyebrow, title, description, actions }) => (
         {title}
       </Typography>
       {description && (
-        <Typography sx={{ mt: 0.8, color: "var(--aa-text-secondary)", fontSize: 14 }}>
+        <Typography
+          sx={{
+            mt: 0.8,
+            display: { xs: "none", sm: "block" },
+            color: "var(--aa-text-secondary)",
+            fontSize: 14,
+          }}
+        >
           {description}
         </Typography>
       )}
     </Box>
-    {actions && <Box sx={{ width: { xs: "100%", md: "auto" } }}>{actions}</Box>}
+    {actions && <Box sx={{ flexShrink: 0, width: "auto" }}>{actions}</Box>}
   </Box>
 );
 

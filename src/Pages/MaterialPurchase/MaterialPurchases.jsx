@@ -115,9 +115,7 @@ const initial = (value) =>
     .slice(0, 1)
     .toUpperCase();
 
-const HeroMetric = (props) => (
-  <SharedHeroMetric {...props} valueSx={{ fontSize: 17 }} />
-);
+const HeroMetric = (props) => <SharedHeroMetric {...props} valueSx={{ fontSize: 17 }} />;
 
 const DebtChip = ({ value }) => {
   const hasDebt = Number(value || 0) > 0;
@@ -142,7 +140,14 @@ const DebtChip = ({ value }) => {
   );
 };
 
-const PremiumDialog = (props) => <SharedPremiumDialog maxWidth="md" subtitle="Homashyo, ta’minotchi va qarzdorlik ma’lumotlari" titleClassName="material-purchases-dialog-title" {...props} />;
+const PremiumDialog = (props) => (
+  <SharedPremiumDialog
+    maxWidth="md"
+    subtitle="Xomashyo, ta’minotchi va qarzdorlik ma’lumotlari"
+    titleClassName="material-purchases-dialog-title"
+    {...props}
+  />
+);
 const MaterialPurchases = () => {
   const auth = useAuth();
 
@@ -584,7 +589,7 @@ const MaterialPurchases = () => {
 
   const saveMaterial = async () => {
     if (!materialForm.name.trim()) {
-      toast.error("Homashyo nomini kiriting.");
+      toast.error("Xomashyo nomini kiriting.");
 
       return;
     }
@@ -600,7 +605,7 @@ const MaterialPurchases = () => {
         note: materialForm.note.trim() || null,
       });
 
-      toast.success("Homashyo qo'shildi.");
+      toast.success("Xomashyo qo'shildi.");
 
       close();
       refresh();
@@ -613,7 +618,7 @@ const MaterialPurchases = () => {
 
   const saveQuickMaterial = async () => {
     if (!quickMaterialForm.name.trim()) {
-      toast.error("Homashyo nomini kiriting.");
+      toast.error("Xomashyo nomini kiriting.");
 
       return;
     }
@@ -639,9 +644,9 @@ const MaterialPurchases = () => {
 
       setQuickMaterialForm(emptyMaterial);
 
-      toast.success("Homashyo yaratildi va qatorga tanlandi.");
+      toast.success("Xomashyo yaratildi va qatorga tanlandi.");
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Homashyoni yaratishda xato.");
+      toast.error(error?.response?.data?.message || "Xomashyoni yaratishda xato.");
     } finally {
       setSaving(false);
     }
@@ -655,7 +660,7 @@ const MaterialPurchases = () => {
           !item.raw_material_id || Number(item.quantity) <= 0 || Number(item.unit_price) < 0,
       )
     ) {
-      toast.error("Ta'minotchi va barcha homashyo qatorlarini to'ldiring.");
+      toast.error("Ta'minotchi va barcha xomashyo qatorlarini to'ldiring.");
 
       return;
     }
@@ -689,7 +694,7 @@ const MaterialPurchases = () => {
         })),
       });
 
-      toast.success("Homashyo xaridi saqlandi.");
+      toast.success("Xomashyo xaridi saqlandi.");
 
       close();
       refresh();
@@ -746,7 +751,7 @@ const MaterialPurchases = () => {
     >
       <style>{materialPurchasesStyles}</style>
 
-      <Box component="section" className="material-purchases-hero" sx={heroSx}>
+      <Box component="section" className="crm-page-hero material-purchases-hero" sx={heroSx}>
         <Box
           sx={{
             position: "relative",
@@ -784,11 +789,11 @@ const MaterialPurchases = () => {
             </Box>
 
             <Typography component="h1" sx={heroTitleSx}>
-              Homashyo xaridi
+              Xomashyo xaridi
             </Typography>
 
             <Typography sx={heroDescriptionSx}>
-              Ta’minotchilar, homashyo kirimi, xarid summalari, to‘lovlar va qarzdorlikni yagona
+              Ta’minotchilar, xomashyo kirimi, xarid summalari, to‘lovlar va qarzdorlikni yagona
               sahifada boshqaring.
             </Typography>
 
@@ -902,6 +907,7 @@ const MaterialPurchases = () => {
       </Box>
 
       <Card
+        className="crm-mobile-secondary-section"
         sx={{
           mb: 2,
           p: 2,
@@ -936,7 +942,7 @@ const MaterialPurchases = () => {
                 fontWeight: 950,
               }}
             >
-              Homashyo kirim hisoboti
+              Xomashyo kirim hisoboti
             </Typography>
 
             <Typography
@@ -946,7 +952,7 @@ const MaterialPurchases = () => {
                 fontSize: 10.5,
               }}
             >
-              Tanlangan davrda kelgan homashyo miqdori, summasi va o‘rtacha narxi
+              Tanlangan davrda kelgan xomashyo miqdori, summasi va o‘rtacha narxi
             </Typography>
           </Box>
 
@@ -963,6 +969,7 @@ const MaterialPurchases = () => {
 
         {stockRows.length ? (
           <Box
+            className="crm-mobile-card-strip"
             sx={{
               display: "grid",
 
@@ -1083,13 +1090,14 @@ const MaterialPurchases = () => {
         ) : (
           <Box sx={emptyStateSx}>
             <Typography sx={emptyTextSx}>
-              Tanlangan davr bo‘yicha homashyo kirimi topilmadi.
+              Tanlangan davr bo‘yicha xomashyo kirimi topilmadi.
             </Typography>
           </Box>
         )}
       </Card>
 
       <Card
+        className="crm-sticky-filters"
         sx={{
           mb: 2,
           p: 2,
@@ -1134,7 +1142,7 @@ const MaterialPurchases = () => {
             <TextField
               size="small"
               label="Qidirish"
-              placeholder="Ta’minotchi yoki homashyo"
+              placeholder="Ta’minotchi yoki xomashyo"
               value={filters.q}
               onChange={(event) =>
                 setFilters((previous) => ({
@@ -1244,7 +1252,7 @@ const MaterialPurchases = () => {
               </Button>
 
               <Button variant="outlined" onClick={() => setMaterialOpen(true)} sx={filterButtonSx}>
-                Homashyo qo‘shish
+                Xomashyo qo‘shish
               </Button>
 
               <Button
@@ -1314,7 +1322,7 @@ const MaterialPurchases = () => {
                 fontWeight: 950,
               }}
             >
-              Homashyo xaridlari
+              Xomashyo xaridlari
             </Typography>
 
             <Typography
@@ -1324,7 +1332,7 @@ const MaterialPurchases = () => {
                 fontSize: 10.5,
               }}
             >
-              Ta’minotchi, kelgan homashyolar, to‘lov va qarz ma’lumotlari
+              Ta’minotchi, kelgan xomashyolar, to‘lov va qarz ma’lumotlari
             </Typography>
           </Box>
 
@@ -1343,7 +1351,7 @@ const MaterialPurchases = () => {
               <TableRow>
                 <TableCell>Ta’minotchi</TableCell>
 
-                <TableCell>Homashyolar</TableCell>
+                <TableCell>Xomashyolar</TableCell>
 
                 <TableCell>Ushbu xarid hisobi</TableCell>
 
@@ -1484,7 +1492,7 @@ const MaterialPurchases = () => {
                               fontWeight: 900,
                             }}
                           >
-                            +{purchase.items.length - 4} ta boshqa homashyo
+                            +{purchase.items.length - 4} ta boshqa xomashyo
                           </Typography>
                         )}
                       </Stack>
@@ -1616,8 +1624,8 @@ const MaterialPurchases = () => {
       <PremiumDialog
         open={purchaseOpen}
         onClose={close}
-        title="Homashyo xaridi"
-        subtitle="Ta’minotchi, kelgan homashyolar va xarid hisobini kiriting"
+        title="Xomashyo xaridi"
+        subtitle="Ta’minotchi, kelgan xomashyolar va xarid hisobini kiriting"
         actions={
           <>
             <Button onClick={close} sx={dialogCancelSx}>
@@ -1719,7 +1727,7 @@ const MaterialPurchases = () => {
                     fontWeight: 950,
                   }}
                 >
-                  Homashyo qatorlari
+                  Xomashyo qatorlari
                 </Typography>
 
                 <Typography
@@ -1731,7 +1739,7 @@ const MaterialPurchases = () => {
                     fontSize: 10,
                   }}
                 >
-                  Bir nechta homashyoni bitta xaridga qo‘shish mumkin
+                  Bir nechta xomashyoni bitta xaridga qo‘shish mumkin
                 </Typography>
               </Box>
 
@@ -1756,7 +1764,7 @@ const MaterialPurchases = () => {
                 }
                 sx={filterButtonSx}
               >
-                + Yana homashyo
+                + Yana xomashyo
               </Button>
             </Box>
 
@@ -1768,7 +1776,7 @@ const MaterialPurchases = () => {
                       select
                       fullWidth
                       required
-                      label="Homashyo"
+                      label="Xomashyo"
                       value={item.raw_material_id}
                       onChange={(event) =>
                         changeItem(
@@ -1809,7 +1817,7 @@ const MaterialPurchases = () => {
                         textTransform: "none",
                       }}
                     >
-                      Yangi homashyo yaratish
+                      Yangi xomashyo yaratish
                     </Button>
                   </Box>
 
@@ -1876,7 +1884,7 @@ const MaterialPurchases = () => {
             <Box sx={quickMaterialBoxSx}>
               <TextField
                 size="small"
-                label="Yangi homashyo nomi"
+                label="Yangi xomashyo nomi"
                 value={quickMaterialForm.name}
                 onChange={(event) =>
                   setQuickMaterialForm((previous) => ({
@@ -2265,8 +2273,8 @@ const MaterialPurchases = () => {
       <PremiumDialog
         open={materialOpen}
         onClose={close}
-        title="Homashyo qo‘shish"
-        subtitle="Yangi homashyo va uning o‘lchov birligini yarating"
+        title="Xomashyo qo‘shish"
+        subtitle="Yangi xomashyo va uning o‘lchov birligini yarating"
         maxWidth="sm"
         actions={
           <>
@@ -2508,7 +2516,7 @@ const MaterialPurchases = () => {
       >
         <Typography sx={confirmTextSx}>
           <strong>{selectedPurchase?.supplier_name || "Tanlangan xarid"}</strong> xaridi
-          o‘chiriladi. U bilan bog‘liq homashyo kirimi va qarzdorlik hisoblari ham qayta
+          o‘chiriladi. U bilan bog‘liq xomashyo kirimi va qarzdorlik hisoblari ham qayta
           hisoblanadi. Davom etasizmi?
         </Typography>
       </PremiumDialog>
@@ -2546,7 +2554,6 @@ const MaterialPurchases = () => {
     </Box>
   );
 };
-
 
 const eyebrowSx = {
   color: "#fecdd3 !important",
@@ -2963,8 +2970,6 @@ const confirmTextSx = {
   fontWeight: 700,
   lineHeight: 1.7,
 };
-
-
 
 const materialPurchasesStyles = `
   .crm-page .material-purchases-hero {

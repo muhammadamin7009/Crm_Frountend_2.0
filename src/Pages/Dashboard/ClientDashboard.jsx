@@ -59,6 +59,7 @@ const ClientStatCard = ({ label, value, helper, icon, tone = "red" }) => {
 
   return (
     <Paper
+      className="aa-dashboard-kpi"
       elevation={0}
       sx={{
         position: "relative",
@@ -173,6 +174,7 @@ const ClientStatCard = ({ label, value, helper, icon, tone = "red" }) => {
 
 const ClientSection = ({ title, subtitle, action, children }) => (
   <Paper
+    className="aa-dashboard-section"
     elevation={0}
     sx={{
       p: 2.5,
@@ -392,10 +394,11 @@ const ClientDashboard = ({ user }) => {
   }
 
   return (
-    <Box className="crm-page h-full overflow-auto pr-1">
+    <Box className="crm-page aa-dashboard-page h-full overflow-auto pr-1">
       {/* Sahifa boshi */}
 
       <Box
+        className="aa-dashboard-hero"
         sx={{
           position: "relative",
           mb: 2.5,
@@ -518,13 +521,14 @@ const ClientDashboard = ({ user }) => {
       {/* Statistikalar */}
 
       <Box
+        className="aa-dashboard-kpi-grid"
         sx={{
           mb: 2.5,
           display: "grid",
           gridTemplateColumns: {
-            xs: "1fr",
+            xs: "repeat(2,minmax(0,1fr))",
             sm: "repeat(2,minmax(0,1fr))",
-            xl: "repeat(3,minmax(0,1fr))",
+            xl: "repeat(4,minmax(0,1fr))",
           },
           gap: 2,
         }}
@@ -555,6 +559,14 @@ const ClientDashboard = ({ user }) => {
           }
           icon={debtAmount > 0 ? AlertIcon : WalletIcon}
           tone={debtAmount > 0 ? "red" : "green"}
+        />
+
+        <ClientStatCard
+          label="To‘lov darajasi"
+          value={`${paymentPercent}%`}
+          helper="Jami xaridga nisbatan to‘langan qism"
+          icon={WalletIcon}
+          tone={paymentPercent >= 100 ? "green" : "amber"}
         />
       </Box>
 
@@ -919,7 +931,7 @@ const ClientDashboard = ({ user }) => {
           }
         >
           {account.client_sales.length ? (
-            <Box sx={{ overflowX: "auto" }}>
+            <Box className="aa-mobile-cards aa-client-sales-table" sx={{ overflowX: "auto" }}>
               <Table
                 size="small"
                 sx={{

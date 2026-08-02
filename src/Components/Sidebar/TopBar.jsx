@@ -21,16 +21,8 @@ import {
   CompatDrawer as Drawer,
   CompatTextField as TextField,
 } from "../UI/MuiCompat";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  NavLink,
-  useNavigate,
-} from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { useAuth } from "../../Context/AuthContext";
@@ -41,10 +33,7 @@ import {
   updateMe,
   updateUserImage,
 } from "../../api/getUsers";
-import {
-  deleteCompanyLogo,
-  updateCompanyLogo,
-} from "../../api/companyBranding";
+import { deleteCompanyLogo, updateCompanyLogo } from "../../api/companyBranding";
 import { getWarehouses } from "../../api/inventory";
 import { clearSession } from "../../utils/auth";
 import { hasPermission } from "../../utils/permissions";
@@ -66,29 +55,19 @@ const mobileLinks = [
   {
     label: "Foydalanuvchilar",
     path: "/users",
-    roles: [
-      "super_admin",
-      "admin",
-      "worker",
-    ],
+    roles: ["super_admin", "admin", "worker"],
     permission: "users.view",
   },
   {
     label: "Mijozlar",
     path: "/clients",
-    roles: [
-      "super_admin",
-      "admin",
-    ],
+    roles: ["super_admin", "admin"],
     permission: "users.view",
   },
   {
     label: "Lavozimlar",
     path: "/employees",
-    roles: [
-      "super_admin",
-      "admin",
-    ],
+    roles: ["super_admin", "admin"],
     permission: "employees.view",
   },
   {
@@ -99,68 +78,57 @@ const mobileLinks = [
   {
     label: "Ish hisoboti",
     path: "/worker-outputs",
-    roles: [
-      "super_admin",
-      "admin",
-      "worker",
-    ],
+    roles: ["super_admin", "admin", "worker"],
     permission: "production.view",
   },
   {
     label: "Oyliklar",
     path: "/worker-payments",
-    roles: [
-      "super_admin",
-      "admin",
-    ],
+    roles: ["super_admin", "admin"],
     permission: "payroll.view",
   },
   {
     label: "Mijoz savdo",
     path: "/client-sales",
-    roles: [
-      "super_admin",
-      "admin",
-    ],
+    roles: ["super_admin", "admin"],
     feature: "client_accounting",
     permission: "client_sales.view",
   },
   {
-    label: "Homashyo xaridi",
+    label: "Zakaz ishlarim",
+    path: "/my-order-tasks",
+    roles: ["worker"],
+  },
+  {
+    label: "Zakazlar",
+    path: "/orders",
+    roles: ["super_admin", "admin"],
+    permission: "orders.view",
+  },
+  {
+    label: "Xomashyo xaridi",
     path: "/material-purchases",
-    roles: [
-      "super_admin",
-      "admin",
-    ],
+    roles: ["super_admin", "admin"],
     feature: "supplier_accounting",
     permission: "material_purchases.view",
   },
   {
     label: "Xarajatlar",
     path: "/expenses",
-    roles: [
-      "super_admin",
-      "admin",
-    ],
+    roles: ["super_admin", "admin"],
     permission: "finance.view",
   },
   {
     label: "Moliya",
     path: "/finance",
-    roles: [
-      "super_admin",
-      "admin",
-    ],
+    roles: ["super_admin", "admin"],
     feature: "finance",
     permission: "finance.view",
   },
   {
     label: "Amallar tarixi",
     path: "/audit-logs",
-    roles: [
-      "super_admin",
-      "admin",
-    ],
+    roles: ["super_admin", "admin"],
     feature: "audit_logs",
     permission: "audit_logs.view",
   },
@@ -168,74 +136,55 @@ const mobileLinks = [
 
 const quickActionItems = [
   {
+    label: "Yangi zakaz",
+    description: "Mijoz zakazini kiritish",
+    path: "/orders",
+    roles: ["super_admin", "admin"],
+    permission: "orders.manage",
+  },
+  {
     label: "Yangi mijoz",
-    description:
-      "Mijozlar ro‘yxatiga o‘tish",
+    description: "Mijozlar ro‘yxatiga o‘tish",
     path: "/clients",
-    roles: [
-      "super_admin",
-      "admin",
-    ],
+    roles: ["super_admin", "admin"],
     permission: "users.manage",
   },
   {
     label: "Yangi savdo",
-    description:
-      "Mijoz savdosini kiritish",
+    description: "Mijoz savdosini kiritish",
     path: "/client-sales",
-    roles: [
-      "super_admin",
-      "admin",
-    ],
+    roles: ["super_admin", "admin"],
     feature: "client_accounting",
     permission: "client_sales.manage",
   },
   {
     label: "Mahsulot qo‘shish",
-    description:
-      "Mahsulotlar katalogiga o‘tish",
+    description: "Mahsulotlar katalogiga o‘tish",
     path: "/products",
-    roles: [
-      "super_admin",
-      "admin",
-    ],
+    roles: ["super_admin", "admin"],
     permission: "products.manage",
   },
   {
     label: "Ishlab chiqarish",
-    description:
-      "Yangi ish yozuvini kiritish",
+    description: "Yangi ish yozuvini kiritish",
     path: "/worker-outputs",
-    roles: [
-      "super_admin",
-      "admin",
-      "worker",
-    ],
+    roles: ["super_admin", "admin"],
     permission: "production.manage",
   },
   {
     label: "Xarajat kiritish",
-    description:
-      "Mayda va umumiy xarajatlar",
+    description: "Mayda va umumiy xarajatlar",
     path: "/expenses",
-    roles: [
-      "super_admin",
-      "admin",
-    ],
+    roles: ["super_admin", "admin"],
     permission: "finance.manage",
   },
   {
-    label: "Homashyo xaridi",
-    description:
-      "Yangi xaridni kiritish",
+    label: "Xomashyo xaridi",
+    description: "Yangi xaridni kiritish",
     path: "/material-purchases",
-    roles: [
-      "super_admin",
-      "admin",
-    ],
+    roles: ["super_admin", "admin"],
     feature: "supplier_accounting",
-    permission:
-      "material_purchases.manage",
+    permission: "material_purchases.manage",
   },
 ];
 
@@ -246,33 +195,21 @@ const getImageUrl = (path) => {
     return path;
   }
 
-  const base = String(
-    import.meta.env.VITE_API_URL || "",
-  ).replace(/\/$/, "");
+  const base = String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
-  return `${base}${
-    path.startsWith("/")
-      ? path
-      : `/${path}`
-  }`;
+  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 };
 
 const getInitials = (user) => {
-  const first =
-    user?.first_name?.[0] || "";
+  const first = user?.first_name?.[0] || "";
 
-  const last =
-    user?.last_name?.[0] || "";
+  const last = user?.last_name?.[0] || "";
 
   if (first || last) {
     return `${first}${last}`.toUpperCase();
   }
 
-  return (
-    user?.username
-      ?.slice(0, 2)
-      ?.toUpperCase() || "AA"
-  );
+  return user?.username?.slice(0, 2)?.toUpperCase() || "AA";
 };
 
 const headerDate = () =>
@@ -283,71 +220,40 @@ const headerDate = () =>
     year: "numeric",
   }).format(new Date());
 
-const DAY_MS =
-  24 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 const utcDateOnly = (value) => {
   if (!value) return null;
 
   const match = String(value)
     .slice(0, 10)
-    .match(
-      /^(\d{4})-(\d{2})-(\d{2})$/,
-    );
+    .match(/^(\d{4})-(\d{2})-(\d{2})$/);
 
   if (!match) return null;
 
-  const [year, month, day] = match
-    .slice(1)
-    .map(Number);
+  const [year, month, day] = match.slice(1).map(Number);
 
-  return Date.UTC(
-    year,
-    month - 1,
-    day,
-  );
+  return Date.UTC(year, month - 1, day);
 };
 
-const getSubscriptionNotice = (
-  user,
-  now,
-) => {
-  if (
-    ![
-      "super_admin",
-      "admin",
-    ].includes(user?.role) ||
-    !user?.subscription_ends_at
-  ) {
+const getSubscriptionNotice = (user, now) => {
+  if (!["super_admin", "admin"].includes(user?.role) || !user?.subscription_ends_at) {
     return null;
   }
 
-  const endsAt = utcDateOnly(
-    user.subscription_ends_at,
-  );
+  const endsAt = utcDateOnly(user.subscription_ends_at);
 
-  const today = Date.UTC(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-  );
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
 
   if (endsAt === null) {
     return null;
   }
 
-  const remainingDays = Math.round(
-    (endsAt - today) / DAY_MS,
-  );
+  const remainingDays = Math.round((endsAt - today) / DAY_MS);
 
-  const graceDays = Number(
-    user.subscription_grace_days || 7,
-  );
+  const graceDays = Number(user.subscription_grace_days || 7);
 
-  if (
-    remainingDays >= 0 &&
-    remainingDays <= 7
-  ) {
+  if (remainingDays >= 0 && remainingDays <= 7) {
     return {
       tone: "warning",
       message:
@@ -357,12 +263,8 @@ const getSubscriptionNotice = (
     };
   }
 
-  if (
-    remainingDays < 0 &&
-    remainingDays >= -graceDays
-  ) {
-    const graceRemaining =
-      graceDays + remainingDays;
+  if (remainingDays < 0 && remainingDays >= -graceDays) {
+    const graceRemaining = graceDays + remainingDays;
 
     return {
       tone: "expired",
@@ -377,82 +279,37 @@ const getSubscriptionNotice = (
 };
 
 export default function TopBar() {
-  const {
-    user,
-    setUser,
-  } = useAuth();
+  const { user, setUser } = useAuth();
 
   const navigate = useNavigate();
 
-  const [
-    menuOpen,
-    setMenuOpen,
-  ] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const [
-    profileOpen,
-    setProfileOpen,
-  ] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
-  const [
-    saving,
-    setSaving,
-  ] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const [
-    imageFile,
-    setImageFile,
-  ] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
-  const [
-    imagePreview,
-    setImagePreview,
-  ] = useState("");
+  const [imagePreview, setImagePreview] = useState("");
 
-  const [
-    sessions,
-    setSessions,
-  ] = useState([]);
+  const [sessions, setSessions] = useState([]);
 
-  const [
-    sessionsLoading,
-    setSessionsLoading,
-  ] = useState(false);
+  const [sessionsLoading, setSessionsLoading] = useState(false);
 
-  const [
-    companyLogoFile,
-    setCompanyLogoFile,
-  ] = useState(null);
+  const [companyLogoFile, setCompanyLogoFile] = useState(null);
 
-  const [
-    companyLogoPreview,
-    setCompanyLogoPreview,
-  ] = useState("");
+  const [companyLogoPreview, setCompanyLogoPreview] = useState("");
 
-  const [
-    companyLogoSaving,
-    setCompanyLogoSaving,
-  ] = useState(false);
+  const [companyLogoSaving, setCompanyLogoSaving] = useState(false);
 
-  const [
-    warehouses,
-    setWarehouses,
-  ] = useState([]);
+  const [warehouses, setWarehouses] = useState([]);
 
-  const [
-    subscriptionNow,
-    setSubscriptionNow,
-  ] = useState(() => new Date());
+  const [subscriptionNow, setSubscriptionNow] = useState(() => new Date());
 
-  const [
-    quickActionsAnchor,
-    setQuickActionsAnchor,
-  ] = useState(null);
+  const [quickActionsAnchor, setQuickActionsAnchor] = useState(null);
 
-  const [
-    form,
-    setForm,
-  ] = useState({
+  const [form, setForm] = useState({
     first_name: "",
     last_name: "",
     username: "",
@@ -461,234 +318,117 @@ export default function TopBar() {
   });
 
   useEffect(() => {
-    if (
-      ![
-        "super_admin",
-        "admin",
-      ].includes(user?.role)
-    ) {
+    if (!["super_admin", "admin"].includes(user?.role)) {
       return undefined;
     }
 
-    const timer =
-      window.setInterval(
-        () =>
-          setSubscriptionNow(
-            new Date(),
-          ),
-        60 * 60 * 1000,
-      );
+    const timer = window.setInterval(() => setSubscriptionNow(new Date()), 60 * 60 * 1000);
 
-    return () =>
-      window.clearInterval(timer);
+    return () => window.clearInterval(timer);
   }, [user?.role]);
 
-  const subscriptionNotice =
-    useMemo(
-      () =>
-        getSubscriptionNotice(
-          user,
-          subscriptionNow,
-        ),
-      [
-        user,
-        subscriptionNow,
-      ],
-    );
+  const subscriptionNotice = useMemo(
+    () => getSubscriptionNotice(user, subscriptionNow),
+    [user, subscriptionNow],
+  );
 
-  const loadWarehouses =
-    useCallback(async () => {
-      const roleAllowed = [
-        "super_admin",
-        "admin",
-        "worker",
-      ].includes(user?.role);
+  const loadWarehouses = useCallback(async () => {
+    const roleAllowed = ["super_admin", "admin", "worker"].includes(user?.role);
 
-      const permissionAllowed =
-        hasPermission(
-          user,
-          "inventory.view",
-        );
+    const permissionAllowed = hasPermission(user, "inventory.view");
 
-      if (
-        !roleAllowed ||
-        !permissionAllowed
-      ) {
-        setWarehouses([]);
-        return;
-      }
+    if (!roleAllowed || !permissionAllowed) {
+      setWarehouses([]);
+      return;
+    }
 
-      try {
-        const { data } =
-          await getWarehouses();
+    try {
+      const { data } = await getWarehouses();
 
-        setWarehouses(
-          (
-            data.warehouses || []
-          ).filter(
-            (warehouse) =>
-              warehouse.is_active !==
-              false,
-          ),
-        );
-      } catch {
-        setWarehouses([]);
-      }
-    }, [user]);
+      setWarehouses((data.warehouses || []).filter((warehouse) => warehouse.is_active !== false));
+    } catch {
+      setWarehouses([]);
+    }
+  }, [user]);
 
   useEffect(() => {
     loadWarehouses();
 
-    window.addEventListener(
-      "warehouses-updated",
-      loadWarehouses,
-    );
+    window.addEventListener("warehouses-updated", loadWarehouses);
 
     return () => {
-      window.removeEventListener(
-        "warehouses-updated",
-        loadWarehouses,
-      );
+      window.removeEventListener("warehouses-updated", loadWarehouses);
     };
   }, [loadWarehouses]);
 
-  const resolvedMobileLinks =
-    useMemo(() => {
-      const canManageWarehouses =
-        hasPermission(
-          user,
-          "inventory.warehouses",
-        ) ||
-        hasPermission(
-          user,
-          "inventory.manage",
-        );
+  const resolvedMobileLinks = useMemo(() => {
+    const canManageWarehouses =
+      hasPermission(user, "inventory.warehouses") || hasPermission(user, "inventory.manage");
 
-      const inventoryLinks = [
-        canManageWarehouses && {
-          label:
-            "Omborlar boshqaruvi",
-          path:
-            "/inventory/warehouses",
-          roles: [
-            "super_admin",
-            "admin",
-            "worker",
-          ],
-          permission:
-            "inventory.warehouses",
-        },
+    const inventoryLinks = [
+      canManageWarehouses && {
+        label: "Omborlar boshqaruvi",
+        path: "/inventory/warehouses",
+        roles: ["super_admin", "admin", "worker"],
+        permission: "inventory.warehouses",
+      },
 
-        ...warehouses.map(
-          (warehouse) => ({
-            label: warehouse.name,
-            path: `/inventory/warehouses/${warehouse.id}`,
-            roles: [
-              "super_admin",
-              "admin",
-              "worker",
-            ],
-            permission:
-              "inventory.view",
-          }),
-        ),
+      ...warehouses.map((warehouse) => ({
+        label: warehouse.name,
+        path: `/inventory/warehouses/${warehouse.id}`,
+        roles: ["super_admin", "admin", "worker"],
+        permission: "inventory.view",
+      })),
 
-        {
-          label: "Inventarizatsiya",
-          path: "/inventory/counts",
-          roles: [
-            "super_admin",
-            "admin",
-            "worker",
-          ],
-          permission:
-            "inventory.view",
-        },
-      ].filter(Boolean);
+      {
+        label: "Inventarizatsiya",
+        path: "/inventory/counts",
+        roles: ["super_admin", "admin", "worker"],
+        permission: "inventory.view",
+      },
+    ].filter(Boolean);
 
-      return mobileLinks.flatMap(
-        (item) =>
-          item.path === "/expenses"
-            ? [
-                ...inventoryLinks,
-                item,
-              ]
-            : [item],
-      );
-    }, [
-      user,
-      warehouses,
-    ]);
-
-  const availableQuickActions =
-    useMemo(
-      () =>
-        quickActionItems.filter(
-          (item) =>
-            (!item.roles ||
-              item.roles.includes(
-                user?.role,
-              )) &&
-            (!item.feature ||
-              !user?.plan_code ||
-              user?.plan_features?.includes(
-                item.feature,
-              )) &&
-            hasPermission(
-              user,
-              item.permission,
-            ),
-        ),
-      [user],
+    return mobileLinks.flatMap((item) =>
+      item.path === "/expenses" ? [...inventoryLinks, item] : [item],
     );
+  }, [user, warehouses]);
+
+  const availableQuickActions = useMemo(
+    () =>
+      quickActionItems.filter(
+        (item) =>
+          (!item.roles || item.roles.includes(user?.role)) &&
+          (!item.feature || !user?.plan_code || user?.plan_features?.includes(item.feature)) &&
+          hasPermission(user, item.permission),
+      ),
+    [user],
+  );
 
   const fullName = useMemo(() => {
-    const name = `${
-      user?.first_name || ""
-    } ${
-      user?.last_name || ""
-    }`.trim();
+    const name = `${user?.first_name || ""} ${user?.last_name || ""}`.trim();
 
-    return (
-      name ||
-      user?.username ||
-      "Al-Amin foydalanuvchisi"
-    );
+    return name || user?.username || "Al-Amin foydalanuvchisi";
   }, [user]);
 
-  const role =
-    roleLabels[user?.role] ||
-    user?.role ||
-    "Foydalanuvchi";
+  const role = roleLabels[user?.role] || user?.role || "Foydalanuvchi";
 
-  const companyHeaderLogo =
-    getCompanyLogoUrl(
-      user?.company_logo_url,
-    );
+  const companyHeaderLogo = getCompanyLogoUrl(user?.company_logo_url);
 
-  const openQuickAction = (
-    path,
-  ) => {
+  const openQuickAction = (event, path) => {
+    event.currentTarget.blur();
     setQuickActionsAnchor(null);
-    navigate(path);
+    requestAnimationFrame(() => navigate(path));
   };
 
   const loadSessions = async () => {
     setSessionsLoading(true);
 
     try {
-      const { data } =
-        await getMySessions();
+      const { data } = await getMySessions();
 
-      setSessions(
-        data.sessions || [],
-      );
+      setSessions(data.sessions || []);
     } catch (error) {
-      toast.error(
-        error?.response?.data
-          ?.message ||
-          "Qurilmalarni olishda xato.",
-      );
+      toast.error(error?.response?.data?.message || "Qurilmalarni olishda xato.");
     } finally {
       setSessionsLoading(false);
     }
@@ -696,14 +436,10 @@ export default function TopBar() {
 
   const openProfile = () => {
     setForm({
-      first_name:
-        user?.first_name || "",
-      last_name:
-        user?.last_name || "",
-      username:
-        user?.username || "",
-      phone:
-        user?.phone || "",
+      first_name: user?.first_name || "",
+      last_name: user?.last_name || "",
+      username: user?.username || "",
+      phone: user?.phone || "",
       password: "",
     });
 
@@ -716,160 +452,111 @@ export default function TopBar() {
     loadSessions();
   };
 
-  const patchStoredUser = (
-    patch,
-  ) => {
+  useEffect(() => {
+    const handleOpenProfile = () => openProfile();
+    window.addEventListener("open-user-profile", handleOpenProfile);
+    return () => window.removeEventListener("open-user-profile", handleOpenProfile);
+  });
+
+  const patchStoredUser = (patch) => {
     const nextUser = {
       ...user,
       ...patch,
     };
 
-    localStorage.setItem(
-      "user",
-      JSON.stringify(nextUser),
-    );
+    localStorage.setItem("user", JSON.stringify(nextUser));
 
     setUser(nextUser);
   };
 
-  const saveCompanyLogo =
-    async () => {
-      if (!companyLogoFile) {
-        toast.error(
-          "Avval logo faylini tanlang.",
-        );
+  const saveCompanyLogo = async () => {
+    if (!companyLogoFile) {
+      toast.error("Avval logo faylini tanlang.");
+
+      return;
+    }
+
+    setCompanyLogoSaving(true);
+
+    try {
+      const { data } = await updateCompanyLogo(companyLogoFile);
+
+      patchStoredUser({
+        company_logo_url: data.company?.logo_url || null,
+      });
+
+      setCompanyLogoFile(null);
+      setCompanyLogoPreview("");
+
+      toast.success("Korxona logosi yangilandi.");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Logoni yuklashda xato.");
+    } finally {
+      setCompanyLogoSaving(false);
+    }
+  };
+
+  const removeCompanyLogo = async () => {
+    if (!window.confirm("Korxona logosini o‘chirasizmi?")) {
+      return;
+    }
+
+    setCompanyLogoSaving(true);
+
+    try {
+      await deleteCompanyLogo();
+
+      patchStoredUser({
+        company_logo_url: null,
+      });
+
+      setCompanyLogoFile(null);
+      setCompanyLogoPreview("");
+
+      toast.success("Korxona logosi o‘chirildi.");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Logoni o‘chirishda xato.");
+    } finally {
+      setCompanyLogoSaving(false);
+    }
+  };
+
+  const removeSession = async (session) => {
+    try {
+      const { data } = await revokeSession(session.id);
+
+      if (data.current_session_revoked) {
+        clearSession();
+
+        navigate("/login", {
+          replace: true,
+        });
 
         return;
       }
 
-      setCompanyLogoSaving(true);
+      await loadSessions();
 
-      try {
-        const { data } =
-          await updateCompanyLogo(
-            companyLogoFile,
-          );
+      toast.success("Qurilmadan chiqildi.");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Sessiyani yopishda xato.");
+    }
+  };
 
-        patchStoredUser({
-          company_logo_url:
-            data.company?.logo_url ||
-            null,
-        });
+  const removeOtherSessions = async () => {
+    try {
+      await revokeOtherSessions();
+      await loadSessions();
 
-        setCompanyLogoFile(null);
-        setCompanyLogoPreview("");
-
-        toast.success(
-          "Korxona logosi yangilandi.",
-        );
-      } catch (error) {
-        toast.error(
-          error?.response?.data
-            ?.message ||
-            "Logoni yuklashda xato.",
-        );
-      } finally {
-        setCompanyLogoSaving(false);
-      }
-    };
-
-  const removeCompanyLogo =
-    async () => {
-      if (
-        !window.confirm(
-          "Korxona logosini o‘chirasizmi?",
-        )
-      ) {
-        return;
-      }
-
-      setCompanyLogoSaving(true);
-
-      try {
-        await deleteCompanyLogo();
-
-        patchStoredUser({
-          company_logo_url: null,
-        });
-
-        setCompanyLogoFile(null);
-        setCompanyLogoPreview("");
-
-        toast.success(
-          "Korxona logosi o‘chirildi.",
-        );
-      } catch (error) {
-        toast.error(
-          error?.response?.data
-            ?.message ||
-            "Logoni o‘chirishda xato.",
-        );
-      } finally {
-        setCompanyLogoSaving(false);
-      }
-    };
-
-  const removeSession =
-    async (session) => {
-      try {
-        const { data } =
-          await revokeSession(
-            session.id,
-          );
-
-        if (
-          data.current_session_revoked
-        ) {
-          clearSession();
-
-          navigate("/login", {
-            replace: true,
-          });
-
-          return;
-        }
-
-        await loadSessions();
-
-        toast.success(
-          "Qurilmadan chiqildi.",
-        );
-      } catch (error) {
-        toast.error(
-          error?.response?.data
-            ?.message ||
-            "Sessiyani yopishda xato.",
-        );
-      }
-    };
-
-  const removeOtherSessions =
-    async () => {
-      try {
-        await revokeOtherSessions();
-        await loadSessions();
-
-        toast.success(
-          "Boshqa barcha qurilmalardan chiqildi.",
-        );
-      } catch (error) {
-        toast.error(
-          error?.response?.data
-            ?.message ||
-            "Sessiyalarni yopishda xato.",
-        );
-      }
-    };
+      toast.success("Boshqa barcha qurilmalardan chiqildi.");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Sessiyalarni yopishda xato.");
+    }
+  };
 
   const saveProfile = async () => {
-    if (
-      !form.first_name.trim() ||
-      !form.last_name.trim() ||
-      !form.username.trim()
-    ) {
-      toast.error(
-        "Ism, familiya va username majburiy.",
-      );
+    if (!form.first_name.trim() || !form.last_name.trim() || !form.username.trim()) {
+      toast.error("Ism, familiya va foydalanuvchi nomi majburiy.");
 
       return;
     }
@@ -878,42 +565,26 @@ export default function TopBar() {
 
     try {
       const payload = {
-        first_name:
-          form.first_name.trim(),
-        last_name:
-          form.last_name.trim(),
-        username:
-          form.username.trim(),
-        phone:
-          form.phone.trim() || null,
+        first_name: form.first_name.trim(),
+        last_name: form.last_name.trim(),
+        username: form.username.trim(),
+        phone: form.phone.trim() || null,
       };
 
       if (form.password) {
-        payload.password =
-          form.password;
+        payload.password = form.password;
       }
 
-      const profileRes =
-        await updateMe(payload);
+      const profileRes = await updateMe(payload);
 
-      let updated =
-        profileRes.data
-          .updated_user ||
-        profileRes.data.user ||
-        {};
+      let updated = profileRes.data.updated_user || profileRes.data.user || {};
 
       if (imageFile) {
-        const imageRes =
-          await updateUserImage(
-            imageFile,
-          );
+        const imageRes = await updateUserImage(imageFile);
 
         updated = {
           ...updated,
-          ...(imageRes.data.user ||
-            imageRes.data
-              .updated_user ||
-            {}),
+          ...(imageRes.data.user || imageRes.data.updated_user || {}),
         };
       }
 
@@ -922,23 +593,14 @@ export default function TopBar() {
         ...updated,
       };
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(nextUser),
-      );
+      localStorage.setItem("user", JSON.stringify(nextUser));
 
       setUser(nextUser);
       setProfileOpen(false);
 
-      toast.success(
-        "Profil yangilandi.",
-      );
+      toast.success("Profil yangilandi.");
     } catch (error) {
-      toast.error(
-        error?.response?.data
-          ?.message ||
-          "Profilni yangilashda xato.",
-      );
+      toast.error(error?.response?.data?.message || "Profilni yangilashda xato.");
     } finally {
       setSaving(false);
     }
@@ -948,15 +610,13 @@ export default function TopBar() {
     <>
       <style>{topBarStyles}</style>
 
-      <Box
-        component="header"
-        className="aa-topbar"
-      >
+      <Box component="header" className="aa-topbar">
         <Box className="aa-topbar-left">
           <Button
-            onClick={() =>
-              setMenuOpen(true)
-            }
+            onClick={(event) => {
+              event.currentTarget.blur();
+              setMenuOpen(true);
+            }}
             className="aa-mobile-menu-button"
             aria-label="Mobil menyuni ochish"
           >
@@ -966,38 +626,25 @@ export default function TopBar() {
           </Button>
 
           {companyHeaderLogo && (
-            <Box
-              className="aa-mobile-company-logo"
-            >
-              <img
-                src={companyHeaderLogo}
-                alt={
-                  user?.company_name ||
-                  "Korxona logosi"
-                }
-              />
+            <Box className="aa-mobile-company-logo">
+              <img src={companyHeaderLogo} alt={user?.company_name || "Korxona logosi"} />
             </Box>
           )}
 
+          <Box className="aa-mobile-brand-copy">
+            <Typography>{user?.company_name || "AL AMIN"}</Typography>
+            <Typography>CRM</Typography>
+          </Box>
+
           <Box className="aa-welcome">
-            <Typography
-              component="h1"
-              className="aa-welcome-title"
-            >
-              Xush kelibsiz,{" "}
-              <span>
-                {user?.first_name ||
-                  fullName}
-              </span>
-              ! 👋
+            <Typography component="h1" className="aa-welcome-title">
+              Xush kelibsiz, <span>{user?.first_name || fullName}</span>! 👋
             </Typography>
 
             <Box className="aa-welcome-meta">
               <span className="aa-online-dot" />
 
-              <Typography>
-                {headerDate()}
-              </Typography>
+              <Typography>{headerDate()}</Typography>
             </Box>
           </Box>
         </Box>
@@ -1006,201 +653,126 @@ export default function TopBar() {
           <Box
             role="status"
             className={`aa-subscription-notice ${
-              subscriptionNotice.tone ===
-              "expired"
-                ? "expired"
-                : "warning"
+              subscriptionNotice.tone === "expired" ? "expired" : "warning"
             }`}
           >
-            <Box className="aa-subscription-icon">
-              !
-            </Box>
+            <Box className="aa-subscription-icon">!</Box>
 
-            <Typography>
-              {subscriptionNotice.message}
-            </Typography>
+            <Typography>{subscriptionNotice.message}</Typography>
           </Box>
         )}
 
         <Box className="aa-topbar-actions">
           <Button
-            disabled={
-              !availableQuickActions.length
-            }
-            onClick={(event) =>
-              setQuickActionsAnchor(
-                event.currentTarget,
-              )
-            }
+            disabled={!availableQuickActions.length}
+            onClick={(event) => {
+              const anchor = event.currentTarget;
+              anchor.blur();
+              setQuickActionsAnchor(anchor);
+            }}
             className="aa-quick-action-button"
             aria-haspopup="menu"
-            aria-expanded={Boolean(
-              quickActionsAnchor,
-            )}
+            aria-expanded={Boolean(quickActionsAnchor)}
           >
-            <span className="aa-plus">
-              +
-            </span>
+            <span className="aa-plus">+</span>
 
             <span>Tezkor amal</span>
 
-            <span className="aa-arrow">
-              ↓
-            </span>
+            <span className="aa-arrow">↓</span>
           </Button>
 
           <Menu
-            anchorEl={
-              quickActionsAnchor
-            }
-            open={Boolean(
-              quickActionsAnchor,
-            )}
-            onClose={() =>
-              setQuickActionsAnchor(
-                null,
-              )
-            }
+            anchorEl={quickActionsAnchor}
+            open={Boolean(quickActionsAnchor)}
+            onClose={() => setQuickActionsAnchor(null)}
             slotProps={{
               paper: {
-                className:
-                  "aa-quick-menu",
+                className: "aa-quick-menu",
               },
             }}
           >
             <Box className="aa-quick-menu-header">
-              <Typography>
-                Tezkor amallar
-              </Typography>
+              <Typography>Tezkor amallar</Typography>
 
-              <Typography>
-                Kerakli bo‘limga tez
-                o‘ting
-              </Typography>
+              <Typography>Kerakli bo‘limga tez o‘ting</Typography>
             </Box>
 
-            {availableQuickActions.map(
-              (item, index) => (
-                <MenuItem
-                  key={item.path}
-                  onClick={() =>
-                    openQuickAction(
-                      item.path,
-                    )
-                  }
-                  className="aa-quick-menu-item"
-                >
-                  <Box className="aa-quick-number">
-                    {String(
-                      index + 1,
-                    ).padStart(2, "0")}
-                  </Box>
+            {availableQuickActions.map((item, index) => (
+              <MenuItem
+                key={item.path}
+                onClick={(event) => openQuickAction(event, item.path)}
+                className="aa-quick-menu-item"
+              >
+                <Box className="aa-quick-number">{String(index + 1).padStart(2, "0")}</Box>
 
-                  <Box className="aa-quick-copy">
-                    <Typography>
-                      {item.label}
-                    </Typography>
+                <Box className="aa-quick-copy">
+                  <Typography>{item.label}</Typography>
 
-                    <Typography>
-                      {item.description}
-                    </Typography>
-                  </Box>
+                  <Typography>{item.description}</Typography>
+                </Box>
 
-                  <span className="aa-menu-arrow">
-                    →
-                  </span>
-                </MenuItem>
-              ),
-            )}
+                <span className="aa-menu-arrow">→</span>
+              </MenuItem>
+            ))}
           </Menu>
 
           <Button
-            onClick={openProfile}
+            onClick={(event) => {
+              event.currentTarget.blur();
+              openProfile();
+            }}
             title="Profilni tahrirlash"
             className="aa-profile-button"
           >
             <Box className="aa-profile-copy">
-              <Typography className="aa-profile-name">
-                {fullName}
-              </Typography>
+              <Typography className="aa-profile-name">{fullName}</Typography>
 
               <Box className="aa-profile-role-row">
                 <span className="aa-profile-status" />
 
-                <Typography>
-                  {role}
-                </Typography>
+                <Typography>{role}</Typography>
               </Box>
             </Box>
 
             <Avatar
-              src={
-                imagePreview ||
-                getImageUrl(
-                  user?.user_image,
-                )
-              }
+              src={imagePreview || getImageUrl(user?.user_image)}
               className="aa-topbar-avatar"
             >
               {getInitials(user)}
             </Avatar>
 
-            <span className="aa-profile-chevron">
-              ⌄
-            </span>
+            <span className="aa-profile-chevron">⌄</span>
           </Button>
         </Box>
       </Box>
 
       <Drawer
         open={menuOpen}
-        onClose={() =>
-          setMenuOpen(false)
-        }
+        onClose={() => setMenuOpen(false)}
         PaperProps={{
-          className:
-            "aa-mobile-drawer",
+          className: "aa-mobile-drawer",
         }}
       >
         <Box className="aa-mobile-drawer-content">
           <Box className="aa-mobile-drawer-header">
             <Box className="aa-drawer-brand">
               {companyHeaderLogo ? (
-                <img
-                  src={
-                    companyHeaderLogo
-                  }
-                  alt={
-                    user?.company_name ||
-                    "Korxona logosi"
-                  }
-                />
+                <img src={companyHeaderLogo} alt={user?.company_name || "Korxona logosi"} />
               ) : (
-                <span>
-                  {user?.company_name
-                    ?.charAt(0)
-                    ?.toUpperCase() ||
-                    "A"}
-                </span>
+                <span>{user?.company_name?.charAt(0)?.toUpperCase() || "A"}</span>
               )}
             </Box>
 
             <Box className="aa-drawer-brand-copy">
-              <Typography>
-                {user?.company_name ||
-                  "Al-Amin CRM"}
-              </Typography>
+              <Typography>{user?.company_name || "Al-Amin CRM"}</Typography>
 
-              <Typography>
-                Korxona boshqaruv tizimi
-              </Typography>
+              <Typography>Korxona boshqaruv tizimi</Typography>
             </Box>
 
             <Button
-              onClick={() =>
-                setMenuOpen(false)
-              }
+              onClick={() => setMenuOpen(false)}
               className="aa-drawer-close"
+              aria-label="Mobil menyuni yopish"
             >
               ×
             </Button>
@@ -1208,85 +780,45 @@ export default function TopBar() {
 
           <Divider className="aa-drawer-divider" />
 
-          <Typography className="aa-drawer-section-title">
-            Navigatsiya
-          </Typography>
+          <Typography className="aa-drawer-section-title">Navigatsiya</Typography>
 
           <List className="aa-mobile-links">
             {resolvedMobileLinks
               .filter(
                 (item) =>
-                  (!item.roles ||
-                    item.roles.includes(
-                      user?.role,
-                    )) &&
+                  (!item.roles || item.roles.includes(user?.role)) &&
                   (!item.feature ||
                     !user?.plan_code ||
-                    user?.plan_features?.includes(
-                      item.feature,
-                    )) &&
-                  hasPermission(
-                    user,
-                    item.permission,
-                  ),
+                    user?.plan_features?.includes(item.feature)) &&
+                  hasPermission(user, item.permission),
               )
-              .map(
-                (
-                  item,
-                  index,
-                ) => (
-                  <ListItemButton
-                    key={item.path}
-                    component={NavLink}
-                    to={item.path}
-                    onClick={() =>
-                      setMenuOpen(
-                        false,
-                      )
-                    }
-                    className="aa-mobile-link"
-                  >
-                    <span className="aa-mobile-link-number">
-                      {String(
-                        index + 1,
-                      ).padStart(
-                        2,
-                        "0",
-                      )}
-                    </span>
+              .map((item, index) => (
+                <ListItemButton
+                  key={item.path}
+                  component={NavLink}
+                  to={item.path}
+                  onClick={() => setMenuOpen(false)}
+                  className="aa-mobile-link"
+                >
+                  <span className="aa-mobile-link-number">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
 
-                    <ListItemText
-                      primary={
-                        item.label
-                      }
-                    />
+                  <ListItemText primary={item.label} />
 
-                    <span className="aa-mobile-link-arrow">
-                      →
-                    </span>
-                  </ListItemButton>
-                ),
-              )}
+                  <span className="aa-mobile-link-arrow">→</span>
+                </ListItemButton>
+              ))}
           </List>
 
           <Box className="aa-mobile-drawer-footer">
             <Box className="aa-mobile-user">
-              <Avatar
-                src={getImageUrl(
-                  user?.user_image,
-                )}
-              >
-                {getInitials(user)}
-              </Avatar>
+              <Avatar src={getImageUrl(user?.user_image)}>{getInitials(user)}</Avatar>
 
               <Box>
-                <Typography>
-                  {fullName}
-                </Typography>
+                <Typography>{fullName}</Typography>
 
-                <Typography>
-                  {role}
-                </Typography>
+                <Typography>{role}</Typography>
               </Box>
             </Box>
 
@@ -1308,430 +840,276 @@ export default function TopBar() {
 
       <Dialog
         open={profileOpen}
-        onClose={() =>
-          setProfileOpen(false)
-        }
+        onClose={() => setProfileOpen(false)}
         fullWidth
         maxWidth="md"
         PaperProps={{
-          className:
-            "aa-profile-dialog",
+          className: "aa-profile-dialog",
         }}
       >
         <DialogTitle className="aa-dialog-title">
           <Box>
-            <Typography component="h2">
-              Profil sozlamalari
-            </Typography>
+            <Typography component="h2">Profil sozlamalari</Typography>
 
-            <Typography>
-              Shaxsiy ma’lumotlar va
-              xavfsizlik sozlamalari
-            </Typography>
+            <Typography>Shaxsiy ma’lumotlar va xavfsizlik sozlamalari</Typography>
           </Box>
 
           <Button
-            onClick={() =>
-              setProfileOpen(false)
-            }
+            onClick={() => setProfileOpen(false)}
             className="aa-dialog-close"
+            aria-label="Profil oynasini yopish"
           >
             ×
           </Button>
         </DialogTitle>
 
-        <DialogContent className="aa-dialog-content">
-          <Stack spacing={2.2}>
-            {user?.role ===
-              "super_admin" && (
-              <Box className="aa-settings-card">
-                <Box className="aa-settings-heading">
-                  <Box>
-                    <Typography>
-                      Korxona logosi
-                    </Typography>
+        <Box
+          component="form"
+          className="aa-profile-form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            saveProfile();
+          }}
+        >
+          <DialogContent className="aa-dialog-content">
+            <Stack spacing={2.2}>
+              {user?.role === "super_admin" && (
+                <Box className="aa-settings-card">
+                  <Box className="aa-settings-heading">
+                    <Box>
+                      <Typography>Korxona logosi</Typography>
 
-                    <Typography>
-                      Logo Sidebar va
-                      korxona sahifalarida
-                      ko‘rinadi.
-                    </Typography>
+                      <Typography>Logo Sidebar va korxona sahifalarida ko‘rinadi.</Typography>
+                    </Box>
+
+                    <Chip label="Branding" size="small" className="aa-branding-chip" />
                   </Box>
 
-                  <Chip
-                    label="Branding"
-                    size="small"
-                    className="aa-branding-chip"
-                  />
-                </Box>
-
-                <Box className="aa-logo-settings">
-                  <Avatar
-                    variant="rounded"
-                    src={
-                      companyLogoPreview ||
-                      getCompanyLogoUrl(
-                        user?.company_logo_url,
-                      ) ||
-                      undefined
-                    }
-                    className="aa-company-logo-preview"
-                  >
-                    {user?.company_name
-                      ?.[0]
-                      ?.toUpperCase() ||
-                      "K"}
-                  </Avatar>
-
-                  <Box className="aa-logo-actions">
-                    <Button
-                      component="label"
-                      variant="outlined"
-                      disabled={
-                        companyLogoSaving
+                  <Box className="aa-logo-settings">
+                    <Avatar
+                      variant="rounded"
+                      src={
+                        companyLogoPreview || getCompanyLogoUrl(user?.company_logo_url) || undefined
                       }
-                      className="aa-outline-button"
+                      className="aa-company-logo-preview"
                     >
-                      Logo tanlash
+                      {user?.company_name?.[0]?.toUpperCase() || "K"}
+                    </Avatar>
 
-                      <input
-                        hidden
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp"
-                        onChange={(
-                          event,
-                        ) => {
-                          const file =
-                            event.target
-                              .files?.[0];
-
-                          if (!file) {
-                            return;
-                          }
-
-                          if (
-                            file.size >
-                            2 *
-                              1024 *
-                              1024
-                          ) {
-                            toast.error(
-                              "Logo hajmi 2 MB dan oshmasligi kerak.",
-                            );
-
-                            return;
-                          }
-
-                          setCompanyLogoFile(
-                            file,
-                          );
-
-                          setCompanyLogoPreview(
-                            URL.createObjectURL(
-                              file,
-                            ),
-                          );
-                        }}
-                      />
-                    </Button>
-
-                    <Button
-                      variant="contained"
-                      disabled={
-                        !companyLogoFile ||
-                        companyLogoSaving
-                      }
-                      onClick={
-                        saveCompanyLogo
-                      }
-                      className="aa-primary-button"
-                    >
-                      {companyLogoSaving
-                        ? "Saqlanmoqda..."
-                        : "Logoni saqlash"}
-                    </Button>
-
-                    {user?.company_logo_url && (
+                    <Box className="aa-logo-actions">
                       <Button
-                        disabled={
-                          companyLogoSaving
-                        }
-                        onClick={
-                          removeCompanyLogo
-                        }
-                        className="aa-delete-button"
+                        component="label"
+                        variant="outlined"
+                        disabled={companyLogoSaving}
+                        className="aa-outline-button"
                       >
-                        O‘chirish
+                        Logo tanlash
+                        <input
+                          hidden
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          onChange={(event) => {
+                            const file = event.target.files?.[0];
+
+                            if (!file) {
+                              return;
+                            }
+
+                            if (file.size > 2 * 1024 * 1024) {
+                              toast.error("Logo hajmi 2 MB dan oshmasligi kerak.");
+
+                              return;
+                            }
+
+                            setCompanyLogoFile(file);
+
+                            setCompanyLogoPreview(URL.createObjectURL(file));
+                          }}
+                        />
                       </Button>
-                    )}
+
+                      <Button
+                        variant="contained"
+                        disabled={!companyLogoFile || companyLogoSaving}
+                        onClick={saveCompanyLogo}
+                        className="aa-primary-button"
+                      >
+                        {companyLogoSaving ? "Saqlanmoqda..." : "Logoni saqlash"}
+                      </Button>
+
+                      {user?.company_logo_url && (
+                        <Button
+                          disabled={companyLogoSaving}
+                          onClick={removeCompanyLogo}
+                          className="aa-delete-button"
+                        >
+                          O‘chirish
+                        </Button>
+                      )}
+                    </Box>
                   </Box>
+
+                  <Typography className="aa-file-hint">JPEG, PNG yoki WebP, 2 MB gacha</Typography>
+                </Box>
+              )}
+
+              <Box className="aa-profile-main-card">
+                <Avatar
+                  src={imagePreview || getImageUrl(user?.user_image)}
+                  className="aa-profile-large-avatar"
+                >
+                  {form.first_name?.[0] || "U"}
+                </Avatar>
+
+                <Box className="aa-profile-main-copy">
+                  <Typography>Profil rasmi</Typography>
+
+                  <Typography>Profilingiz uchun aniq va sifatli rasm tanlang.</Typography>
+
+                  <Button component="label" variant="outlined" className="aa-outline-button">
+                    Rasm tanlash
+                    <input
+                      hidden
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+
+                        if (file) {
+                          setImageFile(file);
+
+                          setImagePreview(URL.createObjectURL(file));
+                        }
+                      }}
+                    />
+                  </Button>
                 </Box>
 
-                <Typography className="aa-file-hint">
-                  JPEG, PNG yoki WebP, 2
-                  MB gacha
+                <Typography className="aa-profile-image-hint">
+                  JPEG, PNG yoki WebP
+                  <br />5 MB gacha
                 </Typography>
               </Box>
-            )}
 
-            <Box className="aa-profile-main-card">
-              <Avatar
-                src={
-                  imagePreview ||
-                  getImageUrl(
-                    user?.user_image,
-                  )
-                }
-                className="aa-profile-large-avatar"
-              >
-                {form.first_name?.[0] ||
-                  "U"}
-              </Avatar>
-
-              <Box className="aa-profile-main-copy">
-                <Typography>
-                  Profil rasmi
-                </Typography>
-
-                <Typography>
-                  Profilingiz uchun aniq
-                  va sifatli rasm tanlang.
-                </Typography>
-
-                <Button
-                  component="label"
-                  variant="outlined"
-                  className="aa-outline-button"
-                >
-                  Rasm tanlash
-
-                  <input
-                    hidden
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    onChange={(
-                      event,
-                    ) => {
-                      const file =
-                        event.target
-                          .files?.[0];
-
-                      if (file) {
-                        setImageFile(file);
-
-                        setImagePreview(
-                          URL.createObjectURL(
-                            file,
-                          ),
-                        );
-                      }
-                    }}
-                  />
-                </Button>
-              </Box>
-
-              <Typography className="aa-profile-image-hint">
-                JPEG, PNG yoki WebP
-                <br />
-                5 MB gacha
-              </Typography>
-            </Box>
-
-            <Box className="aa-form-grid">
-              {[
-                [
-                  "first_name",
-                  "Ism",
-                ],
-                [
-                  "last_name",
-                  "Familiya",
-                ],
-                [
-                  "username",
-                  "Foydalanuvchi nomi",
-                ],
-                [
-                  "phone",
-                  "Telefon",
-                ],
-              ].map(
-                ([
-                  field,
-                  label,
-                ]) => (
+              <Box className="aa-form-grid">
+                {[
+                  ["first_name", "Ism", "given-name"],
+                  ["last_name", "Familiya", "family-name"],
+                  ["username", "Foydalanuvchi nomi", "username"],
+                  ["phone", "Telefon", "tel"],
+                ].map(([field, label, autoComplete]) => (
                   <TextField
                     key={field}
+                    name={field}
                     label={label}
-                    value={
-                      form[field]
-                    }
-                    onChange={(
-                      event,
-                    ) =>
-                      setForm(
-                        (
-                          current,
-                        ) => ({
-                          ...current,
-                          [field]:
-                            event
-                              .target
-                              .value,
-                        }),
-                      )
+                    autoComplete={autoComplete}
+                    value={form[field]}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        [field]: event.target.value,
+                      }))
                     }
                     className="aa-profile-field"
                   />
-                ),
-              )}
-            </Box>
+                ))}
+              </Box>
 
-            <TextField
-              type="password"
-              label="Yangi parol"
-              value={form.password}
-              onChange={(event) =>
-                setForm(
-                  (current) => ({
+              <TextField
+                name="new_password"
+                type="password"
+                autoComplete="new-password"
+                label="Yangi parol"
+                value={form.password}
+                onChange={(event) =>
+                  setForm((current) => ({
                     ...current,
-                    password:
-                      event.target
-                        .value,
-                  }),
-                )
-              }
-              helperText="Parolni o‘zgartirmasangiz, bo‘sh qoldiring"
-              className="aa-profile-field"
-            />
+                    password: event.target.value,
+                  }))
+                }
+                helperText="Parolni o‘zgartirmasangiz, bo‘sh qoldiring"
+                className="aa-profile-field"
+              />
 
-            <Divider className="aa-profile-divider" />
+              <Divider className="aa-profile-divider" />
 
-            <Box className="aa-session-heading">
-              <Box>
-                <Typography>
-                  Faol qurilmalar
-                </Typography>
+              <Box className="aa-session-heading">
+                <Box>
+                  <Typography>Faol qurilmalar</Typography>
 
-                <Typography>
-                  Profilingiz ochiq turgan
-                  brauzer va qurilmalar
-                </Typography>
+                  <Typography>Profilingiz ochiq turgan brauzer va qurilmalar</Typography>
+                </Box>
+
+                <Button
+                  onClick={removeOtherSessions}
+                  disabled={sessionsLoading || sessions.length < 2}
+                  className="aa-delete-outline-button"
+                >
+                  Boshqalaridan chiqish
+                </Button>
               </Box>
 
-              <Button
-                onClick={
-                  removeOtherSessions
-                }
-                disabled={
-                  sessionsLoading ||
-                  sessions.length < 2
-                }
-                className="aa-delete-outline-button"
-              >
-                Boshqalaridan chiqish
-              </Button>
-            </Box>
-
-            {sessionsLoading ? (
-              <Box className="aa-sessions-loading">
-                <CircularProgress
-                  size={26}
-                  sx={{
-                    color: "#991b1b",
-                  }}
-                />
-              </Box>
-            ) : sessions.length ? (
-              <Box className="aa-sessions-list">
-                {sessions.map(
-                  (session) => (
-                    <Box
-                      key={session.id}
-                      className="aa-session-item"
-                    >
+              {sessionsLoading ? (
+                <Box className="aa-sessions-loading">
+                  <CircularProgress
+                    size={26}
+                    sx={{
+                      color: "#991b1b",
+                    }}
+                  />
+                </Box>
+              ) : sessions.length ? (
+                <Box className="aa-sessions-list">
+                  {sessions.map((session) => (
+                    <Box key={session.id} className="aa-session-item">
                       <Box className="aa-session-icon">
-                        {session
-                          .device_name
-                          ?.charAt(0)
-                          ?.toUpperCase() ||
-                          "D"}
+                        {session.device_name?.charAt(0)?.toUpperCase() || "D"}
                       </Box>
 
                       <Box className="aa-session-copy">
                         <Box className="aa-session-name-row">
-                          <Typography>
-                            {session.device_name ||
-                              "Noma’lum qurilma"}
-                          </Typography>
+                          <Typography>{session.device_name || "Noma’lum qurilma"}</Typography>
 
                           {session.is_current && (
-                            <Chip
-                              size="small"
-                              label="Hozirgi"
-                              className="aa-current-chip"
-                            />
+                            <Chip size="small" label="Hozirgi" className="aa-current-chip" />
                           )}
                         </Box>
 
                         <Typography>
-                          IP:{" "}
-                          {session.ip_address ||
-                            "-"}
+                          IP: {session.ip_address || "-"}
                           {" • "}
-                          Oxirgi faollik:{" "}
-                          {new Date(
-                            session.last_used_at,
-                          ).toLocaleString(
-                            "uz-UZ",
-                          )}
+                          Oxirgi faollik: {new Date(session.last_used_at).toLocaleString("uz-UZ")}
                         </Typography>
                       </Box>
 
-                      <Button
-                        onClick={() =>
-                          removeSession(
-                            session,
-                          )
-                        }
-                        className="aa-session-logout"
-                      >
+                      <Button onClick={() => removeSession(session)} className="aa-session-logout">
                         Chiqish
                       </Button>
                     </Box>
-                  ),
-                )}
-              </Box>
-            ) : (
-              <Box className="aa-empty-sessions">
-                <Typography>
-                  Faol sessiya topilmadi.
-                </Typography>
-              </Box>
-            )}
-          </Stack>
-        </DialogContent>
+                  ))}
+                </Box>
+              ) : (
+                <Box className="aa-empty-sessions">
+                  <Typography>Faol sessiya topilmadi.</Typography>
+                </Box>
+              )}
+            </Stack>
+          </DialogContent>
 
-        <DialogActions className="aa-dialog-actions">
-          <Button
-            onClick={() =>
-              setProfileOpen(false)
-            }
-            className="aa-cancel-button"
-          >
-            Bekor qilish
-          </Button>
+          <DialogActions className="aa-dialog-actions">
+            <Button
+              type="button"
+              onClick={() => setProfileOpen(false)}
+              className="aa-cancel-button"
+            >
+              Bekor qilish
+            </Button>
 
-          <Button
-            onClick={saveProfile}
-            disabled={saving}
-            className="aa-save-button"
-          >
-            {saving
-              ? "Saqlanmoqda..."
-              : "O‘zgarishlarni saqlash"}
-          </Button>
-        </DialogActions>
+            <Button type="submit" disabled={saving} className="aa-save-button">
+              {saving ? "Saqlanmoqda..." : "O‘zgarishlarni saqlash"}
+            </Button>
+          </DialogActions>
+        </Box>
       </Dialog>
     </>
   );
@@ -1824,6 +1202,31 @@ const topBarStyles = `
     width: 100%;
     height: 100%;
     object-fit: contain;
+  }
+
+  .aa-mobile-brand-copy {
+    display: none;
+    min-width: 0;
+  }
+
+  .aa-mobile-brand-copy p:first-child {
+    overflow: hidden;
+    color: #8f1d20;
+    font-size: 18px;
+    line-height: 1.05;
+    font-weight: 950;
+    letter-spacing: -.035em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .aa-mobile-brand-copy p:last-child {
+    margin-top: 3px;
+    color: #b5873b;
+    font-size: 9px;
+    line-height: 1;
+    font-weight: 850;
+    letter-spacing: .18em;
   }
 
   .aa-welcome {
@@ -2380,6 +1783,9 @@ const topBarStyles = `
   }
 
   .aa-profile-dialog {
+    max-height: min(900px, calc(100dvh - 32px));
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     border:
       1px solid rgba(15, 23, 42, 0.08);
@@ -2390,6 +1796,7 @@ const topBarStyles = `
   }
 
   .aa-dialog-title {
+    flex: 0 0 auto;
     padding: 21px 24px !important;
     display: flex;
     align-items: center;
@@ -2423,7 +1830,18 @@ const topBarStyles = `
   }
 
   .aa-dialog-content {
+    min-height: 0;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
     padding: 22px !important;
+  }
+
+  .aa-profile-form {
+    min-height: 0;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    overflow: hidden;
   }
 
   .aa-settings-card {
@@ -2784,6 +2202,7 @@ const topBarStyles = `
   }
 
   .aa-dialog-actions {
+    flex: 0 0 auto;
     padding: 16px 22px 20px !important;
     gap: 9px;
     border-top:
@@ -2813,14 +2232,14 @@ const topBarStyles = `
     }
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 1023px) {
     .aa-topbar {
-      width: calc(100% - 20px);
-      min-height: 76px;
-      margin: 10px 10px 0;
-      padding: 11px 12px;
+      width: calc(100% - 16px);
+      min-height: 72px;
+      margin: 8px 8px 0;
+      padding: 10px 12px;
       gap: 10px;
-      border-radius: 18px;
+      border-radius: 20px;
     }
 
     .aa-mobile-menu-button {
@@ -2828,7 +2247,16 @@ const topBarStyles = `
     }
 
     .aa-mobile-company-logo {
+      display: none;
+    }
+
+    .aa-mobile-brand-copy {
       display: block;
+      max-width: 190px;
+    }
+
+    .aa-welcome {
+      display: none;
     }
 
     .aa-welcome-title {
@@ -2844,9 +2272,7 @@ const topBarStyles = `
     }
 
     .aa-quick-action-button {
-      min-width: 45px !important;
-      width: 45px;
-      padding: 0 !important;
+      display: none !important;
     }
 
     .aa-quick-action-button
@@ -2879,26 +2305,6 @@ const topBarStyles = `
   }
 
   @media (max-width: 640px) {
-    .aa-mobile-company-logo {
-      display: none;
-    }
-
-    .aa-welcome-title {
-      max-width: 180px;
-      overflow: hidden;
-      font-size: 15px !important;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .aa-welcome-meta p {
-      max-width: 170px;
-      overflow: hidden;
-      font-size: 10px;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
     .aa-form-grid {
       grid-template-columns: 1fr;
     }
@@ -2946,12 +2352,6 @@ const topBarStyles = `
 
     .aa-topbar-actions {
       margin-left: auto;
-    }
-
-    .aa-quick-action-button {
-      min-width: 40px !important;
-      width: 40px;
-      height: 40px;
     }
 
     .aa-profile-button {

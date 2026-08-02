@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { toast } from "react-toastify";
+
 import { useAuth } from "../../Context/AuthContext";
 import { getWorkerOutputs, getWorkerOutputsSummary } from "../../api/workerOutputs";
 import { getWorkerBalance } from "../../api/workerPayments";
@@ -34,7 +35,10 @@ const getLocalUser = () => {
 };
 
 const formatMoney = (value) => {
-  if (value === null || value === undefined || value === "") return "0 so'm";
+  if (value === null || value === undefined || value === "") {
+    return "0 so'm";
+  }
+
   return `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
 };
 
@@ -42,12 +46,15 @@ const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(val
 
 const formatDate = (value) => {
   if (!value) return "-";
+
   return new Date(value).toLocaleDateString("uz-UZ");
 };
 
 const getMonthRange = () => {
   const now = new Date();
+
   const start = new Date(now.getFullYear(), now.getMonth(), 1);
+
   const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
   return {
@@ -63,9 +70,11 @@ const StatCard = ({ label, value, helper }) => (
     <Typography variant="body2" className="text-slate-500">
       {label}
     </Typography>
+
     <Typography variant="h5" fontWeight={800} className="mt-1 text-slate-950">
       {value}
     </Typography>
+
     {helper && (
       <Typography variant="body2" className="mt-1 text-slate-500">
         {helper}
@@ -80,21 +89,25 @@ const workerCardTones = {
     soft: "rgba(143,29,32,.07)",
     shadow: "rgba(143,29,32,.20)",
   },
+
   green: {
     gradient: "linear-gradient(145deg,#16985c,#21bd73)",
     soft: "rgba(22,152,92,.07)",
     shadow: "rgba(22,152,92,.18)",
   },
+
   amber: {
     gradient: "linear-gradient(145deg,#e28720,#f4a238)",
     soft: "rgba(226,135,32,.08)",
     shadow: "rgba(226,135,32,.20)",
   },
+
   violet: {
     gradient: "linear-gradient(145deg,#6750cf,#8a67e8)",
     soft: "rgba(103,80,207,.07)",
     shadow: "rgba(103,80,207,.20)",
   },
+
   blue: {
     gradient: "linear-gradient(145deg,#3262d9,#587cf0)",
     soft: "rgba(50,98,217,.07)",
@@ -107,6 +120,7 @@ const WorkerKpiCard = ({ label, value, helper, icon, tone = "red" }) => {
 
   return (
     <Paper
+      className="aa-dashboard-kpi"
       elevation={0}
       sx={{
         position: "relative",
@@ -221,8 +235,8 @@ const WorkerKpiCard = ({ label, value, helper, icon, tone = "red" }) => {
 
 const WorkerSection = ({ title, subtitle, action, children, className = "" }) => (
   <Paper
+    className={`aa-dashboard-section ${className}`}
     elevation={0}
-    className={className}
     sx={{
       p: 2.5,
       borderRadius: "22px",
@@ -558,11 +572,14 @@ const WorkerDashboard = ({ user }) => {
 
   const month = getMonthRange();
 
+  const hasMonthlyBalance = totalEarned > 0 || totalPaid > 0 || remaining > 0;
+
   return (
-    <Box className="crm-page h-full overflow-auto pr-1">
+    <Box className="crm-page aa-dashboard-page h-full overflow-auto pr-1">
       {/* Sahifa boshi */}
 
       <Box
+        className="aa-dashboard-hero"
         sx={{
           mb: 2.5,
           p: {
@@ -708,13 +725,14 @@ const WorkerDashboard = ({ user }) => {
       {/* Statistikalar */}
 
       <Box
+        className="aa-dashboard-kpi-grid"
         sx={{
           mb: 2.5,
           display: "grid",
           gridTemplateColumns: {
-            xs: "1fr",
+            xs: "repeat(2,minmax(0,1fr))",
             sm: "repeat(2,minmax(0,1fr))",
-            xl: "repeat(5,minmax(0,1fr))",
+            xl: "repeat(6,minmax(0,1fr))",
           },
           gap: 2,
         }}
@@ -758,6 +776,14 @@ const WorkerDashboard = ({ user }) => {
           icon={BoxIcon}
           tone="blue"
         />
+
+        <WorkerKpiCard
+          label="Bu oy bajarilgan"
+          value={`${formatNumber(monthTotals.total_quantity)} dona`}
+          helper="Oy boshidan jami ishlab chiqarish"
+          icon={CheckIcon}
+          tone="green"
+        />
       </Box>
 
       {/* Balans va bo‘limlar */}
@@ -773,188 +799,202 @@ const WorkerDashboard = ({ user }) => {
           gap: 2,
         }}
       >
-        <Paper
-          elevation={0}
-          sx={{
-            position: "relative",
-            p: 3,
-            overflow: "hidden",
-            color: "#ffffff",
-            borderRadius: "23px",
-            border: "1px solid rgba(255,255,255,.06)",
-            background:
-              "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 32%),linear-gradient(145deg,#11151c,#171117 52%,#321218)",
-            boxShadow: "0 20px 55px rgba(15,23,42,.18)",
-          }}
-        >
-          <Box
+        {hasMonthlyBalance ? (
+          <Paper
+            elevation={0}
             sx={{
               position: "relative",
-              zIndex: 1,
+              minHeight: 330,
+              p: 3,
+              overflow: "hidden",
+              color: "#ffffff",
+              borderRadius: "23px",
+              border: "1px solid rgba(255,255,255,.06)",
+              background:
+                "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 32%),linear-gradient(145deg,#11151c,#171117 52%,#321218)",
+              boxShadow: "0 20px 55px rgba(15,23,42,.18)",
             }}
           >
-            <Typography
-              sx={{
-                color: "#ffffff",
-                fontSize: 16,
-                fontWeight: 900,
-              }}
-            >
-              Bu oydagi hisob
-            </Typography>
-
-            <Typography
-              sx={{
-                mt: 0.7,
-                color: "rgba(255,255,255,.43)",
-                fontSize: 11,
-              }}
-            >
-              Ishlangan va berilgan summa holati
-            </Typography>
-
-            <Typography
-              sx={{
-                mt: 3,
-                color: "#ffffff",
-                fontSize: {
-                  xs: 26,
-                  sm: 31,
-                },
-                lineHeight: 1.1,
-                fontWeight: 950,
-                letterSpacing: "-0.04em",
-              }}
-            >
-              {formatMoney(totalEarned)}
-            </Typography>
-
-            <Typography
-              sx={{
-                mt: 0.8,
-                color: "rgba(255,255,255,.45)",
-                fontSize: 11,
-              }}
-            >
-              Jami ishlab topilgan
-            </Typography>
-
-            <Box sx={{ mt: 3 }}>
-              <Box
-                sx={{
-                  mb: 1.2,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "rgba(255,255,255,.52)",
-                    fontSize: 10.5,
-                    fontWeight: 700,
-                  }}
-                >
-                  To‘lov bajarilishi
-                </Typography>
-
-                <Typography
-                  sx={{
-                    color: "#ffffff",
-                    fontSize: 11,
-                    fontWeight: 900,
-                  }}
-                >
-                  {paymentProgress}%
-                </Typography>
-              </Box>
-
-              <LinearProgress
-                variant="determinate"
-                value={paymentProgress}
-                sx={{
-                  height: 9,
-                  borderRadius: 99,
-                  backgroundColor: "rgba(255,255,255,.09)",
-
-                  "& .MuiLinearProgress-bar": {
-                    borderRadius: 99,
-                    background: "linear-gradient(90deg,#fb7185,#ef4444)",
-                  },
-                }}
-              />
-            </Box>
-
             <Box
               sx={{
-                mt: 3,
-                display: "grid",
-                gridTemplateColumns: "repeat(2,minmax(0,1fr))",
-                gap: 1.3,
+                position: "relative",
+                zIndex: 1,
               }}
             >
-              <Box
+              <Typography
                 sx={{
-                  p: 1.7,
-                  borderRadius: "15px",
-                  border: "1px solid rgba(255,255,255,.07)",
-                  backgroundColor: "rgba(255,255,255,.04)",
+                  color: "#ffffff !important",
+                  fontSize: 16,
+                  fontWeight: 900,
                 }}
               >
-                <Typography
-                  sx={{
-                    color: "rgba(255,255,255,.4)",
-                    fontSize: 9.5,
-                  }}
-                >
-                  Berilgan
-                </Typography>
+                Bu oydagi hisob
+              </Typography>
 
-                <Typography
-                  noWrap
+              <Typography
+                sx={{
+                  mt: 0.7,
+                  color: "rgba(255,255,255,.43) !important",
+                  fontSize: 11,
+                }}
+              >
+                Ishlangan va berilgan summa holati
+              </Typography>
+
+              <Typography
+                sx={{
+                  mt: 3,
+                  color: "#ffffff !important",
+                  fontSize: {
+                    xs: 26,
+                    sm: 31,
+                  },
+                  lineHeight: 1.1,
+                  fontWeight: 950,
+                  letterSpacing: "-0.04em",
+                }}
+              >
+                {formatMoney(totalEarned)}
+              </Typography>
+
+              <Typography
+                sx={{
+                  mt: 0.8,
+                  color: "rgba(255,255,255,.45) !important",
+                  fontSize: 11,
+                }}
+              >
+                Jami ishlab topilgan
+              </Typography>
+
+              <Box sx={{ mt: 3 }}>
+                <Box
                   sx={{
-                    mt: 0.8,
-                    color: "#86efac",
-                    fontSize: 14,
-                    fontWeight: 900,
+                    mb: 1.2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                   }}
                 >
-                  {formatMoney(totalPaid)}
-                </Typography>
+                  <Typography
+                    sx={{
+                      color: "rgba(255,255,255,.52) !important",
+                      fontSize: 10.5,
+                      fontWeight: 700,
+                    }}
+                  >
+                    To‘lov bajarilishi
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      color: "#ffffff !important",
+                      fontSize: 11,
+                      fontWeight: 900,
+                    }}
+                  >
+                    {paymentProgress}%
+                  </Typography>
+                </Box>
+
+                <LinearProgress
+                  variant="determinate"
+                  value={paymentProgress}
+                  sx={{
+                    height: 9,
+                    borderRadius: 99,
+                    backgroundColor: "rgba(255,255,255,.09)",
+
+                    "& .MuiLinearProgress-bar": {
+                      borderRadius: 99,
+                      background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                    },
+                  }}
+                />
               </Box>
 
               <Box
                 sx={{
-                  p: 1.7,
-                  borderRadius: "15px",
-                  border: "1px solid rgba(255,255,255,.07)",
-                  backgroundColor: "rgba(255,255,255,.04)",
+                  mt: 3,
+                  display: "grid",
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    sm: "repeat(2,minmax(0,1fr))",
+                  },
+                  gap: 1.3,
                 }}
               >
-                <Typography
+                <Box
                   sx={{
-                    color: "rgba(255,255,255,.4)",
-                    fontSize: 9.5,
+                    p: 1.7,
+                    minWidth: 0,
+                    borderRadius: "15px",
+                    border: "1px solid rgba(255,255,255,.07)",
+                    backgroundColor: "rgba(255,255,255,.04)",
                   }}
                 >
-                  Qolgan
-                </Typography>
+                  <Typography
+                    sx={{
+                      color: "rgba(255,255,255,.4) !important",
+                      fontSize: 9.5,
+                    }}
+                  >
+                    Berilgan
+                  </Typography>
 
-                <Typography
-                  noWrap
+                  <Typography
+                    sx={{
+                      mt: 0.8,
+                      color: "#86efac !important",
+                      fontSize: 14,
+                      fontWeight: 900,
+                      overflowWrap: "anywhere",
+                    }}
+                  >
+                    {formatMoney(totalPaid)}
+                  </Typography>
+                </Box>
+
+                <Box
                   sx={{
-                    mt: 0.8,
-                    color: "#fda4af",
-                    fontSize: 14,
-                    fontWeight: 900,
+                    p: 1.7,
+                    minWidth: 0,
+                    borderRadius: "15px",
+                    border: "1px solid rgba(255,255,255,.07)",
+                    backgroundColor: "rgba(255,255,255,.04)",
                   }}
                 >
-                  {formatMoney(remaining)}
-                </Typography>
+                  <Typography
+                    sx={{
+                      color: "rgba(255,255,255,.4) !important",
+                      fontSize: 9.5,
+                    }}
+                  >
+                    Qolgan
+                  </Typography>
+
+                  <Typography
+                    sx={{
+                      mt: 0.8,
+                      color: "#fda4af !important",
+                      fontSize: 14,
+                      fontWeight: 900,
+                      overflowWrap: "anywhere",
+                    }}
+                  >
+                    {formatMoney(remaining)}
+                  </Typography>
+                </Box>
               </Box>
             </Box>
-          </Box>
-        </Paper>
+          </Paper>
+        ) : (
+          <WorkerSection title="Bu oydagi hisob" subtitle="Ishlangan va berilgan summa holati">
+            <WorkerEmptyState>
+              Bu oy bo‘yicha hali ish yoki to‘lov ma’lumotlari mavjud emas.
+            </WorkerEmptyState>
+          </WorkerSection>
+        )}
 
         <WorkerSection
           title="Bo‘limlar bo‘yicha"
@@ -972,7 +1012,12 @@ const WorkerDashboard = ({ user }) => {
 
       <WorkerSection title="Oxirgi ish yozuvlari" subtitle="Bu oy kiritilgan so‘nggi ishlaringiz">
         {monthOutputs.length ? (
-          <Box sx={{ overflowX: "auto" }}>
+          <Box
+            className="aa-mobile-cards aa-worker-output-table"
+            sx={{
+              overflowX: "auto",
+            }}
+          >
             <Table
               size="small"
               sx={{
@@ -1112,6 +1157,7 @@ const BusinessDashboard = ({ user }) => (
       <Typography variant="h5" fontWeight={800} className="text-slate-950">
         Bosh sahifa
       </Typography>
+
       <Typography variant="body2" className="mt-1 text-slate-500">
         Salom, {user?.first_name || "Foydalanuvchi"}. Hisobingiz faol.
       </Typography>
@@ -1121,17 +1167,21 @@ const BusinessDashboard = ({ user }) => (
       <Typography fontWeight={800} className="text-slate-950">
         Ma'lumotlaringiz administrator tomonidan boshqariladi
       </Typography>
+
       <Typography className="mt-2 max-w-2xl text-slate-500">
         Bu ruxsat turi uchun ish haqi va ishlab chiqarish ma'lumotlari ochilmaydi. Kerakli ma'lumot
         yoki ruxsat o'zgarishi bo'yicha administrator bilan bog'laning.
       </Typography>
+
       <Box className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
         <StatCard
           label="Ruxsat turi"
           value={user?.role || "-"}
           helper="Joriy foydalanuvchi ruxsati"
         />
+
         <StatCard label="Holati" value="Faol" helper="Tizimga kirish ruxsati bor" />
+
         <StatCard label="Aloqa" value="+998 91 571 70 09" helper="Tizim administratori" />
       </Box>
     </Paper>
@@ -1142,8 +1192,9 @@ const NoDashboardPermission = ({ user }) => (
   <Box className="crm-page h-full overflow-auto pr-1">
     <Box className="mb-5">
       <Typography variant="h5" fontWeight={900} className="text-slate-950">
-        Xush kelibsiz, {user?.first_name || "Admin"}!
+        Xush kelibsiz, {user?.first_name || "Administrator"}!
       </Typography>
+
       <Typography variant="body2" className="mt-1 text-slate-500">
         Shaxsiy hisobingiz faol. Hozircha sizga boshqaruv bo'limlari ochilmagan.
       </Typography>
@@ -1154,6 +1205,7 @@ const NoDashboardPermission = ({ user }) => (
         <Typography fontWeight={900} className="text-amber-900">
           Sizda hali hech qanday bo'lim ruxsati yo'q
         </Typography>
+
         <Typography variant="body2" className="mt-2 max-w-2xl text-amber-800">
           Kerakli bo'limlardan foydalanish uchun korxona super administratoriga murojaat qiling.
           Ruxsat berilgach, shu sahifada faqat sizga ochilgan ma'lumotlar ko'rinadi.
@@ -1168,7 +1220,9 @@ const NoDashboardPermission = ({ user }) => (
           }
           helper={user?.username ? `@${user.username}` : "Shaxsiy profil"}
         />
-        <StatCard label="Ruxsat turi" value="Admin" helper="Korxona administratori" />
+
+        <StatCard label="Ruxsat turi" value="Administrator" helper="Korxona administratori" />
+
         <StatCard label="Korxona" value={user?.company_name || "Korxona"} helper="Faol hisob" />
       </Box>
     </Paper>
@@ -1177,6 +1231,7 @@ const NoDashboardPermission = ({ user }) => (
 
 const Dashboard = () => {
   const auth = useAuth();
+
   const user = auth?.user || getLocalUser();
 
   if (user?.role === "worker") {
