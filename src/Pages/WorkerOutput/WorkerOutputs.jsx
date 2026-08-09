@@ -74,7 +74,7 @@ const ProductOptionLabel = ({ product }) => (
     <Typography
       noWrap
       sx={{
-        color: "#334155",
+        color: "var(--aa-text)",
         fontSize: 14,
         fontWeight: 850,
       }}
@@ -87,7 +87,7 @@ const ProductOptionLabel = ({ product }) => (
         noWrap
         sx={{
           mt: 0.15,
-          color: "#94a3b8",
+          color: "var(--aa-text-tertiary)",
           fontSize: 11.5,
           fontWeight: 650,
         }}
@@ -768,6 +768,7 @@ const WorkerOutputs = () => {
             }}
           >
             <Box
+              className="aa-mobile-filter-grid"
               sx={{
                 display: "grid",
 
@@ -826,6 +827,7 @@ const WorkerOutputs = () => {
 
           {filtersOpen && (
             <Box
+              className="aa-mobile-filter-grid aa-mobile-filter-grid-secondary"
               sx={{
                 pt: 1.6,
                 display: "grid",
@@ -932,7 +934,7 @@ const WorkerOutputs = () => {
           <Box>
             <Typography
               sx={{
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 fontSize: 15,
                 fontWeight: 950,
               }}
@@ -943,7 +945,7 @@ const WorkerOutputs = () => {
             <Typography
               sx={{
                 mt: 0.45,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10.5,
               }}
             >
@@ -965,6 +967,7 @@ const WorkerOutputs = () => {
         </Box>
 
         <Box
+          className="aa-mobile-records aa-worker-outputs-table"
           sx={{
             minHeight: 0,
             flex: 1,
@@ -977,18 +980,18 @@ const WorkerOutputs = () => {
 
               "& th": {
                 py: 1.55,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
                 fontWeight: 900,
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
-                backgroundColor: "#fafbfc",
+                backgroundColor: "var(--aa-surface-muted)",
                 borderColor: "#edf0f3",
               },
 
               "& td": {
                 py: 1.4,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 fontSize: 10.5,
                 borderColor: "#edf0f3",
               },
@@ -1048,7 +1051,7 @@ const WorkerOutputs = () => {
                         <Box sx={{ minWidth: 0 }}>
                           <Typography
                             sx={{
-                              color: "#334155",
+                              color: "var(--aa-text)",
                               fontSize: 14.5,
                               fontWeight: 900,
                               lineHeight: 1.15,
@@ -1060,7 +1063,7 @@ const WorkerOutputs = () => {
                           <Typography
                             sx={{
                               mt: 0.35,
-                              color: "#64748b",
+                              color: "var(--aa-text-secondary)",
                               fontSize: 12.5,
                               fontWeight: 700,
                             }}
@@ -1074,7 +1077,7 @@ const WorkerOutputs = () => {
                     <TableCell>
                       <Typography
                         sx={{
-                          color: "#334155",
+                          color: "var(--aa-text)",
                           fontSize: 14.5,
                           fontWeight: 900,
                         }}
@@ -1086,7 +1089,7 @@ const WorkerOutputs = () => {
                         sx={{
                           mt: 0.35,
                           mb: 0.7,
-                          color: "#64748b",
+                          color: "var(--aa-text-secondary)",
                           fontSize: 12.5,
                           fontWeight: 700,
                         }}
@@ -1100,7 +1103,7 @@ const WorkerOutputs = () => {
                     <TableCell>
                       <Typography
                         sx={{
-                          color: "#334155",
+                          color: "var(--aa-text)",
                           fontSize: 14.5,
                           fontWeight: 950,
                         }}
@@ -1111,7 +1114,7 @@ const WorkerOutputs = () => {
                       <Typography
                         sx={{
                           mt: 0.35,
-                          color: "#64748b",
+                          color: "var(--aa-text-secondary)",
                           fontSize: 12.5,
                           fontWeight: 700,
                         }}
@@ -1123,7 +1126,7 @@ const WorkerOutputs = () => {
 
                     <TableCell
                       sx={{
-                        color: "#64748b",
+                        color: "var(--aa-text-secondary)",
                         fontWeight: 800,
                       }}
                     >
@@ -1174,7 +1177,7 @@ const WorkerOutputs = () => {
                     align="center"
                     sx={{
                       py: 7,
-                      color: "#94a3b8",
+                      color: "var(--aa-text-tertiary)",
                       fontWeight: 850,
                     }}
                   >
@@ -1189,7 +1192,7 @@ const WorkerOutputs = () => {
         <Box
           sx={{
             borderTop: "1px solid #edf0f3",
-            backgroundColor: "#fafbfc",
+            backgroundColor: "var(--aa-surface-muted)",
           }}
         >
           <CrmPagination
@@ -1212,7 +1215,24 @@ const WorkerOutputs = () => {
               Bekor qilish
             </Button>
 
-            <Button variant="contained" onClick={handleSave} disabled={saving} sx={dialogPrimarySx}>
+            <Button
+              variant="contained"
+              onClick={handleSave}
+              disabled={
+                saving ||
+                !form.worker_id ||
+                !form.department_id ||
+                (selectedOutput
+                  ? !form.product_id || Number(form.quantity || 0) <= 0
+                  : !batchItems.length ||
+                    batchItems.some(
+                      (item) => !item.product_id || Number(item.quantity || 0) <= 0,
+                    ) ||
+                    new Set(batchItems.map((item) => String(item.product_id))).size !==
+                      batchItems.length)
+              }
+              sx={dialogPrimarySx}
+            >
               {saving ? "Saqlanmoqda..." : "Saqlash"}
             </Button>
           </>
@@ -1335,12 +1355,13 @@ const WorkerOutputs = () => {
                   p: 2,
                   borderRadius: "18px",
                   border: "1px solid #e7ebf0",
-                  background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+                  background:
+                    "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
                 }}
               >
                 <Typography
                   sx={{
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
                     fontSize: 10,
                     fontWeight: 800,
                   }}
@@ -1351,7 +1372,7 @@ const WorkerOutputs = () => {
                 <Typography
                   sx={{
                     mt: 0.6,
-                    color: "#334155",
+                    color: "var(--aa-text)",
                     fontSize: 13,
                     fontWeight: 950,
                   }}
@@ -1367,7 +1388,8 @@ const WorkerOutputs = () => {
                 p: 2,
                 borderRadius: "18px",
                 border: "1px solid #e7ebf0",
-                background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+                background:
+                  "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
               }}
             >
               <Box
@@ -1393,7 +1415,7 @@ const WorkerOutputs = () => {
                 <Box>
                   <Typography
                     sx={{
-                      color: "#334155",
+                      color: "var(--aa-text)",
                       fontSize: 16,
                       fontWeight: 950,
                     }}
@@ -1404,7 +1426,7 @@ const WorkerOutputs = () => {
                   <Typography
                     sx={{
                       mt: 0.4,
-                      color: "#64748b",
+                      color: "var(--aa-text-secondary)",
                       fontSize: 11,
                       lineHeight: 1.6,
                     }}
@@ -1433,7 +1455,7 @@ const WorkerOutputs = () => {
                       gap: 1.3,
                       p: 1.4,
                       borderRadius: "16px",
-                      backgroundColor: "#ffffff",
+                      backgroundColor: "var(--aa-surface-solid)",
                       border: "1px solid #e7ebf0",
                     }}
                   >
@@ -1538,7 +1560,7 @@ const WorkerOutputs = () => {
       >
         <Typography
           sx={{
-            color: "#64748b",
+            color: "var(--aa-text-secondary)",
             fontSize: 12.5,
             lineHeight: 1.7,
             fontWeight: 700,
@@ -1555,13 +1577,13 @@ const WorkerOutputs = () => {
 const filterButtonSx = {
   minHeight: 40,
   px: 1.8,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   borderColor: "#dce3ea",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
-  backgroundColor: "#ffffff",
+  backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
     color: "#991b1b",
@@ -1578,7 +1600,7 @@ const tableActionSx = {
 };
 
 const dialogCancelSx = {
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   fontWeight: 850,
   textTransform: "none",

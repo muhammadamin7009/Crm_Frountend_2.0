@@ -40,6 +40,7 @@ import {
   getWorkerAdvanceBalance,
 } from "../../api/workerAdvances";
 import { getFinancialAccounts } from "../../api/finance";
+import { ENABLE_MULTI_ACCOUNT_SELECTION } from "../../utils/features";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -96,6 +97,10 @@ const getImageUrl = (path) => {
 };
 
 const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
+const formatAmountInput = (value) =>
+  value === "" || value === null || value === undefined
+    ? ""
+    : new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
@@ -973,7 +978,7 @@ const WorkerPayments = () => {
               <Box>
                 <Typography
                   sx={{
-                    color: "#0f172a",
+                    color: "var(--aa-text)",
                     fontSize: 14,
                     fontWeight: 950,
                   }}
@@ -984,7 +989,7 @@ const WorkerPayments = () => {
                 <Typography
                   sx={{
                     mt: 0.35,
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
                     fontSize: 10,
                   }}
                 >
@@ -1006,6 +1011,7 @@ const WorkerPayments = () => {
             </Box>
 
             <Box
+              className="crm-mobile-card-strip worker-dues-strip"
               sx={{
                 display: "flex",
                 gap: 1.3,
@@ -1038,7 +1044,7 @@ const WorkerPayments = () => {
                     <Typography
                       noWrap
                       sx={{
-                        color: "#334155",
+                        color: "var(--aa-text)",
                         fontSize: 12,
                         fontWeight: 900,
                       }}
@@ -1059,7 +1065,7 @@ const WorkerPayments = () => {
 
                     <Typography
                       sx={{
-                        color: "#94a3b8",
+                        color: "var(--aa-text-tertiary)",
                         fontSize: 9.5,
                       }}
                     >
@@ -1091,7 +1097,7 @@ const WorkerPayments = () => {
           >
             <Typography
               sx={{
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 11,
                 fontWeight: 800,
               }}
@@ -1114,7 +1120,7 @@ const WorkerPayments = () => {
           <Box>
             <Typography
               sx={{
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 fontSize: 15,
                 fontWeight: 950,
               }}
@@ -1125,7 +1131,7 @@ const WorkerPayments = () => {
             <Typography
               sx={{
                 mt: 0.45,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10.5,
               }}
             >
@@ -1148,6 +1154,7 @@ const WorkerPayments = () => {
         </Box>
 
         <Box
+          className="aa-mobile-records aa-worker-payments-table"
           sx={{
             minHeight: 0,
             flex: 1,
@@ -1222,7 +1229,7 @@ const WorkerPayments = () => {
                         >
                           <Typography
                             sx={{
-                              color: "#334155",
+                              color: "var(--aa-text)",
 
                               fontSize: 12.5,
 
@@ -1235,7 +1242,7 @@ const WorkerPayments = () => {
                           <Typography
                             sx={{
                               mt: 0.35,
-                              color: "#94a3b8",
+                              color: "var(--aa-text-tertiary)",
 
                               fontSize: 9.5,
                             }}
@@ -1336,7 +1343,7 @@ const WorkerPayments = () => {
                     align="center"
                     sx={{
                       py: 8,
-                      color: "#94a3b8",
+                      color: "var(--aa-text-tertiary)",
                       fontWeight: 850,
                     }}
                   >
@@ -1352,7 +1359,7 @@ const WorkerPayments = () => {
           sx={{
             borderTop: "1px solid #edf0f3",
 
-            backgroundColor: "#fafbfc",
+            backgroundColor: "var(--aa-surface-muted)",
           }}
         >
           <CrmPagination
@@ -1385,7 +1392,12 @@ const WorkerPayments = () => {
             <Button
               variant="contained"
               onClick={handleSave}
-              disabled={saving || paymentExceedsBalance}
+              disabled={
+                saving ||
+                paymentExceedsBalance ||
+                !form.worker_id ||
+                (Number(form.amount || 0) <= 0 && Number(form.advance_deduction || 0) <= 0)
+              }
               sx={dialogPrimarySx}
             >
               {saving ? "Saqlanmoqda..." : "Saqlash"}
@@ -1415,7 +1427,7 @@ const WorkerPayments = () => {
 
               border: paymentExceedsBalance ? "1px solid rgba(220,38,38,.28)" : "1px solid #e7ebf0",
 
-              background: "linear-gradient(145deg,#fff,#f8fafc)",
+              background: "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
             }}
           >
             <Box
@@ -1431,7 +1443,7 @@ const WorkerPayments = () => {
               <Box>
                 <Typography
                   sx={{
-                    color: "#334155",
+                    color: "var(--aa-text)",
                     fontSize: 14,
                     fontWeight: 950,
                   }}
@@ -1442,7 +1454,7 @@ const WorkerPayments = () => {
                 <Typography
                   sx={{
                     mt: 0.35,
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
                     fontSize: 9.5,
                   }}
                 >
@@ -1514,23 +1526,34 @@ const WorkerPayments = () => {
             }}
           >
             <TextField
-              type="number"
+              type="text"
               label="Naqd beriladi"
-              value={form.amount}
-              onChange={handleFormChange("amount")}
+              value={formatAmountInput(form.amount)}
+              onChange={(event) => {
+                const amount = event.target.value.replace(/\D/g, "");
+
+                setForm((previous) => ({ ...previous, amount }));
+              }}
               error={paymentExceedsBalance}
               helperText={paymentExceedsBalance ? `Maksimum ${money(availableWorkerBalance)}` : " "}
               inputProps={{
-                min: 0,
-                step: 1000,
+                inputMode: "numeric",
+                pattern: "[0-9 ]*",
               }}
             />
 
             <TextField
-              type="number"
+              type="text"
               label="Avansdan ushlash"
-              value={form.advance_deduction}
-              onChange={handleFormChange("advance_deduction")}
+              value={formatAmountInput(form.advance_deduction)}
+              onChange={(event) => {
+                const advanceDeduction = event.target.value.replace(/\D/g, "");
+
+                setForm((previous) => ({
+                  ...previous,
+                  advance_deduction: advanceDeduction,
+                }));
+              }}
               error={paymentExceedsBalance}
               helperText={
                 paymentExceedsBalance
@@ -1538,8 +1561,8 @@ const WorkerPayments = () => {
                   : `Maksimum: ${money(selectedWorkerBalance.remaining_advance)}`
               }
               inputProps={{
-                min: 0,
-                step: 1000,
+                inputMode: "numeric",
+                pattern: "[0-9 ]*",
               }}
             />
 
@@ -1593,20 +1616,22 @@ const WorkerPayments = () => {
             />
           </Box>
 
-          <TextField
-            select
-            label="Pul chiqadigan hisob"
-            value={form.account_id}
-            onChange={handleFormChange("account_id")}
-            helperText="Tanlanmasa Asosiy kassa ishlatiladi"
-          >
-            <MenuItem value="">Asosiy kassa (avtomatik)</MenuItem>
-            {accounts.map((account) => (
-              <MenuItem key={account.id} value={account.id}>
-                {account.name} — {money(account.balance)}
-              </MenuItem>
-            ))}
-          </TextField>
+          {ENABLE_MULTI_ACCOUNT_SELECTION && (
+            <TextField
+              select
+              label="Pul chiqadigan hisob"
+              value={form.account_id}
+              onChange={handleFormChange("account_id")}
+              helperText="Tanlanmasa Asosiy kassa ishlatiladi"
+            >
+              <MenuItem value="">Asosiy kassa (avtomatik)</MenuItem>
+              {accounts.map((account) => (
+                <MenuItem key={account.id} value={account.id}>
+                  {account.name} — {money(account.balance)}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
 
           {paymentExceedsBalance && (
             <Box
@@ -1649,7 +1674,7 @@ const WorkerPayments = () => {
 
               border: "1px solid #e7ebf0",
 
-              backgroundColor: "#f8fafc",
+              backgroundColor: "var(--aa-surface-muted)",
             }}
           >
             <BalanceBox label="Oylikdan yopiladi" value={money(enteredPaymentTotal)} tone="blue" />
@@ -1669,22 +1694,24 @@ const WorkerPayments = () => {
             />
           </Box>
 
-          <TextField
-            select
-            label="Pul chiqadigan hisob"
-            value={advanceForm.account_id}
-            onChange={(event) =>
-              setAdvanceForm((previous) => ({ ...previous, account_id: event.target.value }))
-            }
-            helperText="Tanlanmasa Asosiy kassa ishlatiladi"
-          >
-            <MenuItem value="">Asosiy kassa (avtomatik)</MenuItem>
-            {accounts.map((account) => (
-              <MenuItem key={account.id} value={account.id}>
-                {account.name} — {money(account.balance)}
-              </MenuItem>
-            ))}
-          </TextField>
+          {ENABLE_MULTI_ACCOUNT_SELECTION && (
+            <TextField
+              select
+              label="Pul chiqadigan hisob"
+              value={advanceForm.account_id}
+              onChange={(event) =>
+                setAdvanceForm((previous) => ({ ...previous, account_id: event.target.value }))
+              }
+              helperText="Tanlanmasa Asosiy kassa ishlatiladi"
+            >
+              <MenuItem value="">Asosiy kassa (avtomatik)</MenuItem>
+              {accounts.map((account) => (
+                <MenuItem key={account.id} value={account.id}>
+                  {account.name} — {money(account.balance)}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
 
           <TextField
             fullWidth
@@ -1720,6 +1747,7 @@ const WorkerPayments = () => {
           </Box>
         ) : (
           <Box
+            className="aa-mobile-records aa-worker-advances-table"
             sx={{
               overflowX: "auto",
             }}
@@ -1745,7 +1773,7 @@ const WorkerPayments = () => {
                         sx={{
                           fontWeight: 900,
 
-                          color: "#334155",
+                          color: "var(--aa-text)",
                         }}
                       >
                         {advance.worker_name}
@@ -1773,7 +1801,7 @@ const WorkerPayments = () => {
                       align="center"
                       sx={{
                         py: 6,
-                        color: "#94a3b8",
+                        color: "var(--aa-text-tertiary)",
                         fontWeight: 850,
                       }}
                     >
@@ -1800,7 +1828,9 @@ const WorkerPayments = () => {
             <Button
               variant="contained"
               onClick={handleSaveAdvance}
-              disabled={advanceSaving}
+              disabled={
+                advanceSaving || !advanceForm.worker_id || Number(advanceForm.amount || 0) <= 0
+              }
               sx={dialogPrimarySx}
             >
               {advanceSaving ? "Saqlanmoqda..." : "Avans berish"}
@@ -1843,19 +1873,20 @@ const WorkerPayments = () => {
           >
             <TextField
               required
-              type="number"
+              type="text"
               label="Avans summasi"
-              value={advanceForm.amount}
-              onChange={(event) =>
+              value={formatAmountInput(advanceForm.amount)}
+              onChange={(event) => {
+                const amount = event.target.value.replace(/\D/g, "");
+
                 setAdvanceForm((previous) => ({
                   ...previous,
-
-                  amount: event.target.value,
-                }))
-              }
+                  amount,
+                }));
+              }}
               inputProps={{
-                min: 0,
-                step: 1000,
+                inputMode: "numeric",
+                pattern: "[0-9 ]*",
               }}
             />
 
@@ -1920,7 +1951,7 @@ const WorkerPayments = () => {
       >
         <Typography
           sx={{
-            color: "#64748b",
+            color: "var(--aa-text-secondary)",
             fontSize: 12.5,
             lineHeight: 1.7,
             fontWeight: 700,
@@ -2050,13 +2081,13 @@ const heroSecondaryButtonSx = {
 const filterButtonSx = {
   minHeight: 40,
   px: 1.8,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   borderColor: "#dce3ea",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
-  backgroundColor: "#fff",
+  backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
     color: "#991b1b",
@@ -2078,7 +2109,7 @@ const dueCardSx = {
 
   border: "1px solid #e7ebf0",
 
-  background: "linear-gradient(145deg,#fff,#f8fafc)",
+  background: "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 };
 
 const tableHeaderBoxSx = {
@@ -2102,7 +2133,7 @@ const tableActionSx = {
 };
 
 const dialogCancelSx = {
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   fontWeight: 850,
   textTransform: "none",
@@ -2138,20 +2169,20 @@ const tableSx = {
 
   "& th": {
     py: 1.55,
-    color: "#94a3b8",
+    color: "var(--aa-text-tertiary)",
     fontSize: 9.5,
     fontWeight: 900,
     letterSpacing: ".045em",
     textTransform: "uppercase",
 
-    backgroundColor: "#fafbfc",
+    backgroundColor: "var(--aa-surface-muted)",
 
     borderColor: "#edf0f3",
   },
 
   "& td": {
     py: 1.4,
-    color: "#64748b",
+    color: "var(--aa-text-secondary)",
     fontSize: 10.5,
     borderColor: "#edf0f3",
   },
@@ -2166,17 +2197,17 @@ const smallTableSx = {
 
   "& th": {
     py: 1.45,
-    color: "#94a3b8",
+    color: "var(--aa-text-tertiary)",
     fontSize: 9.5,
     fontWeight: 900,
     textTransform: "uppercase",
 
-    backgroundColor: "#fafbfc",
+    backgroundColor: "var(--aa-surface-muted)",
   },
 
   "& td": {
     py: 1.35,
-    color: "#64748b",
+    color: "var(--aa-text-secondary)",
     fontSize: 10.5,
     borderColor: "#edf0f3",
   },

@@ -1,4 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
+import PublicThemeToggle from "../Components/UI/PublicThemeToggle";
 import { getToken, isTokenExpired } from "../utils/auth";
 
 const PublicRoute = () => {
@@ -8,7 +9,12 @@ const PublicRoute = () => {
     return <Navigate to="/" replace />;
   }
 
-  return <Outlet />;
+  return (
+    <>
+      <PublicThemeToggle />
+      <Outlet />
+    </>
+  );
 };
 
 export default PublicRoute;

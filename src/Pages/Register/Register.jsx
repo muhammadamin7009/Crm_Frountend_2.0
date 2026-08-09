@@ -19,7 +19,7 @@ const fieldSx = {
   "& .MuiOutlinedInput-root": {
     minHeight: 56,
     borderRadius: "14px",
-    backgroundColor: "#ffffff",
+    backgroundColor: "var(--aa-surface-solid)",
     transition: "box-shadow .2s ease, border-color .2s ease, background-color .2s ease",
 
     "& fieldset": {
@@ -180,8 +180,9 @@ const Register = () => {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm({
+    mode: "onChange",
     defaultValues: {
       first_name: "",
       last_name: "",
@@ -271,6 +272,7 @@ const Register = () => {
 
   return (
     <Box
+      className="auth-page"
       sx={{
         minHeight: "100vh",
         px: {
@@ -305,6 +307,7 @@ const Register = () => {
       }}
     >
       <Paper
+        className="auth-shell"
         elevation={0}
         sx={{
           width: "100%",
@@ -325,7 +328,7 @@ const Register = () => {
             sm: "30px",
           },
           border: "1px solid rgba(15,23,42,.08)",
-          backgroundColor: "#ffffff",
+          backgroundColor: "var(--aa-surface-solid)",
           boxShadow: `
             0 30px 90px rgba(15,23,42,.14),
             inset 0 1px 0 rgba(255,255,255,.8)
@@ -343,6 +346,7 @@ const Register = () => {
         />
 
         <Box
+          className="auth-form-panel"
           component="main"
           sx={{
             minHeight: {
@@ -395,7 +399,7 @@ const Register = () => {
                   flexShrink: 0,
                   borderRadius: "16px",
                   border: "1px solid #e2e8f0",
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "var(--aa-surface-solid)",
                   boxShadow: "0 8px 20px rgba(15,23,42,.07)",
                 }}
               >
@@ -682,7 +686,8 @@ const Register = () => {
                   gap: 1.4,
                   borderRadius: "15px",
                   border: "1px solid rgba(34,197,94,.12)",
-                  background: "linear-gradient(135deg,rgba(34,197,94,.055),rgba(255,255,255,.9))",
+                  background:
+                    "linear-gradient(135deg,rgba(34,197,94,.055),var(--aa-surface-elevated))",
                 }}
               >
                 <Box
@@ -730,7 +735,7 @@ const Register = () => {
                 type="submit"
                 fullWidth
                 variant="contained"
-                disabled={loading}
+                disabled={loading || !isValid}
                 sx={{
                   ...primaryButtonSx,
                   mt: 2.5,

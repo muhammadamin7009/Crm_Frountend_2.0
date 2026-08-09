@@ -31,6 +31,7 @@ import { getUsers } from "../../api/getUsers";
 import { getProducts } from "../../api/products";
 import { getInventoryStock, getWarehouses } from "../../api/inventory";
 import { getFinancialAccounts } from "../../api/finance";
+import { ENABLE_MULTI_ACCOUNT_SELECTION } from "../../utils/features";
 import { getDepartments, updateDepartment } from "../../api/departments";
 import {
   assignWorkflowWorkerDepartment,
@@ -47,12 +48,54 @@ import {
 } from "../../api/orders";
 
 const statuses = {
-  new: { label: "Yangi", color: "#2563eb", bg: "#eff6ff" },
-  confirmed: { label: "Tasdiqlandi", color: "#7c3aed", bg: "#f5f3ff" },
-  in_production: { label: "Ishlab chiqarishda", color: "#d97706", bg: "#fffbeb" },
-  ready: { label: "Tayyor", color: "#059669", bg: "#ecfdf5" },
-  completed: { label: "Bajarildi", color: "#15803d", bg: "#f0fdf4" },
-  cancelled: { label: "Bekor qilindi", color: "#dc2626", bg: "#fef2f2" },
+  new: {
+    label: "Yangi",
+    color: "#1d4ed8",
+    bg: "#eff6ff",
+    darkColor: "#93c5fd",
+    darkBg: "rgba(37,99,235,.16)",
+    darkBorder: "rgba(96,165,250,.30)",
+  },
+  confirmed: {
+    label: "Tasdiqlandi",
+    color: "#7c3aed",
+    bg: "#f5f3ff",
+    darkColor: "#c4b5fd",
+    darkBg: "rgba(124,58,237,.16)",
+    darkBorder: "rgba(167,139,250,.30)",
+  },
+  in_production: {
+    label: "Ishlab chiqarishda",
+    color: "#b45309",
+    bg: "#fffbeb",
+    darkColor: "#fbbf24",
+    darkBg: "rgba(217,119,6,.16)",
+    darkBorder: "rgba(251,191,36,.30)",
+  },
+  ready: {
+    label: "Tayyor",
+    color: "#047857",
+    bg: "#ecfdf5",
+    darkColor: "#6ee7b7",
+    darkBg: "rgba(5,150,105,.16)",
+    darkBorder: "rgba(52,211,153,.30)",
+  },
+  completed: {
+    label: "Bajarildi",
+    color: "#15803d",
+    bg: "#f0fdf4",
+    darkColor: "#86efac",
+    darkBg: "rgba(21,128,61,.18)",
+    darkBorder: "rgba(74,222,128,.30)",
+  },
+  cancelled: {
+    label: "Bekor qilindi",
+    color: "#dc2626",
+    bg: "#fef2f2",
+    darkColor: "#fca5a5",
+    darkBg: "rgba(220,38,38,.16)",
+    darkBorder: "rgba(248,113,113,.30)",
+  },
 };
 const editableStatuses = Object.entries(statuses).filter(([value]) => value !== "completed");
 
@@ -87,9 +130,10 @@ const StatusChip = ({ value }) => {
       label={status.label}
       sx={{
         height: 27,
-        color: status.color,
-        bgcolor: status.bg,
-        border: `1px solid ${status.color}28`,
+        color: (theme) => (theme.palette.mode === "dark" ? status.darkColor : status.color),
+        bgcolor: (theme) => (theme.palette.mode === "dark" ? status.darkBg : status.bg),
+        border: (theme) =>
+          `1px solid ${theme.palette.mode === "dark" ? status.darkBorder : `${status.color}28`}`,
         fontWeight: 800,
       }}
     />
@@ -520,20 +564,25 @@ const Orders = () => {
   };
 
   return (
-    <Stack className="crm-page" spacing={3} sx={{ p: { xs: 2, md: 3.5 }, minWidth: 0 }}>
+    <Stack className="crm-page orders-page" spacing={3} sx={{ p: { xs: 2, md: 3.5 }, minWidth: 0 }}>
       <PageHeader
         eyebrow="Savdo jarayoni"
         title="Zakazlar"
         description="Mijoz buyurtmalarini qabul qiling, muddat va bajarilish holatini kuzating."
         actions={
           canManage && (
-            <Stack direction="row" spacing={1}>
+            <Stack className="orders-header-actions" direction="row" spacing={1}>
               <Button
                 variant="outlined"
                 onClick={openDepartmentOrder}
                 sx={{ minHeight: 44, textTransform: "none", fontWeight: 850 }}
               >
-                Bo'limlar va xodimlar
+                <Box component="span" className="orders-action-label-desktop">
+                  Bo'limlar va xodimlar
+                </Box>
+                <Box component="span" className="orders-action-label-mobile">
+                  Bo'limlar
+                </Box>
               </Button>
               <Button
                 variant="contained"
@@ -547,7 +596,12 @@ const Orders = () => {
                   borderRadius: 2.5,
                 }}
               >
-                + Yangi zakaz
+                <Box component="span" className="orders-action-label-desktop">
+                  + Yangi zakaz
+                </Box>
+                <Box component="span" className="orders-action-label-mobile">
+                  + Zakaz
+                </Box>
               </Button>
             </Stack>
           )
@@ -647,7 +701,7 @@ const Orders = () => {
             ))}
           </TextField>
         </Box>
-        <Box sx={{ overflowX: "auto" }}>
+        <Box className="aa-mobile-records aa-orders-table" sx={{ overflowX: "auto" }}>
           <Table sx={{ minWidth: 1080 }}>
             <TableHead>
               <TableRow>
@@ -664,7 +718,7 @@ const Orders = () => {
                   <TableCell
                     key={head}
                     sx={{
-                      bgcolor: "#f8fafc",
+                      bgcolor: "var(--aa-surface-muted)",
                       color: "var(--aa-text-secondary)",
                       fontSize: 11.5,
                       fontWeight: 850,
@@ -710,7 +764,8 @@ const Orders = () => {
                             mt: 0.6,
                             height: 22,
                             color: "#b91c1c",
-                            bgcolor: "#fef2f2",
+                            bgcolor: "rgba(185,28,28,.12)",
+                            border: "1px solid rgba(239,68,68,.22)",
                             fontWeight: 850,
                           }}
                         />
@@ -767,7 +822,16 @@ const Orders = () => {
                           onChange={(event) => changeStatus(order, event.target.value)}
                           sx={{
                             minWidth: 160,
-                            "& .MuiOutlinedInput-root": { bgcolor: statuses[order.status]?.bg },
+                            "& .MuiOutlinedInput-root": {
+                              color: (theme) =>
+                                theme.palette.mode === "dark"
+                                  ? statuses[order.status]?.darkColor
+                                  : statuses[order.status]?.color,
+                              bgcolor: (theme) =>
+                                theme.palette.mode === "dark"
+                                  ? statuses[order.status]?.darkBg
+                                  : statuses[order.status]?.bg,
+                            },
                           }}
                         >
                           {editableStatuses.map(([value, item]) => (
@@ -782,9 +846,15 @@ const Orders = () => {
                     </TableCell>
                     <TableCell>
                       {canManage && (
-                        <Stack direction="row" spacing={0.5}>
+                        <Stack
+                          className="orders-card-actions"
+                          direction="row"
+                          spacing={0.5}
+                          useFlexGap
+                        >
                           <Button
                             size="small"
+                            variant="outlined"
                             onClick={() => openTasks(order)}
                             disabled={taskLoading}
                             sx={{ textTransform: "none", fontWeight: 800 }}
@@ -808,23 +878,21 @@ const Orders = () => {
                           )}
                           {!order.converted_batch_id && Number(order.task_count || 0) === 0 && (
                             <>
-                              <div className="flex gap-2">
-                                <Button
-                                  variant="outlined"
-                                  size="small"
-                                  onClick={() => openEdit(order.id)}
-                                  sx={{ textTransform: "none", fontWeight: 800 }}
-                                >
-                                  Tahrirlash
-                                </Button>
-                                <Button
-                                  variant="contained"
-                                  size="small"
-                                  onClick={() => remove(order)}
-                                >
-                                  delete
-                                </Button>
-                              </div>
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={() => openEdit(order.id)}
+                                sx={{ textTransform: "none", fontWeight: 800 }}
+                              >
+                                Tahrirlash
+                              </Button>
+                              <Button
+                                variant="contained"
+                                size="small"
+                                onClick={() => remove(order)}
+                              >
+                                O‘chirish
+                              </Button>
                             </>
                           )}
                         </Stack>
@@ -993,7 +1061,8 @@ const Orders = () => {
               sx={{
                 p: 2,
                 borderRadius: 2.5,
-                bgcolor: "#f8fafc",
+                bgcolor: "var(--aa-surface-muted)",
+                border: "1px solid var(--aa-border)",
                 display: "flex",
                 justifyContent: "space-between",
               }}
@@ -1012,7 +1081,12 @@ const Orders = () => {
           <Button
             variant="contained"
             onClick={save}
-            disabled={saving}
+            disabled={
+              saving ||
+              !form.client_id ||
+              !form.items.length ||
+              form.items.some((item) => !item.product_id || Number(item.quantity || 0) <= 0)
+            }
             sx={{ bgcolor: "var(--aa-brand-700)", textTransform: "none", fontWeight: 850 }}
           >
             {saving ? <CircularProgress size={20} color="inherit" /> : "Saqlash"}
@@ -1039,13 +1113,16 @@ const Orders = () => {
                 sx={{ p: 1.3, display: "flex", alignItems: "center", gap: 1.2, borderRadius: 2 }}
               >
                 <Box
+                  className="department-order-index"
                   sx={{
                     width: 30,
                     height: 30,
                     display: "grid",
                     placeItems: "center",
                     borderRadius: 1.5,
-                    bgcolor: "#f1f5f9",
+                    color: "var(--aa-brand-400)",
+                    bgcolor: "var(--aa-brand-100)",
+                    border: "1px solid var(--aa-brand-200)",
                     fontWeight: 900,
                   }}
                 >
@@ -1128,7 +1205,7 @@ const Orders = () => {
             </Stack>
           </Box>
         </DialogContent>
-        <DialogActions sx={{ p: 2 }}>
+        <DialogActions className="department-order-actions" sx={{ p: 2 }}>
           <Button
             onClick={() => setDepartmentOrderOpen(false)}
             disabled={departmentOrderSaving}
@@ -1145,7 +1222,14 @@ const Orders = () => {
             {departmentOrderSaving ? (
               <CircularProgress size={19} color="inherit" />
             ) : (
-              "Tartib va birikmalarni saqlash"
+              <>
+                <Box component="span" className="department-save-label-desktop">
+                  Tartib va birikmalarni saqlash
+                </Box>
+                <Box component="span" className="department-save-label-mobile">
+                  Saqlash
+                </Box>
+              </>
             )}
           </Button>
         </DialogActions>
@@ -1273,7 +1357,13 @@ const Orders = () => {
                     <Button
                       variant="contained"
                       onClick={saveTask}
-                      disabled={taskSaving}
+                      disabled={
+                        taskSaving ||
+                        !taskForm.order_item_id ||
+                        !taskForm.department_id ||
+                        !taskForm.assigned_to ||
+                        Number(taskForm.planned_quantity || 0) <= 0
+                      }
                       sx={{ textTransform: "none", fontWeight: 850 }}
                     >
                       {taskSaving ? <CircularProgress size={19} color="inherit" /> : "Biriktirish"}
@@ -1364,7 +1454,15 @@ const Orders = () => {
         <DialogTitle sx={{ fontWeight: 900 }}>Zakazni savdoga o'tkazish</DialogTitle>
         <DialogContent dividers>
           <Stack spacing={2} sx={{ pt: 0.5 }}>
-            <Paper variant="outlined" sx={{ p: 2, borderRadius: 2.5, bgcolor: "#f8fafc" }}>
+            <Paper
+              variant="outlined"
+              sx={{
+                p: 2,
+                borderRadius: 2.5,
+                bgcolor: "var(--aa-surface-muted)",
+                borderColor: "var(--aa-border)",
+              }}
+            >
               <Typography sx={{ fontWeight: 900 }}>
                 {conversionOrder?.order_number} · {conversionOrder?.client_name}
               </Typography>
@@ -1438,8 +1536,15 @@ const Orders = () => {
                 sx={{
                   p: 1.4,
                   borderRadius: 2,
-                  color: "#b91c1c",
-                  bgcolor: "#fef2f2",
+                  color: (theme) => (theme.palette.mode === "dark" ? "#fca5a5" : "#b91c1c"),
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark" ? "rgba(220,38,38,.16)" : "#fef2f2",
+                  border: (theme) =>
+                    `1px solid ${
+                      theme.palette.mode === "dark"
+                        ? "rgba(248,113,113,.28)"
+                        : "rgba(220,38,38,.14)"
+                    }`,
                   fontSize: 12.5,
                   fontWeight: 750,
                 }}
@@ -1482,22 +1587,24 @@ const Orders = () => {
               }
               inputProps={{ min: 0 }}
             />
-            <TextField
-              select
-              label="Pul tushadigan hisob"
-              value={conversionForm.account_id}
-              onChange={(event) =>
-                setConversionForm((current) => ({ ...current, account_id: event.target.value }))
-              }
-              helperText="Tanlanmasa Asosiy kassa ishlatiladi"
-            >
-              <MenuItem value="">Asosiy kassa (avtomatik)</MenuItem>
-              {accounts.map((account) => (
-                <MenuItem key={account.id} value={account.id}>
-                  {account.name} · {money(account.balance)}
-                </MenuItem>
-              ))}
-            </TextField>
+            {ENABLE_MULTI_ACCOUNT_SELECTION && (
+              <TextField
+                select
+                label="Pul tushadigan hisob"
+                value={conversionForm.account_id}
+                onChange={(event) =>
+                  setConversionForm((current) => ({ ...current, account_id: event.target.value }))
+                }
+                helperText="Tanlanmasa Asosiy kassa ishlatiladi"
+              >
+                <MenuItem value="">Asosiy kassa (avtomatik)</MenuItem>
+                {accounts.map((account) => (
+                  <MenuItem key={account.id} value={account.id}>
+                    {account.name} · {money(account.balance)}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
             <Typography
               sx={{ p: 1.4, borderRadius: 2, color: "#92400e", bgcolor: "#fffbeb", fontSize: 12.5 }}
             >

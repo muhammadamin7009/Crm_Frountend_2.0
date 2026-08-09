@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Avatar,
   Box,
@@ -183,7 +183,7 @@ const KpiCard = ({ label, value, helper, icon, tone = "red" }) => {
         overflow: "hidden",
         borderRadius: "22px",
         border: "1px solid rgba(226,232,240,.9)",
-        backgroundColor: "#ffffff",
+        backgroundColor: "var(--aa-surface-solid)",
         boxShadow: "0 14px 40px rgba(15,23,42,.055)",
         transition: "transform .2s ease, box-shadow .2s ease",
 
@@ -221,7 +221,7 @@ const KpiCard = ({ label, value, helper, icon, tone = "red" }) => {
         <Box sx={{ minWidth: 0 }}>
           <Typography
             sx={{
-              color: "#64748b",
+              color: "var(--aa-text-secondary)",
               fontSize: 12,
               fontWeight: 750,
             }}
@@ -233,7 +233,7 @@ const KpiCard = ({ label, value, helper, icon, tone = "red" }) => {
             noWrap
             sx={{
               mt: 1.1,
-              color: "#0f172a",
+              color: "var(--aa-text)",
               fontSize: 21,
               lineHeight: 1.2,
               fontWeight: 950,
@@ -275,7 +275,7 @@ const KpiCard = ({ label, value, helper, icon, tone = "red" }) => {
           position: "relative",
           zIndex: 1,
           mt: 2,
-          color: "#94a3b8",
+          color: "var(--aa-text-tertiary)",
           fontSize: 11,
           lineHeight: 1.55,
           fontWeight: 600,
@@ -296,7 +296,7 @@ const Section = ({ title, subtitle, action, children, className = "" }) => (
       overflow: "hidden",
       borderRadius: "22px",
       border: "1px solid rgba(226,232,240,.9)",
-      backgroundColor: "#ffffff",
+      backgroundColor: "var(--aa-surface-solid)",
       boxShadow: "0 14px 40px rgba(15,23,42,.045)",
     }}
   >
@@ -313,7 +313,7 @@ const Section = ({ title, subtitle, action, children, className = "" }) => (
       <Box>
         <Typography
           sx={{
-            color: "#0f172a",
+            color: "var(--aa-text)",
             fontSize: 15,
             fontWeight: 900,
             letterSpacing: "-.02em",
@@ -326,7 +326,7 @@ const Section = ({ title, subtitle, action, children, className = "" }) => (
           <Typography
             sx={{
               mt: 0.7,
-              color: "#94a3b8",
+              color: "var(--aa-text-tertiary)",
               fontSize: 11,
               lineHeight: 1.55,
             }}
@@ -355,8 +355,8 @@ const Empty = ({ children }) => (
       gap: 1.5,
       textAlign: "center",
       borderRadius: "17px",
-      border: "1px dashed #cbd5e1",
-      backgroundColor: "#f8fafc",
+      border: "1px dashed var(--aa-border-strong)",
+      backgroundColor: "var(--aa-surface-muted)",
     }}
   >
     <Box
@@ -364,14 +364,14 @@ const Empty = ({ children }) => (
         width: 10,
         height: 10,
         borderRadius: "50%",
-        backgroundColor: "#cbd5e1",
-        boxShadow: "0 0 0 7px rgba(203,213,225,.25)",
+        backgroundColor: "var(--aa-text-tertiary)",
+        boxShadow: "0 0 0 7px color-mix(in srgb, var(--aa-text-tertiary) 18%, transparent)",
       }}
     />
 
     <Typography
       sx={{
-        color: "#94a3b8",
+        color: "var(--aa-text-tertiary)",
         fontSize: 12,
         fontWeight: 650,
       }}
@@ -408,7 +408,7 @@ const ProgressList = ({ items, valueKey, color, quantity = false }) => {
               <Typography
                 noWrap
                 sx={{
-                  color: "#475569",
+                  color: "var(--aa-text-secondary)",
                   fontSize: 11,
                   fontWeight: 900,
                 }}
@@ -418,7 +418,7 @@ const ProgressList = ({ items, valueKey, color, quantity = false }) => {
 
               <Typography
                 sx={{
-                  color: "#94a3b8",
+                  color: "var(--aa-text-tertiary)",
                   fontSize: 10,
                   fontWeight: 750,
                 }}
@@ -552,7 +552,7 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#b4232b" }) => {
         <Box>
           <Typography
             sx={{
-              color: "#0f172a",
+              color: "var(--aa-text)",
               fontSize: {
                 xs: 22,
                 sm: 27,
@@ -587,7 +587,7 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#b4232b" }) => {
 
             <Typography
               sx={{
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10.5,
                 fontWeight: 650,
               }}
@@ -603,13 +603,13 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#b4232b" }) => {
             px: 1.5,
             py: 1.1,
             borderRadius: "14px",
-            border: "1px solid #e7ebf0",
-            backgroundColor: "#f8fafc",
+            border: "1px solid var(--aa-border)",
+            backgroundColor: "var(--aa-surface-muted)",
           }}
         >
           <Typography
             sx={{
-              color: "#94a3b8",
+              color: "var(--aa-text-tertiary)",
               fontSize: 9,
               fontWeight: 850,
               letterSpacing: ".07em",
@@ -633,22 +633,24 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#b4232b" }) => {
       </Box>
 
       <Box
+        className="aa-dashboard-chart"
         sx={{
           position: "relative",
-          overflowX: "auto",
+          overflowX: "hidden",
           overflowY: "hidden",
           borderRadius: "18px",
           border: "1px solid #e7ebf0",
-          background: "linear-gradient(180deg,#f8fafc,#ffffff)",
+          background: "linear-gradient(180deg,var(--aa-surface-muted),var(--aa-surface-solid))",
         }}
       >
         <Box
           component="svg"
+          className="aa-dashboard-chart-svg"
           viewBox={`0 0 ${width} ${height}`}
           sx={{
             display: "block",
             width: "100%",
-            minWidth: 620,
+            minWidth: 0,
             height: "auto",
           }}
           role="img"
@@ -769,12 +771,12 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#b4232b" }) => {
               sx={{
                 px: 2,
                 py: 1,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 11,
                 fontWeight: 750,
                 borderRadius: "999px",
-                backgroundColor: "rgba(255,255,255,.9)",
-                border: "1px solid #e7ebf0",
+                backgroundColor: "var(--aa-surface-elevated)",
+                border: "1px solid var(--aa-border)",
               }}
             >
               Oxirgi 6 oyda ma’lumot topilmadi
@@ -845,7 +847,14 @@ const ActivityDonut = ({ items }) => {
             transform: "rotate(-90deg)",
           }}
         >
-          <circle cx="70" cy="70" r={radius} fill="none" stroke="#edf1f5" strokeWidth="17" />
+          <circle
+            cx="70"
+            cy="70"
+            r={radius}
+            fill="none"
+            stroke="var(--aa-border-strong)"
+            strokeWidth="17"
+          />
 
           {segments.map((segment) => (
             <circle
@@ -876,7 +885,7 @@ const ActivityDonut = ({ items }) => {
         >
           <Typography
             sx={{
-              color: "#0f172a",
+              color: "var(--aa-text)",
               fontSize: 18,
               fontWeight: 950,
               letterSpacing: "-.035em",
@@ -888,7 +897,7 @@ const ActivityDonut = ({ items }) => {
           <Typography
             sx={{
               mt: 0.4,
-              color: "#94a3b8",
+              color: "var(--aa-text-tertiary)",
               fontSize: 9.5,
               fontWeight: 750,
             }}
@@ -913,8 +922,8 @@ const ActivityDonut = ({ items }) => {
               alignItems: "center",
               gap: 1.15,
               borderRadius: "13px",
-              border: "1px solid #edf0f3",
-              backgroundColor: "#fafbfc",
+              border: "1px solid var(--aa-border)",
+              backgroundColor: "var(--aa-surface-muted)",
             }}
           >
             <Box
@@ -937,7 +946,7 @@ const ActivityDonut = ({ items }) => {
               <Typography
                 noWrap
                 sx={{
-                  color: "#475569",
+                  color: "var(--aa-text-secondary)",
                   fontSize: 10.5,
                   fontWeight: 900,
                 }}
@@ -949,7 +958,7 @@ const ActivityDonut = ({ items }) => {
                 noWrap
                 sx={{
                   mt: 0.3,
-                  color: "#94a3b8",
+                  color: "var(--aa-text-tertiary)",
                   fontSize: 9,
                 }}
               >
@@ -1039,8 +1048,8 @@ const TrendSummaryCards = ({ items = [] }) => {
             minWidth: 0,
             p: 1.7,
             borderRadius: "16px",
-            border: "1px solid #e7ebf0",
-            background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+            border: "1px solid var(--aa-border)",
+            background: "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
             transition: "transform .18s ease, box-shadow .18s ease",
 
             "&:hover": {
@@ -1070,7 +1079,7 @@ const TrendSummaryCards = ({ items = [] }) => {
 
             <Typography
               sx={{
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 fontSize: 9.5,
                 fontWeight: 850,
               }}
@@ -1095,7 +1104,7 @@ const TrendSummaryCards = ({ items = [] }) => {
             noWrap
             sx={{
               mt: 0.7,
-              color: "#94a3b8",
+              color: "var(--aa-text-tertiary)",
               fontSize: 9.5,
             }}
           >
@@ -1653,7 +1662,7 @@ const AdminOverview = ({ user }) => {
 
         <Typography
           sx={{
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 13,
             fontWeight: 750,
           }}
@@ -1750,10 +1759,10 @@ const AdminOverview = ({ user }) => {
           gap: 2.5,
           overflow: "hidden",
           borderRadius: "24px",
-          border: "1px solid rgba(226,232,240,.9)",
+          border: "1px solid var(--aa-border)",
           background:
-            "radial-gradient(circle at 98% 0%,rgba(143,29,32,.075),transparent 28%),linear-gradient(145deg,#ffffff,#fafafa)",
-          boxShadow: "0 15px 42px rgba(15,23,42,.055)",
+            "radial-gradient(circle at 98% 0%,rgba(143,29,32,.075),transparent 28%),linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
+          boxShadow: "var(--aa-shadow-md)",
         }}
       >
         <Box>
@@ -1790,7 +1799,7 @@ const AdminOverview = ({ user }) => {
           <Typography
             component="h1"
             sx={{
-              color: "#0f172a",
+              color: "var(--aa-text)",
               fontSize: {
                 xs: 26,
                 sm: 30,
@@ -1806,7 +1815,7 @@ const AdminOverview = ({ user }) => {
           <Typography
             sx={{
               mt: 1,
-              color: "#94a3b8",
+              color: "var(--aa-text-tertiary)",
               fontSize: 13,
               lineHeight: 1.7,
               fontWeight: 600,
@@ -1836,8 +1845,8 @@ const AdminOverview = ({ user }) => {
             alignItems: "center",
             gap: 1,
             borderRadius: "18px",
-            border: "1px solid #e2e8f0",
-            backgroundColor: "rgba(255,255,255,.92)",
+            border: "1px solid var(--aa-border)",
+            backgroundColor: "var(--aa-surface-elevated)",
             boxShadow: "0 10px 25px rgba(15,23,42,.045)",
           }}
         >
@@ -2066,14 +2075,14 @@ const AdminOverview = ({ user }) => {
                       gap: 1.35,
                       cursor: "pointer",
                       borderRadius: "14px",
-                      border: "1px solid #e8edf2",
-                      backgroundColor: "#fafbfc",
+                      border: "1px solid var(--aa-border)",
+                      backgroundColor: "var(--aa-surface-muted)",
                       transition: "transform .18s ease,border-color .18s ease",
 
                       "&:hover": {
                         transform: "translateX(2px)",
                         borderColor: "rgba(143,29,32,.16)",
-                        backgroundColor: "#ffffff",
+                        backgroundColor: "var(--aa-surface-solid)",
                       },
                     }}
                   >
@@ -2097,7 +2106,7 @@ const AdminOverview = ({ user }) => {
                       <Typography
                         noWrap
                         sx={{
-                          color: "#475569",
+                          color: "var(--aa-text-secondary)",
                           fontSize: 10.5,
                           fontWeight: 900,
                         }}
@@ -2109,7 +2118,7 @@ const AdminOverview = ({ user }) => {
                         noWrap
                         sx={{
                           mt: 0.4,
-                          color: "#94a3b8",
+                          color: "var(--aa-text-tertiary)",
                           fontSize: 9.5,
                         }}
                       >
@@ -2121,7 +2130,7 @@ const AdminOverview = ({ user }) => {
                       noWrap
                       sx={{
                         maxWidth: 125,
-                        color: "#0f172a",
+                        color: "var(--aa-text)",
                         fontSize: 10,
                         fontWeight: 950,
                       }}
@@ -2162,8 +2171,9 @@ const AdminOverview = ({ user }) => {
                   sx={{
                     p: 1.8,
                     borderRadius: "16px",
-                    border: "1px solid #e8edf2",
-                    background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+                    border: "1px solid var(--aa-border)",
+                    background:
+                      "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
                   }}
                 >
                   <ProgressList
@@ -2191,8 +2201,8 @@ const AdminOverview = ({ user }) => {
           gap: 0.5,
           overflowX: "auto",
           borderRadius: "15px",
-          border: "1px solid #e2e8f0",
-          backgroundColor: "#ffffff",
+          border: "1px solid var(--aa-border)",
+          backgroundColor: "var(--aa-surface-solid)",
           boxShadow: "0 8px 22px rgba(15,23,42,.035)",
         }}
       >
@@ -2265,7 +2275,7 @@ const AdminOverview = ({ user }) => {
 
                             <Typography
                               sx={{
-                                color: "#475569",
+                                color: "var(--aa-text-secondary)",
                                 fontSize: 11,
                                 fontWeight: 900,
                               }}
@@ -2345,7 +2355,7 @@ const AdminOverview = ({ user }) => {
                         <TableCell>
                           <Typography
                             sx={{
-                              color: "#475569",
+                              color: "var(--aa-text-secondary)",
                               fontSize: 11,
                               fontWeight: 900,
                             }}
@@ -2417,8 +2427,9 @@ const AdminOverview = ({ user }) => {
                           p: 2,
                           cursor: "pointer",
                           borderRadius: "18px",
-                          border: "1px solid #e7ebf0",
-                          background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+                          border: "1px solid var(--aa-border)",
+                          background:
+                            "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
                           transition:
                             "transform .2s ease,border-color .2s ease,box-shadow .2s ease",
 
@@ -2439,6 +2450,7 @@ const AdminOverview = ({ user }) => {
                           <Box sx={warehouseIconSx}>
                             <Box
                               component="img"
+                              className="aa-warehouse-status-icon"
                               src={BoxIcon}
                               alt=""
                               sx={{
@@ -2458,7 +2470,7 @@ const AdminOverview = ({ user }) => {
                             <Typography
                               noWrap
                               sx={{
-                                color: "#334155",
+                                color: "var(--aa-text)",
                                 fontSize: 13,
                                 fontWeight: 950,
                               }}
@@ -2470,7 +2482,7 @@ const AdminOverview = ({ user }) => {
                               noWrap
                               sx={{
                                 mt: 0.5,
-                                color: "#94a3b8",
+                                color: "var(--aa-text-tertiary)",
                                 fontSize: 10,
                               }}
                             >
@@ -2494,7 +2506,7 @@ const AdminOverview = ({ user }) => {
                             display: "grid",
                             gridTemplateColumns: "repeat(3,minmax(0,1fr))",
                             gap: 1,
-                            borderTop: "1px solid #edf0f3",
+                            borderTop: "1px solid var(--aa-border)",
                           }}
                         >
                           {[
@@ -2507,7 +2519,7 @@ const AdminOverview = ({ user }) => {
                             <Box key={label}>
                               <Typography
                                 sx={{
-                                  color: "#94a3b8",
+                                  color: "var(--aa-text-tertiary)",
                                   fontSize: 9,
                                   fontWeight: 750,
                                 }}
@@ -2518,7 +2530,7 @@ const AdminOverview = ({ user }) => {
                               <Typography
                                 sx={{
                                   mt: 0.6,
-                                  color: "#334155",
+                                  color: "var(--aa-text)",
                                   fontSize: 14,
                                   fontWeight: 950,
                                 }}
@@ -2856,7 +2868,7 @@ const dateFieldSx = {
   "& .MuiOutlinedInput-root": {
     minHeight: 40,
     borderRadius: 2.7,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "var(--aa-surface-muted)",
   },
 
   "& .MuiOutlinedInput-notchedOutline": {
@@ -2946,10 +2958,11 @@ const redSoftChipSx = {
 
 const neutralChipSx = {
   height: 24,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   fontSize: 8.5,
   fontWeight: 850,
-  backgroundColor: "#f1f5f9",
+  border: "1px solid var(--aa-border)",
+  backgroundColor: "var(--aa-surface-muted)",
 };
 
 const clientAvatarSx = {
@@ -3041,14 +3054,14 @@ const tableSx = {
   "& .MuiTableCell-root": {
     px: 1.2,
     py: 1.25,
-    color: "#5d6777",
+    color: "var(--aa-text-secondary)",
     fontSize: 10.5,
     borderColor: "#edf0f3",
   },
 
   "& .MuiTableHead-root .MuiTableCell-root": {
-    color: "#929aa7",
-    backgroundColor: "#fafbfc",
+    color: "var(--aa-text-tertiary)",
+    backgroundColor: "var(--aa-surface-muted)",
     fontSize: 9.5,
     fontWeight: 900,
     letterSpacing: ".035em",

@@ -144,8 +144,8 @@ const formatDetails = (details) => {
 const HeroMetric = (props) => <SharedHeroMetric {...props} />;
 const ActionChip = ({ action }) => {
   const current = actionStyles[action] || {
-    color: "#64748b",
-    background: "#f1f5f9",
+    color: "var(--aa-text-secondary)",
+    background: "var(--aa-surface-muted)",
     border: "#e2e8f0",
   };
 
@@ -229,14 +229,14 @@ const DetailItem = ({ label, value, accent = false }) => (
       p: 1.45,
       borderRadius: "15px",
 
-      border: accent ? "1px solid rgba(153,27,27,.15)" : "1px solid #e7ebf0",
+      border: accent ? "1px solid var(--aa-brand-200)" : "1px solid var(--aa-border)",
 
-      backgroundColor: accent ? "rgba(153,27,27,.045)" : "#f8fafc",
+      backgroundColor: accent ? "var(--aa-brand-50)" : "var(--aa-surface-muted)",
     }}
   >
     <Typography
       sx={{
-        color: "#94a3b8",
+        color: "var(--aa-text-tertiary)",
         fontSize: 9,
         fontWeight: 800,
       }}
@@ -248,7 +248,7 @@ const DetailItem = ({ label, value, accent = false }) => (
       sx={{
         mt: 0.5,
 
-        color: accent ? "#991b1b" : "#475569",
+        color: accent ? "var(--aa-brand-500)" : "var(--aa-text)",
 
         fontSize: 10.5,
         fontWeight: 900,
@@ -687,7 +687,7 @@ const AuditLogs = () => {
           <Box>
             <Typography
               sx={{
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 fontSize: 15,
                 fontWeight: 950,
               }}
@@ -698,7 +698,7 @@ const AuditLogs = () => {
             <Typography
               sx={{
                 mt: 0.45,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10.5,
               }}
             >
@@ -721,6 +721,7 @@ const AuditLogs = () => {
         </Box>
 
         <TableContainer
+          className="aa-mobile-records aa-audit-logs-table"
           sx={{
             minHeight: 0,
             flex: 1,
@@ -734,18 +735,18 @@ const AuditLogs = () => {
 
               "& th": {
                 py: 1.55,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
                 fontWeight: 900,
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
-                backgroundColor: "#fafbfc",
+                backgroundColor: "var(--aa-surface-muted)",
                 borderColor: "#edf0f3",
               },
 
               "& td": {
                 py: 1.4,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 fontSize: 10.5,
                 borderColor: "#edf0f3",
               },
@@ -797,7 +798,7 @@ const AuditLogs = () => {
                     >
                       <Typography
                         sx={{
-                          color: "#475569",
+                          color: "var(--aa-text-secondary)",
                           fontSize: 10,
                           fontWeight: 850,
                           whiteSpace: "nowrap",
@@ -843,7 +844,7 @@ const AuditLogs = () => {
                             noWrap
                             sx={{
                               maxWidth: 205,
-                              color: "#334155",
+                              color: "var(--aa-text)",
                               fontSize: 12,
                               fontWeight: 900,
                             }}
@@ -856,7 +857,7 @@ const AuditLogs = () => {
                             sx={{
                               maxWidth: 205,
                               mt: 0.35,
-                              color: "#94a3b8",
+                              color: "var(--aa-text-tertiary)",
                               fontSize: 9.5,
                             }}
                           >
@@ -878,7 +879,7 @@ const AuditLogs = () => {
                       <Stack direction="row" spacing={0.8} alignItems="center">
                         <Typography
                           sx={{
-                            color: "#475569",
+                            color: "var(--aa-text-secondary)",
                             fontSize: 10,
                             fontWeight: 900,
                           }}
@@ -894,7 +895,7 @@ const AuditLogs = () => {
                       <Typography
                         sx={{
                           maxWidth: 380,
-                          color: "#64748b",
+                          color: "var(--aa-text-secondary)",
                           fontSize: 10,
                           fontWeight: 750,
                           lineHeight: 1.55,
@@ -913,7 +914,7 @@ const AuditLogs = () => {
                     align="center"
                     sx={{
                       py: 8,
-                      color: "#94a3b8",
+                      color: "var(--aa-text-tertiary)",
                       fontWeight: 850,
                     }}
                   >
@@ -929,7 +930,7 @@ const AuditLogs = () => {
           sx={{
             borderTop: "1px solid #edf0f3",
 
-            backgroundColor: "#fafbfc",
+            backgroundColor: "var(--aa-surface-muted)",
           }}
         >
           <CrmPagination
@@ -1034,9 +1035,10 @@ const AuditLogs = () => {
                   p: 1.7,
                   borderRadius: "18px",
 
-                  border: "1px solid #e7ebf0",
+                  border: "1px solid var(--aa-border)",
 
-                  background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+                  background:
+                    "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
                 }}
               >
                 <Avatar
@@ -1059,7 +1061,7 @@ const AuditLogs = () => {
                 <Box sx={{ minWidth: 0 }}>
                   <Typography
                     sx={{
-                      color: "#0f172a",
+                      color: "var(--aa-text)",
                       fontSize: 15,
                       fontWeight: 950,
                     }}
@@ -1070,7 +1072,7 @@ const AuditLogs = () => {
                   <Typography
                     sx={{
                       mt: 0.35,
-                      color: "#94a3b8",
+                      color: "var(--aa-text-tertiary)",
                       fontSize: 10,
                     }}
                   >
@@ -1121,14 +1123,14 @@ const AuditLogs = () => {
                   p: 1.7,
                   borderRadius: "17px",
 
-                  border: "1px solid #e7ebf0",
+                  border: "1px solid var(--aa-border)",
 
-                  backgroundColor: "#f8fafc",
+                  backgroundColor: "var(--aa-surface-muted)",
                 }}
               >
                 <Typography
                   sx={{
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
                     fontSize: 9,
                     fontWeight: 800,
                   }}
@@ -1139,7 +1141,7 @@ const AuditLogs = () => {
                 <Typography
                   sx={{
                     mt: 0.6,
-                    color: "#475569",
+                    color: "var(--aa-text-secondary)",
                     fontSize: 10.5,
                     fontWeight: 850,
                     lineHeight: 1.6,
@@ -1158,7 +1160,7 @@ const AuditLogs = () => {
                     <Typography
                       sx={{
                         mb: 0.9,
-                        color: "#334155",
+                        color: "var(--aa-text)",
                         fontSize: 11,
                         fontWeight: 950,
                       }}
@@ -1206,7 +1208,7 @@ const AuditLogs = () => {
 
             borderTop: "1px solid #edf0f3",
 
-            backgroundColor: "#fafbfc",
+            backgroundColor: "var(--aa-surface-muted)",
           }}
         >
           <Button
@@ -1240,13 +1242,13 @@ const AuditLogs = () => {
 const filterButtonSx = {
   minHeight: 40,
   px: 1.8,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   borderColor: "#dce3ea",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
-  backgroundColor: "#ffffff",
+  backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
     color: "#991b1b",

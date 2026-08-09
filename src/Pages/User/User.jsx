@@ -137,7 +137,7 @@ const Surface = ({ children, sx = {} }) => (
       overflow: "hidden",
       borderRadius: "22px",
       border: "1px solid #e4e9ef",
-      backgroundColor: "#ffffff",
+      backgroundColor: "var(--aa-surface-solid)",
       boxShadow: "0 14px 40px rgba(15,23,42,.045)",
       ...sx,
     }}
@@ -283,7 +283,7 @@ const StatCard = ({ label, value, helper, tone = "red" }) => {
         <Box sx={{ minWidth: 0 }}>
           <Typography
             sx={{
-              color: "#64748b",
+              color: "var(--aa-text-secondary)",
               fontSize: 11,
               fontWeight: 750,
             }}
@@ -295,7 +295,7 @@ const StatCard = ({ label, value, helper, tone = "red" }) => {
             noWrap
             sx={{
               mt: 1,
-              color: "#0f172a",
+              color: "var(--aa-text)",
               fontSize: {
                 xs: 18,
                 sm: 21,
@@ -332,7 +332,7 @@ const StatCard = ({ label, value, helper, tone = "red" }) => {
           position: "relative",
           zIndex: 1,
           mt: 2,
-          color: "#94a3b8",
+          color: "var(--aa-text-tertiary)",
           fontSize: 10.5,
           lineHeight: 1.55,
         }}
@@ -362,7 +362,7 @@ const Section = ({ title, subtitle, action, children, sx = {} }) => (
       <Box>
         <Typography
           sx={{
-            color: "#0f172a",
+            color: "var(--aa-text)",
             fontSize: 15,
             fontWeight: 950,
             letterSpacing: "-.02em",
@@ -375,7 +375,7 @@ const Section = ({ title, subtitle, action, children, sx = {} }) => (
           <Typography
             sx={{
               mt: 0.55,
-              color: "#94a3b8",
+              color: "var(--aa-text-tertiary)",
               fontSize: 10.5,
               lineHeight: 1.55,
             }}
@@ -405,7 +405,7 @@ const InfoItem = ({ label, value, valueColor = "#334155" }) => (
   >
     <Typography
       sx={{
-        color: "#94a3b8",
+        color: "var(--aa-text-tertiary)",
         fontSize: 9.5,
         fontWeight: 750,
       }}
@@ -438,12 +438,12 @@ const EmptyState = ({ children }) => (
       textAlign: "center",
       borderRadius: "17px",
       border: "1px dashed #cbd5e1",
-      backgroundColor: "#f8fafc",
+      backgroundColor: "var(--aa-surface-muted)",
     }}
   >
     <Typography
       sx={{
-        color: "#94a3b8",
+        color: "var(--aa-text-tertiary)",
         fontSize: 11.5,
         fontWeight: 750,
       }}
@@ -481,7 +481,7 @@ const ProgressRows = ({ items = [], color = "#7c3aed", empty = "Ma’lumot topil
             <Typography
               noWrap
               sx={{
-                color: "#475569",
+                color: "var(--aa-text-secondary)",
                 fontSize: 10.5,
                 fontWeight: 900,
               }}
@@ -492,7 +492,7 @@ const ProgressRows = ({ items = [], color = "#7c3aed", empty = "Ma’lumot topil
             <Typography
               noWrap
               sx={{
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
                 fontWeight: 750,
               }}
@@ -536,7 +536,7 @@ const AccountProgress = ({
       p: 2.2,
       borderRadius: "18px",
       border: "1px solid #e7ebf0",
-      background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+      background: "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
     }}
   >
     <Box
@@ -550,7 +550,7 @@ const AccountProgress = ({
       <Box>
         <Typography
           sx={{
-            color: "#334155",
+            color: "var(--aa-text)",
             fontSize: 12.5,
             fontWeight: 950,
           }}
@@ -561,7 +561,7 @@ const AccountProgress = ({
         <Typography
           sx={{
             mt: 0.5,
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 9.5,
           }}
         >
@@ -610,7 +610,7 @@ const AccountProgress = ({
       <Box>
         <Typography
           sx={{
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 9,
             fontWeight: 750,
           }}
@@ -622,7 +622,7 @@ const AccountProgress = ({
           noWrap
           sx={{
             mt: 0.6,
-            color: "#334155",
+            color: "var(--aa-text)",
             fontSize: 12,
             fontWeight: 900,
           }}
@@ -634,7 +634,7 @@ const AccountProgress = ({
       <Box>
         <Typography
           sx={{
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 9,
             fontWeight: 750,
           }}
@@ -674,7 +674,7 @@ const HistoryTable = ({ title, subtitle, rows = [], columns = [], empty }) => (
       <Box>
         <Typography
           sx={{
-            color: "#0f172a",
+            color: "var(--aa-text)",
             fontSize: 14,
             fontWeight: 950,
           }}
@@ -686,7 +686,7 @@ const HistoryTable = ({ title, subtitle, rows = [], columns = [], empty }) => (
           <Typography
             sx={{
               mt: 0.45,
-              color: "#94a3b8",
+              color: "var(--aa-text-tertiary)",
               fontSize: 9.5,
             }}
           >
@@ -700,15 +700,15 @@ const HistoryTable = ({ title, subtitle, rows = [], columns = [], empty }) => (
         label={`${number(rows.length)} ta`}
         sx={{
           height: 24,
-          color: "#64748b",
+          color: "var(--aa-text-secondary)",
           fontSize: 9,
           fontWeight: 900,
-          backgroundColor: "#f1f5f9",
+          backgroundColor: "var(--aa-surface-muted)",
         }}
       />
     </Box>
 
-    <Box sx={{ overflowX: "auto" }}>
+    <Box className="aa-mobile-records aa-user-detail-table" sx={{ overflowX: "auto" }}>
       <Table
         size="small"
         sx={{
@@ -716,18 +716,18 @@ const HistoryTable = ({ title, subtitle, rows = [], columns = [], empty }) => (
 
           "& th": {
             py: 1.45,
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 9.5,
             fontWeight: 900,
             letterSpacing: ".035em",
             textTransform: "uppercase",
-            backgroundColor: "#fafbfc",
+            backgroundColor: "var(--aa-surface-muted)",
             borderColor: "#edf0f3",
           },
 
           "& td": {
             py: 1.4,
-            color: "#475569",
+            color: "var(--aa-text-secondary)",
             fontSize: 10.5,
             fontWeight: 700,
             borderColor: "#edf0f3",
@@ -751,7 +751,9 @@ const HistoryTable = ({ title, subtitle, rows = [], columns = [], empty }) => (
             rows.map((item, rowIndex) => (
               <TableRow key={item.id || rowIndex} hover>
                 {columns.map(([label, render]) => (
-                  <TableCell key={label}>{render(item)}</TableCell>
+                  <TableCell key={label} data-label={label}>
+                    {render(item)}
+                  </TableCell>
                 ))}
               </TableRow>
             ))
@@ -762,7 +764,7 @@ const HistoryTable = ({ title, subtitle, rows = [], columns = [], empty }) => (
                 align="center"
                 sx={{
                   py: 7,
-                  color: "#94a3b8",
+                  color: "var(--aa-text-tertiary)",
                   fontWeight: 800,
                 }}
               >
@@ -1094,7 +1096,7 @@ const User = ({ backTo = "/users" }) => {
 
         <Typography
           sx={{
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 12.5,
             fontWeight: 750,
           }}
@@ -1380,7 +1382,7 @@ const User = ({ backTo = "/users" }) => {
         <Surface sx={{ p: 3 }}>
           <Typography
             sx={{
-              color: "#0f172a",
+              color: "var(--aa-text)",
               fontSize: 17,
               fontWeight: 950,
             }}
@@ -1391,7 +1393,7 @@ const User = ({ backTo = "/users" }) => {
           <Typography
             sx={{
               mt: 0.8,
-              color: "#64748b",
+              color: "var(--aa-text-secondary)",
               fontSize: 12,
               lineHeight: 1.7,
             }}
@@ -1776,7 +1778,7 @@ const User = ({ backTo = "/users" }) => {
               <Typography
                 sx={{
                   mt: 2,
-                  color: "#0f172a",
+                  color: "var(--aa-text)",
                   fontSize: 18,
                   fontWeight: 950,
                 }}
@@ -1788,7 +1790,7 @@ const User = ({ backTo = "/users" }) => {
                 sx={{
                   maxWidth: 600,
                   mt: 0.8,
-                  color: "#64748b",
+                  color: "var(--aa-text-secondary)",
                   fontSize: 11.5,
                   lineHeight: 1.75,
                 }}
@@ -1831,10 +1833,10 @@ const User = ({ backTo = "/users" }) => {
 
 const genericChipSx = {
   height: 25,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   fontSize: 9.5,
   fontWeight: 900,
-  backgroundColor: "#f1f5f9",
+  backgroundColor: "var(--aa-surface-muted)",
 };
 
 const userPageStyles = `

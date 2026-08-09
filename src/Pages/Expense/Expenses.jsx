@@ -29,6 +29,7 @@ import { toast } from "react-toastify";
 
 import Card from "../../Components/UI/AppCard";
 import { useAuth } from "../../Context/AuthContext";
+import { ENABLE_MULTI_ACCOUNT_SELECTION } from "../../utils/features";
 import {
   createExpense,
   deleteExpense,
@@ -623,7 +624,7 @@ const Expenses = () => {
             <Box>
               <Typography
                 sx={{
-                  color: "#0f172a",
+                  color: "var(--aa-text)",
                   fontSize: 15,
                   fontWeight: 950,
                 }}
@@ -634,7 +635,7 @@ const Expenses = () => {
               <Typography
                 sx={{
                   mt: 0.45,
-                  color: "#94a3b8",
+                  color: "var(--aa-text-tertiary)",
                   fontSize: 10.5,
                 }}
               >
@@ -706,7 +707,7 @@ const Expenses = () => {
                 <Typography
                   sx={{
                     mt: 1.6,
-                    color: "#334155",
+                    color: "var(--aa-text)",
                     fontSize: 14,
                     fontWeight: 950,
                   }}
@@ -717,7 +718,7 @@ const Expenses = () => {
                 <Typography
                   sx={{
                     mt: 0.6,
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
                     fontSize: 11,
                     lineHeight: 1.6,
                   }}
@@ -728,6 +729,7 @@ const Expenses = () => {
             </Box>
           ) : (
             <TableContainer
+              className="aa-mobile-records aa-expenses-table"
               sx={{
                 minHeight: 0,
                 flex: 1,
@@ -739,18 +741,18 @@ const Expenses = () => {
 
                   "& th": {
                     py: 1.55,
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
                     fontSize: 9.5,
                     fontWeight: 900,
                     letterSpacing: ".045em",
                     textTransform: "uppercase",
-                    backgroundColor: "#fafbfc",
+                    backgroundColor: "var(--aa-surface-muted)",
                     borderColor: "#edf0f3",
                   },
 
                   "& td": {
                     py: 1.4,
-                    color: "#64748b",
+                    color: "var(--aa-text-secondary)",
                     fontSize: 10.5,
                     borderColor: "#edf0f3",
                   },
@@ -815,7 +817,7 @@ const Expenses = () => {
                           <Box sx={{ minWidth: 0 }}>
                             <Typography
                               sx={{
-                                color: "#334155",
+                                color: "var(--aa-text)",
                                 fontSize: 12,
                                 fontWeight: 900,
                               }}
@@ -827,7 +829,7 @@ const Expenses = () => {
                               sx={{
                                 mt: 0.35,
                                 maxWidth: 280,
-                                color: "#94a3b8",
+                                color: "var(--aa-text-tertiary)",
                                 fontSize: 9.5,
                                 lineHeight: 1.5,
                               }}
@@ -885,7 +887,7 @@ const Expenses = () => {
 
                           <Typography
                             sx={{
-                              color: "#475569",
+                              color: "var(--aa-text-secondary)",
                               fontSize: 10,
                               fontWeight: 850,
                             }}
@@ -898,7 +900,7 @@ const Expenses = () => {
                       <TableCell>
                         <Typography
                           sx={{
-                            color: "#475569",
+                            color: "var(--aa-text-secondary)",
                             fontSize: 10.5,
                             fontWeight: 850,
                           }}
@@ -951,7 +953,7 @@ const Expenses = () => {
           <Card sx={{ p: 2.3 }}>
             <Typography
               sx={{
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
                 fontWeight: 850,
                 textTransform: "uppercase",
@@ -976,7 +978,7 @@ const Expenses = () => {
             <Typography
               sx={{
                 mt: 0.8,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10.5,
                 lineHeight: 1.6,
               }}
@@ -1005,7 +1007,7 @@ const Expenses = () => {
           <Card sx={{ p: 2.3 }}>
             <Typography
               sx={{
-                color: "#334155",
+                color: "var(--aa-text)",
                 fontSize: 13,
                 fontWeight: 950,
               }}
@@ -1016,7 +1018,7 @@ const Expenses = () => {
             <Typography
               sx={{
                 mt: 0.45,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
                 lineHeight: 1.5,
               }}
@@ -1041,14 +1043,14 @@ const Expenses = () => {
 
                       border: "1px solid #e7ebf0",
 
-                      backgroundColor: "#f8fafc",
+                      backgroundColor: "var(--aa-surface-muted)",
                     }}
                   >
                     <Typography
                       noWrap
                       sx={{
                         minWidth: 0,
-                        color: "#475569",
+                        color: "var(--aa-text-secondary)",
                         fontSize: 10,
                         fontWeight: 850,
                       }}
@@ -1078,12 +1080,12 @@ const Expenses = () => {
 
                     border: "1px dashed #cbd5e1",
 
-                    backgroundColor: "#f8fafc",
+                    backgroundColor: "var(--aa-surface-muted)",
                   }}
                 >
                   <Typography
                     sx={{
-                      color: "#94a3b8",
+                      color: "var(--aa-text-tertiary)",
                       fontSize: 10,
                       fontWeight: 800,
                     }}
@@ -1204,21 +1206,23 @@ const Expenses = () => {
               />
             </Box>
 
-            <TextField
-              select
-              label="Qaysi hisobdan to‘landi?"
-              value={form.account_id}
-              onChange={field("account_id")}
-              helperText="Hisob tanlanmasa xarajat faqat yozuv sifatida saqlanadi"
-            >
-              <MenuItem value="">Hisobsiz yozish</MenuItem>
+            {ENABLE_MULTI_ACCOUNT_SELECTION && (
+              <TextField
+                select
+                label="Qaysi hisobdan to‘landi?"
+                value={form.account_id}
+                onChange={field("account_id")}
+                helperText="Hisob tanlanmasa xarajat faqat yozuv sifatida saqlanadi"
+              >
+                <MenuItem value="">Hisobsiz yozish</MenuItem>
 
-              {accounts.map((item) => (
-                <MenuItem key={item.id} value={item.id}>
-                  {item.name} — {money(item.balance)}
-                </MenuItem>
-              ))}
-            </TextField>
+                {accounts.map((item) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.name} — {money(item.balance)}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
 
             {selectedAccount && (
               <Box
@@ -1300,14 +1304,14 @@ const Expenses = () => {
 
             borderTop: "1px solid #edf0f3",
 
-            backgroundColor: "#fafbfc",
+            backgroundColor: "var(--aa-surface-muted)",
           }}
         >
           <Button
             onClick={closeModal}
             disabled={saving}
             sx={{
-              color: "#64748b",
+              color: "var(--aa-text-secondary)",
               borderRadius: "11px",
               fontWeight: 850,
               textTransform: "none",
@@ -1319,7 +1323,7 @@ const Expenses = () => {
           <Button
             variant="contained"
             onClick={save}
-            disabled={saving}
+            disabled={saving || !form.title.trim() || Number(form.amount || 0) <= 0}
             sx={{
               minWidth: 120,
               minHeight: 40,
@@ -1373,13 +1377,13 @@ const Expenses = () => {
 const filterButtonSx = {
   minHeight: 40,
   px: 1.8,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   borderColor: "#dce3ea",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
-  backgroundColor: "#ffffff",
+  backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
     color: "#991b1b",

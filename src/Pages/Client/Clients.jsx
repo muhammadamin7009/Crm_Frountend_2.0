@@ -829,7 +829,7 @@ const Clients = () => {
           p: 2,
           borderRadius: "21px",
           border: "1px solid #e4e9ef",
-          backgroundColor: "#ffffff",
+          backgroundColor: "var(--aa-surface-solid)",
           boxShadow: "0 12px 35px rgba(15,23,42,.045)",
         }}
       >
@@ -915,7 +915,7 @@ const Clients = () => {
             sx={{
               minHeight: 40,
               px: 2,
-              color: "#64748b",
+              color: "var(--aa-text-secondary)",
               borderRadius: "11px",
               border: "1px solid #dce3ea",
               fontSize: 11.5,
@@ -942,7 +942,7 @@ const Clients = () => {
           overflow: "hidden",
           borderRadius: "22px",
           border: "1px solid #e4e9ef",
-          backgroundColor: "#ffffff",
+          backgroundColor: "var(--aa-surface-solid)",
           boxShadow: "0 14px 40px rgba(15,23,42,.045)",
         }}
       >
@@ -960,7 +960,7 @@ const Clients = () => {
           <Box>
             <Typography
               sx={{
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 fontSize: 15,
                 fontWeight: 950,
               }}
@@ -971,7 +971,7 @@ const Clients = () => {
             <Typography
               sx={{
                 mt: 0.5,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10.5,
               }}
             >
@@ -992,25 +992,25 @@ const Clients = () => {
           />
         </Box>
 
-        <Box sx={{ overflowX: "auto" }}>
+        <Box className="aa-mobile-records aa-clients-table" sx={{ overflowX: "auto" }}>
           <Table
             sx={{
               minWidth: 1180,
 
               "& th": {
                 py: 1.6,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
                 fontWeight: 900,
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
-                backgroundColor: "#fafbfc",
+                backgroundColor: "var(--aa-surface-muted)",
                 borderColor: "#edf0f3",
               },
 
               "& td": {
                 py: 1.45,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 fontSize: 10.5,
                 borderColor: "#edf0f3",
               },
@@ -1097,7 +1097,7 @@ const Clients = () => {
                             <Typography
                               noWrap
                               sx={{
-                                color: "#334155",
+                                color: "var(--aa-text)",
                                 fontSize: 12.5,
                                 fontWeight: 900,
                               }}
@@ -1130,7 +1130,7 @@ const Clients = () => {
                       <TableCell>
                         <Typography
                           sx={{
-                            color: "#334155",
+                            color: "var(--aa-text)",
                             fontSize: 10.5,
                             fontWeight: 850,
                           }}
@@ -1255,7 +1255,7 @@ const Clients = () => {
                     align="center"
                     sx={{
                       py: 8,
-                      color: "#94a3b8",
+                      color: "var(--aa-text-tertiary)",
                       fontWeight: 850,
                     }}
                   >
@@ -1270,7 +1270,7 @@ const Clients = () => {
         <Box
           sx={{
             borderTop: "1px solid #edf0f3",
-            backgroundColor: "#fafbfc",
+            backgroundColor: "var(--aa-surface-muted)",
           }}
         >
           <CrmPagination
@@ -1415,7 +1415,7 @@ const ClientFormDialog = ({
             gap: 1.5,
             borderRadius: "16px",
             border: "1px solid #e7ebf0",
-            backgroundColor: "#f8fafc",
+            backgroundColor: "var(--aa-surface-muted)",
           }}
         >
           <Avatar
@@ -1433,7 +1433,7 @@ const ClientFormDialog = ({
           <Box>
             <Typography
               sx={{
-                color: "#334155",
+                color: "var(--aa-text)",
                 fontSize: 13.5,
                 fontWeight: 900,
               }}
@@ -1444,7 +1444,7 @@ const ClientFormDialog = ({
             <Typography
               sx={{
                 mt: 0.4,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10.5,
               }}
             >
@@ -1548,7 +1548,7 @@ const ClientFormDialog = ({
       <Button
         onClick={onClose}
         sx={{
-          color: "#64748b",
+          color: "var(--aa-text-secondary)",
           fontWeight: 850,
           textTransform: "none",
         }}
@@ -1608,7 +1608,7 @@ const ConfirmDialog = ({
     <DialogContent>
       <Typography
         sx={{
-          color: "#64748b",
+          color: "var(--aa-text-secondary)",
           fontSize: 12.5,
           lineHeight: 1.7,
         }}
@@ -1621,7 +1621,7 @@ const ConfirmDialog = ({
       <Button
         onClick={onClose}
         sx={{
-          color: "#64748b",
+          color: "var(--aa-text-secondary)",
           fontWeight: 850,
           textTransform: "none",
         }}

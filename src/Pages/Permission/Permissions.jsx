@@ -87,7 +87,7 @@ const presets = [
 const roleNames = {
   super_admin: "Super administrator",
   admin: "Administrator",
-  worker: "Omborchi",
+  worker: "Ishchi",
 };
 
 const getFullName = (user) => `${user?.first_name || ""} ${user?.last_name || ""}`.trim();
@@ -210,13 +210,13 @@ const PresetCard = ({ preset, onClick }) => (
       alignItems: "flex-start",
       justifyContent: "flex-start",
 
-      color: "#334155",
+      color: "var(--aa-text)",
       textAlign: "left",
       borderRadius: "17px",
       borderColor: "#e4e9ef",
       textTransform: "none",
 
-      background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+      background: "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 
       transition: "transform .2s ease, border-color .2s ease, box-shadow .2s ease",
 
@@ -227,7 +227,7 @@ const PresetCard = ({ preset, onClick }) => (
 
         borderColor: "rgba(153,27,27,.20)",
 
-        background: "linear-gradient(145deg,rgba(153,27,27,.045),#ffffff)",
+        background: "linear-gradient(145deg,rgba(153,27,27,.045),var(--aa-surface-solid))",
 
         boxShadow: "0 14px 30px rgba(15,23,42,.07)",
       },
@@ -270,7 +270,7 @@ const PresetCard = ({ preset, onClick }) => (
       <Typography
         sx={{
           mt: 0.55,
-          color: "#94a3b8",
+          color: "var(--aa-text-tertiary)",
           fontSize: 9.5,
           lineHeight: 1.55,
         }}
@@ -318,7 +318,7 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
         <Box sx={{ minWidth: 0 }}>
           <Typography
             sx={{
-              color: "#0f172a",
+              color: "var(--aa-text)",
               fontSize: 13,
               fontWeight: 950,
             }}
@@ -329,7 +329,7 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
           <Typography
             sx={{
               mt: 0.4,
-              color: "#94a3b8",
+              color: "var(--aa-text-tertiary)",
               fontSize: 9.5,
             }}
           >
@@ -443,7 +443,7 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
                     <Typography
                       sx={{
                         mt: 0.35,
-                        color: "#94a3b8",
+                        color: "var(--aa-text-tertiary)",
                         fontSize: 9.2,
                         lineHeight: 1.55,
                       }}
@@ -764,7 +764,7 @@ const Permissions = () => {
 
         <Typography
           sx={{
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 12.5,
             fontWeight: 750,
           }}
@@ -1052,7 +1052,7 @@ const Permissions = () => {
           >
             <Typography
               sx={{
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 fontSize: 14,
                 fontWeight: 950,
               }}
@@ -1063,7 +1063,7 @@ const Permissions = () => {
             <Typography
               sx={{
                 mt: 0.4,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
               }}
             >
@@ -1115,7 +1115,7 @@ const Permissions = () => {
                       justifyContent: "flex-start",
 
                       gap: 1.2,
-                      color: "#334155",
+                      color: "var(--aa-text)",
                       textAlign: "left",
                       borderRadius: "16px",
                       textTransform: "none",
@@ -1133,7 +1133,8 @@ const Permissions = () => {
 
                         borderColor: "rgba(153,27,27,.23)",
 
-                        background: "linear-gradient(145deg,rgba(153,27,27,.055),#ffffff)",
+                        background:
+                          "linear-gradient(145deg,rgba(153,27,27,.055),var(--aa-surface-solid))",
                       },
                     }}
                   >
@@ -1181,7 +1182,7 @@ const Permissions = () => {
                         noWrap
                         sx={{
                           mt: 0.35,
-                          color: "#94a3b8",
+                          color: "var(--aa-text-tertiary)",
                           fontSize: 8.8,
                         }}
                       >
@@ -1208,12 +1209,12 @@ const Permissions = () => {
 
                   border: "1px dashed #cbd5e1",
 
-                  backgroundColor: "#f8fafc",
+                  backgroundColor: "var(--aa-surface-muted)",
                 }}
               >
                 <Typography
                   sx={{
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
                     fontSize: 10,
                     fontWeight: 800,
                   }}
@@ -1292,7 +1293,7 @@ const Permissions = () => {
                     >
                       <Typography
                         sx={{
-                          color: "#0f172a",
+                          color: "var(--aa-text)",
                           fontSize: 16,
                           fontWeight: 950,
                         }}
@@ -1306,7 +1307,7 @@ const Permissions = () => {
                     <Typography
                       sx={{
                         mt: 0.5,
-                        color: "#94a3b8",
+                        color: "var(--aa-text-tertiary)",
                         fontSize: 9.5,
                       }}
                     >
@@ -1401,7 +1402,7 @@ const Permissions = () => {
                     <Typography
                       sx={{
                         mt: 0.35,
-                        color: "#94a3b8",
+                        color: "var(--aa-text-tertiary)",
                         fontSize: 9,
                       }}
                     >
@@ -1446,7 +1447,7 @@ const Permissions = () => {
                 <Box sx={{ mt: 2.3 }}>
                   <Typography
                     sx={{
-                      color: "#0f172a",
+                      color: "var(--aa-text)",
                       fontSize: 13,
                       fontWeight: 950,
                     }}
@@ -1457,7 +1458,7 @@ const Permissions = () => {
                   <Typography
                     sx={{
                       mt: 0.4,
-                      color: "#94a3b8",
+                      color: "var(--aa-text-tertiary)",
                       fontSize: 9.5,
                     }}
                   >
@@ -1496,7 +1497,7 @@ const Permissions = () => {
               <Box>
                 <Typography
                   sx={{
-                    color: "#0f172a",
+                    color: "var(--aa-text)",
                     fontSize: 14,
                     fontWeight: 950,
                   }}
@@ -1507,7 +1508,7 @@ const Permissions = () => {
                 <Typography
                   sx={{
                     mt: 0.45,
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
                     fontSize: 9.5,
                   }}
                 >
@@ -1553,12 +1554,12 @@ const Permissions = () => {
 
                     border: "1px dashed #cbd5e1",
 
-                    backgroundColor: "#f8fafc",
+                    backgroundColor: "var(--aa-surface-muted)",
                   }}
                 >
                   <Typography
                     sx={{
-                      color: "#94a3b8",
+                      color: "var(--aa-text-tertiary)",
                       fontSize: 11,
                       fontWeight: 800,
                     }}
@@ -1602,7 +1603,7 @@ const Permissions = () => {
                 <Typography
                   sx={{
                     mt: 1.7,
-                    color: "#334155",
+                    color: "var(--aa-text)",
                     fontSize: 14,
                     fontWeight: 950,
                   }}
@@ -1614,7 +1615,7 @@ const Permissions = () => {
                   sx={{
                     maxWidth: 340,
                     mt: 0.6,
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
                     fontSize: 10.5,
                     lineHeight: 1.65,
                   }}
@@ -1634,13 +1635,13 @@ const Permissions = () => {
 const secondaryButtonSx = {
   minHeight: 40,
   px: 1.7,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   borderColor: "#dce3ea",
   fontSize: 10,
   fontWeight: 900,
   textTransform: "none",
-  backgroundColor: "#ffffff",
+  backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
     color: "#991b1b",

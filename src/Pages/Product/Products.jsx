@@ -697,13 +697,13 @@ const Products = () => {
         p: 2,
         borderRadius: "18px",
         border: "1px solid #e7ebf0",
-        background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+        background: "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
       }}
     >
       <Typography
         sx={{
           mb: 1.5,
-          color: "#334155",
+          color: "var(--aa-text)",
           fontSize: 14,
           fontWeight: 950,
         }}
@@ -750,7 +750,7 @@ const Products = () => {
             p: 1.4,
             borderRadius: "16px",
             border: "1px solid #e7ebf0",
-            backgroundColor: "#ffffff",
+            backgroundColor: "var(--aa-surface-solid)",
           }}
         >
           <Avatar
@@ -766,7 +766,7 @@ const Products = () => {
           <Box sx={{ minWidth: 0 }}>
             <Typography
               sx={{
-                color: "#334155",
+                color: "var(--aa-text)",
                 fontSize: 12,
                 fontWeight: 900,
               }}
@@ -778,7 +778,7 @@ const Products = () => {
               noWrap
               sx={{
                 mt: 0.4,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10,
               }}
             >
@@ -792,7 +792,7 @@ const Products = () => {
         <Typography
           sx={{
             mt: 1.4,
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 10,
           }}
         >
@@ -835,7 +835,7 @@ const Products = () => {
                     border: image.is_primary
                       ? "1px solid rgba(153,27,27,.18)"
                       : "1px solid #e7ebf0",
-                    backgroundColor: "#ffffff",
+                    backgroundColor: "var(--aa-surface-solid)",
                   }}
                 >
                   <Avatar
@@ -851,7 +851,7 @@ const Products = () => {
                   <Box sx={{ minWidth: 0, flex: 1 }}>
                     <Typography
                       sx={{
-                        color: "#334155",
+                        color: "var(--aa-text)",
                         fontSize: 11,
                         fontWeight: 900,
                       }}
@@ -862,7 +862,7 @@ const Products = () => {
                     <Typography
                       sx={{
                         mt: 0.3,
-                        color: "#94a3b8",
+                        color: "var(--aa-text-tertiary)",
                         fontSize: 9.5,
                       }}
                     >
@@ -912,12 +912,12 @@ const Products = () => {
                 textAlign: "center",
                 borderRadius: "15px",
                 border: "1px dashed #cbd5e1",
-                backgroundColor: "#f8fafc",
+                backgroundColor: "var(--aa-surface-muted)",
               }}
             >
               <Typography
                 sx={{
-                  color: "#94a3b8",
+                  color: "var(--aa-text-tertiary)",
                   fontSize: 10.5,
                   fontWeight: 750,
                 }}
@@ -941,7 +941,7 @@ const Products = () => {
         <Typography
           sx={{
             mb: 0.5,
-            color: "#0f172a",
+            color: "var(--aa-text)",
             fontSize: 16,
             fontWeight: 950,
           }}
@@ -952,7 +952,7 @@ const Products = () => {
         <Typography
           sx={{
             mb: 2,
-            color: "#64748b",
+            color: "var(--aa-text-secondary)",
             fontSize: 11,
             lineHeight: 1.7,
           }}
@@ -975,7 +975,7 @@ const Products = () => {
                     gap: 1,
                     borderRadius: "14px",
                     border: "1px solid #e7ebf0",
-                    backgroundColor: "#f8fafc",
+                    backgroundColor: "var(--aa-surface-muted)",
                   }}
                 >
                   {editing ? (
@@ -1000,7 +1000,7 @@ const Products = () => {
                     <Typography
                       sx={{
                         flex: 1,
-                        color: "#334155",
+                        color: "var(--aa-text)",
                         fontSize: 11,
                         fontWeight: 900,
                       }}
@@ -1055,7 +1055,7 @@ const Products = () => {
             <Typography
               sx={{
                 py: 5,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 textAlign: "center",
                 fontSize: 11,
                 fontWeight: 800,
@@ -1209,7 +1209,7 @@ const Products = () => {
           py: 0.6,
           borderRadius: "13px",
           border: "1px solid #e7ebf0",
-          backgroundColor: "#f8fafc",
+          backgroundColor: "var(--aa-surface-muted)",
         }}
       >
         <FormControlLabel
@@ -1615,7 +1615,7 @@ const Products = () => {
           <Box>
             <Typography
               sx={{
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 fontSize: 15,
                 fontWeight: 950,
               }}
@@ -1626,7 +1626,7 @@ const Products = () => {
             <Typography
               sx={{
                 mt: 0.45,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10.5,
               }}
             >
@@ -1648,6 +1648,7 @@ const Products = () => {
         </Box>
 
         <Box
+          className="aa-mobile-records aa-products-table"
           sx={{
             minHeight: 0,
             flex: 1,
@@ -1660,18 +1661,18 @@ const Products = () => {
 
               "& th": {
                 py: 1.55,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
                 fontWeight: 900,
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
-                backgroundColor: "#fafbfc",
+                backgroundColor: "var(--aa-surface-muted)",
                 borderColor: "#edf0f3",
               },
 
               "& td": {
                 py: 1.4,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 fontSize: 10.5,
                 borderColor: "#edf0f3",
               },
@@ -1738,7 +1739,7 @@ const Products = () => {
                           <Typography
                             noWrap
                             sx={{
-                              color: "#334155",
+                              color: "var(--aa-text)",
                               fontSize: 12.5,
                               fontWeight: 900,
                             }}
@@ -1750,7 +1751,7 @@ const Products = () => {
                             noWrap
                             sx={{
                               mt: 0.4,
-                              color: "#94a3b8",
+                              color: "var(--aa-text-tertiary)",
                               fontSize: 9.5,
                             }}
                           >
@@ -1777,7 +1778,7 @@ const Products = () => {
                     <TableCell>
                       <Typography
                         sx={{
-                          color: "#334155",
+                          color: "var(--aa-text)",
                           fontSize: 10.5,
                           fontWeight: 850,
                         }}
@@ -1788,7 +1789,7 @@ const Products = () => {
                       <Typography
                         sx={{
                           mt: 0.4,
-                          color: "#94a3b8",
+                          color: "var(--aa-text-tertiary)",
                           fontSize: 9.5,
                         }}
                       >
@@ -1811,7 +1812,7 @@ const Products = () => {
                         <Typography
                           sx={{
                             mt: 0.4,
-                            color: "#64748b",
+                            color: "var(--aa-text-secondary)",
                             fontSize: 9.5,
                             fontWeight: 750,
                           }}
@@ -1827,7 +1828,7 @@ const Products = () => {
 
                         <Typography
                           sx={{
-                            color: "#94a3b8",
+                            color: "var(--aa-text-tertiary)",
                             fontSize: 9.5,
                           }}
                         >
@@ -1884,7 +1885,7 @@ const Products = () => {
                     align="center"
                     sx={{
                       py: 8,
-                      color: "#94a3b8",
+                      color: "var(--aa-text-tertiary)",
                       fontWeight: 850,
                     }}
                   >
@@ -1899,7 +1900,7 @@ const Products = () => {
         <Box
           sx={{
             borderTop: "1px solid #edf0f3",
-            backgroundColor: "#fafbfc",
+            backgroundColor: "var(--aa-surface-muted)",
           }}
         >
           <CrmPagination
@@ -1925,7 +1926,12 @@ const Products = () => {
             <Button
               variant="contained"
               onClick={handleCreateProduct}
-              disabled={saving}
+              disabled={
+                saving ||
+                !productForm.name.trim() ||
+                productForm.sale_price === "" ||
+                Number(productForm.sale_price) < 0
+              }
               sx={dialogPrimarySx}
             >
               {saving ? "Saqlanmoqda..." : "Mahsulotni qo‘shish"}
@@ -1949,7 +1955,12 @@ const Products = () => {
             <Button
               variant="contained"
               onClick={handleUpdateProduct}
-              disabled={saving}
+              disabled={
+                saving ||
+                !productForm.name.trim() ||
+                productForm.sale_price === "" ||
+                Number(productForm.sale_price) < 0
+              }
               sx={dialogPrimarySx}
             >
               {saving ? "Saqlanmoqda..." : "O‘zgarishlarni saqlash"}
@@ -1990,7 +2001,7 @@ const Products = () => {
       >
         <Typography
           sx={{
-            color: "#475569",
+            color: "var(--aa-text-secondary)",
             fontSize: 12.5,
             lineHeight: 1.7,
             fontWeight: 700,
@@ -2045,7 +2056,7 @@ const Products = () => {
 
             "& .MuiTab-root": {
               minHeight: 42,
-              color: "#64748b",
+              color: "var(--aa-text-secondary)",
               fontSize: 11,
               fontWeight: 900,
               textTransform: "none",
@@ -2120,7 +2131,7 @@ const Products = () => {
                 py: 0.6,
                 borderRadius: "13px",
                 border: "1px solid #e7ebf0",
-                backgroundColor: "#f8fafc",
+                backgroundColor: "var(--aa-surface-muted)",
               }}
             >
               <FormControlLabel
@@ -2148,11 +2159,11 @@ const Products = () => {
 
                     "& th": {
                       py: 1.45,
-                      color: "#94a3b8",
+                      color: "var(--aa-text-tertiary)",
                       fontSize: 9.5,
                       fontWeight: 900,
                       textTransform: "uppercase",
-                      backgroundColor: "#fafbfc",
+                      backgroundColor: "var(--aa-surface-muted)",
                     },
 
                     "& td": {
@@ -2177,7 +2188,7 @@ const Products = () => {
                         <TableRow key={category.id} hover>
                           <TableCell
                             sx={{
-                              color: "#334155",
+                              color: "var(--aa-text)",
                               fontSize: 11,
                               fontWeight: 900,
                             }}
@@ -2187,7 +2198,7 @@ const Products = () => {
 
                           <TableCell
                             sx={{
-                              color: "#64748b",
+                              color: "var(--aa-text-secondary)",
                               fontSize: 10.5,
                             }}
                           >
@@ -2235,7 +2246,7 @@ const Products = () => {
                           align="center"
                           sx={{
                             py: 6,
-                            color: "#94a3b8",
+                            color: "var(--aa-text-tertiary)",
                           }}
                         >
                           Kategoriyalar topilmadi
@@ -2260,13 +2271,13 @@ const Products = () => {
 const filterButtonSx = {
   minHeight: 40,
   px: 1.8,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   borderColor: "#dce3ea",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
-  backgroundColor: "#ffffff",
+  backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
     color: "#991b1b",
@@ -2278,13 +2289,13 @@ const filterButtonSx = {
 const secondaryButtonSx = {
   minHeight: 40,
   px: 1.8,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   borderColor: "#dce3ea",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
-  backgroundColor: "#ffffff",
+  backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
     color: "#991b1b",
@@ -2317,7 +2328,7 @@ const tableActionSx = {
 };
 
 const dialogCancelSx = {
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   fontWeight: 850,
   textTransform: "none",

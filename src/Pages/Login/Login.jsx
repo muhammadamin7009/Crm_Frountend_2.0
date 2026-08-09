@@ -22,7 +22,7 @@ const fieldSx = {
   "& .MuiOutlinedInput-root": {
     minHeight: 58,
     borderRadius: "15px",
-    backgroundColor: "#ffffff",
+    backgroundColor: "var(--aa-surface-solid)",
     transition: "box-shadow .2s ease",
 
     "& fieldset": {
@@ -109,8 +109,9 @@ const Login = () => {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm({
+    mode: "onChange",
     defaultValues: {
       username: "",
       password: "",
@@ -284,6 +285,7 @@ const Login = () => {
 
   return (
     <Box
+      className="auth-page"
       sx={{
         minHeight: "100vh",
         p: { xs: 1.5, sm: 3, lg: 4 },
@@ -294,6 +296,7 @@ const Login = () => {
       }}
     >
       <Paper
+        className="auth-shell"
         elevation={0}
         sx={{
           width: "100%",
@@ -308,13 +311,14 @@ const Login = () => {
           overflow: "hidden",
           borderRadius: { xs: "22px", sm: "30px" },
           border: "1px solid rgba(15,23,42,.08)",
-          backgroundColor: "#ffffff",
+          backgroundColor: "var(--aa-surface-solid)",
           boxShadow: "0 28px 80px rgba(15,23,42,.13)",
         }}
       >
         <AuthBrandPanel companyName={companyTitle} companyLogo={companyLogo} />
 
         <Box
+          className="auth-form-panel"
           sx={{
             minHeight: { xs: "calc(100vh - 24px)", lg: 820 },
             p: { xs: 2.5, sm: 5, lg: 7, xl: 9 },
@@ -349,7 +353,7 @@ const Login = () => {
                   flexShrink: 0,
                   borderRadius: "16px",
                   border: "1px solid #e2e8f0",
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "var(--aa-surface-solid)",
                   boxShadow: "0 8px 20px rgba(15,23,42,.07)",
                 }}
               >
@@ -458,7 +462,7 @@ const Login = () => {
                         fontWeight: 850,
                         borderRadius: "10px",
                         border: "1px solid #fef3c7",
-                        backgroundColor: "#ffffff",
+                        backgroundColor: "var(--aa-surface-solid)",
                       }}
                     >
                       {recoveryCode}
@@ -502,7 +506,7 @@ const Login = () => {
                       textAlign: "center",
                       borderRadius: "18px",
                       border: "1px solid #e2e8f0",
-                      backgroundColor: "#f8fafc",
+                      backgroundColor: "var(--aa-surface-muted)",
                     }}
                   >
                     <Box
@@ -516,7 +520,7 @@ const Login = () => {
                         mx: "auto",
                         p: 1,
                         borderRadius: "14px",
-                        backgroundColor: "#ffffff",
+                        backgroundColor: "var(--aa-surface-solid)",
                       }}
                     />
 
@@ -543,7 +547,7 @@ const Login = () => {
                         fontWeight: 850,
                         letterSpacing: ".08em",
                         borderRadius: "10px",
-                        backgroundColor: "#ffffff",
+                        backgroundColor: "var(--aa-surface-solid)",
                       }}
                     >
                       {challenge.manual_key}
@@ -742,7 +746,7 @@ const Login = () => {
                     type="submit"
                     fullWidth
                     variant="contained"
-                    disabled={loading}
+                    disabled={loading || !isValid}
                     sx={primaryButtonSx}
                   >
                     {loading ? "Kirilmoqda..." : "Tizimga kirish"}

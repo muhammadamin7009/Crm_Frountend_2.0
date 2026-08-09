@@ -204,8 +204,8 @@ const RoleChip = ({ role }) => {
   };
 
   const style = styles[role] || {
-    color: "#64748b",
-    background: "#f1f5f9",
+    color: "var(--aa-text-secondary)",
+    background: "var(--aa-surface-muted)",
   };
 
   return (
@@ -833,7 +833,7 @@ const Users = () => {
           p: 2,
           borderRadius: "21px",
           border: "1px solid #e4e9ef",
-          backgroundColor: "#ffffff",
+          backgroundColor: "var(--aa-surface-solid)",
           boxShadow: "0 12px 35px rgba(15,23,42,.045)",
         }}
       >
@@ -917,7 +917,7 @@ const Users = () => {
             sx={{
               minHeight: 40,
               px: 2,
-              color: "#64748b",
+              color: "var(--aa-text-secondary)",
               borderRadius: "11px",
               border: "1px solid #dce3ea",
               fontWeight: 850,
@@ -941,7 +941,7 @@ const Users = () => {
           overflow: "hidden",
           borderRadius: "22px",
           border: "1px solid #e4e9ef",
-          backgroundColor: "#ffffff",
+          backgroundColor: "var(--aa-surface-solid)",
           boxShadow: "0 14px 40px rgba(15,23,42,.045)",
         }}
       >
@@ -954,7 +954,7 @@ const Users = () => {
         >
           <Typography
             sx={{
-              color: "#0f172a",
+              color: "var(--aa-text)",
               fontSize: 15,
               fontWeight: 950,
             }}
@@ -965,7 +965,7 @@ const Users = () => {
           <Typography
             sx={{
               mt: 0.5,
-              color: "#94a3b8",
+              color: "var(--aa-text-tertiary)",
               fontSize: 10.5,
             }}
           >
@@ -973,25 +973,28 @@ const Users = () => {
           </Typography>
         </Box>
 
-        <Box sx={{ overflowX: "auto" }}>
+        <Box
+          className={`aa-mobile-records aa-users-table ${isWorkerView ? "worker-view" : "admin-view"}`}
+          sx={{ overflowX: "auto" }}
+        >
           <Table
             sx={{
               minWidth: isWorkerView ? 800 : 1080,
 
               "& th": {
                 py: 1.6,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
                 fontWeight: 900,
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
-                backgroundColor: "#fafbfc",
+                backgroundColor: "var(--aa-surface-muted)",
                 borderColor: "#edf0f3",
               },
 
               "& td": {
                 py: 1.45,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 fontSize: 10.5,
                 borderColor: "#edf0f3",
               },
@@ -1086,7 +1089,7 @@ const Users = () => {
                           <Typography
                             noWrap
                             sx={{
-                              color: "#334155",
+                              color: "var(--aa-text)",
                               fontSize: 12.5,
                               fontWeight: 900,
                             }}
@@ -1121,7 +1124,7 @@ const Users = () => {
                         <TableCell>
                           <Typography
                             sx={{
-                              color: "#334155",
+                              color: "var(--aa-text)",
                               fontSize: 10.5,
                               fontWeight: 850,
                             }}
@@ -1218,7 +1221,7 @@ const Users = () => {
                     align="center"
                     sx={{
                       py: 8,
-                      color: "#94a3b8",
+                      color: "var(--aa-text-tertiary)",
                       fontWeight: 850,
                     }}
                   >
@@ -1233,7 +1236,7 @@ const Users = () => {
         <Box
           sx={{
             borderTop: "1px solid #edf0f3",
-            backgroundColor: "#fafbfc",
+            backgroundColor: "var(--aa-surface-muted)",
           }}
         >
           <CrmPagination
@@ -1251,6 +1254,12 @@ const Users = () => {
         title="Foydalanuvchi qo‘shish"
         form={form}
         saving={saving}
+        submitDisabled={
+          !form.first_name.trim() ||
+          !form.last_name.trim() ||
+          !form.username.trim() ||
+          form.password.length < 6
+        }
         roleOptions={createRoleOptions}
         onClose={closeCreateModal}
         onSave={handleCreate}
@@ -1263,6 +1272,12 @@ const Users = () => {
         title="Foydalanuvchini tahrirlash"
         form={form}
         saving={saving}
+        submitDisabled={
+          !form.first_name.trim() ||
+          !form.last_name.trim() ||
+          !form.username.trim() ||
+          Boolean(form.password && form.password.length < 6)
+        }
         roleOptions={createRoleOptions}
         selectedUser={selectedUser}
         canEditRole={selectedUser && canEditRole(selectedUser)}
@@ -1319,6 +1334,7 @@ const UserFormDialog = ({
   title,
   form,
   saving,
+  submitDisabled,
   roleOptions,
   selectedUser,
   canEditRole,
@@ -1374,155 +1390,170 @@ const UserFormDialog = ({
       </Typography>
     </DialogTitle>
 
-    <DialogContent
-      sx={{
-        px: 3,
-        pt: "24px !important",
+    <Box
+      component="form"
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSave();
       }}
     >
-      {selectedUser && (
-        <Box
-          sx={{
-            mb: 2.5,
-            p: 1.7,
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-            borderRadius: "16px",
-            border: "1px solid #e7ebf0",
-            backgroundColor: "#f8fafc",
-          }}
-        >
-          <Avatar
-            src={imagePreview}
+      <DialogContent
+        sx={{
+          px: 3,
+          pt: "24px !important",
+        }}
+      >
+        {selectedUser && (
+          <Box
             sx={{
-              width: 58,
-              height: 58,
-              color: "#ffffff",
-              background: "linear-gradient(135deg,#334155,#0f172a)",
-              fontWeight: 900,
+              mb: 2.5,
+              p: 1.7,
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+              borderRadius: "16px",
+              border: "1px solid #e7ebf0",
+              backgroundColor: "var(--aa-surface-muted)",
             }}
           >
-            {getInitials(selectedUser)}
-          </Avatar>
-
-          <Box>
-            <Typography
+            <Avatar
+              src={imagePreview}
               sx={{
-                color: "#334155",
-                fontSize: 13.5,
+                width: 58,
+                height: 58,
+                color: "#ffffff",
+                background: "linear-gradient(135deg,#334155,#0f172a)",
                 fontWeight: 900,
               }}
             >
-              {selectedUser.first_name} {selectedUser.last_name}
-            </Typography>
+              {getInitials(selectedUser)}
+            </Avatar>
 
-            {imageAllowed && (
-              <Button
-                component="label"
-                size="small"
-                variant="outlined"
+            <Box>
+              <Typography
                 sx={{
-                  mt: 0.8,
-                  borderRadius: "9px",
-                  fontSize: 9.5,
-                  fontWeight: 850,
-                  textTransform: "none",
+                  color: "var(--aa-text)",
+                  fontSize: 13.5,
+                  fontWeight: 900,
                 }}
               >
-                Rasm tanlash
-                <input hidden type="file" accept="image/*" onChange={onImageChange} />
-              </Button>
-            )}
-          </Box>
-        </Box>
-      )}
+                {selectedUser.first_name} {selectedUser.last_name}
+              </Typography>
 
-      <Box
+              {imageAllowed && (
+                <Button
+                  component="label"
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    mt: 0.8,
+                    borderRadius: "9px",
+                    fontSize: 9.5,
+                    fontWeight: 850,
+                    textTransform: "none",
+                  }}
+                >
+                  Rasm tanlash
+                  <input hidden type="file" accept="image/*" onChange={onImageChange} />
+                </Button>
+              )}
+            </Box>
+          </Box>
+        )}
+
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2,minmax(0,1fr))",
+            },
+            gap: 1.7,
+          }}
+        >
+          <TextField
+            fullWidth
+            required
+            label="Ism"
+            value={form.first_name}
+            onChange={onFormChange("first_name")}
+          />
+
+          <TextField
+            fullWidth
+            required
+            label="Familiya"
+            value={form.last_name}
+            onChange={onFormChange("last_name")}
+          />
+
+          <TextField
+            fullWidth
+            required
+            label="Foydalanuvchi nomi"
+            value={form.username}
+            onChange={onFormChange("username")}
+          />
+
+          <TextField
+            fullWidth
+            required={!selectedUser}
+            label={selectedUser ? "Yangi parol" : "Parol"}
+            type="password"
+            name="password"
+            autoComplete="new-password"
+            value={form.password}
+            onChange={onFormChange("password")}
+          />
+
+          <TextField
+            fullWidth
+            label="Telefon"
+            value={form.phone}
+            onChange={onFormChange("phone")}
+            placeholder="+998 (96) 500-10-01"
+          />
+
+          {(!selectedUser || canEditRole) && (
+            <TextField
+              select
+              fullWidth
+              label="Ruxsat turi"
+              value={form.role}
+              onChange={onFormChange("role")}
+            >
+              {roleOptions.map((role) => (
+                <MenuItem key={role} value={role}>
+                  {roleNames[role]}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        </Box>
+      </DialogContent>
+
+      <DialogActions
         sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            sm: "repeat(2,minmax(0,1fr))",
-          },
-          gap: 1.7,
+          px: 3,
+          py: 2.3,
+          borderTop: "1px solid #edf0f3",
+          backgroundColor: "var(--aa-surface-muted)",
         }}
       >
-        <TextField
-          fullWidth
-          required
-          label="Ism"
-          value={form.first_name}
-          onChange={onFormChange("first_name")}
-        />
+        <Button type="button" onClick={onClose} disabled={saving} sx={dialogCancelSx}>
+          Bekor qilish
+        </Button>
 
-        <TextField
-          fullWidth
-          required
-          label="Familiya"
-          value={form.last_name}
-          onChange={onFormChange("last_name")}
-        />
-
-        <TextField
-          fullWidth
-          required
-          label="Foydalanuvchi nomi"
-          value={form.username}
-          onChange={onFormChange("username")}
-        />
-
-        <TextField
-          fullWidth
-          required={!selectedUser}
-          label={selectedUser ? "Yangi parol" : "Parol"}
-          type="password"
-          value={form.password}
-          onChange={onFormChange("password")}
-        />
-
-        <TextField
-          fullWidth
-          label="Telefon"
-          value={form.phone}
-          onChange={onFormChange("phone")}
-          placeholder="+998 (96) 500-10-01"
-        />
-
-        {(!selectedUser || canEditRole) && (
-          <TextField
-            select
-            fullWidth
-            label="Ruxsat turi"
-            value={form.role}
-            onChange={onFormChange("role")}
-          >
-            {roleOptions.map((role) => (
-              <MenuItem key={role} value={role}>
-                {roleNames[role]}
-              </MenuItem>
-            ))}
-          </TextField>
-        )}
-      </Box>
-    </DialogContent>
-
-    <DialogActions
-      sx={{
-        px: 3,
-        py: 2.3,
-        borderTop: "1px solid #edf0f3",
-        backgroundColor: "#fafbfc",
-      }}
-    >
-      <Button onClick={onClose} disabled={saving} sx={dialogCancelSx}>
-        Bekor qilish
-      </Button>
-
-      <Button variant="contained" onClick={onSave} disabled={saving} sx={dialogPrimarySx}>
-        {saving ? "Saqlanmoqda..." : submitText}
-      </Button>
-    </DialogActions>
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={saving || submitDisabled}
+          sx={dialogPrimarySx}
+        >
+          {saving ? "Saqlanmoqda..." : submitText}
+        </Button>
+      </DialogActions>
+    </Box>
   </Dialog>
 );
 
@@ -1574,7 +1605,7 @@ const UserConfirmDialog = ({
     >
       <Typography
         sx={{
-          color: "#64748b",
+          color: "var(--aa-text-secondary)",
           fontSize: 12.5,
           lineHeight: 1.7,
         }}
@@ -1588,7 +1619,7 @@ const UserConfirmDialog = ({
         px: 3,
         py: 2.1,
         borderTop: "1px solid #edf0f3",
-        backgroundColor: "#fafbfc",
+        backgroundColor: "var(--aa-surface-muted)",
       }}
     >
       <Button onClick={onClose} disabled={loading} sx={dialogCancelSx}>
@@ -1622,7 +1653,7 @@ const tableActionSx = {
 };
 
 const dialogCancelSx = {
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   fontWeight: 850,
   textTransform: "none",

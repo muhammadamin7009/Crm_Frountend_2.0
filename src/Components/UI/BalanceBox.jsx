@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 
 const compactTones = {
-  default: ["#334155", "#ffffff", "#e7ebf0"],
+  default: ["var(--aa-text)", "var(--aa-surface-solid)", "var(--aa-border)"],
   green: ["#15803d", "rgba(34,197,94,.07)", "rgba(34,197,94,.17)"],
   red: ["#991b1b", "rgba(153,27,27,.07)", "rgba(153,27,27,.16)"],
   blue: ["#1d4ed8", "rgba(37,99,235,.07)", "rgba(37,99,235,.17)"],
@@ -23,7 +23,7 @@ const BalanceBox = ({ label, value, tone = "default", variant = "compact" }) => 
         sx={{
           p: 1.5,
           borderRadius: "var(--aa-radius-lg)",
-          background: "#fff",
+          background: "var(--aa-surface-solid)",
           border: "1px solid var(--aa-border)",
         }}
       >
@@ -66,7 +66,7 @@ const BalanceBox = ({ label, value, tone = "default", variant = "compact" }) => 
     >
       <Typography
         sx={{
-          color: "#94a3b8",
+          color: "var(--aa-text-tertiary)",
           fontSize: 9.5,
           fontWeight: 800,
         }}

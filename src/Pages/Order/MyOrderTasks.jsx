@@ -104,7 +104,7 @@ const MyOrderTasks = () => {
   };
 
   return (
-    <Stack className="crm-page" spacing={3} sx={{ p: { xs: 2, md: 3.5 } }}>
+    <Stack className="crm-page my-order-tasks-page" spacing={3} sx={{ p: { xs: 2, md: 3.5 } }}>
       <PageHeader
         eyebrow={department?.name || "Ishlab chiqarish"}
         title="Bo'lim navbati"
@@ -161,7 +161,7 @@ const MyOrderTasks = () => {
           <Typography color="text.secondary">Bo'lim navbatida hozircha ish yo'q</Typography>
         </Paper>
       ) : (
-        <Stack spacing={1.5}>
+        <Stack className="aa-task-list" spacing={1.5}>
           {tasks.map((task) => {
             const availableQuantity = Number(task.available_quantity || task.planned_quantity || 0);
             const percent = Math.round(
@@ -169,6 +169,7 @@ const MyOrderTasks = () => {
             );
             return (
               <Paper
+                className="aa-task-card"
                 key={task.id}
                 elevation={0}
                 sx={{ p: 2.2, border: "1px solid var(--aa-border)", borderRadius: 3 }}
@@ -243,12 +244,19 @@ const MyOrderTasks = () => {
                 </Box>
                 {task.note && (
                   <Typography
-                    sx={{ mt: 1.5, p: 1.2, bgcolor: "#f8fafc", borderRadius: 2, fontSize: 12.5 }}
+                    sx={{
+                      mt: 1.5,
+                      p: 1.2,
+                      bgcolor: "var(--aa-surface-muted)",
+                      borderRadius: 2,
+                      fontSize: 12.5,
+                    }}
                   >
                     Administrator izohi: {task.note}
                   </Typography>
                 )}
                 <Box
+                  className="aa-task-actions"
                   sx={{ mt: 2, display: "flex", alignItems: "center", gap: 1.2, flexWrap: "wrap" }}
                 >
                   {task.status === "pending" && (
@@ -314,7 +322,11 @@ const MyOrderTasks = () => {
                         color="success"
                         disabled={savingId === task.id}
                         onClick={() =>
-                          update(task, { status: "completed", worker_note: task.worker_note || "" })
+                          update(task, {
+                            status: "completed",
+                            completed_quantity: Number(task.completed_quantity),
+                            worker_note: task.worker_note || "",
+                          })
                         }
                         sx={{ textTransform: "none", fontWeight: 850 }}
                       >

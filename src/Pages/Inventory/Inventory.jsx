@@ -117,25 +117,25 @@ const surfaceCardSx = {
   overflow: "hidden",
   borderRadius: "22px",
   border: "1px solid #e4e9ef",
-  background: "#ffffff",
+  background: "var(--aa-surface-solid)",
   boxShadow: "0 14px 40px rgba(15,23,42,.045)",
 };
 
 const tableSx = {
   "& th": {
     py: 1.55,
-    color: "#94a3b8",
+    color: "var(--aa-text-tertiary)",
     fontSize: 9.5,
     fontWeight: 900,
     textTransform: "uppercase",
     letterSpacing: ".045em",
-    background: "#fafbfc",
+    background: "var(--aa-surface-muted)",
     borderBottom: "1px solid #edf0f3",
   },
 
   "& td": {
     py: 1.4,
-    color: "#64748b",
+    color: "var(--aa-text-secondary)",
     fontSize: 10.5,
     borderBottom: "1px solid #edf0f3",
   },
@@ -180,7 +180,7 @@ const dialogActionsSx = {
 
   borderTop: "1px solid #edf0f3",
 
-  background: "#fafbfc",
+  background: "var(--aa-surface-muted)",
 };
 
 const primaryButtonSx = {
@@ -204,13 +204,13 @@ const primaryButtonSx = {
 const secondaryButtonSx = {
   minHeight: 40,
   px: 1.8,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   borderColor: "#dce3ea",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
-  backgroundColor: "#ffffff",
+  backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
     color: "#991b1b",
@@ -320,7 +320,7 @@ const MetricCard = ({ label, value, hint, tone = "red" }) => {
       <Typography
         sx={{
           mt: 1.2,
-          color: "#94a3b8",
+          color: "var(--aa-text-tertiary)",
           fontSize: 9.5,
           fontWeight: 800,
         }}
@@ -345,7 +345,7 @@ const MetricCard = ({ label, value, hint, tone = "red" }) => {
         noWrap
         sx={{
           mt: 0.45,
-          color: "#94a3b8",
+          color: "var(--aa-text-tertiary)",
           fontSize: 9,
         }}
       >
@@ -507,6 +507,11 @@ const Inventory = () => {
     () => warehouses.filter((warehouse) => warehouse.is_active !== false),
 
     [warehouses],
+  );
+
+  const countWarehouseHasPositions = Boolean(
+    countWarehouseChoice &&
+    stock.some((row) => Number(row.warehouse_id) === Number(countWarehouseChoice)),
   );
 
   const selectedWarehouse = useMemo(
@@ -715,6 +720,7 @@ const Inventory = () => {
   const saveInventoryCount = async () => {
     if (
       !countWarehouse ||
+      !countRows.length ||
       countRows.some((row) => row.counted_quantity === "" || Number(row.counted_quantity) < 0)
     ) {
       toast.error("Barcha haqiqiy miqdorlarni to‘g‘ri kiriting.");
@@ -770,7 +776,11 @@ const Inventory = () => {
   };
 
   const saveMovement = async () => {
-    if (!movementForm.warehouse_id || !movementForm.item_id || !movementForm.quantity) {
+    if (
+      !movementForm.warehouse_id ||
+      !movementForm.item_id ||
+      Number(movementForm.quantity || 0) <= 0
+    ) {
       toast.error("Ombor, element va miqdorni kiriting.");
 
       return;
@@ -850,7 +860,7 @@ const Inventory = () => {
       !transferForm.from_warehouse_id ||
       !transferForm.to_warehouse_id ||
       !transferForm.item_id ||
-      !transferForm.quantity
+      Number(transferForm.quantity || 0) <= 0
     ) {
       toast.error("Barcha majburiy maydonlarni kiriting.");
 
@@ -1050,7 +1060,7 @@ const Inventory = () => {
 
         <Typography
           sx={{
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 11,
             fontWeight: 800,
           }}
@@ -1296,7 +1306,7 @@ const Inventory = () => {
 
               {isCountsPage && canCount && (
                 <Button
-                  disabled={!countWarehouseChoice}
+                  disabled={!countWarehouseChoice || !countWarehouseHasPositions}
                   onClick={() => {
                     const warehouse = activeWarehouses.find(
                       (item) => Number(item.id) === Number(countWarehouseChoice),
@@ -1370,7 +1380,7 @@ const Inventory = () => {
             <Box>
               <Typography
                 sx={{
-                  color: "#0f172a",
+                  color: "var(--aa-text)",
                   fontSize: 15,
                   fontWeight: 950,
                 }}
@@ -1381,7 +1391,7 @@ const Inventory = () => {
               <Typography
                 sx={{
                   mt: 0.4,
-                  color: "#94a3b8",
+                  color: "var(--aa-text-tertiary)",
                   fontSize: 10.5,
                   fontWeight: 700,
                 }}
@@ -1405,7 +1415,7 @@ const Inventory = () => {
           </Box>
 
           <Box
-            className="crm-mobile-card-strip"
+            className="crm-mobile-card-strip inventory-warehouse-grid"
             sx={{
               display: "grid",
 
@@ -1422,6 +1432,7 @@ const Inventory = () => {
           >
             {warehouses.map((warehouse) => (
               <Card
+                className="inventory-warehouse-card"
                 key={warehouse.id}
                 variant="outlined"
                 sx={{
@@ -1432,7 +1443,8 @@ const Inventory = () => {
 
                   borderColor: "#e4e9ef",
 
-                  background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+                  background:
+                    "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 
                   boxShadow: "0 10px 28px rgba(15,23,42,.045)",
 
@@ -1474,7 +1486,7 @@ const Inventory = () => {
                     <Typography
                       noWrap
                       sx={{
-                        color: "#334155",
+                        color: "var(--aa-text)",
 
                         fontSize: 13,
 
@@ -1488,7 +1500,7 @@ const Inventory = () => {
                       sx={{
                         mt: 0.4,
 
-                        color: "#94a3b8",
+                        color: "var(--aa-text-tertiary)",
 
                         fontSize: 9.5,
 
@@ -1535,7 +1547,7 @@ const Inventory = () => {
 
                 <Typography
                   sx={{
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
                     fontSize: 9.5,
                     fontWeight: 700,
                   }}
@@ -1548,7 +1560,7 @@ const Inventory = () => {
                     sx={{
                       mt: 1,
 
-                      color: "#64748b",
+                      color: "var(--aa-text-secondary)",
                       fontSize: 9.5,
                       lineHeight: 1.5,
                     }}
@@ -1630,12 +1642,12 @@ const Inventory = () => {
 
                   border: "1px dashed #cbd5e1",
 
-                  backgroundColor: "#f8fafc",
+                  backgroundColor: "var(--aa-surface-muted)",
                 }}
               >
                 <Typography
                   sx={{
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
                     fontSize: 10.5,
                     fontWeight: 800,
                   }}
@@ -1727,7 +1739,7 @@ const Inventory = () => {
                 gap: 1.4,
                 p: 2,
                 borderRadius: 2,
-                backgroundColor: "#ffffff",
+                backgroundColor: "var(--aa-surface-solid)",
               }}
             >
               <TextField
@@ -1741,6 +1753,7 @@ const Inventory = () => {
 
             {tab === 0 && (
               <Box
+                className="aa-mobile-records aa-inventory-stock-table"
                 sx={{
                   overflowX: "auto",
                 }}
@@ -1776,7 +1789,7 @@ const Inventory = () => {
                           <TableCell>
                             <Typography
                               sx={{
-                                color: "#334155",
+                                color: "var(--aa-text)",
 
                                 fontSize: 10.5,
 
@@ -1879,7 +1892,7 @@ const Inventory = () => {
                           align="center"
                           sx={{
                             py: 7,
-                            color: "#94a3b8",
+                            color: "var(--aa-text-tertiary)",
                             fontWeight: 800,
                           }}
                         >
@@ -1894,6 +1907,7 @@ const Inventory = () => {
 
             {tab === 1 && (
               <Box
+                className="aa-mobile-records aa-inventory-movements-table"
                 sx={{
                   overflowX: "auto",
                 }}
@@ -1931,7 +1945,7 @@ const Inventory = () => {
                           <TableCell>
                             <Typography
                               sx={{
-                                color: "#334155",
+                                color: "var(--aa-text)",
 
                                 fontSize: 10.5,
 
@@ -1990,7 +2004,7 @@ const Inventory = () => {
                             sx={{
                               maxWidth: 260,
 
-                              color: "#94a3b8",
+                              color: "var(--aa-text-tertiary)",
 
                               lineHeight: 1.55,
                             }}
@@ -2006,7 +2020,7 @@ const Inventory = () => {
                           align="center"
                           sx={{
                             py: 7,
-                            color: "#94a3b8",
+                            color: "var(--aa-text-tertiary)",
                             fontWeight: 800,
                           }}
                         >
@@ -2055,7 +2069,7 @@ const Inventory = () => {
             <Box>
               <Typography
                 sx={{
-                  color: "#0f172a",
+                  color: "var(--aa-text)",
                   fontSize: 15,
                   fontWeight: 950,
                 }}
@@ -2066,7 +2080,7 @@ const Inventory = () => {
               <Typography
                 sx={{
                   mt: 0.4,
-                  color: "#94a3b8",
+                  color: "var(--aa-text-tertiary)",
                   fontSize: 10.5,
                   fontWeight: 700,
                 }}
@@ -2089,6 +2103,11 @@ const Inventory = () => {
                   label="Omborni tanlang"
                   value={countWarehouseChoice}
                   onChange={(event) => setCountWarehouseChoice(event.target.value)}
+                  helperText={
+                    countWarehouseChoice && !countWarehouseHasPositions
+                      ? "Bu omborda sanaladigan pozitsiya yo‘q"
+                      : " "
+                  }
                   sx={{
                     minWidth: 230,
                   }}
@@ -2096,13 +2115,16 @@ const Inventory = () => {
                   {activeWarehouses.map((warehouse) => (
                     <MenuItem key={warehouse.id} value={warehouse.id}>
                       {warehouse.name}
+                      {stock.some((row) => Number(row.warehouse_id) === Number(warehouse.id))
+                        ? ""
+                        : " — pozitsiya yo‘q"}
                     </MenuItem>
                   ))}
                 </TextField>
 
                 <Button
                   variant="contained"
-                  disabled={!countWarehouseChoice}
+                  disabled={!countWarehouseChoice || !countWarehouseHasPositions}
                   onClick={() => {
                     const warehouse = activeWarehouses.find(
                       (item) => Number(item.id) === Number(countWarehouseChoice),
@@ -2121,6 +2143,7 @@ const Inventory = () => {
           </Box>
 
           <Box
+            className="aa-mobile-records aa-inventory-counts-table"
             sx={{
               overflowX: "auto",
             }}
@@ -2158,7 +2181,7 @@ const Inventory = () => {
                       <TableCell>
                         <Typography
                           sx={{
-                            color: "#334155",
+                            color: "var(--aa-text)",
 
                             fontSize: 10.5,
 
@@ -2208,7 +2231,7 @@ const Inventory = () => {
                       <TableCell
                         sx={{
                           maxWidth: 250,
-                          color: "#94a3b8",
+                          color: "var(--aa-text-tertiary)",
                           lineHeight: 1.55,
                         }}
                       >
@@ -2234,7 +2257,7 @@ const Inventory = () => {
                       align="center"
                       sx={{
                         py: 6,
-                        color: "#94a3b8",
+                        color: "var(--aa-text-tertiary)",
                         fontWeight: 800,
                       }}
                     >
@@ -2294,6 +2317,7 @@ const Inventory = () => {
             </Box>
 
             <Box
+              className="aa-mobile-records aa-inventory-count-entry-table"
               sx={{
                 overflowX: "auto",
 
@@ -2339,7 +2363,7 @@ const Inventory = () => {
                         <TableCell>
                           <Typography
                             sx={{
-                              color: "#334155",
+                              color: "var(--aa-text)",
 
                               fontSize: 10.5,
 
@@ -2406,7 +2430,7 @@ const Inventory = () => {
 
             <Typography
               sx={{
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10.5,
                 fontWeight: 700,
                 lineHeight: 1.6,
@@ -2424,7 +2448,14 @@ const Inventory = () => {
 
           <Button
             variant="contained"
-            disabled={saving}
+            disabled={
+              saving ||
+              !countWarehouse ||
+              !countRows.length ||
+              countRows.some(
+                (row) => row.counted_quantity === "" || Number(row.counted_quantity) < 0,
+              )
+            }
             onClick={saveInventoryCount}
             sx={primaryButtonSx}
           >
@@ -2450,7 +2481,7 @@ const Inventory = () => {
           <Stack spacing={1.5} sx={{ pt: 1 }}>
             <Typography
               sx={{
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10.5,
                 fontWeight: 700,
               }}
@@ -2459,6 +2490,7 @@ const Inventory = () => {
             </Typography>
 
             <Box
+              className="aa-mobile-records aa-inventory-count-detail-table"
               sx={{
                 overflowX: "auto",
 
@@ -2494,7 +2526,7 @@ const Inventory = () => {
                       <TableCell>
                         <Typography
                           sx={{
-                            color: "#334155",
+                            color: "var(--aa-text)",
 
                             fontSize: 10.5,
 
@@ -2715,7 +2747,17 @@ const Inventory = () => {
             Bekor qilish
           </Button>
 
-          <Button variant="contained" disabled={saving} onClick={saveMovement} sx={primaryButtonSx}>
+          <Button
+            variant="contained"
+            disabled={
+              saving ||
+              !movementForm.warehouse_id ||
+              !movementForm.item_id ||
+              Number(movementForm.quantity || 0) <= 0
+            }
+            onClick={saveMovement}
+            sx={primaryButtonSx}
+          >
             {saving ? "Saqlanmoqda..." : "Saqlash"}
           </Button>
         </DialogActions>
@@ -2886,7 +2928,12 @@ const Inventory = () => {
 
           <Button
             variant="contained"
-            disabled={saving}
+            disabled={
+              saving ||
+              !receiptForm.warehouse_id ||
+              !receiptForm.product_id ||
+              Number(receiptForm.quantity || 0) <= 0
+            }
             onClick={saveProductionReceipt}
             sx={primaryButtonSx}
           >
@@ -3040,7 +3087,15 @@ const Inventory = () => {
 
           <Button
             variant="contained"
-            disabled={saving || activeWarehouses.length < 2}
+            disabled={
+              saving ||
+              activeWarehouses.length < 2 ||
+              !transferForm.from_warehouse_id ||
+              !transferForm.to_warehouse_id ||
+              Number(transferForm.from_warehouse_id) === Number(transferForm.to_warehouse_id) ||
+              !transferForm.item_id ||
+              Number(transferForm.quantity || 0) <= 0
+            }
             onClick={saveTransfer}
             sx={primaryButtonSx}
           >
@@ -3131,7 +3186,7 @@ const Inventory = () => {
 
           <Button
             variant="contained"
-            disabled={saving}
+            disabled={saving || !warehouseForm.name.trim() || !warehouseForm.code.trim()}
             onClick={saveWarehouse}
             sx={primaryButtonSx}
           >
@@ -3155,7 +3210,7 @@ const Inventory = () => {
           <Stack spacing={1.2}>
             <Typography
               sx={{
-                color: "#334155",
+                color: "var(--aa-text)",
                 fontSize: 12,
                 fontWeight: 900,
               }}
@@ -3165,7 +3220,7 @@ const Inventory = () => {
 
             <Typography
               sx={{
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 fontSize: 10.5,
                 lineHeight: 1.65,
               }}
@@ -3214,7 +3269,7 @@ const Inventory = () => {
           <Typography
             sx={{
               mb: 2,
-              color: "#64748b",
+              color: "var(--aa-text-secondary)",
               fontSize: 10.5,
               lineHeight: 1.6,
             }}
@@ -3244,7 +3299,7 @@ const Inventory = () => {
 
           <Button
             variant="contained"
-            disabled={saving}
+            disabled={saving || thresholdValue === "" || Number(thresholdValue) < 0}
             onClick={saveThreshold}
             sx={primaryButtonSx}
           >
@@ -3279,6 +3334,17 @@ const inventoryPageStyles = `
     --aa-warning: #b45309;
     --aa-success: #15803d;
     --aa-info: #1d4ed8;
+  }
+
+  [data-theme="dark"] .inventory-page {
+    --aa-border: rgba(255,255,255,.09);
+    --aa-surface: rgba(18,20,25,.96);
+    --aa-surface-solid: #121419;
+    --aa-surface-muted: #17191f;
+    --aa-surface-hover: #1d2027;
+    --aa-text: #f8fafc;
+    --aa-text-secondary: #a3aab7;
+    --aa-text-tertiary: #737b89;
   }
 
   .inventory-page .inventory-hero {

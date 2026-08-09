@@ -237,7 +237,7 @@ const UsageBar = ({ label, value, limit, tone = "red" }) => {
       >
         <Typography
           sx={{
-            color: "#64748b",
+            color: "var(--aa-text-secondary)",
             fontSize: 9,
             fontWeight: 800,
           }}
@@ -247,7 +247,7 @@ const UsageBar = ({ label, value, limit, tone = "red" }) => {
 
         <Typography
           sx={{
-            color: "#334155",
+            color: "var(--aa-text)",
             fontSize: 9,
             fontWeight: 950,
           }}
@@ -311,7 +311,7 @@ const SummaryBox = ({ label, value, tone = "default" }) => {
     >
       <Typography
         sx={{
-          color: "#94a3b8",
+          color: "var(--aa-text-tertiary)",
           fontSize: 9,
           fontWeight: 800,
         }}
@@ -460,6 +460,36 @@ const PlatformDashboard = () => {
   };
 
   const save = async () => {
+    if (
+      dialog === "company" &&
+      (!form.name?.trim() ||
+        !form.slug?.trim() ||
+        !form.plan_code ||
+        !form.first_name?.trim() ||
+        !form.last_name?.trim() ||
+        !form.username?.trim() ||
+        !form.password)
+    ) {
+      toast.error("Barcha majburiy korxona va administrator ma’lumotlarini to‘ldiring.");
+      return;
+    }
+
+    if (
+      dialog === "management" &&
+      (!form.name?.trim() ||
+        !form.first_name?.trim() ||
+        !form.last_name?.trim() ||
+        !form.username?.trim())
+    ) {
+      toast.error("Barcha majburiy korxona va administrator ma’lumotlarini to‘ldiring.");
+      return;
+    }
+
+    if (dialog === "plan" && !form.plan_code) {
+      toast.error("Obuna rejasini tanlang.");
+      return;
+    }
+
     setSaving(true);
 
     try {
@@ -1110,7 +1140,7 @@ const PlatformDashboard = () => {
             <Box>
               <Typography
                 sx={{
-                  color: "#0f172a",
+                  color: "var(--aa-text)",
                   fontSize: 15,
                   fontWeight: 950,
                 }}
@@ -1121,7 +1151,7 @@ const PlatformDashboard = () => {
               <Typography
                 sx={{
                   mt: 0.45,
-                  color: "#94a3b8",
+                  color: "var(--aa-text-tertiary)",
                   fontSize: 10.5,
                 }}
               >
@@ -1166,7 +1196,7 @@ const PlatformDashboard = () => {
                 <Typography
                   sx={{
                     mt: 1.3,
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
                     fontSize: 10.5,
                     fontWeight: 800,
                   }}
@@ -1177,6 +1207,7 @@ const PlatformDashboard = () => {
             </Box>
           ) : (
             <Box
+              className="aa-mobile-records aa-platform-companies-table"
               sx={{
                 overflowX: "auto",
               }}
@@ -1187,7 +1218,7 @@ const PlatformDashboard = () => {
 
                   "& th": {
                     py: 1.55,
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
                     fontSize: 9.5,
                     fontWeight: 900,
 
@@ -1195,14 +1226,14 @@ const PlatformDashboard = () => {
 
                     textTransform: "uppercase",
 
-                    backgroundColor: "#fafbfc",
+                    backgroundColor: "var(--aa-surface-muted)",
 
                     borderColor: "#edf0f3",
                   },
 
                   "& td": {
                     py: 1.4,
-                    color: "#64748b",
+                    color: "var(--aa-text-secondary)",
                     fontSize: 10.5,
 
                     borderColor: "#edf0f3",
@@ -1280,7 +1311,7 @@ const PlatformDashboard = () => {
                                 sx={{
                                   maxWidth: 220,
 
-                                  color: "#334155",
+                                  color: "var(--aa-text)",
 
                                   fontSize: 12.5,
 
@@ -1297,7 +1328,7 @@ const PlatformDashboard = () => {
 
                                   mt: 0.4,
 
-                                  color: "#94a3b8",
+                                  color: "var(--aa-text-tertiary)",
 
                                   fontSize: 9.5,
                                 }}
@@ -1317,11 +1348,11 @@ const PlatformDashboard = () => {
 
                               display: "inline-block",
 
-                              color: "#475569",
+                              color: "var(--aa-text-secondary)",
 
                               borderRadius: "9px",
 
-                              backgroundColor: "#f1f5f9",
+                              backgroundColor: "var(--aa-surface-muted)",
 
                               border: "1px solid #e2e8f0",
 
@@ -1341,7 +1372,7 @@ const PlatformDashboard = () => {
                             sx={{
                               mt: 0.6,
 
-                              color: "#475569",
+                              color: "var(--aa-text-secondary)",
 
                               fontSize: 9.5,
 
@@ -1385,7 +1416,7 @@ const PlatformDashboard = () => {
                         <TableCell>
                           <Typography
                             sx={{
-                              color: "#334155",
+                              color: "var(--aa-text)",
 
                               fontSize: 10.5,
 
@@ -1399,7 +1430,7 @@ const PlatformDashboard = () => {
                             sx={{
                               mt: 0.4,
 
-                              color: "#94a3b8",
+                              color: "var(--aa-text-tertiary)",
 
                               fontSize: 9,
                             }}
@@ -1425,7 +1456,7 @@ const PlatformDashboard = () => {
                             sx={{
                               mt: 0.4,
 
-                              color: "#94a3b8",
+                              color: "var(--aa-text-tertiary)",
 
                               fontSize: 9,
                             }}
@@ -1565,7 +1596,7 @@ const PlatformDashboard = () => {
                         sx={{
                           py: 8,
 
-                          color: "#94a3b8",
+                          color: "var(--aa-text-tertiary)",
 
                           fontWeight: 850,
                         }}
@@ -1604,6 +1635,23 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
     dialog === "payment" && calculation.discountAmount > 0 && !form.discount_reason?.trim();
 
   const paymentInvalid = dialog === "payment" && (!calculation.valid || discountNeedsReason);
+
+  const requiredFieldsMissing =
+    (dialog === "company" &&
+      (!form.name?.trim() ||
+        !form.slug?.trim() ||
+        !form.plan_code ||
+        !form.first_name?.trim() ||
+        !form.last_name?.trim() ||
+        !form.username?.trim() ||
+        !form.password)) ||
+    (dialog === "management" &&
+      (!form.name?.trim() ||
+        !form.first_name?.trim() ||
+        !form.last_name?.trim() ||
+        !form.username?.trim())) ||
+    (dialog === "plan" && !form.plan_code) ||
+    (dialog === "payment" && (!form.paid_at || !form.period_from || !form.period_to));
 
   const field = (key, label, type = "text", extra = {}) => (
     <TextField
@@ -1707,7 +1755,10 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
             color={dialog === "delete" ? "error" : "primary"}
             onClick={save}
             disabled={
-              saving || paymentInvalid || (dialog === "delete" && form.confirm_slug !== form.slug)
+              saving ||
+              requiredFieldsMissing ||
+              paymentInvalid ||
+              (dialog === "delete" && form.confirm_slug !== form.slug)
             }
             sx={
               dialog === "delete"
@@ -1871,7 +1922,7 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
             <Box>
               <Typography
                 sx={{
-                  color: "#334155",
+                  color: "var(--aa-text)",
                   fontSize: 11.5,
                   fontWeight: 950,
                 }}
@@ -1931,7 +1982,7 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
             <Typography
               sx={{
                 mt: 0.65,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 fontSize: 10,
                 lineHeight: 1.65,
               }}
@@ -1943,7 +1994,7 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
 
           <Typography
             sx={{
-              color: "#475569",
+              color: "var(--aa-text-secondary)",
               fontSize: 10.5,
               lineHeight: 1.65,
             }}
@@ -2197,13 +2248,13 @@ const primaryButtonSx = {
 const secondaryButtonSx = {
   minHeight: 40,
   px: 1.8,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   borderColor: "#dce3ea",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
-  backgroundColor: "#ffffff",
+  backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
     color: "#991b1b",
@@ -2223,7 +2274,7 @@ const tableActionSx = {
 };
 
 const dialogCancelSx = {
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   fontWeight: 850,
   textTransform: "none",
@@ -2254,11 +2305,11 @@ const dialogSectionSx = {
 
   border: "1px solid #e7ebf0",
 
-  background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+  background: "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 };
 
 const sectionTitleSx = {
-  color: "#334155",
+  color: "var(--aa-text)",
   fontSize: 14,
   fontWeight: 950,
 };
@@ -2266,7 +2317,7 @@ const sectionTitleSx = {
 const sectionSubtitleSx = {
   mt: 0.4,
   mb: 1.6,
-  color: "#94a3b8",
+  color: "var(--aa-text-tertiary)",
   fontSize: 9.5,
   lineHeight: 1.55,
 };

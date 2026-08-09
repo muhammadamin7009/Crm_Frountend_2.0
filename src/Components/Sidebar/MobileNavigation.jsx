@@ -198,6 +198,7 @@ const MobileNavigation = () => {
         transformOrigin={{ vertical: "bottom", horizontal: "center" }}
         slotProps={{
           paper: {
+            className: "aa-mobile-quick-menu",
             sx: {
               width: "min(340px, calc(100vw - 28px))",
               maxHeight: "min(520px, calc(100vh - 150px))",
@@ -205,17 +206,19 @@ const MobileNavigation = () => {
               p: 1,
               overflowY: "auto",
               borderRadius: "20px !important",
-              border: "1px solid #e7e9ed",
-              boxShadow: "0 24px 60px rgba(15,23,42,.18)",
+              color: "var(--aa-text)",
+              border: "1px solid var(--aa-border)",
+              background: "var(--aa-surface-solid)",
+              boxShadow: "var(--aa-shadow-lg)",
             },
           },
         }}
       >
         <Box sx={{ px: 1.25, pt: 0.75, pb: 1.25 }}>
-          <Typography sx={{ color: "#0f172a", fontSize: 14, fontWeight: 950 }}>
+          <Typography sx={{ color: "var(--aa-text)", fontSize: 14, fontWeight: 950 }}>
             Tezkor amallar
           </Typography>
-          <Typography sx={{ mt: 0.35, color: "#94a3b8", fontSize: 10.5 }}>
+          <Typography sx={{ mt: 0.35, color: "var(--aa-text-tertiary)", fontSize: 10.5 }}>
             Kerakli amalni tanlang
           </Typography>
         </Box>
@@ -223,6 +226,7 @@ const MobileNavigation = () => {
         {availableQuickActions.map((item, index) => (
           <MenuItem
             key={`${item.path}-${item.label}`}
+            className="aa-mobile-quick-menu-item"
             onClick={(event) => {
               event.currentTarget.blur();
               setQuickActionsAnchor(null);
@@ -243,7 +247,7 @@ const MobileNavigation = () => {
                 display: "grid",
                 placeItems: "center",
                 flexShrink: 0,
-                color: "#991b1b",
+                color: "var(--aa-brand-700)",
                 fontSize: 10,
                 fontWeight: 950,
                 borderRadius: "11px",
@@ -254,10 +258,10 @@ const MobileNavigation = () => {
             </Box>
 
             <Box sx={{ minWidth: 0, flex: 1 }}>
-              <Typography sx={{ color: "#1e293b", fontSize: 12, fontWeight: 900 }}>
+              <Typography sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 900 }}>
                 {item.label}
               </Typography>
-              <Typography noWrap sx={{ mt: 0.3, color: "#94a3b8", fontSize: 9.5 }}>
+              <Typography noWrap sx={{ mt: 0.3, color: "var(--aa-text-tertiary)", fontSize: 9.5 }}>
                 {item.description}
               </Typography>
             </Box>

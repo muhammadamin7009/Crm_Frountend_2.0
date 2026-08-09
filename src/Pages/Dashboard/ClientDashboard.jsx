@@ -68,7 +68,7 @@ const ClientStatCard = ({ label, value, helper, icon, tone = "red" }) => {
         overflow: "hidden",
         borderRadius: "22px",
         border: "1px solid rgba(226,232,240,.9)",
-        backgroundColor: "#ffffff",
+        backgroundColor: "var(--aa-surface-solid)",
         boxShadow: "0 14px 40px rgba(15,23,42,.055)",
         transition: "transform .2s ease, box-shadow .2s ease",
 
@@ -107,7 +107,7 @@ const ClientStatCard = ({ label, value, helper, icon, tone = "red" }) => {
         <Box sx={{ minWidth: 0 }}>
           <Typography
             sx={{
-              color: "#64748b",
+              color: "var(--aa-text-secondary)",
               fontSize: 12,
               fontWeight: 750,
             }}
@@ -119,7 +119,7 @@ const ClientStatCard = ({ label, value, helper, icon, tone = "red" }) => {
             noWrap
             sx={{
               mt: 1.2,
-              color: "#0f172a",
+              color: "var(--aa-text)",
               fontSize: 21,
               lineHeight: 1.2,
               fontWeight: 950,
@@ -160,7 +160,7 @@ const ClientStatCard = ({ label, value, helper, icon, tone = "red" }) => {
           position: "relative",
           zIndex: 1,
           mt: 2.1,
-          color: "#94a3b8",
+          color: "var(--aa-text-tertiary)",
           fontSize: 11,
           lineHeight: 1.55,
           fontWeight: 600,
@@ -181,7 +181,7 @@ const ClientSection = ({ title, subtitle, action, children }) => (
       overflow: "hidden",
       borderRadius: "22px",
       border: "1px solid rgba(226,232,240,.9)",
-      backgroundColor: "#ffffff",
+      backgroundColor: "var(--aa-surface-solid)",
       boxShadow: "0 14px 40px rgba(15,23,42,.045)",
     }}
   >
@@ -197,7 +197,7 @@ const ClientSection = ({ title, subtitle, action, children }) => (
       <Box>
         <Typography
           sx={{
-            color: "#0f172a",
+            color: "var(--aa-text)",
             fontSize: 15,
             fontWeight: 900,
             letterSpacing: "-0.02em",
@@ -210,7 +210,7 @@ const ClientSection = ({ title, subtitle, action, children }) => (
           <Typography
             sx={{
               mt: 0.7,
-              color: "#94a3b8",
+              color: "var(--aa-text-tertiary)",
               fontSize: 11,
               lineHeight: 1.55,
             }}
@@ -239,7 +239,7 @@ const ClientEmptyState = ({ title, description }) => (
       textAlign: "center",
       borderRadius: "17px",
       border: "1px dashed #cbd5e1",
-      backgroundColor: "#f8fafc",
+      backgroundColor: "var(--aa-surface-muted)",
     }}
   >
     <Box
@@ -267,7 +267,7 @@ const ClientEmptyState = ({ title, description }) => (
 
     <Typography
       sx={{
-        color: "#334155",
+        color: "var(--aa-text)",
         fontSize: 13,
         fontWeight: 900,
       }}
@@ -279,7 +279,7 @@ const ClientEmptyState = ({ title, description }) => (
       sx={{
         maxWidth: 340,
         mt: 0.8,
-        color: "#94a3b8",
+        color: "var(--aa-text-tertiary)",
         fontSize: 11,
         lineHeight: 1.6,
       }}
@@ -382,7 +382,7 @@ const ClientDashboard = ({ user }) => {
 
         <Typography
           sx={{
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 13,
             fontWeight: 750,
           }}
@@ -419,10 +419,10 @@ const ClientDashboard = ({ user }) => {
           gap: 2.5,
           overflow: "hidden",
           borderRadius: "24px",
-          border: "1px solid rgba(226,232,240,.9)",
+          border: "1px solid var(--aa-border)",
           background:
-            "radial-gradient(circle at 98% 0%,rgba(143,29,32,.075),transparent 28%),linear-gradient(145deg,#ffffff,#fafafa)",
-          boxShadow: "0 15px 42px rgba(15,23,42,.055)",
+            "radial-gradient(circle at 98% 0%,rgba(143,29,32,.075),transparent 28%),linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
+          boxShadow: "var(--aa-shadow-md)",
         }}
       >
         <Box>
@@ -459,7 +459,7 @@ const ClientDashboard = ({ user }) => {
           <Typography
             component="h1"
             sx={{
-              color: "#0f172a",
+              color: "var(--aa-text)",
               fontSize: {
                 xs: 26,
                 sm: 30,
@@ -476,7 +476,7 @@ const ClientDashboard = ({ user }) => {
             sx={{
               mt: 1,
               maxWidth: 620,
-              color: "#94a3b8",
+              color: "var(--aa-text-tertiary)",
               fontSize: 13,
               lineHeight: 1.7,
               fontWeight: 600,
@@ -966,7 +966,7 @@ const ClientDashboard = ({ user }) => {
                         >
                           <Typography
                             sx={{
-                              color: "#334155",
+                              color: "var(--aa-text)",
                               fontSize: 11.5,
                               fontWeight: 900,
                             }}
@@ -977,7 +977,7 @@ const ClientDashboard = ({ user }) => {
                           <Typography
                             sx={{
                               mt: 0.4,
-                              color: "#94a3b8",
+                              color: "var(--aa-text-tertiary)",
                               fontSize: 9.5,
                             }}
                           >
@@ -989,7 +989,7 @@ const ClientDashboard = ({ user }) => {
                       <TableCell>
                         <Typography
                           sx={{
-                            color: "#334155",
+                            color: "var(--aa-text)",
                             fontSize: 11,
                             fontWeight: 850,
                           }}
@@ -1003,7 +1003,7 @@ const ClientDashboard = ({ user }) => {
                       <TableCell>
                         <Typography
                           sx={{
-                            color: "#0f172a",
+                            color: "var(--aa-text)",
                             fontSize: 11,
                             fontWeight: 900,
                           }}
@@ -1061,8 +1061,9 @@ const ClientDashboard = ({ user }) => {
                     alignItems: "center",
                     gap: 1.4,
                     borderRadius: "15px",
-                    border: "1px solid #edf0f3",
-                    background: "linear-gradient(135deg,#f8fafc,#ffffff)",
+                    border: "1px solid var(--aa-border)",
+                    background:
+                      "linear-gradient(135deg,var(--aa-surface-muted),var(--aa-surface-solid))",
                     transition: "transform .18s ease, border-color .18s ease",
 
                     "&:hover": {
@@ -1103,7 +1104,7 @@ const ClientDashboard = ({ user }) => {
                     <Typography
                       noWrap
                       sx={{
-                        color: "#0f172a",
+                        color: "var(--aa-text)",
                         fontSize: 12,
                         fontWeight: 900,
                       }}
@@ -1115,7 +1116,7 @@ const ClientDashboard = ({ user }) => {
                       noWrap
                       sx={{
                         mt: 0.5,
-                        color: "#94a3b8",
+                        color: "var(--aa-text-tertiary)",
                         fontSize: 9.5,
                       }}
                     >
@@ -1130,7 +1131,7 @@ const ClientDashboard = ({ user }) => {
                         noWrap
                         sx={{
                           mt: 0.4,
-                          color: "#64748b",
+                          color: "var(--aa-text-secondary)",
                           fontSize: 9.5,
                         }}
                       >
@@ -1142,7 +1143,7 @@ const ClientDashboard = ({ user }) => {
                   <Typography
                     sx={{
                       flexShrink: 0,
-                      color: "#94a3b8",
+                      color: "var(--aa-text-tertiary)",
                       fontSize: 9.5,
                       fontWeight: 650,
                     }}
@@ -1197,10 +1198,10 @@ const clientDarkValueSx = {
 
 const neutralChipSx = {
   height: 24,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   fontSize: 9.5,
   fontWeight: 850,
-  backgroundColor: "#f1f5f9",
+  backgroundColor: "var(--aa-surface-muted)",
 };
 
 const debtChipSx = {
@@ -1223,18 +1224,18 @@ const tableSx = {
   "& .MuiTableCell-root": {
     px: 1.3,
     py: 1.4,
-    color: "#64748b",
+    color: "var(--aa-text-secondary)",
     fontSize: 10.5,
     borderColor: "#edf0f3",
   },
 
   "& .MuiTableHead-root .MuiTableCell-root": {
-    color: "#94a3b8",
+    color: "var(--aa-text-tertiary)",
     fontSize: 9.5,
     fontWeight: 900,
     letterSpacing: ".04em",
     textTransform: "uppercase",
-    backgroundColor: "#fafbfc",
+    backgroundColor: "var(--aa-surface-muted)",
   },
 
   "& .MuiTableBody-root .MuiTableRow-root": {

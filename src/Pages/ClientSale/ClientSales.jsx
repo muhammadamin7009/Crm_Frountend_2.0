@@ -38,6 +38,7 @@ import {
 import { createClientPayment } from "../../api/clientPayments";
 import { getInventoryStock, getWarehouses } from "../../api/inventory";
 import { getFinancialAccounts } from "../../api/finance";
+import { ENABLE_MULTI_ACCOUNT_SELECTION } from "../../utils/features";
 
 const emptyForm = {
   client_id: "",
@@ -755,8 +756,14 @@ const ClientSales = () => {
     }
 
     if (selectedSale) {
-      if (!form.product_id || !form.quantity || Number(form.quantity) <= 0) {
-        toast.error("Mahsulot va miqdorni to'g'ri kiriting.");
+      if (
+        !form.product_id ||
+        !form.quantity ||
+        Number(form.quantity) <= 0 ||
+        form.unit_price === "" ||
+        Number(form.unit_price) < 0
+      ) {
+        toast.error("Mahsulot, miqdor va sotish narxini to'g'ri kiriting.");
 
         return false;
       }
@@ -1229,7 +1236,7 @@ const ClientSales = () => {
 
                 borderColor: "var(--aa-border-strong)",
 
-                background: "#fff",
+                background: "var(--aa-surface-solid)",
 
                 "&:hover": {
                   borderColor: "var(--aa-brand-300)",
@@ -1254,7 +1261,7 @@ const ClientSales = () => {
 
                 borderColor: "var(--aa-border-strong)",
 
-                background: "#fff",
+                background: "var(--aa-surface-solid)",
 
                 "&:hover": {
                   borderColor: "var(--aa-brand-300)",
@@ -1381,7 +1388,7 @@ const ClientSales = () => {
 
                   borderColor: "var(--aa-border-strong)",
 
-                  background: "#fff",
+                  background: "var(--aa-surface-solid)",
 
                   "&:hover": {
                     borderColor: "var(--aa-brand-300)",
@@ -1440,6 +1447,7 @@ const ClientSales = () => {
             </Box>
           ) : summary.length ? (
             <Box
+              className="crm-mobile-card-strip client-sales-summary-strip"
               sx={{
                 display: "grid",
 
@@ -1460,7 +1468,7 @@ const ClientSales = () => {
 
                     borderRadius: "var(--aa-radius-lg)",
 
-                    background: "#fff",
+                    background: "var(--aa-surface-solid)",
 
                     border: "1px solid var(--aa-border)",
 
@@ -1541,6 +1549,7 @@ const ClientSales = () => {
         }}
       >
         <Box
+          className="aa-mobile-records aa-client-sales-list-table"
           sx={{
             minHeight: 0,
             flex: 1,
@@ -1764,7 +1773,7 @@ const ClientSales = () => {
                         sx={{
                           fontSize: 13.5,
                           fontWeight: 800,
-                          color: "#334155",
+                          color: "var(--aa-text)",
                         }}
                       >
                         {formatDate(sale.sold_at)}
@@ -1912,7 +1921,23 @@ const ClientSales = () => {
               disabled={
                 saving ||
                 selectedSaleQuantityExceeded ||
-                (!selectedSale && bulkSaleQuantityExceeded)
+                (!selectedSale && bulkSaleQuantityExceeded) ||
+                !form.client_id ||
+                (!selectedSale && !form.warehouse_id) ||
+                (selectedSale
+                  ? !form.product_id ||
+                    Number(form.quantity || 0) <= 0 ||
+                    form.unit_price === "" ||
+                    Number(form.unit_price) < 0
+                  : !form.items.length ||
+                    form.items.some(
+                      (item) =>
+                        !item.product_id ||
+                        Number(item.quantity || 0) <= 0 ||
+                        item.unit_price === "" ||
+                        Number(item.unit_price) < 0,
+                    )) ||
+                preview.overPaid
               }
               sx={{
                 minWidth: 120,
@@ -2058,7 +2083,8 @@ const ClientSales = () => {
                 p: 2,
                 borderRadius: "18px",
 
-                background: "linear-gradient(135deg,#ffffff,#f8fafc)",
+                background:
+                  "linear-gradient(135deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 
                 border: "1px solid rgba(148,163,184,.22)",
               }}
@@ -2088,7 +2114,7 @@ const ClientSales = () => {
                     sx={{
                       fontSize: 16,
                       fontWeight: 950,
-                      color: "#0f172a",
+                      color: "var(--aa-text)",
                     }}
                   >
                     Mahsulotlar
@@ -2099,7 +2125,7 @@ const ClientSales = () => {
                       mt: 0.4,
                       fontSize: 13,
                       fontWeight: 650,
-                      color: "#64748b",
+                      color: "var(--aa-text-secondary)",
                     }}
                   >
                     Bir nechta mahsulotni bitta savdoga qo'shishingiz mumkin.
@@ -2107,6 +2133,7 @@ const ClientSales = () => {
                 </Box>
 
                 <Button
+                  className="aa-dialog-secondary-action"
                   variant="outlined"
                   onClick={() =>
                     setForm((previous) => ({
@@ -2150,7 +2177,7 @@ const ClientSales = () => {
                       p: 1.4,
                       borderRadius: "16px",
 
-                      background: "#ffffff",
+                      background: "var(--aa-surface-solid)",
 
                       border: "1px solid rgba(148,163,184,.20)",
                     }}
@@ -2281,21 +2308,23 @@ const ClientSales = () => {
               },
             }}
           />
-          <TextField
-            select
-            fullWidth
-            label="Pul tushadigan hisob"
-            value={form.account_id}
-            onChange={handleFormChange("account_id")}
-            helperText="Tanlanmasa Asosiy kassa ishlatiladi"
-          >
-            <MenuItem value="">Asosiy kassa (avtomatik)</MenuItem>
-            {accounts.map((account) => (
-              <MenuItem key={account.id} value={account.id}>
-                {account.name} — {formatMoney(account.balance)}
-              </MenuItem>
-            ))}
-          </TextField>
+          {ENABLE_MULTI_ACCOUNT_SELECTION && (
+            <TextField
+              select
+              fullWidth
+              label="Pul tushadigan hisob"
+              value={form.account_id}
+              onChange={handleFormChange("account_id")}
+              helperText="Tanlanmasa Asosiy kassa ishlatiladi"
+            >
+              <MenuItem value="">Asosiy kassa (avtomatik)</MenuItem>
+              {accounts.map((account) => (
+                <MenuItem key={account.id} value={account.id}>
+                  {account.name} — {formatMoney(account.balance)}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
           <Box
             sx={{
               display: "grid",
@@ -2309,11 +2338,16 @@ const ClientSales = () => {
               p: 1.5,
               borderRadius: "18px",
 
-              background: preview.overPaid ? "rgba(254,242,242,.95)" : "#f8fafc",
+              background: (theme) =>
+                preview.overPaid
+                  ? theme.palette.mode === "dark"
+                    ? "rgba(220,38,38,.14)"
+                    : "rgba(254,242,242,.95)"
+                  : "var(--aa-surface-muted)",
 
               border: preview.overPaid
                 ? "1px solid rgba(220,38,38,.30)"
-                : "1px solid rgba(148,163,184,.20)",
+                : "1px solid var(--aa-border)",
             }}
           >
             <BalanceBox label="Jami" value={formatMoney(preview.total)} tone="blue" />
@@ -2368,7 +2402,7 @@ const ClientSales = () => {
       >
         <Typography
           sx={{
-            color: "#334155",
+            color: "var(--aa-text)",
             fontWeight: 700,
           }}
         >
@@ -2397,7 +2431,13 @@ const ClientSales = () => {
             <Button
               variant="contained"
               onClick={handleSavePayment}
-              disabled={paymentSaving}
+              disabled={
+                paymentSaving ||
+                !paymentForm.client_id ||
+                !paymentForm.client_sale_id ||
+                Number(paymentForm.amount || 0) <= 0 ||
+                Number(paymentForm.amount || 0) > Number(paymentBalance.debt_amount || 0)
+              }
               sx={{
                 minWidth: 120,
                 borderRadius: "12px",
@@ -2468,20 +2508,26 @@ const ClientSales = () => {
           >
             <TextField
               required
-              type="number"
+              type="text"
               label="Kirim summa"
-              value={paymentForm.amount}
-              onChange={handlePaymentChange("amount")}
+              value={paymentForm.amount ? formatNumber(paymentForm.amount) : ""}
+              onChange={(event) => {
+                const amount = event.target.value.replace(/\D/g, "");
+
+                setPaymentForm((previous) => ({ ...previous, amount }));
+              }}
               error={Number(paymentForm.amount || 0) > Number(paymentBalance.debt_amount || 0)}
               helperText={
                 Number(paymentForm.amount || 0) > Number(paymentBalance.debt_amount || 0)
                   ? "Summa qolgan qarzdan oshmasin"
-                  : "Masalan: 1700000"
+                  : paymentBalanceLoading
+                    ? "Qarz aniqlanmoqda..."
+                    : `Qarz: ${formatMoney(paymentBalance.debt_amount)}`
               }
               slotProps={{
                 htmlInput: {
-                  min: 0,
-                  step: 1000,
+                  inputMode: "numeric",
+                  pattern: "[0-9 ]*",
                 },
               }}
             />
@@ -2499,28 +2545,30 @@ const ClientSales = () => {
             />
           </Box>
 
-          <TextField
-            select
-            fullWidth
-            label="Pul tushadigan hisob"
-            value={paymentForm.account_id}
-            onChange={handlePaymentChange("account_id")}
-            helperText="Tanlanmasa Asosiy kassa ishlatiladi"
-          >
-            <MenuItem value="">Asosiy kassa (avtomatik)</MenuItem>
-            {accounts.map((account) => (
-              <MenuItem key={account.id} value={account.id}>
-                {account.name} — {formatMoney(account.balance)}
-              </MenuItem>
-            ))}
-          </TextField>
+          {ENABLE_MULTI_ACCOUNT_SELECTION && (
+            <TextField
+              select
+              fullWidth
+              label="Pul tushadigan hisob"
+              value={paymentForm.account_id}
+              onChange={handlePaymentChange("account_id")}
+              helperText="Tanlanmasa Asosiy kassa ishlatiladi"
+            >
+              <MenuItem value="">Asosiy kassa (avtomatik)</MenuItem>
+              {accounts.map((account) => (
+                <MenuItem key={account.id} value={account.id}>
+                  {account.name} — {formatMoney(account.balance)}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
 
           <Box
             sx={{
               p: 2,
               borderRadius: "18px",
 
-              background: "linear-gradient(135deg,#ffffff,#f8fafc)",
+              background: "linear-gradient(135deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 
               border: "1px solid rgba(148,163,184,.22)",
             }}
@@ -2538,7 +2586,7 @@ const ClientSales = () => {
                 sx={{
                   fontSize: 16,
                   fontWeight: 950,
-                  color: "#0f172a",
+                  color: "var(--aa-text)",
                 }}
               >
                 Qarz holati

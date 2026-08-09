@@ -167,7 +167,7 @@ const PlatformLogin = () => {
             md: "30px",
           },
           border: "1px solid rgba(148,163,184,.20)",
-          backgroundColor: "#ffffff",
+          backgroundColor: "var(--aa-surface-solid)",
           boxShadow: "0 35px 100px rgba(15,23,42,.16)",
           gridTemplateColumns: {
             xs: "1fr",
@@ -483,7 +483,7 @@ const PlatformLogin = () => {
             },
             display: "flex",
             alignItems: "center",
-            backgroundColor: "#ffffff",
+            backgroundColor: "var(--aa-surface-solid)",
           }}
         >
           <Box
@@ -527,7 +527,7 @@ const PlatformLogin = () => {
               component="h2"
               sx={{
                 mt: 1,
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 fontSize: {
                   xs: 29,
                   sm: 34,
@@ -543,7 +543,7 @@ const PlatformLogin = () => {
             <Typography
               sx={{
                 mt: 1.2,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 fontSize: 11.5,
                 lineHeight: 1.7,
               }}
@@ -607,7 +607,7 @@ const PlatformLogin = () => {
                           sx={{
                             minWidth: "auto",
                             px: 1,
-                            color: "#64748b",
+                            color: "var(--aa-text-secondary)",
                             fontSize: 9.5,
                             fontWeight: 900,
                             textTransform: "none",
@@ -682,7 +682,7 @@ const PlatformLogin = () => {
                 gap: 1.2,
                 borderRadius: "15px",
                 border: "1px solid #e7ebf0",
-                backgroundColor: "#f8fafc",
+                backgroundColor: "var(--aa-surface-muted)",
               }}
             >
               <Box
@@ -705,7 +705,7 @@ const PlatformLogin = () => {
               <Box>
                 <Typography
                   sx={{
-                    color: "#475569",
+                    color: "var(--aa-text-secondary)",
                     fontSize: 10,
                     fontWeight: 900,
                   }}
@@ -716,7 +716,7 @@ const PlatformLogin = () => {
                 <Typography
                   sx={{
                     mt: 0.35,
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
                     fontSize: 9,
                     lineHeight: 1.55,
                   }}
@@ -745,7 +745,7 @@ const PlatformLogin = () => {
 
 const fieldLabelSx = {
   mb: 0.8,
-  color: "#475569",
+  color: "var(--aa-text-secondary)",
   fontSize: 10,
   fontWeight: 900,
 };
@@ -754,7 +754,7 @@ const inputSx = {
   "& .MuiOutlinedInput-root": {
     minHeight: 52,
     borderRadius: "14px",
-    backgroundColor: "#f8fafc",
+    backgroundColor: "var(--aa-surface-muted)",
     transition: "background-color .2s ease, box-shadow .2s ease",
 
     "& fieldset": {
@@ -766,7 +766,7 @@ const inputSx = {
     },
 
     "&.Mui-focused": {
-      backgroundColor: "#ffffff",
+      backgroundColor: "var(--aa-surface-solid)",
       boxShadow: "0 0 0 4px rgba(153,27,27,.055)",
     },
 
@@ -777,7 +777,7 @@ const inputSx = {
   },
 
   "& input": {
-    color: "#0f172a",
+    color: "var(--aa-text)",
     fontSize: 11.5,
     fontWeight: 750,
   },

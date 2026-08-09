@@ -76,8 +76,8 @@ const PremiumDialog = ({
         sx={{
           px: 3,
           py: 2.1,
-          borderTop: "1px solid #edf0f3",
-          backgroundColor: "#fafbfc",
+          borderTop: "1px solid var(--aa-border)",
+          backgroundColor: "var(--aa-surface-muted)",
           ...actionsSx,
         }}
       >

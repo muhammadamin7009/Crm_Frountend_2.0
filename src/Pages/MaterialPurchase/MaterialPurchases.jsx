@@ -40,6 +40,7 @@ import {
 import CrmPagination from "../../Components/Common/CrmPagination";
 import { useAuth } from "../../Context/AuthContext";
 import { hasPermission } from "../../utils/permissions";
+import { ENABLE_MULTI_ACCOUNT_SELECTION } from "../../utils/features";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -96,6 +97,10 @@ const getLocalUser = () => {
 };
 
 const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
+const formatAmountInput = (value) =>
+  value === "" || value === null || value === undefined
+    ? ""
+    : new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
@@ -267,6 +272,18 @@ const MaterialPurchases = () => {
 
     0,
   );
+
+  const purchaseReady =
+    Boolean(purchaseForm.supplier_id) &&
+    purchaseForm.items.length > 0 &&
+    purchaseForm.items.every(
+      (item) =>
+        Boolean(item.raw_material_id) &&
+        item.quantity !== "" &&
+        Number(item.quantity) > 0 &&
+        item.unit_price !== "" &&
+        Number(item.unit_price) > 0,
+    );
 
   const totalStockQuantity = useMemo(
     () =>
@@ -657,7 +674,7 @@ const MaterialPurchases = () => {
       !purchaseForm.supplier_id ||
       purchaseForm.items.some(
         (item) =>
-          !item.raw_material_id || Number(item.quantity) <= 0 || Number(item.unit_price) < 0,
+          !item.raw_material_id || Number(item.quantity) <= 0 || Number(item.unit_price) <= 0,
       )
     ) {
       toast.error("Ta'minotchi va barcha xomashyo qatorlarini to'ldiring.");
@@ -937,7 +954,7 @@ const MaterialPurchases = () => {
           <Box>
             <Typography
               sx={{
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 fontSize: 15,
                 fontWeight: 950,
               }}
@@ -948,7 +965,7 @@ const MaterialPurchases = () => {
             <Typography
               sx={{
                 mt: 0.45,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10.5,
               }}
             >
@@ -1030,7 +1047,7 @@ const MaterialPurchases = () => {
                     <Typography
                       noWrap
                       sx={{
-                        color: "#334155",
+                        color: "var(--aa-text)",
 
                         fontSize: 12,
 
@@ -1044,7 +1061,7 @@ const MaterialPurchases = () => {
                       sx={{
                         mt: 0.3,
 
-                        color: "#94a3b8",
+                        color: "var(--aa-text-tertiary)",
 
                         fontSize: 9.5,
                       }}
@@ -1317,7 +1334,7 @@ const MaterialPurchases = () => {
           <Box>
             <Typography
               sx={{
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 fontSize: 15,
                 fontWeight: 950,
               }}
@@ -1328,7 +1345,7 @@ const MaterialPurchases = () => {
             <Typography
               sx={{
                 mt: 0.45,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10.5,
               }}
             >
@@ -1340,6 +1357,7 @@ const MaterialPurchases = () => {
         </Box>
 
         <Box
+          className="aa-mobile-records aa-material-purchases-table"
           sx={{
             minHeight: 0,
             flex: 1,
@@ -1412,7 +1430,7 @@ const MaterialPurchases = () => {
                         >
                           <Typography
                             sx={{
-                              color: "#334155",
+                              color: "var(--aa-text)",
 
                               fontSize: 12.5,
 
@@ -1426,7 +1444,7 @@ const MaterialPurchases = () => {
                             sx={{
                               mt: 0.35,
 
-                              color: "#94a3b8",
+                              color: "var(--aa-text-tertiary)",
 
                               fontSize: 9.5,
                             }}
@@ -1457,7 +1475,7 @@ const MaterialPurchases = () => {
                               sx={{
                                 maxWidth: 190,
 
-                                color: "#475569",
+                                color: "var(--aa-text-secondary)",
 
                                 fontSize: 10.5,
 
@@ -1470,7 +1488,7 @@ const MaterialPurchases = () => {
                             <Typography
                               noWrap
                               sx={{
-                                color: "#94a3b8",
+                                color: "var(--aa-text-tertiary)",
 
                                 fontSize: 9.5,
 
@@ -1501,7 +1519,7 @@ const MaterialPurchases = () => {
                     <TableCell>
                       <Typography
                         sx={{
-                          color: "#334155",
+                          color: "var(--aa-text)",
 
                           fontSize: 11.5,
 
@@ -1533,7 +1551,7 @@ const MaterialPurchases = () => {
                     <TableCell>
                       <Typography
                         sx={{
-                          color: "#475569",
+                          color: "var(--aa-text-secondary)",
 
                           fontSize: 10.5,
 
@@ -1549,7 +1567,7 @@ const MaterialPurchases = () => {
 
                           maxWidth: 220,
 
-                          color: "#94a3b8",
+                          color: "var(--aa-text-tertiary)",
 
                           fontSize: 9.5,
 
@@ -1586,7 +1604,7 @@ const MaterialPurchases = () => {
                     align="center"
                     sx={{
                       py: 8,
-                      color: "#94a3b8",
+                      color: "var(--aa-text-tertiary)",
                       fontWeight: 850,
                     }}
                   >
@@ -1602,7 +1620,7 @@ const MaterialPurchases = () => {
           sx={{
             borderTop: "1px solid #edf0f3",
 
-            backgroundColor: "#fafbfc",
+            backgroundColor: "var(--aa-surface-muted)",
           }}
         >
           <CrmPagination
@@ -1634,7 +1652,7 @@ const MaterialPurchases = () => {
 
             <Button
               variant="contained"
-              disabled={saving}
+              disabled={saving || !purchaseReady}
               onClick={savePurchase}
               sx={dialogPrimarySx}
             >
@@ -1720,7 +1738,7 @@ const MaterialPurchases = () => {
               <Box>
                 <Typography
                   sx={{
-                    color: "#334155",
+                    color: "var(--aa-text)",
 
                     fontSize: 15,
 
@@ -1734,7 +1752,7 @@ const MaterialPurchases = () => {
                   sx={{
                     mt: 0.4,
 
-                    color: "#94a3b8",
+                    color: "var(--aa-text-tertiary)",
 
                     fontSize: 10,
                   }}
@@ -1911,7 +1929,7 @@ const MaterialPurchases = () => {
 
               <Button
                 variant="contained"
-                disabled={saving}
+                disabled={saving || !quickMaterialForm.name.trim()}
                 onClick={saveQuickMaterial}
                 sx={dialogPrimarySx}
               >
@@ -1941,25 +1959,27 @@ const MaterialPurchases = () => {
             }}
           />
 
-          <TextField
-            select
-            label="Pul chiqadigan hisob"
-            value={purchaseForm.account_id}
-            onChange={(event) =>
-              setPurchaseForm((previous) => ({
-                ...previous,
-                account_id: event.target.value,
-              }))
-            }
-            helperText="Tanlanmasa Asosiy kassa ishlatiladi"
-          >
-            <MenuItem value="">Avtomatik — Asosiy kassa</MenuItem>
-            {accounts.map((account) => (
-              <MenuItem key={account.id} value={account.id}>
-                {account.name} — {money(account.balance)}
-              </MenuItem>
-            ))}
-          </TextField>
+          {ENABLE_MULTI_ACCOUNT_SELECTION && (
+            <TextField
+              select
+              label="Pul chiqadigan hisob"
+              value={purchaseForm.account_id}
+              onChange={(event) =>
+                setPurchaseForm((previous) => ({
+                  ...previous,
+                  account_id: event.target.value,
+                }))
+              }
+              helperText="Tanlanmasa Asosiy kassa ishlatiladi"
+            >
+              <MenuItem value="">Avtomatik — Asosiy kassa</MenuItem>
+              {accounts.map((account) => (
+                <MenuItem key={account.id} value={account.id}>
+                  {account.name} — {money(account.balance)}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
 
           <Box sx={balanceGridSx}>
             <BalanceBox label="Xarid" value={money(subtotal)} tone="blue" />
@@ -2003,7 +2023,7 @@ const MaterialPurchases = () => {
           <Box>
             <Typography
               sx={{
-                color: "#334155",
+                color: "var(--aa-text)",
                 fontSize: 15,
                 fontWeight: 950,
               }}
@@ -2014,7 +2034,7 @@ const MaterialPurchases = () => {
             <Typography
               sx={{
                 mt: 0.4,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10,
               }}
             >
@@ -2125,7 +2145,7 @@ const MaterialPurchases = () => {
 
             <Button
               variant="contained"
-              disabled={saving}
+              disabled={saving || !supplierForm.name.trim()}
               onClick={saveSupplier}
               sx={dialogPrimarySx}
             >
@@ -2141,6 +2161,7 @@ const MaterialPurchases = () => {
           }}
         >
           <Box
+            className="aa-mobile-records aa-suppliers-table"
             sx={{
               overflowX: "auto",
             }}
@@ -2195,7 +2216,7 @@ const MaterialPurchases = () => {
 
                           <Typography
                             sx={{
-                              color: "#334155",
+                              color: "var(--aa-text)",
 
                               fontSize: 10.5,
 
@@ -2255,7 +2276,7 @@ const MaterialPurchases = () => {
                       sx={{
                         py: 6,
 
-                        color: "#94a3b8",
+                        color: "var(--aa-text-tertiary)",
 
                         fontWeight: 850,
                       }}
@@ -2284,7 +2305,7 @@ const MaterialPurchases = () => {
 
             <Button
               variant="contained"
-              disabled={saving}
+              disabled={saving || !materialForm.name.trim()}
               onClick={saveMaterial}
               sx={dialogPrimarySx}
             >
@@ -2350,7 +2371,7 @@ const MaterialPurchases = () => {
 
             <Button
               variant="contained"
-              disabled={saving}
+              disabled={saving || !paymentForm.supplier_id || Number(paymentForm.amount || 0) <= 0}
               onClick={savePayment}
               sx={dialogPrimarySx}
             >
@@ -2370,6 +2391,7 @@ const MaterialPurchases = () => {
                 ...previous,
 
                 supplier_id: event.target.value,
+                amount: "",
               }))
             }
           >
@@ -2380,25 +2402,27 @@ const MaterialPurchases = () => {
             ))}
           </TextField>
 
-          <TextField
-            select
-            label="Pul chiqadigan hisob"
-            value={paymentForm.account_id}
-            onChange={(event) =>
-              setPaymentForm((previous) => ({
-                ...previous,
-                account_id: event.target.value,
-              }))
-            }
-            helperText="Tanlanmasa Asosiy kassa ishlatiladi"
-          >
-            <MenuItem value="">Avtomatik — Asosiy kassa</MenuItem>
-            {accounts.map((account) => (
-              <MenuItem key={account.id} value={account.id}>
-                {account.name} — {money(account.balance)}
-              </MenuItem>
-            ))}
-          </TextField>
+          {ENABLE_MULTI_ACCOUNT_SELECTION && (
+            <TextField
+              select
+              label="Pul chiqadigan hisob"
+              value={paymentForm.account_id}
+              onChange={(event) =>
+                setPaymentForm((previous) => ({
+                  ...previous,
+                  account_id: event.target.value,
+                }))
+              }
+              helperText="Tanlanmasa Asosiy kassa ishlatiladi"
+            >
+              <MenuItem value="">Avtomatik — Asosiy kassa</MenuItem>
+              {accounts.map((account) => (
+                <MenuItem key={account.id} value={account.id}>
+                  {account.name} — {money(account.balance)}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
 
           <Box
             sx={{
@@ -2414,19 +2438,26 @@ const MaterialPurchases = () => {
           >
             <TextField
               required
-              type="number"
+              type="text"
               label="Summa"
-              value={paymentForm.amount}
-              onChange={(event) =>
+              value={formatAmountInput(paymentForm.amount)}
+              disabled={!paymentForm.supplier_id}
+              helperText={
+                paymentForm.supplier_id
+                  ? "To‘lov summasini kiriting"
+                  : "Avval ta’minotchini tanlang"
+              }
+              onChange={(event) => {
+                const amount = event.target.value.replace(/\D/g, "");
+
                 setPaymentForm((previous) => ({
                   ...previous,
-
-                  amount: event.target.value,
-                }))
-              }
+                  amount,
+                }));
+              }}
               inputProps={{
-                min: 0,
-                step: 1000,
+                inputMode: "numeric",
+                pattern: "[0-9 ]*",
               }}
             />
 
@@ -2464,7 +2495,7 @@ const MaterialPurchases = () => {
 
               border: "1px solid #e7ebf0",
 
-              backgroundColor: "#f8fafc",
+              backgroundColor: "var(--aa-surface-muted)",
             }}
           >
             <BalanceBox label="Hozirgi qarz" value={money(paymentCurrentDebt)} tone="red" />
@@ -2671,13 +2702,13 @@ const heroSecondaryButtonSx = {
 const filterButtonSx = {
   minHeight: 40,
   px: 1.8,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   borderColor: "#dce3ea",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
-  backgroundColor: "#ffffff",
+  backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
     color: "#991b1b",
@@ -2756,7 +2787,7 @@ const stockCardSx = {
 
   border: "1px solid #e7ebf0",
 
-  background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+  background: "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 
   "&::after": {
     content: '""',
@@ -2772,7 +2803,7 @@ const stockCardSx = {
 };
 
 const tinyLabelSx = {
-  color: "#94a3b8",
+  color: "var(--aa-text-tertiary)",
   fontSize: 8.8,
   fontWeight: 800,
 };
@@ -2786,7 +2817,7 @@ const greenValueSx = {
 
 const darkValueSx = {
   mt: 0.4,
-  color: "#475569",
+  color: "var(--aa-text-secondary)",
   fontSize: 10,
   fontWeight: 900,
 };
@@ -2799,11 +2830,11 @@ const emptyStateSx = {
 
   border: "1px dashed #cbd5e1",
 
-  backgroundColor: "#f8fafc",
+  backgroundColor: "var(--aa-surface-muted)",
 };
 
 const emptyTextSx = {
-  color: "#94a3b8",
+  color: "var(--aa-text-tertiary)",
   fontSize: 11,
   fontWeight: 800,
 };
@@ -2820,20 +2851,20 @@ const tableSx = {
 
   "& th": {
     py: 1.55,
-    color: "#94a3b8",
+    color: "var(--aa-text-tertiary)",
     fontSize: 9.5,
     fontWeight: 900,
     letterSpacing: ".045em",
     textTransform: "uppercase",
 
-    backgroundColor: "#fafbfc",
+    backgroundColor: "var(--aa-surface-muted)",
 
     borderColor: "#edf0f3",
   },
 
   "& td": {
     py: 1.4,
-    color: "#64748b",
+    color: "var(--aa-text-secondary)",
     fontSize: 10.5,
     borderColor: "#edf0f3",
   },
@@ -2848,17 +2879,17 @@ const supplierTableSx = {
 
   "& th": {
     py: 1.45,
-    color: "#94a3b8",
+    color: "var(--aa-text-tertiary)",
     fontSize: 9.5,
     fontWeight: 900,
     textTransform: "uppercase",
 
-    backgroundColor: "#fafbfc",
+    backgroundColor: "var(--aa-surface-muted)",
   },
 
   "& td": {
     py: 1.35,
-    color: "#64748b",
+    color: "var(--aa-text-secondary)",
     fontSize: 10.5,
     borderColor: "#edf0f3",
   },
@@ -2870,7 +2901,7 @@ const dialogSectionSx = {
 
   border: "1px solid #e7ebf0",
 
-  background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+  background: "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 };
 
 const purchaseItemRowSx = {
@@ -2885,7 +2916,7 @@ const purchaseItemRowSx = {
   gap: 1.3,
   p: 1.4,
   borderRadius: "16px",
-  backgroundColor: "#ffffff",
+  backgroundColor: "var(--aa-surface-solid)",
 
   border: "1px solid #e7ebf0",
 };
@@ -2909,7 +2940,7 @@ const quickMaterialBoxSx = {
   gap: 1.3,
   p: 1.6,
   borderRadius: "18px",
-  backgroundColor: "#f8fafc",
+  backgroundColor: "var(--aa-surface-muted)",
 
   border: "1px solid #dce3ea",
 };
@@ -2926,13 +2957,13 @@ const balanceGridSx = {
   gap: 1.2,
   p: 1.5,
   borderRadius: "18px",
-  backgroundColor: "#f8fafc",
+  backgroundColor: "var(--aa-surface-muted)",
 
   border: "1px solid #e7ebf0",
 };
 
 const dialogCancelSx = {
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   fontWeight: 850,
   textTransform: "none",
@@ -2965,7 +2996,7 @@ const deleteButtonSx = {
 };
 
 const confirmTextSx = {
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   fontSize: 12.5,
   fontWeight: 700,
   lineHeight: 1.7,

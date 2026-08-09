@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../Context/AuthContext";
 import { getClientSales } from "../../api/clientSales";
 import { hasPermission } from "../../utils/permissions";
+import { ENABLE_MULTI_ACCOUNT_SELECTION } from "../../utils/features";
 import {
   closePayrollPeriod,
   createCashTransaction,
@@ -44,6 +45,24 @@ import {
 } from "../../api/finance";
 
 const today = () => new Date().toISOString().slice(0, 10);
+
+const isFinanceEntryReady = (name, form) => {
+  if (name === "payroll") {
+    return Boolean(form.period_from && form.period_to && form.payment_date);
+  }
+
+  if (name === "category") return Boolean(form.name?.trim());
+  if (name === "expense") return Boolean(form.title?.trim()) && Number(form.amount || 0) > 0;
+  if (name === "account") return Boolean(form.name?.trim() && form.account_type);
+  if (name === "transaction") {
+    return Boolean(form.account_id && form.transaction_type) && Number(form.amount || 0) > 0;
+  }
+  if (name === "return") {
+    return Boolean(form.client_sale_id) && Number(form.quantity || 0) > 0;
+  }
+
+  return true;
+};
 
 const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
 
@@ -98,7 +117,7 @@ const Card = ({ children, sx = {} }) => (
       overflow: "hidden",
       borderRadius: "22px",
       border: "1px solid #e4e9ef",
-      backgroundColor: "#ffffff",
+      backgroundColor: "var(--aa-surface-solid)",
 
       boxShadow: "0 14px 40px rgba(15,23,42,.045)",
 
@@ -177,6 +196,7 @@ const StatCard = ({ label, value, tone = "default", helper }) => {
 
   return (
     <Box
+      className="aa-mobile-compact-metric"
       sx={{
         minWidth: 0,
         p: 1.7,
@@ -189,7 +209,7 @@ const StatCard = ({ label, value, tone = "default", helper }) => {
     >
       <Typography
         sx={{
-          color: "#94a3b8",
+          color: "var(--aa-text-tertiary)",
           fontSize: 9.5,
           fontWeight: 800,
         }}
@@ -214,7 +234,7 @@ const StatCard = ({ label, value, tone = "default", helper }) => {
         <Typography
           sx={{
             mt: 0.45,
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 9,
             lineHeight: 1.5,
           }}
@@ -250,7 +270,7 @@ const SectionHeader = ({ title, subtitle, actions }) => (
     <Box>
       <Typography
         sx={{
-          color: "#0f172a",
+          color: "var(--aa-text)",
           fontSize: 15,
           fontWeight: 950,
         }}
@@ -262,7 +282,7 @@ const SectionHeader = ({ title, subtitle, actions }) => (
         <Typography
           sx={{
             mt: 0.45,
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 10,
             lineHeight: 1.55,
           }}
@@ -286,7 +306,7 @@ const PremiumDialog = (props) => (
 );
 const Grid = ({ heads, rows, onRow, minWidth = 820 }) => (
   <Card sx={{ boxShadow: "none" }}>
-    <Box sx={{ overflowX: "auto" }}>
+    <Box className="aa-mobile-records aa-finance-grid" sx={{ overflowX: "auto" }}>
       <Table
         size="small"
         sx={{
@@ -294,20 +314,20 @@ const Grid = ({ heads, rows, onRow, minWidth = 820 }) => (
 
           "& th": {
             py: 1.55,
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 9.5,
             fontWeight: 900,
             letterSpacing: ".045em",
             textTransform: "uppercase",
 
-            backgroundColor: "#fafbfc",
+            backgroundColor: "var(--aa-surface-muted)",
 
             borderColor: "#edf0f3",
           },
 
           "& td": {
             py: 1.4,
-            color: "#64748b",
+            color: "var(--aa-text-secondary)",
             fontSize: 10.5,
             borderColor: "#edf0f3",
           },
@@ -337,7 +357,9 @@ const Grid = ({ heads, rows, onRow, minWidth = 820 }) => (
                 }}
               >
                 {row.cells.map((value, cellIndex) => (
-                  <TableCell key={cellIndex}>{value}</TableCell>
+                  <TableCell key={cellIndex} data-label={heads[cellIndex]}>
+                    {value}
+                  </TableCell>
                 ))}
               </TableRow>
             ))
@@ -348,7 +370,7 @@ const Grid = ({ heads, rows, onRow, minWidth = 820 }) => (
                 align="center"
                 sx={{
                   py: 7,
-                  color: "#94a3b8",
+                  color: "var(--aa-text-tertiary)",
                   fontWeight: 850,
                 }}
               >
@@ -548,6 +570,11 @@ const Finance = () => {
     if (!canManage) {
       toast.error("Sizda moliyaviy amallarni bajarish uchun ruxsat yo‘q.");
 
+      return;
+    }
+
+    if (!isFinanceEntryReady(dialog, form)) {
+      toast.error("Barcha majburiy maydonlarni to‘g‘ri kiriting.");
       return;
     }
 
@@ -1042,17 +1069,19 @@ const Finance = () => {
                     px: 1.8,
                     flexShrink: 0,
 
-                    color: active ? "#ffffff" : "#64748b",
+                    color: active ? "#ffffff" : "var(--aa-text-secondary)",
 
                     borderRadius: "11px",
 
-                    border: active ? "1px solid rgba(153,27,27,.10)" : "1px solid #e1e7ed",
+                    border: active ? "1px solid rgba(153,27,27,.10)" : "1px solid var(--aa-border)",
 
                     fontSize: 10.5,
                     fontWeight: 900,
                     textTransform: "none",
 
-                    background: active ? "linear-gradient(135deg,#7f1d1d,#b91c1c)" : "#ffffff",
+                    background: active
+                      ? "linear-gradient(135deg,#7f1d1d,#b91c1c)"
+                      : "var(--aa-surface-solid)",
 
                     boxShadow: active ? "0 8px 20px rgba(127,29,29,.18)" : "none",
 
@@ -1160,7 +1189,7 @@ const Finance = () => {
               <Typography
                 sx={{
                   mt: 1.3,
-                  color: "#94a3b8",
+                  color: "var(--aa-text-tertiary)",
                   fontSize: 10.5,
                   fontWeight: 800,
                 }}
@@ -1509,7 +1538,17 @@ const Expenses = ({ data, open, canManage }) => (
 );
 
 const Accounts = ({ data, open, canManage }) => {
-  const totalBalance = (data.accounts || []).reduce(
+  const allAccounts = data.accounts || [];
+  const primaryAccount =
+    allAccounts.find((item) => String(item.name || "").toLowerCase() === "asosiy kassa") ||
+    allAccounts.find((item) => item.account_type === "cash") ||
+    allAccounts[0];
+  const visibleAccounts = ENABLE_MULTI_ACCOUNT_SELECTION
+    ? allAccounts
+    : primaryAccount
+      ? [primaryAccount]
+      : [];
+  const totalBalance = visibleAccounts.reduce(
     (sum, item) => sum + Number(item.balance || 0),
 
     0,
@@ -1530,27 +1569,29 @@ const Accounts = ({ data, open, canManage }) => {
                 }}
                 spacing={1}
               >
-                <Button
-                  variant="outlined"
-                  onClick={() =>
-                    open("account", {
-                      name: "",
+                {ENABLE_MULTI_ACCOUNT_SELECTION && (
+                  <Button
+                    variant="outlined"
+                    onClick={() =>
+                      open("account", {
+                        name: "",
 
-                      account_type: "cash",
+                        account_type: "cash",
 
-                      opening_balance: "",
-                    })
-                  }
-                  sx={secondaryButtonSx}
-                >
-                  Hisob yaratish
-                </Button>
+                        opening_balance: "",
+                      })
+                    }
+                    sx={secondaryButtonSx}
+                  >
+                    Hisob yaratish
+                  </Button>
+                )}
 
                 <Button
                   variant="contained"
                   onClick={() =>
                     open("transaction", {
-                      account_id: "",
+                      account_id: primaryAccount?.id || "",
 
                       transaction_type: "income",
 
@@ -1588,7 +1629,7 @@ const Accounts = ({ data, open, canManage }) => {
         >
           <StatCard label="Umumiy balans" value={money(totalBalance)} tone="green" />
 
-          {(data.accounts || []).slice(0, 3).map((item, index) => (
+          {visibleAccounts.slice(0, 3).map((item, index) => (
             <StatCard
               key={item.id}
               label={`${item.name} / ${item.account_type || "hisob"}`}
@@ -1989,20 +2030,22 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
           ))}
         </TextField>
 
-        <TextField
-          select
-          label="Moliyaviy hisob"
-          value={form.account_id || ""}
-          onChange={field("account_id")}
-        >
-          <MenuItem value="">Hisobsiz</MenuItem>
+        {ENABLE_MULTI_ACCOUNT_SELECTION && (
+          <TextField
+            select
+            label="Moliyaviy hisob"
+            value={form.account_id || ""}
+            onChange={field("account_id")}
+          >
+            <MenuItem value="">Hisobsiz</MenuItem>
 
-          {(data.accounts || []).map((item) => (
-            <MenuItem key={item.id} value={item.id}>
-              {item.name} — {money(item.balance)}
-            </MenuItem>
-          ))}
-        </TextField>
+            {(data.accounts || []).map((item) => (
+              <MenuItem key={item.id} value={item.id}>
+                {item.name} — {money(item.balance)}
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
 
         {input("title", "Xarajat nomi")}
 
@@ -2054,18 +2097,20 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
   if (name === "transaction") {
     fields = (
       <>
-        <TextField
-          select
-          label="Hisob"
-          value={form.account_id || ""}
-          onChange={field("account_id")}
-        >
-          {(data.accounts || []).map((item) => (
-            <MenuItem key={item.id} value={item.id}>
-              {item.name} — {money(item.balance)}
-            </MenuItem>
-          ))}
-        </TextField>
+        {ENABLE_MULTI_ACCOUNT_SELECTION && (
+          <TextField
+            select
+            label="Hisob"
+            value={form.account_id || ""}
+            onChange={field("account_id")}
+          >
+            {(data.accounts || []).map((item) => (
+              <MenuItem key={item.id} value={item.id}>
+                {item.name} — {money(item.balance)}
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
 
         <TextField
           select
@@ -2124,20 +2169,22 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
 
         {input("returned_at", "Sana", "date")}
 
-        <TextField
-          select
-          label="Pul qaytariladigan hisob"
-          value={form.refund_account_id || ""}
-          onChange={field("refund_account_id")}
-          helperText="Qaytarish ortiqcha to‘lov hosil qilsa ishlatiladi"
-        >
-          <MenuItem value="">Avtomatik — Asosiy kassa</MenuItem>
-          {(data.accounts || []).map((item) => (
-            <MenuItem key={item.id} value={item.id}>
-              {item.name} — {money(item.balance)}
-            </MenuItem>
-          ))}
-        </TextField>
+        {ENABLE_MULTI_ACCOUNT_SELECTION && (
+          <TextField
+            select
+            label="Pul qaytariladigan hisob"
+            value={form.refund_account_id || ""}
+            onChange={field("refund_account_id")}
+            helperText="Qaytarish ortiqcha to‘lov hosil qilsa ishlatiladi"
+          >
+            <MenuItem value="">Avtomatik — Asosiy kassa</MenuItem>
+            {(data.accounts || []).map((item) => (
+              <MenuItem key={item.id} value={item.id}>
+                {item.name} — {money(item.balance)}
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
 
         {input("reason", "Sabab", "text", {
           multiline: true,
@@ -2159,7 +2206,12 @@ const EntryDialog = ({ name, form, field, close, save, saving, data }) => {
             Bekor qilish
           </Button>
 
-          <Button variant="contained" disabled={saving} onClick={save} sx={dialogPrimarySx}>
+          <Button
+            variant="contained"
+            disabled={saving || !isFinanceEntryReady(name, form)}
+            onClick={save}
+            sx={dialogPrimarySx}
+          >
             {saving ? "Saqlanmoqda..." : "Saqlash"}
           </Button>
         </>
@@ -2208,13 +2260,13 @@ const primaryButtonSx = {
 const secondaryButtonSx = {
   minHeight: 40,
   px: 1.8,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   borderColor: "#dce3ea",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
-  backgroundColor: "#ffffff",
+  backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
     color: "#991b1b",
@@ -2233,7 +2285,7 @@ const tableActionSx = {
 };
 
 const dialogCancelSx = {
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   fontWeight: 850,
   textTransform: "none",
@@ -2259,7 +2311,7 @@ const dialogPrimarySx = {
 };
 
 const strongCellSx = {
-  color: "#334155",
+  color: "var(--aa-text)",
   fontSize: 10.5,
   fontWeight: 900,
 };

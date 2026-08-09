@@ -145,8 +145,8 @@ const Surface = ({ children, sx = {} }) => (
     sx={{
       overflow: "hidden",
       borderRadius: "22px",
-      border: "1px solid #e4e9ef",
-      backgroundColor: "#ffffff",
+      border: "1px solid var(--aa-border)",
+      backgroundColor: "var(--aa-surface-solid)",
       boxShadow: "0 14px 40px rgba(15,23,42,.045)",
       ...sx,
     }}
@@ -163,16 +163,16 @@ const InfoItem = ({ label, value, accent = false }) => (
       p: 1.65,
       borderRadius: "16px",
 
-      border: accent ? "1px solid rgba(153,27,27,.14)" : "1px solid #e7ebf0",
+      border: accent ? "1px solid rgba(153,27,27,.24)" : "1px solid var(--aa-border)",
 
       background: accent
-        ? "linear-gradient(145deg,rgba(153,27,27,.055),#ffffff)"
-        : "linear-gradient(145deg,#ffffff,#f8fafc)",
+        ? "linear-gradient(145deg,var(--aa-brand-100),var(--aa-surface-solid))"
+        : "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
     }}
   >
     <Typography
       sx={{
-        color: "#94a3b8",
+        color: "var(--aa-text-tertiary)",
         fontSize: 9.5,
         fontWeight: 750,
       }}
@@ -185,7 +185,7 @@ const InfoItem = ({ label, value, accent = false }) => (
       sx={{
         mt: 0.65,
 
-        color: accent ? "#991b1b" : "#334155",
+        color: accent ? "var(--aa-brand-600)" : "var(--aa-text)",
 
         fontSize: 12,
         fontWeight: 900,
@@ -233,7 +233,7 @@ const PricePanel = ({ label, value, tone = "green", helper }) => {
     >
       <Typography
         sx={{
-          color: "#64748b",
+          color: "var(--aa-text-secondary)",
           fontSize: 10,
           fontWeight: 800,
         }}
@@ -258,7 +258,7 @@ const PricePanel = ({ label, value, tone = "green", helper }) => {
         <Typography
           sx={{
             mt: 0.6,
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 9.5,
           }}
         >
@@ -294,7 +294,7 @@ const SectionHeader = ({ title, subtitle, actions }) => (
     <Box>
       <Typography
         sx={{
-          color: "#0f172a",
+          color: "var(--aa-text)",
           fontSize: 16,
           fontWeight: 950,
           letterSpacing: "-.02em",
@@ -307,7 +307,7 @@ const SectionHeader = ({ title, subtitle, actions }) => (
         <Typography
           sx={{
             mt: 0.55,
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 10.5,
             lineHeight: 1.55,
           }}
@@ -715,7 +715,7 @@ const Product = () => {
 
         <Typography
           sx={{
-            color: "#94a3b8",
+            color: "var(--aa-text-tertiary)",
             fontSize: 12.5,
             fontWeight: 750,
           }}
@@ -1056,10 +1056,10 @@ const Product = () => {
               overflow: "hidden",
               borderRadius: "19px",
 
-              border: "1px solid #e7ebf0",
+              border: "1px solid var(--aa-border)",
 
               background:
-                "radial-gradient(circle at 100% 0%,rgba(153,27,27,.06),transparent 34%),linear-gradient(145deg,#f8fafc,#ffffff)",
+                "radial-gradient(circle at 100% 0%,rgba(153,27,27,.10),transparent 34%),linear-gradient(145deg,var(--aa-surface-muted),var(--aa-surface-solid))",
             }}
           >
             {activeImage ? (
@@ -1119,7 +1119,7 @@ const Product = () => {
                       overflow: "hidden",
                       borderRadius: "14px",
 
-                      border: selected ? "2px solid #991b1b" : "1px solid #e4e9ef",
+                      border: selected ? "2px solid #991b1b" : "1px solid var(--aa-border)",
 
                       boxShadow: selected ? "0 9px 22px rgba(153,27,27,.14)" : "none",
                     }}
@@ -1146,14 +1146,14 @@ const Product = () => {
                 textAlign: "center",
                 borderRadius: "15px",
 
-                border: "1px dashed #cbd5e1",
+                border: "1px dashed var(--aa-border-strong)",
 
-                backgroundColor: "#f8fafc",
+                backgroundColor: "var(--aa-surface-muted)",
               }}
             >
               <Typography
                 sx={{
-                  color: "#94a3b8",
+                  color: "var(--aa-text-tertiary)",
                   fontSize: 11,
                   fontWeight: 750,
                 }}
@@ -1247,15 +1247,15 @@ const Product = () => {
               p: 2,
               borderRadius: "18px",
 
-              border: "1px solid #e7ebf0",
+              border: "1px solid var(--aa-border)",
 
               background:
-                "radial-gradient(circle at 100% 0%,rgba(153,27,27,.055),transparent 32%),linear-gradient(145deg,#ffffff,#f8fafc)",
+                "radial-gradient(circle at 100% 0%,rgba(153,27,27,.08),transparent 32%),linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
             }}
           >
             <Typography
               sx={{
-                color: "#334155",
+                color: "var(--aa-text)",
                 fontSize: 12,
                 fontWeight: 950,
               }}
@@ -1266,7 +1266,7 @@ const Product = () => {
             <Typography
               sx={{
                 mt: 0.8,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 fontSize: 11,
                 lineHeight: 1.75,
                 wordBreak: "break-word",
@@ -1335,9 +1335,10 @@ const Product = () => {
                     p: 1.8,
                     borderRadius: "18px",
 
-                    border: "1px solid #e7ebf0",
+                    border: "1px solid var(--aa-border)",
 
-                    background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+                    background:
+                      "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 
                     "&::after": {
                       content: '""',
@@ -1373,7 +1374,7 @@ const Product = () => {
                       <Typography
                         noWrap
                         sx={{
-                          color: "#334155",
+                          color: "var(--aa-text)",
 
                           fontSize: 12.5,
 
@@ -1387,7 +1388,7 @@ const Product = () => {
                         noWrap
                         sx={{
                           mt: 0.4,
-                          color: "#94a3b8",
+                          color: "var(--aa-text-tertiary)",
 
                           fontSize: 9.5,
                         }}
@@ -1442,7 +1443,15 @@ const Product = () => {
               <Button
                 variant="contained"
                 onClick={handleSaveRecipe}
-                disabled={recipeSaving}
+                disabled={
+                  recipeSaving ||
+                  Boolean(
+                    completionDepartmentId &&
+                    recipeRows.some(
+                      (row) => !row.raw_material_id || Number(row.quantity_per_pair || 0) <= 0,
+                    ),
+                  )
+                }
                 sx={primaryButtonSx}
               >
                 {recipeSaving ? "Saqlanmoqda..." : "Retseptni saqlash"}
@@ -1503,9 +1512,10 @@ const Product = () => {
                     p: 1.5,
                     borderRadius: "17px",
 
-                    border: "1px solid #e7ebf0",
+                    border: "1px solid var(--aa-border)",
 
-                    background: "linear-gradient(145deg,#ffffff,#f8fafc)",
+                    background:
+                      "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
                   }}
                 >
                   <TextField
@@ -1603,7 +1613,7 @@ const Product = () => {
 
             <Typography
               sx={{
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10,
                 fontWeight: 750,
               }}
@@ -1728,14 +1738,14 @@ const Product = () => {
 
             borderTop: "1px solid #edf0f3",
 
-            backgroundColor: "#fafbfc",
+            backgroundColor: "var(--aa-surface-muted)",
           }}
         >
           <Button
             onClick={closeDepartmentModal}
             disabled={departmentSaving}
             sx={{
-              color: "#64748b",
+              color: "var(--aa-text-secondary)",
               fontWeight: 850,
               textTransform: "none",
             }}
@@ -1746,7 +1756,9 @@ const Product = () => {
           <Button
             variant="contained"
             onClick={handleCreateDepartment}
-            disabled={departmentSaving}
+            disabled={
+              departmentSaving || !departmentForm.name.trim() || !departmentForm.code.trim()
+            }
             sx={primaryButtonSx}
           >
             {departmentSaving ? "Saqlanmoqda..." : "Bo‘limni saqlash"}
@@ -1773,13 +1785,13 @@ const darkChipSx = {
 const secondaryButtonSx = {
   minHeight: 40,
   px: 1.8,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "12px",
   borderColor: "#dce3ea",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
-  backgroundColor: "#ffffff",
+  backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
     color: "#991b1b",

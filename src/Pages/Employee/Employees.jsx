@@ -198,8 +198,8 @@ const RoleChip = ({ role }) => {
   };
 
   const current = styles[role] || {
-    color: "#64748b",
-    background: "#f1f5f9",
+    color: "var(--aa-text-secondary)",
+    background: "var(--aa-surface-muted)",
     border: "#e2e8f0",
   };
 
@@ -832,7 +832,7 @@ const Employees = () => {
           <Box>
             <Typography
               sx={{
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 fontSize: 14,
                 fontWeight: 950,
               }}
@@ -843,7 +843,7 @@ const Employees = () => {
             <Typography
               sx={{
                 mt: 0.4,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
               }}
             >
@@ -915,7 +915,7 @@ const Employees = () => {
           <Box>
             <Typography
               sx={{
-                color: "#0f172a",
+                color: "var(--aa-text)",
                 fontSize: 15,
                 fontWeight: 950,
               }}
@@ -926,7 +926,7 @@ const Employees = () => {
             <Typography
               sx={{
                 mt: 0.45,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 10.5,
               }}
             >
@@ -949,6 +949,7 @@ const Employees = () => {
         </Box>
 
         <Box
+          className="aa-mobile-records aa-employees-table"
           sx={{
             minHeight: 0,
             flex: 1,
@@ -962,18 +963,18 @@ const Employees = () => {
 
               "& th": {
                 py: 1.55,
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
                 fontWeight: 900,
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
-                backgroundColor: "#fafbfc",
+                backgroundColor: "var(--aa-surface-muted)",
                 borderColor: "#edf0f3",
               },
 
               "& td": {
                 py: 1.4,
-                color: "#64748b",
+                color: "var(--aa-text-secondary)",
                 fontSize: 10.5,
                 borderColor: "#edf0f3",
               },
@@ -1057,7 +1058,7 @@ const Employees = () => {
                             noWrap
                             sx={{
                               maxWidth: 210,
-                              color: "#334155",
+                              color: "var(--aa-text)",
                               fontSize: 12.5,
                               fontWeight: 900,
                             }}
@@ -1070,7 +1071,7 @@ const Employees = () => {
                             sx={{
                               maxWidth: 210,
                               mt: 0.4,
-                              color: "#94a3b8",
+                              color: "var(--aa-text-tertiary)",
                               fontSize: 9.5,
                             }}
                           >
@@ -1087,7 +1088,7 @@ const Employees = () => {
                     <TableCell>
                       <Typography
                         sx={{
-                          color: "#334155",
+                          color: "var(--aa-text)",
                           fontSize: 10.5,
                           fontWeight: 900,
                         }}
@@ -1100,7 +1101,7 @@ const Employees = () => {
                           sx={{
                             mt: 0.35,
                             maxWidth: 200,
-                            color: "#94a3b8",
+                            color: "var(--aa-text-tertiary)",
                             fontSize: 9,
                             lineHeight: 1.45,
                           }}
@@ -1149,7 +1150,7 @@ const Employees = () => {
                     <TableCell>
                       <Typography
                         sx={{
-                          color: "#475569",
+                          color: "var(--aa-text-secondary)",
                           fontSize: 10.5,
                           fontWeight: 850,
                         }}
@@ -1163,7 +1164,7 @@ const Employees = () => {
                     <TableCell>
                       <Typography
                         sx={{
-                          color: "#475569",
+                          color: "var(--aa-text-secondary)",
                           fontSize: 10.5,
                           fontWeight: 850,
                         }}
@@ -1193,7 +1194,7 @@ const Employees = () => {
                     align="center"
                     sx={{
                       py: 8,
-                      color: "#94a3b8",
+                      color: "var(--aa-text-tertiary)",
                       fontWeight: 850,
                     }}
                   >
@@ -1221,7 +1222,7 @@ const Employees = () => {
 
             <Button
               variant="contained"
-              disabled={saving}
+              disabled={saving || !positionForm.name.trim()}
               onClick={savePosition}
               sx={dialogPrimarySx}
             >
@@ -1294,7 +1295,7 @@ const Employees = () => {
 
             <Button
               variant="contained"
-              disabled={saving}
+              disabled={saving || !profileForm.user_id || !profileForm.position_id}
               onClick={saveProfile}
               sx={dialogPrimarySx}
             >
@@ -1400,7 +1401,17 @@ const Employees = () => {
 
             <Button
               variant="contained"
-              disabled={saving}
+              disabled={
+                saving ||
+                !agreementForm.employee_id ||
+                !agreementForm.payment_type ||
+                (agreementForm.payment_type === "fixed_salary" &&
+                  Number(agreementForm.fixed_amount || 0) <= 0) ||
+                (agreementForm.payment_type === "daily_rate" &&
+                  Number(agreementForm.daily_rate || 0) <= 0) ||
+                (agreementForm.payment_type === "commission" &&
+                  Number(agreementForm.commission_percent || 0) <= 0)
+              }
               onClick={saveAgreement}
               sx={dialogPrimarySx}
             >
@@ -1559,12 +1570,12 @@ const Employees = () => {
               p: 1.6,
               borderRadius: "17px",
               border: "1px solid #e7ebf0",
-              backgroundColor: "#f8fafc",
+              backgroundColor: "var(--aa-surface-muted)",
             }}
           >
             <Typography
               sx={{
-                color: "#94a3b8",
+                color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
                 fontWeight: 800,
               }}
@@ -1575,7 +1586,7 @@ const Employees = () => {
             <Typography
               sx={{
                 mt: 0.6,
-                color: "#334155",
+                color: "var(--aa-text)",
                 fontSize: 13,
                 fontWeight: 950,
               }}
@@ -1657,13 +1668,13 @@ const heroSecondaryButtonSx = {
 const secondaryButtonSx = {
   minHeight: 40,
   px: 1.8,
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   borderColor: "#dce3ea",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
-  backgroundColor: "#ffffff",
+  backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
     color: "#991b1b",
@@ -1682,7 +1693,7 @@ const tableActionSx = {
 };
 
 const dialogCancelSx = {
-  color: "#64748b",
+  color: "var(--aa-text-secondary)",
   borderRadius: "11px",
   fontWeight: 850,
   textTransform: "none",
