@@ -61,7 +61,6 @@ const emptyForm = {
 
 const emptyPaymentForm = {
   client_id: "",
-  client_sale_id: "",
   amount: "",
   account_id: "",
   paid_at: new Date().toISOString().slice(0, 10),
@@ -223,6 +222,7 @@ const ClientSales = () => {
   const [paymentForm, setPaymentForm] = useState(emptyPaymentForm);
 
   const [paymentBalance, setPaymentBalance] = useState({
+    opening_debt_amount: 0,
     total_amount: 0,
     paid_amount: 0,
     debt_amount: 0,
@@ -632,6 +632,7 @@ const ClientSales = () => {
   const fetchPaymentBalance = useCallback(async (clientId) => {
     if (!clientId) {
       setPaymentBalance({
+        opening_debt_amount: 0,
         total_amount: 0,
         paid_amount: 0,
         debt_amount: 0,
@@ -649,6 +650,7 @@ const ClientSales = () => {
 
       setPaymentBalance(
         data.balance || {
+          opening_debt_amount: 0,
           total_amount: 0,
           paid_amount: 0,
           debt_amount: 0,
@@ -667,31 +669,21 @@ const ClientSales = () => {
     const nextForm = {
       ...emptyPaymentForm,
       client_id: sale?.client_id || filters.client_id || "",
-      client_sale_id: sale?.id || "",
-      note: sale ? `${sale.product_name || "Savdo"} qarzidan to'lov` : "",
+      note: "Mijoz qarzi uchun to'lov",
     };
 
     setPaymentForm(nextForm);
 
-    setPaymentBalance(
-      sale
-        ? {
-            total_amount: Number(sale.total_amount || 0),
-
-            paid_amount: Number(sale.current_paid_amount ?? sale.paid_amount ?? 0),
-
-            debt_amount: Number(sale.remaining_debt ?? sale.debt_amount ?? 0),
-          }
-        : {
-            total_amount: 0,
-            paid_amount: 0,
-            debt_amount: 0,
-          },
-    );
+    setPaymentBalance({
+      opening_debt_amount: 0,
+      total_amount: 0,
+      paid_amount: 0,
+      debt_amount: 0,
+    });
 
     setPaymentOpen(true);
 
-    if (!sale && nextForm.client_id) {
+    if (nextForm.client_id) {
       fetchPaymentBalance(nextForm.client_id);
     }
   };
@@ -702,32 +694,10 @@ const ClientSales = () => {
     setPaymentForm((previous) => ({
       ...previous,
       [field]: value,
-
-      ...(field === "client_id"
-        ? {
-            client_sale_id: "",
-          }
-        : {}),
     }));
 
     if (field === "client_id") {
       fetchPaymentBalance(value);
-    }
-
-    if (field === "client_sale_id") {
-      const sale = sales.find((item) => Number(item.id) === Number(value));
-
-      if (sale) {
-        setPaymentBalance({
-          total_amount: Number(sale.total_amount || 0),
-
-          paid_amount: Number(sale.current_paid_amount ?? sale.paid_amount ?? 0),
-
-          debt_amount: Number(sale.remaining_debt ?? sale.debt_amount ?? 0),
-        });
-      } else if (paymentForm.client_id) {
-        fetchPaymentBalance(paymentForm.client_id);
-      }
     }
   };
 
@@ -740,6 +710,7 @@ const ClientSales = () => {
     setPaymentForm(emptyPaymentForm);
 
     setPaymentBalance({
+      opening_debt_amount: 0,
       total_amount: 0,
       paid_amount: 0,
       debt_amount: 0,
@@ -917,12 +888,6 @@ const ClientSales = () => {
       return false;
     }
 
-    if (!paymentForm.client_sale_id) {
-      toast.error("Qaysi savdodan to'lov qilinishini tanlang.");
-
-      return false;
-    }
-
     if (!paymentForm.amount || Number(paymentForm.amount) <= 0) {
       toast.error("To'lov summasini to'g'ri kiriting.");
 
@@ -949,8 +914,6 @@ const ClientSales = () => {
       await createClientPayment({
         client_id: Number(paymentForm.client_id),
 
-        client_sale_id: Number(paymentForm.client_sale_id),
-
         amount: Number(paymentForm.amount),
 
         account_id: paymentForm.account_id ? Number(paymentForm.account_id) : undefined,
@@ -960,7 +923,7 @@ const ClientSales = () => {
         note: paymentForm.note.trim() || null,
       });
 
-      toast.success("Mijoz to'lovi kiritildi.");
+      toast.success("To'lov mijozning umumiy qarzidan ayirildi.");
 
       closeModals();
       refreshPage();
@@ -2446,7 +2409,6 @@ const ClientSales = () => {
               disabled={
                 paymentSaving ||
                 !paymentForm.client_id ||
-                !paymentForm.client_sale_id ||
                 Number(paymentForm.amount || 0) <= 0 ||
                 Number(paymentForm.amount || 0) > Number(paymentBalance.debt_amount || 0)
               }
@@ -2482,29 +2444,20 @@ const ClientSales = () => {
             ))}
           </TextField>
 
-          <TextField
-            select
-            required
-            label="Qaysi savdodan"
-            value={paymentForm.client_sale_id}
-            onChange={handlePaymentChange("client_sale_id")}
-            disabled={Boolean(selectedSale)}
-            helperText="Savdoni tanlash majburiy"
+          <Box
+            sx={{
+              p: 1.4,
+              color: "var(--aa-text-secondary)",
+              border: "1px solid var(--aa-border)",
+              borderRadius: "14px",
+              background: "var(--aa-surface-muted)",
+              fontSize: 12,
+              lineHeight: 1.6,
+            }}
           >
-            {sales
-              .filter(
-                (sale) =>
-                  !paymentForm.client_id ||
-                  Number(sale.client_id) === Number(paymentForm.client_id),
-              )
-              .filter((sale) => Number(sale.remaining_debt ?? sale.debt_amount ?? 0) > 0)
-              .map((sale) => (
-                <MenuItem key={sale.id} value={sale.id}>
-                  #{sale.id} - {sale.product_name} / qarz{" "}
-                  {formatMoney(sale.remaining_debt ?? sale.debt_amount)}
-                </MenuItem>
-              ))}
-          </TextField>
+            Savdoni tanlash shart emas. Kiritilgan pul mijozning boshlang'ich qarzi va savdolardan
+            yig'ilgan umumiy qarzidan kamayadi.
+          </Box>
 
           <Box
             sx={{
@@ -2534,7 +2487,7 @@ const ClientSales = () => {
                   ? "Summa qolgan qarzdan oshmasin"
                   : paymentBalanceLoading
                     ? "Qarz aniqlanmoqda..."
-                    : `Qarz: ${formatMoney(paymentBalance.debt_amount)}`
+                    : `Jami qarz: ${formatMoney(paymentBalance.debt_amount)}`
               }
               slotProps={{
                 htmlInput: {
@@ -2620,20 +2573,18 @@ const ClientSales = () => {
               }}
             >
               <BalanceBox
-                label="Savdo"
-                value={formatMoney(paymentBalance.total_amount)}
+                label="Boshlang'ich qarz"
+                value={formatMoney(paymentBalance.opening_debt_amount)}
+                tone="orange"
+              />
+
+              <BalanceBox
+                label="Jami qarz"
+                value={formatMoney(paymentBalance.debt_amount)}
                 tone="blue"
               />
 
-              <BalanceBox label="Kirim" value={formatMoney(paymentForm.amount)} tone="green" />
-
-              <BalanceBox
-                label="Jami to'langan"
-                value={formatMoney(
-                  Number(paymentBalance.paid_amount || 0) + Number(paymentForm.amount || 0),
-                )}
-                tone="green"
-              />
+              <BalanceBox label="To'lov" value={formatMoney(paymentForm.amount)} tone="green" />
 
               <BalanceBox
                 label="Qolgan qarz"
