@@ -85,6 +85,8 @@ const formatMoney = (value) => {
 };
 
 const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
+const formatAmountInput = (value) =>
+  value === "" || value === null || value === undefined ? "" : formatNumber(value);
 
 const formatDate = (value) => {
   if (!value) return "-";
@@ -2046,10 +2048,14 @@ const ClientSales = () => {
 
                 <TextField
                   required
-                  type="number"
+                  type="text"
                   label="Sotish narxi"
-                  value={form.unit_price}
-                  onChange={handleFormChange("unit_price")}
+                  value={formatAmountInput(form.unit_price)}
+                  onChange={(event) => {
+                    const unitPrice = event.target.value.replace(/\D/g, "");
+
+                    setForm((previous) => ({ ...previous, unit_price: unitPrice }));
+                  }}
                   helperText={
                     selectedProduct
                       ? `Standart narx: ${formatMoney(selectedProduct.sale_price)}`
@@ -2057,8 +2063,8 @@ const ClientSales = () => {
                   }
                   slotProps={{
                     htmlInput: {
-                      min: 0,
-                      step: 1000,
+                      inputMode: "numeric",
+                      pattern: "[0-9 ]*",
                     },
                   }}
                 />
@@ -2233,16 +2239,18 @@ const ClientSales = () => {
                     />
 
                     <TextField
-                      type="number"
+                      type="text"
                       label="Sotish narxi"
-                      value={item.unit_price}
-                      onChange={(event) =>
-                        handleSaleItemChange(index, "unit_price", event.target.value)
-                      }
+                      value={formatAmountInput(item.unit_price)}
+                      onChange={(event) => {
+                        const unitPrice = event.target.value.replace(/\D/g, "");
+
+                        handleSaleItemChange(index, "unit_price", unitPrice);
+                      }}
                       slotProps={{
                         htmlInput: {
-                          min: 0,
-                          step: 1000,
+                          inputMode: "numeric",
+                          pattern: "[0-9 ]*",
                         },
                       }}
                     />
@@ -2291,10 +2299,14 @@ const ClientSales = () => {
           )}
           <TextField
             fullWidth
-            type="number"
+            type="text"
             label="To'langan summa"
-            value={form.paid_amount}
-            onChange={handleFormChange("paid_amount")}
+            value={formatAmountInput(form.paid_amount)}
+            onChange={(event) => {
+              const paidAmount = event.target.value.replace(/\D/g, "");
+
+              setForm((previous) => ({ ...previous, paid_amount: paidAmount }));
+            }}
             error={preview.overPaid}
             helperText={
               preview.overPaid
@@ -2303,8 +2315,8 @@ const ClientSales = () => {
             }
             slotProps={{
               htmlInput: {
-                min: 0,
-                step: 1000,
+                inputMode: "numeric",
+                pattern: "[0-9 ]*",
               },
             }}
           />
