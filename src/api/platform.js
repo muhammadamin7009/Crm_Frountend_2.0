@@ -11,6 +11,14 @@ platformApi.interceptors.request.use((config) => {
 });
 
 export const platformLogin = (data) => platformApi.post("/login", data);
+export const submitCompanyApplication = (data) => platformApi.post("/applications", data);
+export const getCompanyApplicationStatus = (slug) =>
+  platformApi.get(`/applications/status/${encodeURIComponent(slug)}`);
+export const getCompanyApplications = (params) => platformApi.get("/applications", { params });
+export const approveCompanyApplication = (id, data = {}) =>
+  platformApi.post(`/applications/${id}/approve`, data);
+export const rejectCompanyApplication = (id, data = {}) =>
+  platformApi.post(`/applications/${id}/reject`, data);
 export const getCompanies = () => platformApi.get("/companies");
 export const getSubscriptionPlans = () => platformApi.get("/plans");
 export const createCompany = (data) => platformApi.post("/companies", data);

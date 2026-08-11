@@ -23,6 +23,7 @@ import {
 } from "@mui/material";
 
 import PageHeader from "../../Components/UI/PageHeader";
+import MoneyTextField from "../../Components/UI/MoneyTextField";
 import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import CrmPagination from "../../Components/Common/CrmPagination";
 import { useAuth } from "../../Context/AuthContext";
@@ -208,7 +209,9 @@ const Orders = () => {
         getUsers({ role: "client", limit: 100, offset: 0 }),
         getProducts({ limit: 100, offset: 0, is_active: true }),
         getWarehouses().catch(() => ({ data: { warehouses: [] } })),
-        getFinancialAccounts().catch(() => ({ data: { financial_accounts: [] } })),
+        ENABLE_MULTI_ACCOUNT_SELECTION
+          ? getFinancialAccounts().catch(() => ({ data: { financial_accounts: [] } }))
+          : Promise.resolve({ data: { financial_accounts: [] } }),
         getDepartments({ is_active: true, limit: 100 }),
         canManage ? getWorkflowWorkers() : Promise.resolve({ data: { workers: [] } }),
       ]);
@@ -361,6 +364,16 @@ const Orders = () => {
       setSaving(false);
     }
   };
+
+  const lastOrderItemComplete = useMemo(() => {
+    const item = form.items.at(-1);
+    return Boolean(
+      item?.product_id &&
+      Number(item.quantity) > 0 &&
+      item.unit_price !== "" &&
+      Number(item.unit_price) >= 0,
+    );
+  }, [form.items]);
 
   const changeStatus = async (order, status) => {
     try {
@@ -1002,12 +1015,13 @@ const Orders = () => {
                   select
                   size="small"
                   label="Mahsulot"
+                  disabled={!form.client_id}
                   value={item.product_id}
                   onChange={(event) => changeItem(index, "product_id", event.target.value)}
                 >
                   {products.map((product) => (
                     <MenuItem key={product.id} value={product.id}>
-                      {product.name}
+                      {product.name} • {product.color || "-"} • {money(product.sale_price)}
                       {product.sku ? ` · ${product.sku}` : ""}
                     </MenuItem>
                   ))}
@@ -1016,14 +1030,15 @@ const Orders = () => {
                   size="small"
                   type="number"
                   label="Miqdor"
+                  disabled={!item.product_id}
                   value={item.quantity}
                   onChange={(event) => changeItem(index, "quantity", event.target.value)}
                   inputProps={{ min: 0.01, step: 0.01 }}
                 />
-                <TextField
+                <MoneyTextField
                   size="small"
-                  type="number"
                   label="Narx"
+                  disabled={!item.product_id || Number(item.quantity) <= 0}
                   value={item.unit_price}
                   onChange={(event) => changeItem(index, "unit_price", event.target.value)}
                   inputProps={{ min: 0 }}
@@ -1043,6 +1058,7 @@ const Orders = () => {
               </Box>
             ))}
             <Button
+              disabled={!lastOrderItemComplete}
               onClick={() =>
                 setForm((current) => ({ ...current, items: [...current.items, { ...emptyItem }] }))
               }
@@ -1561,8 +1577,7 @@ const Orders = () => {
                 setConversionForm((current) => ({ ...current, sold_at: event.target.value }))
               }
             />
-            <TextField
-              type="number"
+            <MoneyTextField
               label="Boshlang'ich to'lov"
               value={conversionForm.paid_amount}
               onChange={(event) =>

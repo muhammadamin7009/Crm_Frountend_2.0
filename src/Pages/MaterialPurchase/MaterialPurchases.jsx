@@ -20,6 +20,7 @@ import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
 import BalanceBox from "../../Components/UI/BalanceBox";
+import MoneyTextField from "../../Components/UI/MoneyTextField";
 import { getFinancialAccounts } from "../../api/finance";
 
 import Card from "../../Components/UI/AppCard";
@@ -307,7 +308,9 @@ const MaterialPurchases = () => {
           limit: 100,
         }),
 
-        getFinancialAccounts(),
+        ENABLE_MULTI_ACCOUNT_SELECTION
+          ? getFinancialAccounts()
+          : Promise.resolve({ data: { financial_accounts: [] } }),
       ]);
 
       const rows = suppliersRes.data.suppliers || [];
@@ -1859,9 +1862,8 @@ const MaterialPurchases = () => {
                     }}
                   />
 
-                  <TextField
+                  <MoneyTextField
                     required
-                    type="number"
                     label="Birlik narxi"
                     value={item.unit_price}
                     onChange={(event) =>
@@ -1873,10 +1875,6 @@ const MaterialPurchases = () => {
                         event.target.value,
                       )
                     }
-                    inputProps={{
-                      min: 0,
-                      step: 1000,
-                    }}
                   />
 
                   <Button
@@ -1942,8 +1940,7 @@ const MaterialPurchases = () => {
             </Box>
           )}
 
-          <TextField
-            type="number"
+          <MoneyTextField
             label="To‘lanadigan summa"
             value={purchaseForm.paid_amount}
             onChange={(event) =>
@@ -1953,10 +1950,6 @@ const MaterialPurchases = () => {
                 paid_amount: event.target.value,
               }))
             }
-            inputProps={{
-              min: 0,
-              step: 1000,
-            }}
           />
 
           {ENABLE_MULTI_ACCOUNT_SELECTION && (

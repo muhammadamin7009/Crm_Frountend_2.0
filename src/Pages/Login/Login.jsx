@@ -1,12 +1,13 @@
-import { Box, Button, Checkbox, FormControlLabel, Paper, Typography } from "@mui/material";
+import { Alert, Box, Button, Checkbox, FormControlLabel, Paper, Typography } from "@mui/material";
 import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import api from "../../api/axios";
 import { getCompanyBranding } from "../../api/companyBranding";
+import { getCompanyApplicationStatus } from "../../api/platform";
 import AuthBrandPanel from "../../Components/Auth/AuthBrandPanel";
 import { useAuth } from "../../Context/AuthContext";
 import SiteLogo from "../../images/zerr_02_logo.png";
@@ -96,6 +97,7 @@ const secondaryButtonSx = {
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setUser } = useAuth();
 
   const [loading, setLoading] = useState(false);
@@ -104,6 +106,9 @@ const Login = () => {
   const [setupResult, setSetupResult] = useState(null);
   const [branding, setBranding] = useState(null);
   const [, setBrandingLoading] = useState(false);
+  const [applicationStatus, setApplicationStatus] = useState(
+    location.state?.companyApplication || null,
+  );
 
   const {
     register,
@@ -115,7 +120,7 @@ const Login = () => {
     defaultValues: {
       username: "",
       password: "",
-      company_slug: getCompanySlug(),
+      company_slug: location.state?.companyApplication?.company_slug || getCompanySlug(),
     },
   });
 
@@ -152,6 +157,26 @@ const Login = () => {
         setBranding(null);
       } finally {
         setBrandingLoading(false);
+      }
+    }, 350);
+
+    return () => clearTimeout(timeout);
+  }, [companySlug]);
+
+  useEffect(() => {
+    const slug = normalizeCompanySlug(companySlug);
+
+    if (!slug) {
+      setApplicationStatus(null);
+      return undefined;
+    }
+
+    const timeout = setTimeout(async () => {
+      try {
+        const { data } = await getCompanyApplicationStatus(slug);
+        setApplicationStatus(data?.status ? data : null);
+      } catch {
+        setApplicationStatus(null);
       }
     }, 350);
 
@@ -283,14 +308,22 @@ const Login = () => {
         ? "Google Authenticator ilovasidagi kodni kiriting."
         : "Hisobingizga kirish uchun ma’lumotlaringizni kiriting.";
 
+  const applicationSeverity = ["rejected", "deleted"].includes(applicationStatus?.status)
+    ? "error"
+    : applicationStatus?.status === "approved"
+      ? "success"
+      : "warning";
+
   return (
     <Box
       className="auth-page"
       sx={{
         minHeight: "100vh",
-        p: { xs: 1.5, sm: 3, lg: 4 },
+        height: { lg: "100dvh" },
+        p: { xs: 1.5, sm: 3, lg: 3 },
         display: "flex",
         alignItems: "center",
+        overflow: { lg: "hidden" },
         background:
           "radial-gradient(circle at 10% 8%,rgba(127,29,29,.075),transparent 28%),#f5f6f8",
       }}
@@ -301,7 +334,8 @@ const Login = () => {
         sx={{
           width: "100%",
           maxWidth: 1480,
-          minHeight: { xs: "calc(100vh - 24px)", lg: 820 },
+          minHeight: { xs: "calc(100vh - 24px)", lg: 0 },
+          height: { lg: "min(820px, calc(100dvh - 48px))" },
           mx: "auto",
           display: "grid",
           gridTemplateColumns: {
@@ -320,11 +354,13 @@ const Login = () => {
         <Box
           className="auth-form-panel"
           sx={{
-            minHeight: { xs: "calc(100vh - 24px)", lg: 820 },
-            p: { xs: 2.5, sm: 5, lg: 7, xl: 9 },
+            minHeight: { xs: "calc(100vh - 24px)", lg: 0 },
+            height: { lg: "100%" },
+            p: { xs: 2.5, sm: 5, lg: "clamp(24px, 4vh, 56px)" },
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            overflowY: { lg: "auto" },
             background:
               "radial-gradient(circle at 92% 5%,rgba(127,29,29,.04),transparent 28%),#ffffff",
           }}
@@ -406,7 +442,7 @@ const Login = () => {
               </Box>
             </Box>
 
-            <Box sx={{ mb: 4 }}>
+            <Box sx={{ mb: applicationStatus ? 2.75 : 4 }}>
               <Typography
                 component="h2"
                 sx={{
@@ -433,6 +469,33 @@ const Login = () => {
                 {pageDescription}
               </Typography>
             </Box>
+
+            {applicationStatus && !challenge && !setupResult && (
+              <Alert
+                severity={applicationSeverity}
+                sx={{
+                  mb: 0.5,
+                  py: 0.25,
+                  borderRadius: "14px",
+                  alignItems: "center",
+                  fontSize: 12.5,
+                  fontWeight: 700,
+
+                  "& .MuiAlert-message": {
+                    py: 0.5,
+                  },
+                }}
+              >
+                {applicationStatus.message ||
+                  (applicationStatus.status === "pending"
+                    ? "Korxona arizangiz tasdiqlanishi kutilmoqda."
+                    : applicationStatus.status === "rejected"
+                      ? "Korxona arizangiz rad etilgan."
+                      : applicationStatus.status === "deleted"
+                        ? "Bu korxona platformadan o‘chirilgan. Qayta ochish uchun ariza yuboring."
+                        : "Korxonangiz tasdiqlangan. Tizimga kirishingiz mumkin.")}
+              </Alert>
+            )}
 
             {setupResult ? (
               <Box sx={{ display: "grid", gap: 2 }}>
@@ -636,7 +699,7 @@ const Login = () => {
                   <TextField
                     fullWidth
                     label="Korxona kodi"
-                    placeholder="Masalan: zerrshoes"
+                    placeholder="Masalan: alamin"
                     autoComplete="organization"
                     error={Boolean(errors.company_slug)}
                     helperText={

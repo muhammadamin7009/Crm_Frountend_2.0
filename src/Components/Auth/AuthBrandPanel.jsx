@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import MrLogo from "../../images/mr-logo.png";
+import AlAminCrmLogo from "../../images/al-amin-crm-logo.png";
 
 const loginHighlights = [
   {
@@ -51,26 +51,75 @@ export default function AuthBrandPanel({
 
   const resolvedHighlights = highlights || (isRegister ? registerHighlights : loginHighlights);
 
-  const displayLogo = companyLogo || MrLogo;
+  const displayLogo = companyLogo || AlAminCrmLogo;
 
   return (
     <Box
       component="section"
+      className="auth-brand-panel"
       sx={{
         position: "relative",
         display: {
           xs: "none",
           lg: "flex",
         },
-        minHeight: 850,
+        minHeight: { lg: 0 },
+        height: { lg: "100%" },
         p: {
-          lg: 5,
-          xl: 7,
+          lg: "clamp(24px, 4vh, 56px)",
         },
         flexDirection: "column",
         justifyContent: "space-between",
         overflow: "hidden",
         color: "#ffffff",
+
+        "@media (min-width: 1200px) and (max-height: 780px)": {
+          p: 2,
+
+          "& .auth-brand-hero": {
+            mt: 2,
+          },
+
+          "& .auth-brand-hero h1": {
+            fontSize: 36,
+          },
+
+          "& .auth-brand-description": {
+            mt: 1.7,
+            fontSize: 14,
+            lineHeight: 1.55,
+          },
+
+          "& .auth-register-security": {
+            my: 0.75,
+            p: 0.8,
+          },
+
+          "& .auth-highlight-grid": {
+            p: 0.8,
+          },
+
+          "& .auth-highlight-card": {
+            minHeight: 80,
+            p: 1.2,
+          },
+
+          "& .auth-highlight-icon": {
+            width: 32,
+            height: 32,
+            mb: 0.8,
+          },
+
+          "& .auth-highlight-label": {
+            mt: 0.4,
+            fontSize: 10.5,
+            lineHeight: 1.35,
+          },
+
+          "& .auth-brand-status": {
+            mt: 0,
+          },
+        },
 
         background: isRegister
           ? `
@@ -215,6 +264,7 @@ export default function AuthBrandPanel({
         }}
       >
         <Box
+          className="auth-brand-hero"
           sx={{
             display: "flex",
             alignItems: "center",
@@ -281,10 +331,7 @@ export default function AuthBrandPanel({
         <Box
           sx={{
             maxWidth: 610,
-            mt: {
-              lg: isRegister ? 8.5 : 10,
-              xl: isRegister ? 10 : 12,
-            },
+            mt: `clamp(32px, ${isRegister ? "7vh" : "8vh"}, ${isRegister ? "80px" : "96px"})`,
           }}
         >
           {isRegister && (
@@ -332,8 +379,7 @@ export default function AuthBrandPanel({
               m: 0,
               color: "#ffffff",
               fontSize: {
-                lg: 44,
-                xl: 53,
+                lg: "clamp(38px, 3.5vw, 53px)",
               },
               lineHeight: 1.07,
               fontWeight: 950,
@@ -353,6 +399,7 @@ export default function AuthBrandPanel({
           </Typography>
 
           <Typography
+            className="auth-brand-description"
             sx={{
               maxWidth: 555,
               mt: 3.5,
@@ -368,6 +415,7 @@ export default function AuthBrandPanel({
 
         {isRegister && (
           <Box
+            className="auth-register-security"
             sx={{
               position: "relative",
               maxWidth: "100%",
@@ -442,6 +490,7 @@ export default function AuthBrandPanel({
         }}
       >
         <Box
+          className="auth-highlight-grid"
           sx={{
             display: "grid",
             gridTemplateColumns: "repeat(3,minmax(0,1fr))",
@@ -457,8 +506,9 @@ export default function AuthBrandPanel({
           {resolvedHighlights.map((item, index) => (
             <Box
               key={`${item.value}-${index}`}
+              className="auth-highlight-card"
               sx={{
-                minHeight: 142,
+                minHeight: "clamp(104px, 15vh, 142px)",
                 p: 2,
                 borderRadius: "17px",
                 border: "1px solid rgba(255,255,255,.06)",
@@ -478,6 +528,7 @@ export default function AuthBrandPanel({
               }}
             >
               <Box
+                className="auth-highlight-icon"
                 sx={{
                   width: 39,
                   height: 39,
@@ -497,6 +548,7 @@ export default function AuthBrandPanel({
               </Box>
 
               <Typography
+                className="auth-highlight-label"
                 sx={{
                   color: "#ffffff",
                   fontSize: 15.5,
@@ -521,6 +573,7 @@ export default function AuthBrandPanel({
         </Box>
 
         <Box
+          className="auth-brand-status"
           sx={{
             mt: 2.4,
             display: "flex",

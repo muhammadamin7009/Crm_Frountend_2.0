@@ -134,7 +134,7 @@ const PlatformLogin = () => {
         display: "grid",
         placeItems: "center",
         overflow: "hidden",
-        backgroundColor: "#f4f6f8",
+        backgroundColor: "var(--aa-page-bg)",
         backgroundImage: `
           radial-gradient(
             circle at 0% 0%,

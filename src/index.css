@@ -1764,18 +1764,21 @@ textarea,
     content: "Turi";
   }
   .aa-inventory-stock-table td:nth-child(3)::before {
-    content: "Ombor";
+    content: "Rang";
   }
   .aa-inventory-stock-table td:nth-child(4)::before {
-    content: "Qoldiq";
+    content: "Ombor";
   }
   .aa-inventory-stock-table td:nth-child(5)::before {
-    content: "Minimum";
+    content: "Qoldiq";
   }
   .aa-inventory-stock-table td:nth-child(6)::before {
-    content: "Holat";
+    content: "Minimum";
   }
   .aa-inventory-stock-table td:nth-child(7)::before {
+    content: "Holat";
+  }
+  .aa-inventory-stock-table td:nth-child(8)::before {
     content: "Amal";
   }
 
@@ -1823,16 +1826,20 @@ textarea,
   }
   .aa-inventory-count-entry-table td:nth-child(3)::before,
   .aa-inventory-count-detail-table td:nth-child(3)::before {
+    content: "Rang";
+  }
+  .aa-inventory-count-entry-table td:nth-child(4)::before,
+  .aa-inventory-count-detail-table td:nth-child(4)::before {
     content: "Tizimdagi";
   }
-  .aa-inventory-count-entry-table td:nth-child(4)::before {
+  .aa-inventory-count-entry-table td:nth-child(5)::before {
     content: "Haqiqiy sanov";
   }
-  .aa-inventory-count-detail-table td:nth-child(4)::before {
+  .aa-inventory-count-detail-table td:nth-child(5)::before {
     content: "Sanalgan";
   }
-  .aa-inventory-count-entry-table td:nth-child(5)::before,
-  .aa-inventory-count-detail-table td:nth-child(5)::before {
+  .aa-inventory-count-entry-table td:nth-child(6)::before,
+  .aa-inventory-count-detail-table td:nth-child(6)::before {
     content: "Farq";
   }
 

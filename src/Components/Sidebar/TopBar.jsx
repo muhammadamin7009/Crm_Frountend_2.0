@@ -63,7 +63,7 @@ const mobileLinks = [
     label: "Mijozlar",
     path: "/clients",
     roles: ["super_admin", "admin"],
-    permission: "users.view",
+    permission: "clients.view",
   },
   {
     label: "Lavozimlar",
@@ -125,6 +125,12 @@ const mobileLinks = [
     roles: ["super_admin", "admin"],
     feature: "finance",
     permission: "finance.view",
+  },
+  {
+    label: "Ruxsatlar",
+    path: "/permissions",
+    roles: ["super_admin", "admin"],
+    permission: "permissions.manage",
   },
   {
     label: "Amallar tarixi",

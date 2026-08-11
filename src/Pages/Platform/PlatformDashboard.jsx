@@ -24,13 +24,16 @@ import { toast } from "react-toastify";
 
 import Card from "../../Components/UI/AppCard";
 import {
+  approveCompanyApplication,
   createCompany,
   createSubscriptionPayment,
   deleteCompany,
+  getCompanyApplications,
   getCompanies,
   getCompanyManagement,
   getSubscriptionPlans,
   resetCompanyAuthenticator,
+  rejectCompanyApplication,
   updateCompany,
   updateCompanyManagement,
 } from "../../api/platform";
@@ -350,6 +353,12 @@ const PlatformDashboard = () => {
 
   const [plans, setPlans] = useState([]);
 
+  const [applications, setApplications] = useState([]);
+
+  const [applicationsOpen, setApplicationsOpen] = useState(false);
+
+  const [applicationActionId, setApplicationActionId] = useState(null);
+
   const [loading, setLoading] = useState(true);
 
   const [dialog, setDialog] = useState("");
@@ -422,15 +431,23 @@ const PlatformDashboard = () => {
     setLoading(true);
 
     try {
-      const [companiesRes, plansRes] = await Promise.all([getCompanies(), getSubscriptionPlans()]);
+      const [companiesRes, plansRes, applicationsRes] = await Promise.all([
+        getCompanies(),
+        getSubscriptionPlans(),
+        getCompanyApplications(),
+      ]);
 
       const companiesData = companiesRes?.data || companiesRes || {};
 
       const plansData = plansRes?.data || plansRes || {};
 
+      const applicationsData = applicationsRes?.data || applicationsRes || {};
+
       setCompanies(companiesData.companies || []);
 
       setPlans(plansData.subscription_plans || []);
+
+      setApplications(applicationsData.applications || []);
     } catch (error) {
       if (error?.response?.status === 401) {
         localStorage.removeItem("platform_token");
@@ -451,6 +468,43 @@ const PlatformDashboard = () => {
   useEffect(() => {
     load();
   }, [load]);
+
+  const pendingApplications = applications.filter(
+    (application) => application.status === "pending",
+  );
+
+  const reviewApplication = async (application, decision, adminPassword = "") => {
+    if (applicationActionId) return;
+
+    if (
+      decision === "reject" &&
+      !window.confirm(`${application.company_name} korxonasi arizasini rad etasizmi?`)
+    ) {
+      return;
+    }
+
+    setApplicationActionId(application.id);
+
+    try {
+      if (decision === "approve") {
+        const defaultPlan = plans.find((plan) => plan.code === "business") || plans[0];
+        await approveCompanyApplication(application.id, {
+          plan_code: defaultPlan?.code,
+          ...(adminPassword ? { admin_password: adminPassword } : {}),
+        });
+        toast.success("Ariza qabul qilindi va yangi korxona yaratildi.");
+      } else {
+        await rejectCompanyApplication(application.id);
+        toast.success("Ariza rad etildi.");
+      }
+
+      await load();
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Arizani ko‘rib chiqishda xato.");
+    } finally {
+      setApplicationActionId(null);
+    }
+  };
 
   const closeDialog = () => {
     if (saving) return;
@@ -737,7 +791,7 @@ const PlatformDashboard = () => {
           lg: 3,
         },
 
-        backgroundColor: "#f4f6f8",
+        backgroundColor: "var(--aa-page-bg)",
 
         backgroundImage:
           "radial-gradient(circle at 0% 0%,rgba(153,27,27,.07),transparent 28%),radial-gradient(circle at 100% 100%,rgba(15,23,42,.06),transparent 32%)",
@@ -896,6 +950,34 @@ const PlatformDashboard = () => {
                   sx={heroPrimaryButtonSx}
                 >
                   + Korxona qo‘shish
+                </Button>
+
+                <Button
+                  onClick={() => setApplicationsOpen(true)}
+                  sx={{ ...heroSecondaryButtonSx, position: "relative" }}
+                >
+                  🔔 Arizalar
+                  {pendingApplications.length > 0 && (
+                    <Box
+                      component="span"
+                      sx={{
+                        minWidth: 20,
+                        height: 20,
+                        ml: 0.8,
+                        px: 0.6,
+                        display: "inline-grid",
+                        placeItems: "center",
+                        borderRadius: 99,
+                        color: "#ffffff",
+                        fontSize: 9,
+                        fontWeight: 950,
+                        backgroundColor: "#dc2626",
+                        boxShadow: "0 0 0 3px rgba(220,38,38,.16)",
+                      }}
+                    >
+                      {pendingApplications.length}
+                    </Box>
+                  )}
                 </Button>
 
                 <Button onClick={logout} sx={heroSecondaryButtonSx}>
@@ -1622,9 +1704,192 @@ const PlatformDashboard = () => {
         plans={plans}
         resetAuthenticator={resetAuthenticator}
       />
+
+      <ApplicationInbox
+        open={applicationsOpen}
+        applications={applications}
+        actionId={applicationActionId}
+        onClose={() => {
+          if (!applicationActionId) setApplicationsOpen(false);
+        }}
+        onReview={reviewApplication}
+      />
     </Box>
   );
 };
+
+const ApplicationInbox = ({ open, applications, actionId, onClose, onReview }) => {
+  const [adminPasswords, setAdminPasswords] = useState({});
+  const statusLabel = {
+    pending: "Kutilmoqda",
+    approved: "Qabul qilingan",
+    rejected: "Rad etilgan",
+  };
+  const statusColor = { pending: "warning", approved: "success", rejected: "error" };
+
+  return (
+    <PremiumDialog
+      open={open}
+      onClose={onClose}
+      title="Yangi korxona arizalari"
+      subtitle="Ro‘yxatdan o‘tgan korxonalarni ko‘rib chiqing va qaror qabul qiling"
+      maxWidth="md"
+      actions={
+        <Button onClick={onClose} disabled={Boolean(actionId)} sx={dialogCancelSx}>
+          Yopish
+        </Button>
+      }
+    >
+      <Stack spacing={1.5}>
+        {applications.length ? (
+          applications.map((application) => {
+            const requiresPassword =
+              application.status === "rejected" && application.has_password === false;
+            const adminPassword = adminPasswords[application.id] || "";
+
+            return (
+              <Box
+                key={application.id}
+                sx={{
+                  p: { xs: 1.5, sm: 2 },
+                  borderRadius: "18px",
+                  border: "1px solid var(--aa-border)",
+                  backgroundColor: "var(--aa-surface-muted)",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    justifyContent: "space-between",
+                    gap: 1.5,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <Box>
+                    <Typography sx={{ color: "var(--aa-text)", fontSize: 15, fontWeight: 950 }}>
+                      {application.company_name}
+                    </Typography>
+                    <Typography
+                      sx={{ mt: 0.35, color: "var(--aa-text-secondary)", fontSize: 11.5 }}
+                    >
+                      Korxona kodi: <strong>{application.company_slug}</strong>
+                    </Typography>
+                  </Box>
+
+                  <Chip
+                    size="small"
+                    color={statusColor[application.status] || "default"}
+                    label={statusLabel[application.status] || application.status}
+                    variant="outlined"
+                    sx={{ fontWeight: 850 }}
+                  />
+                </Box>
+
+                <Box
+                  sx={{
+                    mt: 1.5,
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", sm: "repeat(2,minmax(0,1fr))" },
+                    gap: 1,
+                  }}
+                >
+                  <ApplicationDetail label="Korxona nomi" value={application.company_name} />
+                  <ApplicationDetail
+                    label="Bosh administrator"
+                    value={`${application.first_name} ${application.last_name}`}
+                  />
+                  <ApplicationDetail label="Foydalanuvchi nomi" value={application.username} />
+                  <ApplicationDetail label="Telefon" value={application.phone || "Kiritilmagan"} />
+                  <ApplicationDetail label="Yuborilgan sana" value={date(application.created_at)} />
+                </Box>
+
+                {application.rejection_reason && (
+                  <Typography sx={{ mt: 1.2, color: "#ef4444", fontSize: 11 }}>
+                    Rad etish sababi: {application.rejection_reason}
+                  </Typography>
+                )}
+
+                {requiresPassword && (
+                  <TextField
+                    fullWidth
+                    required
+                    type="password"
+                    label="Yangi administrator paroli"
+                    value={adminPassword}
+                    onChange={(event) =>
+                      setAdminPasswords((current) => ({
+                        ...current,
+                        [application.id]: event.target.value,
+                      }))
+                    }
+                    autoComplete="new-password"
+                    helperText="Eski arizada parol saqlanmagan. Kamida 6 belgili yangi parol kiriting."
+                    sx={{ mt: 1.5 }}
+                  />
+                )}
+
+                {["pending", "rejected"].includes(application.status) && (
+                  <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ mt: 1.7 }}>
+                    <Button
+                      variant="contained"
+                      disabled={Boolean(actionId) || (requiresPassword && adminPassword.length < 6)}
+                      onClick={() =>
+                        onReview(application, "approve", requiresPassword ? adminPassword : "")
+                      }
+                      sx={dialogPrimarySx}
+                    >
+                      {actionId === application.id
+                        ? "Bajarilmoqda..."
+                        : application.status === "rejected"
+                          ? "Rad etilgan arizani qabul qilish"
+                          : "Taklifni qabul qilish"}
+                    </Button>
+                    {application.status === "pending" && (
+                      <Button
+                        color="error"
+                        variant="outlined"
+                        disabled={Boolean(actionId)}
+                        onClick={() => onReview(application, "reject")}
+                        sx={secondaryButtonSx}
+                      >
+                        Rad etish
+                      </Button>
+                    )}
+                  </Stack>
+                )}
+              </Box>
+            );
+          })
+        ) : (
+          <Box sx={{ py: 6, textAlign: "center" }}>
+            <Typography sx={{ color: "var(--aa-text)", fontWeight: 900 }}>
+              Hozircha korxona arizalari yo‘q
+            </Typography>
+          </Box>
+        )}
+      </Stack>
+    </PremiumDialog>
+  );
+};
+
+const ApplicationDetail = ({ label, value }) => (
+  <Box
+    sx={{
+      p: 1.2,
+      borderRadius: "12px",
+      border: "1px solid var(--aa-border)",
+      backgroundColor: "var(--aa-surface-solid)",
+    }}
+  >
+    <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 9, fontWeight: 850 }}>
+      {label}
+    </Typography>
+    <Typography sx={{ mt: 0.35, color: "var(--aa-text)", fontSize: 11.5, fontWeight: 850 }}>
+      {value}
+    </Typography>
+  </Box>
+);
 
 const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthenticator }) => {
   if (!dialog) return null;

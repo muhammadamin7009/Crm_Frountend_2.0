@@ -20,70 +20,6 @@ import { toast } from "react-toastify";
 import Card from "../../Components/UI/AppCard";
 import { getPermissionSettings, updateUserPermissions } from "../../api/permissions";
 
-const presets = [
-  {
-    label: "Omborchi",
-    roles: ["worker"],
-
-    description: "Ombor qoldig‘i, kirim-chiqim va inventarizatsiya bilan ishlaydi.",
-
-    permissions: ["inventory.view", "inventory.movements", "inventory.count"],
-  },
-
-  {
-    label: "Ishlab chiqarish admini",
-    roles: ["admin"],
-
-    description:
-      "Xodim, mahsulot va ish hisobotlarini yuritadi. Moliyaviy ma’lumotlar yopiq qoladi.",
-
-    permissions: [
-      "dashboard.view",
-      "users.view",
-      "products.view",
-      "production.view",
-      "production.manage",
-      "payroll.view",
-    ],
-  },
-
-  {
-    label: "Savdo admini",
-    roles: ["admin"],
-
-    description: "Mijoz savdosi va mijoz to‘lovlarini yuritadi.",
-
-    permissions: ["dashboard.view", "products.view", "client_sales.view", "client_sales.manage"],
-  },
-
-  {
-    label: "Xomashyo admini",
-    roles: ["admin"],
-
-    description: "Ta’minotchi, xomashyo xaridi va to‘lovlarini yuritadi.",
-
-    permissions: ["dashboard.view", "material_purchases.view", "material_purchases.manage"],
-  },
-
-  {
-    label: "Hisobchi",
-    roles: ["admin"],
-
-    description: "Oylik, kassa, xarajat va moliyaviy hisobotlarni ko‘radi va yuritadi.",
-
-    permissions: [
-      "dashboard.view",
-      "dashboard.finance",
-      "payroll.view",
-      "payroll.manage",
-      "client_sales.view",
-      "material_purchases.view",
-      "finance.view",
-      "finance.manage",
-    ],
-  },
-];
-
 const roleNames = {
   super_admin: "Super administrator",
   admin: "Administrator",
@@ -143,6 +79,9 @@ const normalizePermissions = (permissions = []) => {
 
   return [...current];
 };
+
+const sanitizePermissions = (permissions, validKeys) =>
+  normalizePermissions(permissions).filter((key) => validKeys.has(key));
 
 const getInitials = (user) => {
   const first = user?.first_name?.[0] || "";
@@ -213,7 +152,7 @@ const PresetCard = ({ preset, onClick }) => (
       color: "var(--aa-text)",
       textAlign: "left",
       borderRadius: "17px",
-      borderColor: "#e4e9ef",
+      borderColor: "var(--aa-border)",
       textTransform: "none",
 
       background: "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
@@ -346,7 +285,7 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
             borderRadius: "10px",
             color: allSelected ? "#b91c1c" : "#64748b",
 
-            borderColor: allSelected ? "rgba(220,38,38,.20)" : "#dce3ea",
+            borderColor: allSelected ? "rgba(220,38,38,.20)" : "var(--aa-border)",
 
             fontSize: 9.5,
             fontWeight: 900,
@@ -372,7 +311,7 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
           mb: 1.8,
           height: 7,
           borderRadius: 99,
-          backgroundColor: "#edf1f5",
+          backgroundColor: "var(--aa-surface-muted)",
 
           "& .MuiLinearProgress-bar": {
             borderRadius: 99,
@@ -398,9 +337,9 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
                 cursor: "pointer",
                 borderRadius: "14px",
 
-                border: checked ? "1px solid rgba(153,27,27,.17)" : "1px solid #e7ebf0",
+                border: checked ? "1px solid rgba(153,27,27,.17)" : "1px solid var(--aa-border)",
 
-                backgroundColor: checked ? "rgba(153,27,27,.045)" : "#f8fafc",
+                backgroundColor: checked ? "rgba(153,27,27,.075)" : "var(--aa-surface-muted)",
 
                 transition: "background-color .2s ease, border-color .2s ease",
 
@@ -431,7 +370,7 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
                   <Box>
                     <Typography
                       sx={{
-                        color: checked ? "#991b1b" : "#334155",
+                        color: checked ? "var(--aa-brand-600)" : "var(--aa-text)",
 
                         fontSize: 10.5,
                         fontWeight: 900,
@@ -490,6 +429,8 @@ const Permissions = () => {
 
   const [groups, setGroups] = useState([]);
 
+  const [permissionPresets, setPermissionPresets] = useState([]);
+
   const [selectedId, setSelectedId] = useState(null);
 
   const [selectedPermissions, setSelectedPermissions] = useState([]);
@@ -525,9 +466,17 @@ const Permissions = () => {
   }, [groups, selectedAdmin]);
 
   const visiblePresets = useMemo(
-    () => presets.filter((preset) => preset.roles.includes(selectedAdmin?.role)),
+    () =>
+      permissionPresets.filter(
+        (preset) => !preset.roles?.length || preset.roles.includes(selectedAdmin?.role),
+      ),
 
-    [selectedAdmin],
+    [permissionPresets, selectedAdmin],
+  );
+
+  const validPermissionKeys = useMemo(
+    () => new Set(groups.flatMap((group) => group.permissions.map((permission) => permission.key))),
+    [groups],
   );
 
   const filteredAdmins = useMemo(() => {
@@ -572,15 +521,15 @@ const Permissions = () => {
       : 0;
 
   const savedPermissions = useMemo(
-    () => normalizePermissions(selectedAdmin?.permissions || []).sort(),
+    () => sanitizePermissions(selectedAdmin?.permissions || [], validPermissionKeys).sort(),
 
-    [selectedAdmin],
+    [selectedAdmin, validPermissionKeys],
   );
 
   const currentPermissions = useMemo(
-    () => normalizePermissions(selectedPermissions).sort(),
+    () => sanitizePermissions(selectedPermissions, validPermissionKeys).sort(),
 
-    [selectedPermissions],
+    [selectedPermissions, validPermissionKeys],
   );
 
   const hasChanges = JSON.stringify(savedPermissions) !== JSON.stringify(currentPermissions);
@@ -592,15 +541,20 @@ const Permissions = () => {
       const { data } = await getPermissionSettings();
 
       const users = data.users || data.admins || [];
+      const nextGroups = data.groups || [];
+      const nextValidKeys = new Set(
+        nextGroups.flatMap((group) => group.permissions.map((permission) => permission.key)),
+      );
 
       setAdmins(users);
-      setGroups(data.groups || []);
+      setGroups(nextGroups);
+      setPermissionPresets(data.presets || []);
 
       const firstAdmin = users[0];
 
       setSelectedId(firstAdmin?.id || null);
 
-      setSelectedPermissions(normalizePermissions(firstAdmin?.permissions || []));
+      setSelectedPermissions(sanitizePermissions(firstAdmin?.permissions || [], nextValidKeys));
     } catch (error) {
       toast.error(error?.response?.data?.message || "Ruxsatlarni olishda xato.");
     } finally {
@@ -617,7 +571,7 @@ const Permissions = () => {
 
     setSelectedId(admin.id);
 
-    setSelectedPermissions(normalizePermissions(admin.permissions || []));
+    setSelectedPermissions(sanitizePermissions(admin.permissions || [], validPermissionKeys));
   };
 
   const togglePermission = (key) => {
@@ -679,7 +633,7 @@ const Permissions = () => {
   };
 
   const applyPreset = (preset) => {
-    setSelectedPermissions(normalizePermissions(preset.permissions));
+    setSelectedPermissions(sanitizePermissions(preset.permissions, validPermissionKeys));
 
     toast.info(`“${preset.label}” shabloni tanlandi. Saqlashni unutmang.`);
   };
@@ -689,7 +643,9 @@ const Permissions = () => {
   };
 
   const restorePermissions = () => {
-    setSelectedPermissions(normalizePermissions(selectedAdmin?.permissions || []));
+    setSelectedPermissions(
+      sanitizePermissions(selectedAdmin?.permissions || [], validPermissionKeys),
+    );
   };
 
   const handleSave = async () => {
@@ -700,7 +656,7 @@ const Permissions = () => {
     setSaving(true);
 
     try {
-      const permissions = normalizePermissions(selectedPermissions);
+      const permissions = sanitizePermissions(selectedPermissions, validPermissionKeys);
 
       const { data } = await updateUserPermissions(selectedAdmin.id, permissions);
 
@@ -719,7 +675,7 @@ const Permissions = () => {
         ),
       );
 
-      setSelectedPermissions(saved);
+      setSelectedPermissions(sanitizePermissions(saved, validPermissionKeys));
     } catch (error) {
       toast.error(error?.response?.data?.message || "Ruxsatlarni saqlashda xato.");
     } finally {
@@ -1120,11 +1076,13 @@ const Permissions = () => {
                       borderRadius: "16px",
                       textTransform: "none",
 
-                      border: active ? "1px solid rgba(153,27,27,.23)" : "1px solid #e7ebf0",
+                      border: active
+                        ? "1px solid rgba(153,27,27,.23)"
+                        : "1px solid var(--aa-border)",
 
                       background: active
-                        ? "linear-gradient(145deg,rgba(153,27,27,.075),#ffffff)"
-                        : "linear-gradient(145deg,#ffffff,#f8fafc)",
+                        ? "linear-gradient(145deg,rgba(153,27,27,.10),var(--aa-surface-solid))"
+                        : "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 
                       boxShadow: active ? "0 10px 24px rgba(153,27,27,.09)" : "none",
 
@@ -1274,7 +1232,7 @@ const Permissions = () => {
 
                       background: "linear-gradient(135deg,#7f1d1d,#c81e2a)",
 
-                      border: "4px solid #ffffff",
+                      border: "4px solid var(--aa-surface-solid)",
 
                       boxShadow: "0 10px 26px rgba(127,29,29,.18)",
                     }}
@@ -1637,7 +1595,7 @@ const secondaryButtonSx = {
   px: 1.7,
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  borderColor: "#dce3ea",
+  borderColor: "var(--aa-border)",
   fontSize: 10,
   fontWeight: 900,
   textTransform: "none",

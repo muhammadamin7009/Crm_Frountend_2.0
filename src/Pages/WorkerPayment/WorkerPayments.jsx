@@ -20,6 +20,7 @@ import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
 import BalanceBox from "../../Components/UI/BalanceBox";
+import MoneyTextField from "../../Components/UI/MoneyTextField";
 
 import Card from "../../Components/UI/AppCard";
 import { useAuth } from "../../Context/AuthContext";
@@ -246,7 +247,9 @@ const WorkerPayments = () => {
           sort_by: "created_at",
           sort_order: "desc",
         }),
-        getFinancialAccounts(),
+        ENABLE_MULTI_ACCOUNT_SELECTION && hasPermission(currentUser, "finance.view")
+          ? getFinancialAccounts()
+          : Promise.resolve({ data: { financial_accounts: [] } }),
       ]);
 
       setWorkers((data.users || data.list || []).filter((user) => user.role === "worker"));
@@ -254,7 +257,7 @@ const WorkerPayments = () => {
     } catch (error) {
       toast.error(error?.response?.data?.message || "Ishchilarni olishda xato.");
     }
-  }, []);
+  }, [currentUser]);
 
   const buildParams = useCallback(
     (offset = 0, limit = pageInfo.limit) => {
@@ -1525,7 +1528,7 @@ const WorkerPayments = () => {
               gap: 1.6,
             }}
           >
-            <TextField
+            <MoneyTextField
               type="text"
               label="Naqd beriladi"
               value={formatAmountInput(form.amount)}
@@ -1542,7 +1545,7 @@ const WorkerPayments = () => {
               }}
             />
 
-            <TextField
+            <MoneyTextField
               type="text"
               label="Avansdan ushlash"
               value={formatAmountInput(form.advance_deduction)}

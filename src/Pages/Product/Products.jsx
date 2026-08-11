@@ -26,6 +26,7 @@ import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import ActiveStatusChip from "../../Components/UI/ActiveStatusChip";
 import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
+import MoneyTextField from "../../Components/UI/MoneyTextField";
 
 import Card from "../../Components/UI/AppCard";
 import { useAuth } from "../../Context/AuthContext";
@@ -1159,27 +1160,17 @@ const Products = () => {
           helperText="Tayyor mahsulot omborda par hisobida yuritiladi."
         />
 
-        <TextField
-          type="number"
+        <MoneyTextField
           label="Xarid narxi"
           value={productForm.purchase_price}
           onChange={handleProductChange("purchase_price")}
-          inputProps={{
-            min: 0,
-            step: 1000,
-          }}
         />
 
-        <TextField
+        <MoneyTextField
           required
-          type="number"
           label="Sotuv narxi"
           value={productForm.sale_price}
           onChange={handleProductChange("sale_price")}
-          inputProps={{
-            min: 0,
-            step: 1000,
-          }}
         />
       </Box>
 

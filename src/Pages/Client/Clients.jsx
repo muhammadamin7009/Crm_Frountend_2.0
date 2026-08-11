@@ -145,6 +145,21 @@ const normalizePhoneForSubmit = (value = "") => {
   return phone;
 };
 
+const isValidClientPhone = (value = "") => {
+  const phone = compactPhoneValue(value);
+  if (!/^\+[1-9]\d{7,14}$/.test(phone)) return false;
+  return !phone.startsWith("+998") || /^\+998\d{9}$/.test(phone);
+};
+
+const isClientFormValid = (form, isEdit = false) =>
+  Boolean(
+    form.first_name.trim() &&
+    form.last_name.trim() &&
+    form.username.trim() &&
+    (isEdit ? !form.password || form.password.length >= 6 : form.password.length >= 6) &&
+    isValidClientPhone(form.phone),
+  );
+
 const getImageUrl = (path) => {
   if (!path) return undefined;
 
@@ -318,7 +333,7 @@ const Clients = () => {
 
   const showingDeleted = deletedFilter === "true";
 
-  const canManageUsers = hasPermission(currentUser, "users.manage");
+  const canManageUsers = hasPermission(currentUser, "clients.manage");
 
   const canManageDebt = hasPermission(currentUser, "client_sales.manage");
 
@@ -506,6 +521,11 @@ const Clients = () => {
   };
 
   const handleCreate = async () => {
+    if (!isClientFormValid(form, false)) {
+      toast.error("Majburiy maydonlarni to‘liq va to‘g‘ri kiriting.");
+      return;
+    }
+
     setSaving(true);
 
     try {
@@ -541,6 +561,10 @@ const Clients = () => {
 
   const handleUpdate = async () => {
     if (!selectedClient) return;
+    if (!isClientFormValid(form, true)) {
+      toast.error("Majburiy maydonlarni to‘liq va to‘g‘ri kiriting.");
+      return;
+    }
 
     setSaving(true);
 
@@ -1465,6 +1489,7 @@ const ClientFormDialog = ({
         }}
       >
         <TextField
+          required
           fullWidth
           label="Ism"
           value={form.first_name}
@@ -1472,6 +1497,7 @@ const ClientFormDialog = ({
         />
 
         <TextField
+          required
           fullWidth
           label="Familiya"
           value={form.last_name}
@@ -1479,6 +1505,7 @@ const ClientFormDialog = ({
         />
 
         <TextField
+          required
           fullWidth
           label="Foydalanuvchi nomi"
           value={form.username}
@@ -1486,6 +1513,7 @@ const ClientFormDialog = ({
         />
 
         <TextField
+          required={!selectedClient}
           fullWidth
           label={selectedClient ? "Yangi parol" : "Parol"}
           type="password"
@@ -1494,6 +1522,7 @@ const ClientFormDialog = ({
         />
 
         <TextField
+          required
           fullWidth
           label="Telefon"
           value={form.phone}
@@ -1559,7 +1588,7 @@ const ClientFormDialog = ({
       <Button
         variant="contained"
         onClick={onSave}
-        disabled={saving || debtLoading}
+        disabled={saving || debtLoading || !isClientFormValid(form, Boolean(selectedClient))}
         sx={{
           minWidth: 170,
           minHeight: 42,

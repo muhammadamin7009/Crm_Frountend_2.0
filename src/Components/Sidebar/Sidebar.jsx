@@ -48,7 +48,7 @@ const menuGroups = [
         label: "Mijozlar",
         path: "/clients",
         allowedRoles: ["super_admin", "admin"],
-        requiredPermission: "users.view",
+        requiredPermission: "clients.view",
       },
       {
         icon: BriefcaseIcon,
@@ -67,7 +67,8 @@ const menuGroups = [
         icon: HistoryIcon,
         label: "Ruxsatlar",
         path: "/permissions",
-        allowedRoles: ["super_admin"],
+        allowedRoles: ["super_admin", "admin"],
+        requiredPermission: "permissions.manage",
       },
     ],
   },

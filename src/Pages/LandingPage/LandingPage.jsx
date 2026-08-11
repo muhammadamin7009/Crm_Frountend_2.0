@@ -3,7 +3,7 @@ import { CompatGrid as Grid, CompatStack as Stack } from "../../Components/UI/Mu
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-import mrLogo from "../../images/mr-logo.png";
+import alAminCrmLogo from "../../images/al-amin-crm-logo.png";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -143,7 +143,7 @@ function Logo({ size = 42 }) {
         height: size,
       }}
     >
-      <Box component="img" src={mrLogo} alt="MR belgisi" />
+      <Box component="img" src={alAminCrmLogo} alt="Al-Amin CRM logosi" />
     </Box>
   );
 }
@@ -456,7 +456,7 @@ export default function LandingPage() {
         <Box component="section" className="lp-hero">
           <Box
             component={motion.img}
-            src={mrLogo}
+            src={alAminCrmLogo}
             alt=""
             aria-hidden="true"
             style={{ y: logoY }}
@@ -728,9 +728,9 @@ export default function LandingPage() {
                   </Box>
 
                   <Box id="logo-sample">
-                    <Box component="img" src={mrLogo} alt="MR belgisi" />
+                    <Box component="img" src={alAminCrmLogo} alt="Al-Amin CRM logosi" />
 
-                    <Typography>Asoschi belgisi • MR</Typography>
+                    <Typography>Al-Amin CRM logosi</Typography>
                   </Box>
                 </Paper>
               </Grid>

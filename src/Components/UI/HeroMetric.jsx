@@ -25,6 +25,7 @@ const HeroMetric = ({
   labelSx,
   valueSx,
   helperSx,
+  onClick,
 }) => {
   const current = toneStyles[tone] || toneStyles.red;
   const toneBorder = softToneBorder ? softToneBorders[tone] || softToneBorders.red : current[2];
@@ -32,6 +33,15 @@ const HeroMetric = ({
   return (
     <Box
       className="aa-mobile-compact-metric"
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onClick={onClick}
+      onKeyDown={(event) => {
+        if (onClick && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault();
+          onClick(event);
+        }
+      }}
       sx={{
         minWidth: 0,
         minHeight: 126,
@@ -40,6 +50,21 @@ const HeroMetric = ({
         border: "1px solid rgba(255,255,255,.075)",
         background: "linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025))",
         backdropFilter: "blur(16px)",
+        cursor: onClick ? "pointer" : "default",
+        transition: "transform .18s ease, border-color .18s ease, background-color .18s ease",
+        "&:hover": onClick
+          ? {
+              transform: "translateY(-2px)",
+              borderColor: current[2],
+              backgroundColor: "rgba(255,255,255,.075)",
+            }
+          : undefined,
+        "&:focus-visible": onClick
+          ? {
+              outline: `3px solid ${current[2]}`,
+              outlineOffset: 2,
+            }
+          : undefined,
       }}
     >
       <Box

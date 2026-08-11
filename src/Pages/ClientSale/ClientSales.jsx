@@ -358,13 +358,17 @@ const ClientSales = () => {
           sort_order: "asc",
         }),
 
-        getWarehouses(),
+        canManage ? getWarehouses() : Promise.resolve({ data: { warehouses: [] } }),
 
-        getInventoryStock({
-          item_type: "product",
-          limit: 200,
-        }),
-        getFinancialAccounts(),
+        canManage
+          ? getInventoryStock({
+              item_type: "product",
+              limit: 200,
+            })
+          : Promise.resolve({ data: { stock: [] } }),
+        ENABLE_MULTI_ACCOUNT_SELECTION
+          ? getFinancialAccounts()
+          : Promise.resolve({ data: { financial_accounts: [] } }),
       ]);
 
       setClients(
@@ -380,7 +384,7 @@ const ClientSales = () => {
     } catch (error) {
       toast.error(error?.response?.data?.message || "Mijoz va mahsulotlarni olishda xato.");
     }
-  }, []);
+  }, [canManage]);
 
   const buildParams = useCallback(
     (offset = 0, limit = pageInfo.limit) => {
@@ -1976,12 +1980,15 @@ const ClientSales = () => {
                   select
                   required
                   label="Mahsulot"
+                  disabled={!form.client_id || !form.warehouse_id}
                   value={form.product_id}
                   onChange={handleFormChange("product_id")}
                 >
                   {products.map((product) => (
                     <MenuItem key={product.id} value={product.id}>
-                      {product.name} - {formatMoney(product.sale_price)} | Omborda:{" "}
+                      {product.name}
+                      {product.model ? ` ${product.model}` : ""} • {product.color || "-"} •{" "}
+                      {formatMoney(product.sale_price)} • Omborda:{" "}
                       {formatNumber(getAvailableStock(product.id))}
                     </MenuItem>
                   ))}
@@ -1991,6 +1998,7 @@ const ClientSales = () => {
                   required
                   type="number"
                   label="Miqdor"
+                  disabled={!form.product_id}
                   value={form.quantity}
                   onChange={handleFormChange("quantity")}
                   error={selectedSaleQuantityExceeded}
@@ -2013,6 +2021,7 @@ const ClientSales = () => {
                   required
                   type="text"
                   label="Sotish narxi"
+                  disabled={!form.product_id || Number(form.quantity) <= 0}
                   value={formatAmountInput(form.unit_price)}
                   onChange={(event) => {
                     const unitPrice = event.target.value.replace(/\D/g, "");
@@ -2104,6 +2113,16 @@ const ClientSales = () => {
                 <Button
                   className="aa-dialog-secondary-action"
                   variant="outlined"
+                  disabled={
+                    !form.items.length ||
+                    form.items.some(
+                      (item) =>
+                        !item.product_id ||
+                        Number(item.quantity) <= 0 ||
+                        item.unit_price === "" ||
+                        Number(item.unit_price) < 0,
+                    )
+                  }
                   onClick={() =>
                     setForm((previous) => ({
                       ...previous,
@@ -2154,6 +2173,7 @@ const ClientSales = () => {
                     <TextField
                       select
                       label="Mahsulot"
+                      disabled={!form.client_id || !form.warehouse_id}
                       value={item.product_id}
                       onChange={(event) =>
                         handleSaleItemChange(index, "product_id", event.target.value)
@@ -2165,7 +2185,9 @@ const ClientSales = () => {
                           value={product.id}
                           disabled={!form.warehouse_id || getAvailableStock(product.id) <= 0}
                         >
-                          {product.name} - {formatMoney(product.sale_price)} | Omborda:{" "}
+                          {product.name}
+                          {product.model ? ` ${product.model}` : ""} • {product.color || "-"} •{" "}
+                          {formatMoney(product.sale_price)} • Omborda:{" "}
                           {formatNumber(getAvailableStock(product.id))}
                         </MenuItem>
                       ))}
@@ -2174,6 +2196,7 @@ const ClientSales = () => {
                     <TextField
                       type="number"
                       label="Miqdor"
+                      disabled={!item.product_id}
                       value={item.quantity}
                       onChange={(event) =>
                         handleSaleItemChange(index, "quantity", event.target.value)
@@ -2204,6 +2227,7 @@ const ClientSales = () => {
                     <TextField
                       type="text"
                       label="Sotish narxi"
+                      disabled={!item.product_id || Number(item.quantity) <= 0}
                       value={formatAmountInput(item.unit_price)}
                       onChange={(event) => {
                         const unitPrice = event.target.value.replace(/\D/g, "");
@@ -2264,6 +2288,14 @@ const ClientSales = () => {
             fullWidth
             type="text"
             label="To'langan summa"
+            disabled={
+              selectedSale
+                ? !form.product_id || Number(form.quantity) <= 0 || form.unit_price === ""
+                : form.items.some(
+                    (item) =>
+                      !item.product_id || Number(item.quantity) <= 0 || item.unit_price === "",
+                  )
+            }
             value={formatAmountInput(form.paid_amount)}
             onChange={(event) => {
               const paidAmount = event.target.value.replace(/\D/g, "");

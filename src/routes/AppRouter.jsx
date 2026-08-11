@@ -84,7 +84,7 @@ const AppRouter = () => {
             element={
               <ProtectedRoute
                 allowedRoles={["super_admin", "admin"]}
-                allowedPermissions={["users.view"]}
+                allowedPermissions={["clients.view"]}
               />
             }
           >
@@ -136,7 +136,14 @@ const AppRouter = () => {
             <Route path="/users/:id" element={page(User)} />
           </Route>
 
-          <Route element={<ProtectedRoute allowedRoles={["super_admin"]} />}>
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={["super_admin", "admin"]}
+                allowedPermissions={["permissions.manage"]}
+              />
+            }
+          >
             <Route path="/permissions" element={page(Permissions)} />
           </Route>
 

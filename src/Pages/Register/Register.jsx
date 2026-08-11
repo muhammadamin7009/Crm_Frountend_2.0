@@ -1,19 +1,12 @@
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Alert, Box, Button, Paper, TextField, Typography } from "@mui/material";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import api from "../../api/axios";
-import { getCompanyBranding } from "../../api/companyBranding";
+import { submitCompanyApplication } from "../../api/platform";
 import AuthBrandPanel from "../../Components/Auth/AuthBrandPanel";
 import SiteLogo from "../../images/zerr_02_logo.png";
-import {
-  getCompanyLogoUrl,
-  getCompanySlug,
-  normalizeCompanySlug,
-  setCompanySlug,
-} from "../../utils/company";
 
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
@@ -172,8 +165,7 @@ const Register = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-  const [branding, setBranding] = useState(null);
-  const [, setBrandingLoading] = useState(false);
+  const [submissionNotice, setSubmissionNotice] = useState(null);
 
   const {
     register,
@@ -184,87 +176,68 @@ const Register = () => {
   } = useForm({
     mode: "onChange",
     defaultValues: {
+      company_name: "",
+      company_slug: "",
       first_name: "",
       last_name: "",
       username: "",
       phone: "+998",
       password: "",
       confirm_password: "",
-      company_slug: getCompanySlug(),
     },
   });
 
   const password = watch("password");
-  const companySlug = watch("company_slug");
-  const normalizedSlug = normalizeCompanySlug(companySlug);
-  const isMainCompany = normalizedSlug === "zerrshoes";
-
-  const companyTitle =
-    branding?.name ||
-    (isMainCompany
-      ? "Al-Amin CRM"
-      : normalizedSlug
-        ? normalizedSlug.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
-        : "Al-Amin CRM");
-
-  const companyLogo = getCompanyLogoUrl(branding?.logo_url) || (isMainCompany ? SiteLogo : "");
-
-  useEffect(() => {
-    const slug = normalizeCompanySlug(companySlug);
-
-    if (!slug) {
-      setBranding(null);
-      setBrandingLoading(false);
-      return undefined;
-    }
-
-    setBrandingLoading(true);
-
-    const timeout = setTimeout(async () => {
-      try {
-        const { data } = await getCompanyBranding(slug);
-
-        setBranding(data.company || null);
-      } catch {
-        setBranding(null);
-      } finally {
-        setBrandingLoading(false);
-      }
-    }, 350);
-
-    return () => clearTimeout(timeout);
-  }, [companySlug]);
-
-  const getBaseUrl = (slug) =>
-    `${String(import.meta.env.VITE_API_URL || "").replace(/\/$/, "")}/api/${slug}`;
+  const companyTitle = "Al-Amin CRM";
+  const companyLogo = SiteLogo;
 
   const onSubmit = async (submittedValues) => {
-    const { company_slug, confirm_password: _confirmPassword, ...values } = submittedValues;
+    const { confirm_password: _confirmPassword, ...values } = submittedValues;
 
     setLoading(true);
+    setSubmissionNotice(null);
 
     try {
       const phone = normalizePhoneForSubmit(values.phone);
-      const slug = setCompanySlug(company_slug);
 
-      await api.post(
-        "/users",
-        {
-          ...values,
-          first_name: formatNameValue(values.first_name),
-          last_name: formatNameValue(values.last_name),
-          phone,
-        },
-        {
-          baseURL: getBaseUrl(slug),
-        },
+      await submitCompanyApplication({
+        ...values,
+        company_name: values.company_name.trim(),
+        company_slug: values.company_slug.trim().toLowerCase(),
+        first_name: formatNameValue(values.first_name),
+        last_name: formatNameValue(values.last_name),
+        phone,
+      });
+
+      toast.success(
+        "Arizangiz yuborildi. Platforma administratori tasdiqlagach tizimga kira olasiz.",
       );
 
-      toast.success("Ro‘yxatdan o‘tdingiz. Endi tizimga kirishingiz mumkin.");
-
-      navigate("/login");
+      navigate("/login", {
+        state: {
+          companyApplication: {
+            status: "pending",
+            company_name: values.company_name.trim(),
+            company_slug: values.company_slug.trim().toLowerCase(),
+            message: "Korxona arizangiz ko‘rib chiqilmoqda.",
+          },
+        },
+      });
     } catch (error) {
-      toast.error(error?.response?.data?.message || error?.message || "Ro‘yxatdan o‘tishda xato.");
+      const message =
+        error?.response?.data?.message || error?.message || "Ro‘yxatdan o‘tishda xato.";
+      const normalizedMessage = message.toLocaleLowerCase("uz-UZ");
+      const severity = normalizedMessage.includes("kutilmoqda")
+        ? "warning"
+        : normalizedMessage.includes("tasdiqlangan") || normalizedMessage.includes("qabul qilingan")
+          ? "success"
+          : "error";
+
+      setSubmissionNotice({ message, severity });
+
+      if (severity === "warning") toast.info(message);
+      else if (severity === "success") toast.success(message);
+      else toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -272,21 +245,68 @@ const Register = () => {
 
   return (
     <Box
-      className="auth-page"
+      className="auth-page auth-register-page"
       sx={{
         minHeight: "100vh",
+        height: { lg: "100dvh" },
         px: {
           xs: 1.5,
           sm: 3,
-          lg: 4,
+          lg: 3,
         },
         py: {
           xs: 1.5,
           sm: 3,
-          lg: 4,
+          lg: 3,
         },
         display: "flex",
         alignItems: "center",
+        overflow: { lg: "hidden" },
+
+        "@media (min-width: 1200px) and (max-height: 780px)": {
+          "& .auth-form-panel": {
+            p: 2.5,
+          },
+
+          "& .auth-register-heading": {
+            mb: 1.5,
+          },
+
+          "& .auth-register-heading-badge": {
+            mb: 1,
+            py: 0.45,
+          },
+
+          "& .auth-register-heading h1": {
+            fontSize: 35,
+          },
+
+          "& .auth-register-heading h1 + p": {
+            mt: 0.8,
+            lineHeight: 1.4,
+          },
+
+          "& .auth-register-fields": {
+            gap: 1.1,
+          },
+
+          "& .auth-register-assurance": {
+            mt: 1.25,
+            p: 1,
+          },
+
+          "& .auth-register-submit": {
+            mt: 1.25,
+          },
+
+          "& .auth-register-account": {
+            mt: 1.5,
+          },
+
+          "& .auth-register-copyright": {
+            mt: 1.25,
+          },
+        },
         background: `
           radial-gradient(
             circle at 7% 7%,
@@ -314,8 +334,9 @@ const Register = () => {
           maxWidth: 1480,
           minHeight: {
             xs: "calc(100vh - 24px)",
-            lg: 850,
+            lg: 0,
           },
+          height: { lg: "min(850px, calc(100dvh - 48px))" },
           mx: "auto",
           display: "grid",
           gridTemplateColumns: {
@@ -339,10 +360,10 @@ const Register = () => {
           variant="register"
           companyName={companyTitle}
           companyLogo={companyLogo}
-          eyebrow="Yangi korxona hisobini yaratish"
+          eyebrow="Yangi korxona arizasini yuborish"
           title="Mukammal boshqaruv sari birinchi qadamingizni"
           accent="bugun boshlang"
-          description="Korxonangiz uchun xavfsiz hisob yarating. Savdo, ombor, xodimlar va moliyaviy jarayonlarni yagona premium tizimda boshqaring."
+          description="Korxonangiz ma’lumotlarini yuboring. Platforma administratori tasdiqlagach boshqaruv tizimingiz avtomatik yaratiladi."
         />
 
         <Box
@@ -351,17 +372,18 @@ const Register = () => {
           sx={{
             minHeight: {
               xs: "calc(100vh - 24px)",
-              lg: 850,
+              lg: 0,
             },
+            height: { lg: "100%" },
             p: {
               xs: 2.5,
               sm: 5,
-              lg: 6,
-              xl: 8,
+              lg: "clamp(24px, 4vh, 48px)",
             },
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            overflowY: { lg: "auto" },
             background: `
               radial-gradient(
                 circle at 93% 5%,
@@ -452,8 +474,9 @@ const Register = () => {
               </Box>
             </Box>
 
-            <Box sx={{ mb: 3.5 }}>
+            <Box className="auth-register-heading" sx={{ mb: 3.5 }}>
               <Box
+                className="auth-register-heading-badge"
                 sx={{
                   width: "fit-content",
                   mb: 1.8,
@@ -485,7 +508,7 @@ const Register = () => {
                     letterSpacing: ".04em",
                   }}
                 >
-                  Yangi foydalanuvchi hisobi
+                  Yangi korxona arizasi
                 </Typography>
               </Box>
 
@@ -518,12 +541,30 @@ const Register = () => {
                   fontWeight: 500,
                 }}
               >
-                Ma’lumotlaringizni to‘ldiring. Hisobingiz korxonaga biriktirilgan holda yaratiladi.
+                Korxona va bo‘lajak bosh administrator ma’lumotlarini to‘ldiring.
               </Typography>
             </Box>
 
+            {submissionNotice && (
+              <Alert
+                severity={submissionNotice.severity}
+                sx={{
+                  mb: 1,
+                  py: 0.25,
+                  borderRadius: "14px",
+                  fontSize: 12,
+                  fontWeight: 750,
+
+                  "& .MuiAlert-message": { py: 0.5 },
+                }}
+              >
+                {submissionNotice.message}
+              </Alert>
+            )}
+
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <Box
+                className="auth-register-fields"
                 sx={{
                   display: "grid",
                   gridTemplateColumns: {
@@ -533,11 +574,29 @@ const Register = () => {
                   gap: 1.8,
                 }}
               >
-                {/* Korxona kodi — to‘liq qator */}
+                <TextField
+                  fullWidth
+                  label="Korxona nomi"
+                  autoComplete="organization"
+                  error={Boolean(errors.company_name)}
+                  helperText={
+                    errors.company_name?.message || "Platformada ko‘rinadigan to‘liq nom."
+                  }
+                  {...register("company_name", {
+                    required: "Korxona nomi majburiy",
+                    maxLength: {
+                      value: 150,
+                      message: "Korxona nomi 150 belgidan oshmasin",
+                    },
+                  })}
+                  sx={fieldSx}
+                />
+
+                {/* Korxona kodi */}
                 <TextField
                   fullWidth
                   label="Korxona kodi"
-                  placeholder="Masalan: zerrshoes"
+                  placeholder="Masalan: alamin"
                   autoComplete="organization"
                   error={Boolean(errors.company_slug)}
                   helperText={errors.company_slug?.message || "Korxonangizga berilgan maxsus kod."}
@@ -548,10 +607,7 @@ const Register = () => {
                       message: "Faqat kichik harf, raqam va chiziqcha kiriting",
                     },
                   })}
-                  sx={{
-                    ...fieldSx,
-                    gridColumn: "1 / -1",
-                  }}
+                  sx={fieldSx}
                 />
 
                 {/* Ism */}
@@ -677,61 +733,65 @@ const Register = () => {
                 />
               </Box>
 
-              <Box
-                sx={{
-                  mt: 2.5,
-                  p: 1.7,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.4,
-                  borderRadius: "15px",
-                  border: "1px solid rgba(34,197,94,.12)",
-                  background:
-                    "linear-gradient(135deg,rgba(34,197,94,.055),var(--aa-surface-elevated))",
-                }}
-              >
+              {!submissionNotice && (
                 <Box
+                  className="auth-register-assurance"
                   sx={{
-                    width: 34,
-                    height: 34,
-                    display: "grid",
-                    placeItems: "center",
-                    flexShrink: 0,
-                    borderRadius: "11px",
-                    color: "#15803d",
-                    fontSize: 15,
-                    fontWeight: 950,
-                    backgroundColor: "rgba(34,197,94,.10)",
+                    mt: 2.5,
+                    p: 1.7,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.4,
+                    borderRadius: "15px",
+                    border: "1px solid rgba(34,197,94,.12)",
+                    background:
+                      "linear-gradient(135deg,rgba(34,197,94,.055),var(--aa-surface-elevated))",
                   }}
                 >
-                  ✓
-                </Box>
-
-                <Box>
-                  <Typography
+                  <Box
                     sx={{
-                      color: "#172033",
-                      fontSize: 12.5,
-                      fontWeight: 850,
+                      width: 34,
+                      height: 34,
+                      display: "grid",
+                      placeItems: "center",
+                      flexShrink: 0,
+                      borderRadius: "11px",
+                      color: "#15803d",
+                      fontSize: 15,
+                      fontWeight: 950,
+                      backgroundColor: "rgba(34,197,94,.10)",
                     }}
                   >
-                    Xavfsiz ro‘yxatdan o‘tish
-                  </Typography>
+                    ✓
+                  </Box>
 
-                  <Typography
-                    sx={{
-                      mt: 0.35,
-                      color: "#7b8494",
-                      fontSize: 11,
-                      lineHeight: 1.45,
-                    }}
-                  >
-                    Ma’lumotlaringiz faqat korxona tizimida ishlatiladi.
-                  </Typography>
+                  <Box>
+                    <Typography
+                      sx={{
+                        color: "#172033",
+                        fontSize: 12.5,
+                        fontWeight: 850,
+                      }}
+                    >
+                      Xavfsiz ro‘yxatdan o‘tish
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        mt: 0.35,
+                        color: "#7b8494",
+                        fontSize: 11,
+                        lineHeight: 1.45,
+                      }}
+                    >
+                      Ma’lumotlaringiz faqat korxona tizimida ishlatiladi.
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
+              )}
 
               <Button
+                className="auth-register-submit"
                 type="submit"
                 fullWidth
                 variant="contained"
@@ -741,11 +801,12 @@ const Register = () => {
                   mt: 2.5,
                 }}
               >
-                {loading ? "Hisob yaratilmoqda..." : "Hisobni yaratish"}
+                {loading ? "Ariza yuborilmoqda..." : "Arizani yuborish"}
               </Button>
             </form>
 
             <Box
+              className="auth-register-account"
               sx={{
                 mt: 3.5,
                 display: "flex",
@@ -780,6 +841,7 @@ const Register = () => {
             </Box>
 
             <Typography
+              className="auth-register-copyright"
               sx={{
                 mt: 3,
                 color: "#a0a7b2",

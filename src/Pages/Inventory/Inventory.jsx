@@ -1,5 +1,6 @@
 import {
   Alert,
+  Autocomplete,
   Box,
   Button,
   Card,
@@ -415,6 +416,8 @@ const Inventory = () => {
 
   const [thresholdOpen, setThresholdOpen] = useState(false);
 
+  const [lowStockOpen, setLowStockOpen] = useState(false);
+
   const [movementForm, setMovementForm] = useState(emptyMovement);
 
   const [receiptForm, setReceiptForm] = useState(emptyReceipt);
@@ -444,6 +447,10 @@ const Inventory = () => {
   const [countDetail, setCountDetail] = useState(null);
 
   const [countWarehouseChoice, setCountWarehouseChoice] = useState("");
+
+  const [countProductPickerOpen, setCountProductPickerOpen] = useState(false);
+
+  const [countProductChoice, setCountProductChoice] = useState(null);
 
   const load = useCallback(async (quiet = false) => {
     if (!quiet) {
@@ -514,6 +521,18 @@ const Inventory = () => {
     stock.some((row) => Number(row.warehouse_id) === Number(countWarehouseChoice)),
   );
 
+  const countWarehouseCanStart = useMemo(() => {
+    if (!countWarehouseChoice) return false;
+    if (countWarehouseHasPositions) return true;
+
+    const warehouse = activeWarehouses.find(
+      (item) => Number(item.id) === Number(countWarehouseChoice),
+    );
+    return (
+      warehouse?.warehouse_type === "product" && items.some((item) => item.item_type === "product")
+    );
+  }, [activeWarehouses, countWarehouseChoice, countWarehouseHasPositions, items]);
+
   const selectedWarehouse = useMemo(
     () =>
       activeWarehouses.find((warehouse) => Number(warehouse.id) === Number(warehouseId)) || null,
@@ -578,6 +597,8 @@ const Inventory = () => {
 
     [filterText, movements, warehouseFilter],
   );
+
+  const lowStockRows = useMemo(() => stock.filter((row) => row.is_low), [stock]);
 
   const pageMetrics = useMemo(() => {
     if (isManagementPage) {
@@ -667,6 +688,7 @@ const Inventory = () => {
     setTransferOpen(false);
     setWarehouseOpen(false);
     setWarehouseDeleteOpen(false);
+    setLowStockOpen(false);
 
     setWarehousePendingDelete(null);
 
@@ -690,12 +712,14 @@ const Inventory = () => {
 
     setCountNote("");
     setCountDetail(null);
+    setCountProductPickerOpen(false);
+    setCountProductChoice(null);
   };
 
   const openInventoryCount = (warehouse) => {
     const rows = stock.filter((row) => Number(row.warehouse_id) === Number(warehouse.id));
 
-    if (!rows.length) {
+    if (!rows.length && warehouse.warehouse_type !== "product") {
       toast.error("Bu omborda sanash uchun qoldiq pozitsiyalari yo‘q.");
 
       return;
@@ -714,7 +738,41 @@ const Inventory = () => {
     setCountedAt(new Date().toISOString().slice(0, 10));
 
     setCountNote("");
+    setCountProductPickerOpen(false);
+    setCountProductChoice(null);
     setCountOpen(true);
+  };
+
+  const availableCountProducts = useMemo(() => {
+    const selectedIds = new Set(
+      countRows.filter((row) => row.item_type === "product").map((row) => Number(row.item_id)),
+    );
+    return items.filter(
+      (item) => item.item_type === "product" && !selectedIds.has(Number(item.item_id)),
+    );
+  }, [countRows, items]);
+
+  const addProductToCount = () => {
+    if (!countProductChoice || !countWarehouse) return;
+
+    setCountRows((current) => [
+      ...current,
+      {
+        id: `catalog-product-${countProductChoice.item_id}`,
+        warehouse_id: countWarehouse.id,
+        item_type: "product",
+        item_id: countProductChoice.item_id,
+        item_name: countProductChoice.name,
+        color: countProductChoice.color || null,
+        model: countProductChoice.model || null,
+        unit: countProductChoice.unit || "par",
+        quantity: 0,
+        minimum_quantity: 0,
+        counted_quantity: "",
+      },
+    ]);
+    setCountProductChoice(null);
+    setCountProductPickerOpen(false);
   };
 
   const saveInventoryCount = async () => {
@@ -1306,7 +1364,7 @@ const Inventory = () => {
 
               {isCountsPage && canCount && (
                 <Button
-                  disabled={!countWarehouseChoice || !countWarehouseHasPositions}
+                  disabled={!countWarehouseCanStart}
                   onClick={() => {
                     const warehouse = activeWarehouses.find(
                       (item) => Number(item.id) === Number(countWarehouseChoice),
@@ -1347,6 +1405,11 @@ const Inventory = () => {
                 value={typeof value === "number" ? quantity(value) : value}
                 helper={helper}
                 tone={tone}
+                onClick={
+                  isManagementPage && label === "Kam qolgan"
+                    ? () => setLowStockOpen(true)
+                    : undefined
+                }
               />
             ))}
           </Box>
@@ -1435,6 +1498,21 @@ const Inventory = () => {
                 className="inventory-warehouse-card"
                 key={warehouse.id}
                 variant="outlined"
+                role={warehouse.is_active ? "button" : undefined}
+                tabIndex={warehouse.is_active ? 0 : undefined}
+                onClick={() => {
+                  if (warehouse.is_active) navigate(`/inventory/warehouses/${warehouse.id}`);
+                }}
+                onKeyDown={(event) => {
+                  if (
+                    warehouse.is_active &&
+                    event.target === event.currentTarget &&
+                    (event.key === "Enter" || event.key === " ")
+                  ) {
+                    event.preventDefault();
+                    navigate(`/inventory/warehouses/${warehouse.id}`);
+                  }
+                }}
                 sx={{
                   position: "relative",
                   overflow: "hidden",
@@ -1450,12 +1528,25 @@ const Inventory = () => {
 
                   opacity: warehouse.is_active ? 1 : 0.62,
 
+                  cursor: warehouse.is_active ? "pointer" : "default",
+
                   transition: "transform .2s ease, box-shadow .2s ease",
 
                   "&:hover": {
                     transform: "translateY(-2px)",
 
                     boxShadow: "0 18px 42px rgba(15,23,42,.08)",
+                  },
+
+                  "&:active": warehouse.is_active
+                    ? {
+                        transform: "translateY(0) scale(.995)",
+                      }
+                    : undefined,
+
+                  "&:focus-visible": {
+                    outline: "3px solid rgba(185,28,28,.25)",
+                    outlineOffset: 2,
                   },
 
                   "&::after": {
@@ -1578,23 +1669,13 @@ const Inventory = () => {
                     flexWrap: "wrap",
                   }}
                 >
-                  {warehouse.is_active && (
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      onClick={() => navigate(`/inventory/warehouses/${warehouse.id}`)}
-                      sx={tableActionSx}
-                    >
-                      Omborni ochish
-                    </Button>
-                  )}
-
                   {canManageWarehouses && warehouse.is_active && (
                     <>
                       <Button
                         size="small"
                         variant="outlined"
-                        onClick={() => {
+                        onClick={(event) => {
+                          event.stopPropagation();
                           setEditingWarehouse(warehouse);
 
                           setWarehouseForm({
@@ -1618,7 +1699,10 @@ const Inventory = () => {
                         size="small"
                         variant="outlined"
                         color="error"
-                        onClick={() => requestWarehouseDelete(warehouse)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          requestWarehouseDelete(warehouse);
+                        }}
                         sx={tableActionSx}
                       >
                         O‘chirish
@@ -1770,6 +1854,8 @@ const Inventory = () => {
 
                       <TableCell>Turi</TableCell>
 
+                      <TableCell>Rang</TableCell>
+
                       <TableCell>Ombor</TableCell>
 
                       <TableCell>Qoldiq</TableCell>
@@ -1819,6 +1905,10 @@ const Inventory = () => {
                                     : "rgba(245,158,11,.09)",
                               }}
                             />
+                          </TableCell>
+
+                          <TableCell>
+                            {row.item_type === "product" ? row.color || "-" : "-"}
                           </TableCell>
 
                           <TableCell>{row.warehouse_name || "-"}</TableCell>
@@ -1888,7 +1978,7 @@ const Inventory = () => {
                     ) : (
                       <TableRow>
                         <TableCell
-                          colSpan={canManageMovements ? 7 : 6}
+                          colSpan={canManageMovements ? 8 : 7}
                           align="center"
                           sx={{
                             py: 7,
@@ -2104,7 +2194,7 @@ const Inventory = () => {
                   value={countWarehouseChoice}
                   onChange={(event) => setCountWarehouseChoice(event.target.value)}
                   helperText={
-                    countWarehouseChoice && !countWarehouseHasPositions
+                    countWarehouseChoice && !countWarehouseHasPositions && !countWarehouseCanStart
                       ? "Bu omborda sanaladigan pozitsiya yo‘q"
                       : " "
                   }
@@ -2124,7 +2214,7 @@ const Inventory = () => {
 
                 <Button
                   variant="contained"
-                  disabled={!countWarehouseChoice || !countWarehouseHasPositions}
+                  disabled={!countWarehouseCanStart}
                   onClick={() => {
                     const warehouse = activeWarehouses.find(
                       (item) => Number(item.id) === Number(countWarehouseChoice),
@@ -2339,6 +2429,8 @@ const Inventory = () => {
 
                     <TableCell>Turi</TableCell>
 
+                    <TableCell>Rang</TableCell>
+
                     <TableCell>Tizimdagi</TableCell>
 
                     <TableCell
@@ -2375,6 +2467,10 @@ const Inventory = () => {
                         </TableCell>
 
                         <TableCell>{itemTypeLabel(row.item_type)}</TableCell>
+
+                        <TableCell>
+                          {row.item_type === "product" ? row.color || "-" : "-"}
+                        </TableCell>
 
                         <TableCell>
                           {quantity(row.quantity)} {row.unit}
@@ -2427,6 +2523,59 @@ const Inventory = () => {
                 </TableBody>
               </Table>
             </Box>
+
+            {countWarehouse?.warehouse_type === "product" && (
+              <Box sx={{ display: "grid", justifyItems: "end", gap: 1 }}>
+                {countProductPickerOpen && (
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "grid",
+                      gridTemplateColumns: { xs: "1fr", sm: "1fr auto" },
+                      alignItems: "start",
+                      gap: 1,
+                      p: 1.5,
+                      border: "1px solid var(--aa-border)",
+                      borderRadius: "14px",
+                      backgroundColor: "var(--aa-surface-muted)",
+                    }}
+                  >
+                    <Autocomplete
+                      options={availableCountProducts}
+                      value={countProductChoice}
+                      onChange={(_event, value) => setCountProductChoice(value)}
+                      getOptionLabel={(option) =>
+                        `${option.name}${option.model ? ` • ${option.model}` : ""} • ${option.color || "-"}`
+                      }
+                      isOptionEqualToValue={(option, value) =>
+                        Number(option.item_id) === Number(value.item_id)
+                      }
+                      noOptionsText="Qo‘shilmagan mahsulot topilmadi"
+                      renderInput={(params) => (
+                        <TextField {...params} label="Mahsulotni qidiring" autoFocus />
+                      )}
+                    />
+                    <Button
+                      variant="contained"
+                      disabled={!countProductChoice}
+                      onClick={addProductToCount}
+                      sx={primaryButtonSx}
+                    >
+                      Qo‘shish
+                    </Button>
+                  </Box>
+                )}
+
+                <Button
+                  variant="outlined"
+                  disabled={!availableCountProducts.length}
+                  onClick={() => setCountProductPickerOpen((current) => !current)}
+                  sx={secondaryButtonSx}
+                >
+                  + Mahsulot qo‘shish
+                </Button>
+              </Box>
+            )}
 
             <Typography
               sx={{
@@ -2512,6 +2661,8 @@ const Inventory = () => {
 
                     <TableCell>Turi</TableCell>
 
+                    <TableCell>Rang</TableCell>
+
                     <TableCell>Tizimdagi</TableCell>
 
                     <TableCell>Sanalgan</TableCell>
@@ -2538,6 +2689,8 @@ const Inventory = () => {
                       </TableCell>
 
                       <TableCell>{itemTypeLabel(row.item_type)}</TableCell>
+
+                      <TableCell>{row.item_type === "product" ? row.color || "-" : "-"}</TableCell>
 
                       <TableCell>
                         {quantity(row.expected_quantity)} {row.unit}
@@ -3250,6 +3403,108 @@ const Inventory = () => {
             }}
           >
             {saving ? "O‘chirilmoqda..." : "Ha, o‘chirish"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={lowStockOpen}
+        onClose={() => setLowStockOpen(false)}
+        fullWidth
+        maxWidth="lg"
+        PaperProps={{ sx: dialogPaperSx }}
+      >
+        <DialogTitle sx={dialogTitleSx}>Kam qolgan mahsulotlar</DialogTitle>
+
+        <DialogContent sx={dialogContentSx}>
+          <Typography
+            sx={{ mb: 2, color: "var(--aa-text-secondary)", fontSize: 11, lineHeight: 1.6 }}
+          >
+            Minimal qoldiqqa yetgan yoki undan kamaygan ombor pozitsiyalari.
+          </Typography>
+
+          <Box className="aa-mobile-records aa-low-stock-table" sx={{ overflowX: "auto" }}>
+            <Table sx={{ minWidth: 820, ...tableSx }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Mahsulot</TableCell>
+                  <TableCell>Rang</TableCell>
+                  <TableCell>Ombor</TableCell>
+                  <TableCell>Qoldiq</TableCell>
+                  <TableCell>Minimum</TableCell>
+                  <TableCell>Yetishmaydi</TableCell>
+                  <TableCell>Holat</TableCell>
+                  <TableCell align="right">Amal</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {lowStockRows.length ? (
+                  lowStockRows.map((row) => {
+                    const shortage = Math.max(
+                      Number(row.minimum_quantity || 0) - Number(row.quantity || 0),
+                      0,
+                    );
+                    return (
+                      <TableRow key={row.id} hover>
+                        <TableCell>{row.item_name || `#${row.item_id}`}</TableCell>
+                        <TableCell>
+                          {row.item_type === "product" ? row.color || "-" : "-"}
+                        </TableCell>
+                        <TableCell>{row.warehouse_name || "-"}</TableCell>
+                        <TableCell>
+                          {quantity(row.quantity)} {row.unit}
+                        </TableCell>
+                        <TableCell>
+                          {quantity(row.minimum_quantity)} {row.unit}
+                        </TableCell>
+                        <TableCell>
+                          {quantity(shortage)} {row.unit}
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            size="small"
+                            label={shortage > 0 ? "Kam qolgan" : "Minimumda"}
+                            sx={{
+                              height: 25,
+                              color: shortage > 0 ? "#b91c1c" : "#b45309",
+                              fontSize: 9.5,
+                              fontWeight: 900,
+                              backgroundColor:
+                                shortage > 0 ? "rgba(220,38,38,.08)" : "rgba(245,158,11,.09)",
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() => {
+                              setLowStockOpen(false);
+                              navigate(`/inventory/warehouses/${row.warehouse_id}`);
+                            }}
+                            sx={tableActionSx}
+                          >
+                            Omborni ko‘rish
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center" sx={{ py: 6 }}>
+                      Kam qolgan mahsulot yo‘q.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </Box>
+        </DialogContent>
+
+        <DialogActions sx={dialogActionsSx}>
+          <Button onClick={() => setLowStockOpen(false)} sx={secondaryButtonSx}>
+            Yopish
           </Button>
         </DialogActions>
       </Dialog>
