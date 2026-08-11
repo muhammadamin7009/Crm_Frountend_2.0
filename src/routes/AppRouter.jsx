@@ -20,7 +20,7 @@ const Finance = lazy(() => import("../Pages/Finance/Finance"));
 const PlatformLogin = lazy(() => import("../Pages/Platform/PlatformLogin"));
 const PlatformDashboard = lazy(() => import("../Pages/Platform/PlatformDashboard"));
 const AuditLogs = lazy(() => import("../Pages/AuditLog/AuditLogs"));
-const LandingPage = lazy(() => import("../Pages/LandingPage/LandingPage"));
+const LandingPage = lazy(() => import("../Pages/LandingPage/PremiumLandingPage"));
 const Permissions = lazy(() => import("../Pages/Permission/Permissions"));
 const Inventory = lazy(() => import("../Pages/Inventory/Inventory"));
 const Expenses = lazy(() => import("../Pages/Expense/Expenses"));
