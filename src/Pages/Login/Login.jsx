@@ -9,6 +9,7 @@ import api from "../../api/axios";
 import { getCompanyBranding } from "../../api/companyBranding";
 import { getCompanyApplicationStatus } from "../../api/platform";
 import AuthBrandPanel from "../../Components/Auth/AuthBrandPanel";
+import AppLogo from "../../images/al-amin-crm-logo.png";
 import { useAuth } from "../../Context/AuthContext";
 import { setSession } from "../../utils/auth";
 import {
@@ -131,9 +132,9 @@ const Login = () => {
       ? normalizedSlug.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
       : "Al-Amin CRM");
 
-  // Faqat korxonaning o'z logosi. Ilgari `zerrshoes` uchun ilova logosi majburan
-  // qo'yilardi va korxona logo yuklamagan bo'lsa ham begona brend ko'rinardi.
-  const companyLogo = getCompanyLogoUrl(branding?.logo_url) || "";
+  // Korxona logo yuklamagan bo'lsa loyihaning o'z logosi. Ilgari bu yerda
+  // `zerrshoes` slugi uchun boshqa korxonaning logosi chiqarilardi.
+  const companyLogo = getCompanyLogoUrl(branding?.logo_url) || AppLogo;
 
   useEffect(() => {
     const slug = normalizeCompanySlug(companySlug);

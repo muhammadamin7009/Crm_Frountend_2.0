@@ -12,6 +12,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useAuth } from "../../Context/AuthContext";
+import AppLogo from "../../images/al-amin-crm-logo.png";
 
 import { clearSession } from "../../utils/auth";
 import { hasPermission } from "../../utils/permissions";
@@ -210,10 +211,10 @@ const Sidebar = () => {
 
   const fullName = `${user?.first_name || ""} ${user?.last_name || ""}`.trim();
 
-  // Ilgari `zerrshoes` uchun ilovaga o'rnatilgan logo majburan ko'rsatilardi — korxona
-  // o'z logosini yuklamagan bo'lsa ham begona brend chiqib turardi. Endi faqat
-  // yuklangan logo ko'rsatiladi, bo'lmasa korxona nomining birinchi harfi.
-  const companyName = user?.company_name || "Korxona CRM";
+  // Ilgari `zerrshoes` slugi uchun boshqa korxonaning (Zerr Collection) logosi
+  // majburan chiqarilardi. Endi zaxira — loyihaning o'z logosi, ya'ni korxona
+  // logo yuklamagan bo'lsa hech kimning brendi begona joyda ko'rinmaydi.
+  const companyName = user?.company_name || "Al-Amin CRM";
 
   const companyLogo = getCompanyLogoUrl(user?.company_logo_url);
 
@@ -289,25 +290,13 @@ const Sidebar = () => {
                 boxShadow: "0 12px 26px rgba(0,0,0,.3)",
               }}
             >
-              {companyLogo ? (
-                <img
-                  width={35}
-                  height={35}
-                  src={companyLogo}
-                  alt={companyName}
-                  className="h-8.75 w-8.75 object-contain"
-                />
-              ) : (
-                <Typography
-                  sx={{
-                    color: "#991b1b",
-                    fontSize: 19,
-                    fontWeight: 950,
-                  }}
-                >
-                  {companyName?.charAt(0)?.toUpperCase() || "K"}
-                </Typography>
-              )}
+              <img
+                width={35}
+                height={35}
+                src={companyLogo || AppLogo}
+                alt={companyName}
+                className="h-8.75 w-8.75 object-contain"
+              />
             </Box>
 
             <Box

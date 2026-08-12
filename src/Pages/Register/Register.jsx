@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 import { submitCompanyApplication } from "../../api/platform";
 import AuthBrandPanel from "../../Components/Auth/AuthBrandPanel";
-import SiteLogo from "../../images/zerr_02_logo.png";
+import AppLogo from "../../images/al-amin-crm-logo.png";
 
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
@@ -189,7 +189,8 @@ const Register = () => {
 
   const password = watch("password");
   const companyTitle = "Al-Amin CRM";
-  const companyLogo = SiteLogo;
+  // Ro'yxatdan o'tish sahifasi hali biror korxonaga tegishli emas — loyiha logosi.
+  const companyLogo = AppLogo;
 
   const onSubmit = async (submittedValues) => {
     const { confirm_password: _confirmPassword, ...values } = submittedValues;
