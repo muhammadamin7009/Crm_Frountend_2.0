@@ -40,10 +40,15 @@ import {
   getInventoryItems,
   getInventoryMovements,
   getInventoryStock,
+  getWarehouseAssignments,
   getWarehouses,
+  setWarehouseMaterials,
+  setWarehouseUsers,
   updateInventoryThreshold,
   updateWarehouse,
 } from "../../api/inventory";
+import { getUsers } from "../../api/getUsers";
+import { getDepartments } from "../../api/departments";
 import { hasPermission } from "../../utils/permissions";
 
 const emptyMovement = {
@@ -79,6 +84,8 @@ const emptyWarehouse = {
   code: "",
   location: "",
   warehouse_type: "mixed",
+  // Sexdagi kichik ombor qaysi bo'limga tegishli. Bo'sh — glavniy ombor.
+  department_id: "",
 };
 
 const movementLabels = {
@@ -427,6 +434,22 @@ const Inventory = () => {
   const [warehouseForm, setWarehouseForm] = useState(emptyWarehouse);
 
   const [editingWarehouse, setEditingWarehouse] = useState(null);
+
+  // Omborga ishchi va xomashyo biriktirish oynasi.
+  const [assignmentWarehouse, setAssignmentWarehouse] = useState(null);
+
+  const [assignmentLoading, setAssignmentLoading] = useState(false);
+
+  const [assignmentSaving, setAssignmentSaving] = useState(false);
+
+  const [assignedUsers, setAssignedUsers] = useState([]);
+
+  const [assignedMaterials, setAssignedMaterials] = useState([]);
+
+  const [staffOptions, setStaffOptions] = useState([]);
+
+  // Ombor shaklidagi "Qaysi bo'lim" tanlagichi uchun.
+  const [departmentOptions, setDepartmentOptions] = useState([]);
 
   const [thresholdRow, setThresholdRow] = useState(null);
 
@@ -986,6 +1009,9 @@ const Inventory = () => {
         code: warehouseForm.code.trim().toUpperCase(),
 
         location: warehouseForm.location.trim() || null,
+
+        // Bo'sh satr emas, null yuborilishi kerak — Joi son yoki null kutadi.
+        department_id: warehouseForm.department_id ? Number(warehouseForm.department_id) : null,
       };
 
       let savedWarehouse = editingWarehouse;
@@ -1026,6 +1052,92 @@ const Inventory = () => {
     setWarehousePendingDelete(warehouse);
 
     setWarehouseDeleteOpen(true);
+  };
+
+  // Bo'limlar faqat ombor boshqaruvi sahifasida, ombor shakli uchun kerak.
+  useEffect(() => {
+    if (!isManagementPage || !canManageWarehouses) return;
+
+    let cancelled = false;
+
+    getDepartments({ is_active: true, limit: 100, sort_by: "sort_order", sort_order: "asc" })
+      .then(({ data }) => {
+        if (!cancelled) setDepartmentOptions(data?.departments || []);
+      })
+      .catch(() => {
+        if (!cancelled) setDepartmentOptions([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isManagementPage, canManageWarehouses]);
+
+  // `getInventoryItems` xomashyoni `item_id` bilan qaytaradi, biriktirish endpointi esa
+  // `id` bilan. Autocomplete ikkalasini solishtira olishi uchun bir shaklga keltiramiz.
+  const materialOptions = useMemo(
+    () =>
+      items
+        .filter((item) => item.item_type === "raw_material")
+        .map((item) => ({ id: item.item_id, name: item.name, unit: item.unit })),
+    [items],
+  );
+
+  /**
+   * Biriktirish oynasi. Ishchi ro'yxati faqat shu yerda kerak bo'lgani uchun
+   * sahifa yuklanishida emas, oyna ochilganda olinadi.
+   */
+  const openAssignments = async (warehouse) => {
+    setAssignmentWarehouse(warehouse);
+    setAssignmentLoading(true);
+    setAssignedUsers([]);
+    setAssignedMaterials([]);
+
+    try {
+      const [assignmentRes, usersRes] = await Promise.all([
+        getWarehouseAssignments(warehouse.id),
+        // `scope: "staff"` — super_admin, admin va worker; mijozlar chiqmaydi.
+        // `limit` maksimumi 100 (users/_schemas.js), kattaroq qiymat 400 beradi.
+        staffOptions.length ? Promise.resolve(null) : getUsers({ limit: 100, scope: "staff" }),
+      ]);
+
+      if (usersRes) {
+        const list = usersRes.data?.users || usersRes.data?.found_users || [];
+        setStaffOptions(list.filter((person) => !person.is_deleted));
+      }
+
+      setAssignedUsers(assignmentRes.data?.users || []);
+      setAssignedMaterials(assignmentRes.data?.materials || []);
+    } catch (error) {
+      toast.error(errorMessage(error, "Biriktirishlarni olishda xato."));
+      setAssignmentWarehouse(null);
+    } finally {
+      setAssignmentLoading(false);
+    }
+  };
+
+  const saveAssignments = async () => {
+    if (!assignmentWarehouse) return;
+
+    setAssignmentSaving(true);
+
+    try {
+      await setWarehouseUsers(
+        assignmentWarehouse.id,
+        assignedUsers.map((person) => person.id),
+      );
+      await setWarehouseMaterials(
+        assignmentWarehouse.id,
+        assignedMaterials.map((material) => material.id),
+      );
+
+      toast.success("Biriktirish saqlandi.");
+      setAssignmentWarehouse(null);
+    } catch (error) {
+      toast.error(errorMessage(error, "Biriktirishni saqlashda xato."));
+    } finally {
+      setAssignmentSaving(false);
+    }
   };
 
   const removeWarehouse = async () => {
@@ -1692,6 +1804,8 @@ const Inventory = () => {
                             location: warehouse.location || "",
 
                             warehouse_type: warehouse.warehouse_type || "mixed",
+
+                            department_id: warehouse.department_id || "",
                           });
 
                           setWarehouseOpen(true);
@@ -1699,6 +1813,18 @@ const Inventory = () => {
                         sx={tableActionSx}
                       >
                         Tahrirlash
+                      </Button>
+
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          openAssignments(warehouse);
+                        }}
+                        sx={tableActionSx}
+                      >
+                        Biriktirish
                       </Button>
 
                       <Button
@@ -3335,6 +3461,30 @@ const Inventory = () => {
 
               <MenuItem value="mixed">Aralash ombor</MenuItem>
             </TextField>
+
+            {/* Bo'lim biriktirilsa bu sexdagi kichik ombor bo'ladi: ishchi shu yerdan
+                sarflaydi va qoldiq minusga tushishi mumkin. Bo'sh qolsa glavniy ombor. */}
+            <TextField
+              select
+              label="Qaysi bo‘lim ombori"
+              value={warehouseForm.department_id}
+              onChange={(event) =>
+                setWarehouseForm((current) => ({
+                  ...current,
+
+                  department_id: event.target.value,
+                }))
+              }
+              helperText="Bo‘lim tanlansa sexdagi kichik ombor bo‘ladi va qoldiq minusga tushishi mumkin."
+            >
+              <MenuItem value="">Glavniy ombor (bo‘limsiz)</MenuItem>
+
+              {departmentOptions.map((department) => (
+                <MenuItem key={department.id} value={department.id}>
+                  {department.name}
+                </MenuItem>
+              ))}
+            </TextField>
           </Stack>
         </DialogContent>
 
@@ -3350,6 +3500,88 @@ const Inventory = () => {
             sx={primaryButtonSx}
           >
             {saving ? "Saqlanmoqda..." : "Saqlash"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Omborga ishchi va xomashyo biriktirish */}
+      <Dialog
+        open={Boolean(assignmentWarehouse)}
+        onClose={() => setAssignmentWarehouse(null)}
+        fullWidth
+        maxWidth="sm"
+        slotProps={{ paper: { sx: dialogPaperSx } }}
+      >
+        <DialogTitle sx={dialogTitleSx}>
+          {assignmentWarehouse?.name} — biriktirish
+        </DialogTitle>
+
+        <DialogContent sx={dialogContentSx}>
+          {assignmentLoading ? (
+            <Box sx={{ display: "grid", placeItems: "center", minHeight: 180 }}>
+              <CircularProgress size={28} sx={{ color: "var(--aa-brand-500)" }} />
+            </Box>
+          ) : (
+            <Stack spacing={2.2} sx={{ mt: 0.5 }}>
+              <Alert severity="info" sx={{ fontSize: 11.5 }}>
+                Biriktirilgan ishchi faqat shu ombor qoldig‘ini va glavniy omborda unga
+                tegishli xomashyolarni ko‘radi. Hech kim biriktirilmasa, ombor hozirgidek
+                hammaga ko‘rinadi.
+              </Alert>
+
+              <Autocomplete
+                multiple
+                options={staffOptions}
+                value={assignedUsers}
+                onChange={(_event, value) => setAssignedUsers(value)}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                getOptionLabel={(option) =>
+                  `${option.first_name || ""} ${option.last_name || ""}`.trim() ||
+                  option.username ||
+                  `#${option.id}`
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Ishchilar"
+                    placeholder="Ism bo‘yicha qidiring"
+                    helperText="Shu omborda kim ishlaydi"
+                  />
+                )}
+              />
+
+              <Autocomplete
+                multiple
+                options={materialOptions}
+                value={assignedMaterials}
+                onChange={(_event, value) => setAssignedMaterials(value)}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                getOptionLabel={(option) => option.name || `#${option.id}`}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Xomashyolar"
+                    placeholder="Nomi bo‘yicha qidiring"
+                    helperText="Shu omborda qanday xomashyo turadi"
+                  />
+                )}
+              />
+            </Stack>
+          )}
+        </DialogContent>
+
+        <DialogActions sx={dialogActionsSx}>
+          <Button onClick={() => setAssignmentWarehouse(null)} sx={secondaryButtonSx}>
+            Bekor qilish
+          </Button>
+
+          <Button
+            variant="contained"
+            disabled={assignmentLoading || assignmentSaving}
+            onClick={saveAssignments}
+            sx={primaryButtonSx}
+          >
+            {assignmentSaving ? "Saqlanmoqda..." : "Saqlash"}
           </Button>
         </DialogActions>
       </Dialog>

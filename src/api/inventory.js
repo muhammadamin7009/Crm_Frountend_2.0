@@ -17,6 +17,13 @@ export const createInventoryMovement = (data) => api.post("/inventory/movements"
 export const createProductionReceipt = (data) => api.post("/inventory/production-receipts", data);
 export const createInventoryTransfer = (data) => api.post("/inventory/transfers", data);
 
+// Omborga ishchi va xomashyo biriktirish. Ro'yxat butunlay almashtiriladi:
+// yuborilmagan yozuvlar o'chiriladi.
+export const getWarehouseAssignments = (id) => api.get(`/warehouses/${id}/assignments`);
+export const setWarehouseUsers = (id, user_ids) => api.put(`/warehouses/${id}/users`, { user_ids });
+export const setWarehouseMaterials = (id, raw_material_ids) =>
+  api.put(`/warehouses/${id}/materials`, { raw_material_ids });
+
 export const getInventoryCounts = (params) => api.get("/inventory/counts", { params });
 export const getInventoryCount = (id) => api.get(`/inventory/counts/${id}`);
 export const createInventoryCount = (data) => api.post("/inventory/counts", data);

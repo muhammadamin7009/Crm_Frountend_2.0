@@ -6,6 +6,11 @@ export const getWorkerOutputsSummary = (params) => api.get("/worker-outputs/summ
 
 export const getWorkerOutput = (id) => api.get(`/worker-outputs/${id}`);
 
+// Shu bosqichda sarflanadigan xomashyolar va bir par uchun me'yor — ish yozuvi
+// shaklidagi tayyor raqamlar uchun.
+export const getStageMaterials = (params) =>
+  api.get("/worker-outputs/stage-materials", { params });
+
 export const createWorkerOutput = (data) => api.post("/worker-outputs", data);
 
 export const createBulkWorkerOutputs = (data) => api.post("/worker-outputs/bulk", data);

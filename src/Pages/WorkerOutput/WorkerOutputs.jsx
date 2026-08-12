@@ -31,6 +31,7 @@ import { getDepartments } from "../../api/departments";
 import {
   createBulkWorkerOutputs,
   deleteWorkerOutput,
+  getStageMaterials,
   getWorkerOutputs,
   updateWorkerOutput,
 } from "../../api/workerOutputs";
@@ -165,6 +166,10 @@ const WorkerOutputs = () => {
   const [workers, setWorkers] = useState([]);
   const [products, setProducts] = useState([]);
   const [departments, setDepartments] = useState([]);
+
+  // Shu bosqichda sarflanadigan xomashyolar va ularning haqiqiy miqdori.
+  const [stageMaterials, setStageMaterials] = useState([]);
+  const [stageLoading, setStageLoading] = useState(false);
 
   const [filters, setFilters] = useState({
     q: "",
@@ -363,7 +368,48 @@ const WorkerOutputs = () => {
       note: output.note || "",
     });
 
+    loadStageMaterials(output);
+
     setModalOpen(true);
+  };
+
+  /**
+   * Shu bosqichda sarflanadigan xomashyolar. Maydonlar retsept × miqdor bilan
+   * to'ldiriladi; foydalanuvchi haqiqiy sarfni oshirishi yoki tushirishi mumkin.
+   */
+  const loadStageMaterials = async (output) => {
+    if (!output?.product_id || !output?.department_id) {
+      setStageMaterials([]);
+      return;
+    }
+
+    setStageLoading(true);
+
+    try {
+      const { data } = await getStageMaterials({
+        product_id: output.product_id,
+        department_id: output.department_id,
+        worker_output_id: output.id,
+      });
+
+      const quantity = Number(output.quantity || 0);
+
+      setStageMaterials(
+        (data?.stage_materials || []).map((material) => {
+          const expected = Number((quantity * Number(material.quantity_per_pair)).toFixed(3));
+
+          return {
+            ...material,
+            expected,
+            value: String(material.actual_quantity ?? expected),
+          };
+        }),
+      );
+    } catch {
+      setStageMaterials([]);
+    } finally {
+      setStageLoading(false);
+    }
   };
 
   const closeModals = () => {
@@ -372,6 +418,7 @@ const WorkerOutputs = () => {
     setSelectedOutput(null);
     setForm(emptyForm);
     setBatchItems([{ ...emptyBatchItem }]);
+    setStageMaterials([]);
   };
 
   const changeBatchItem = (index, field) => (event) => {
@@ -444,6 +491,15 @@ const WorkerOutputs = () => {
     quantity: Number(form.quantity),
     worked_at: form.worked_at || undefined,
     note: form.note.trim() || null,
+
+    // Haqiqiy sarf. Yuborilmasa server retsept bo'yicha hisoblaydi.
+    materials: stageMaterials.length
+      ? stageMaterials.map((material) => ({
+          raw_material_id: material.raw_material_id,
+          quantity: Number(material.value || 0),
+          expected_quantity: material.expected,
+        }))
+      : undefined,
   });
 
   const handleSave = async () => {
@@ -1350,11 +1406,103 @@ const WorkerOutputs = () => {
                 />
               </Box>
 
+              {/* Haqiqiy xomashyo sarfi. Maydonlar retsept × miqdor bilan to'ldirilgan;
+                  o'zgartirilsa farq saqlanadi va kichik ombordan shuncha yechiladi. */}
+              {(stageLoading || stageMaterials.length > 0) && (
+                <Box
+                  sx={{
+                    p: 2,
+                    borderRadius: "18px",
+                    border: "1px solid var(--aa-border)",
+                    background: "var(--aa-surface-muted)",
+                  }}
+                >
+                  <Typography
+                    sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 950 }}
+                  >
+                    Sarflangan xomashyo
+                  </Typography>
+
+                  <Typography
+                    sx={{ mt: 0.4, color: "var(--aa-text-tertiary)", fontSize: 10.5 }}
+                  >
+                    Retsept bo‘yicha hisoblangan miqdor turibdi. Haqiqatda boshqacha ketgan
+                    bo‘lsa o‘zgartiring.
+                  </Typography>
+
+                  {stageLoading ? (
+                    <Typography sx={{ mt: 1.5, color: "var(--aa-text-tertiary)", fontSize: 11 }}>
+                      Yuklanmoqda...
+                    </Typography>
+                  ) : (
+                    <Stack spacing={1.2} sx={{ mt: 1.6 }}>
+                      {stageMaterials.map((material, index) => {
+                        const difference = Number(material.value || 0) - material.expected;
+
+                        return (
+                          <Box
+                            key={material.raw_material_id}
+                            sx={{
+                              display: "grid",
+                              gridTemplateColumns: { xs: "1fr", sm: "1fr 160px" },
+                              alignItems: "center",
+                              gap: 1.2,
+                            }}
+                          >
+                            <Box sx={{ minWidth: 0 }}>
+                              <Typography
+                                sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 800 }}
+                              >
+                                {material.name}
+                              </Typography>
+
+                              <Typography
+                                sx={{
+                                  mt: 0.2,
+                                  fontSize: 10,
+                                  fontWeight: 700,
+                                  color:
+                                    Math.abs(difference) < 0.001
+                                      ? "var(--aa-text-tertiary)"
+                                      : difference > 0
+                                        ? "var(--aa-danger)"
+                                        : "var(--aa-success)",
+                                }}
+                              >
+                                {Math.abs(difference) < 0.001
+                                  ? `Reja: ${material.expected} ${material.unit || ""}`
+                                  : `Reja ${material.expected} — farq ${difference > 0 ? "+" : ""}${Number(difference.toFixed(3))} ${material.unit || ""}`}
+                              </Typography>
+                            </Box>
+
+                            <TextField
+                              size="small"
+                              type="number"
+                              label={material.unit || "miqdor"}
+                              value={material.value}
+                              onChange={(event) => {
+                                const next = event.target.value;
+                                setStageMaterials((current) =>
+                                  current.map((row, rowIndex) =>
+                                    rowIndex === index ? { ...row, value: next } : row,
+                                  ),
+                                );
+                              }}
+                              slotProps={{ htmlInput: { min: 0, step: 0.001 } }}
+                            />
+                          </Box>
+                        );
+                      })}
+                    </Stack>
+                  )}
+                </Box>
+              )}
+
               <Box
                 sx={{
                   p: 2,
                   borderRadius: "18px",
-                  border: "1px solid #e7ebf0",
+                  border: "1px solid var(--aa-border)",
                   background:
                     "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
                 }}

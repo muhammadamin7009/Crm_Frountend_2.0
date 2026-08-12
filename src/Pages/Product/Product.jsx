@@ -26,6 +26,7 @@ import ActiveStatusChip from "../../Components/UI/ActiveStatusChip";
 
 import {
   getProduct,
+  getProductCost,
   getProductRecipe,
   saveProductDepartmentPrices,
   saveProductRecipe,
@@ -378,6 +379,9 @@ const Product = () => {
 
   const [recipeSaving, setRecipeSaving] = useState(false);
 
+  // Haqiqiy tannarx: ombor harakatlaridan yig'iladi, retsept bilan solishtiriladi.
+  const [costReport, setCostReport] = useState(null);
+
   const images = useMemo(() => product?.images || [], [product?.images]);
 
   const primaryImage = useMemo(
@@ -397,7 +401,7 @@ const Product = () => {
     setError("");
 
     try {
-      const [{ data }, departmentsRes, recipeRes] = await Promise.all([
+      const [{ data }, departmentsRes, recipeRes, costRes] = await Promise.all([
         getProduct(id),
 
         needsDepartments
@@ -423,6 +427,8 @@ const Product = () => {
                 raw_materials: [],
               },
             }),
+
+        canViewRecipe ? getProductCost(id) : Promise.resolve({ data: { cost: null } }),
       ]);
 
       const receivedProduct = data?.product || data?.found_product || data;
@@ -448,10 +454,14 @@ const Product = () => {
           raw_material_id: material.raw_material_id,
 
           quantity_per_pair: material.quantity_per_pair,
+
+          department_id: material.department_id || "",
         })),
       );
 
       setRawMaterials(recipeRes.data?.raw_materials || []);
+
+      setCostReport(costRes.data?.cost || null);
     } catch (requestError) {
       const status = requestError?.response?.status;
 
@@ -613,6 +623,7 @@ const Product = () => {
         row_id: `${Date.now()}-${Math.random()}`,
         raw_material_id: "",
         quantity_per_pair: "",
+        department_id: "",
       },
     ]);
   };
@@ -675,6 +686,9 @@ const Product = () => {
           raw_material_id: Number(row.raw_material_id),
 
           quantity_per_pair: Number(row.quantity_per_pair),
+
+          // Bo'sh bo'lsa server yakunlovchi bo'limni qo'yadi.
+          department_id: row.department_id ? Number(row.department_id) : null,
         })),
       });
 
@@ -687,6 +701,8 @@ const Product = () => {
           raw_material_id: material.raw_material_id,
 
           quantity_per_pair: material.quantity_per_pair,
+
+          department_id: material.department_id || "",
         })),
       );
 
@@ -1533,7 +1549,7 @@ const Product = () => {
                     gridTemplateColumns: {
                       xs: "1fr",
 
-                      md: "minmax(220px,1fr) 220px auto",
+                      md: "minmax(200px,1fr) minmax(180px,220px) 180px auto",
                     },
 
                     gap: 1.2,
@@ -1589,6 +1605,27 @@ const Product = () => {
                       step: 0.001,
                     }}
                   />
+
+                  {/* Qaysi bosqichda sarflanadi: teri kroyda, ip tikuvda. Bo'sh
+                      qoldirilsa yakunlovchi bo'limda sarflanadi — eski xatti-harakat. */}
+                  <TextField
+                    select
+                    size="small"
+                    label="Qaysi bo‘limda"
+                    value={row.department_id || ""}
+                    onChange={(event) =>
+                      updateRecipeRow(row.row_id, "department_id", event.target.value)
+                    }
+                    helperText={row.department_id ? " " : "Yakunlovchi bo‘lim"}
+                  >
+                    <MenuItem value="">Yakunlovchi bo‘lim</MenuItem>
+
+                    {priceRows.map((department) => (
+                      <MenuItem key={department.department_id} value={department.department_id}>
+                        {department.department_name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
 
                   <Button
                     color="error"
@@ -1660,6 +1697,111 @@ const Product = () => {
               }}
             >
               Retsept tuzish uchun avval xomashyo yarating.
+            </Alert>
+          )}
+        </Surface>
+      )}
+
+      {/* Haqiqiy tannarx — ombor harakatlaridan yig'ilgan sarf va rejadan farqi. */}
+      {canViewRecipe && costReport && costReport.produced_pairs > 0 && (
+        <Surface sx={{ mt: 2.5, p: 2.4 }}>
+          <SectionHeader
+            title="Haqiqiy tannarx"
+            subtitle={`${formatNumber(costReport.produced_pairs)} par ishlab chiqarilgan — qaysi xomashyodan qancha ketgani`}
+          />
+
+          <Box
+            sx={{
+              mb: 2,
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "repeat(3,minmax(0,1fr))" },
+              gap: 1.3,
+            }}
+          >
+            <PricePanel
+              label="Bir par tannarxi"
+              value={formatMoney(costReport.cost_per_pair)}
+              helper="Faqat xomashyo sarfi"
+              tone="blue"
+            />
+
+            <PricePanel
+              label="Jami xomashyo"
+              value={formatMoney(costReport.total_material_cost)}
+              helper="Butun ishlab chiqarish bo‘yicha"
+              tone="amber"
+            />
+
+            <PricePanel
+              label="Sotuv narxi"
+              value={formatMoney(costReport.sale_price)}
+              helper={
+                costReport.sale_price > 0
+                  ? `Xomashyo ulushi: ${Math.round((costReport.cost_per_pair / costReport.sale_price) * 100)}%`
+                  : "Sotuv narxi belgilanmagan"
+              }
+              tone={costReport.sale_price > costReport.cost_per_pair ? "green" : "red"}
+            />
+          </Box>
+
+          <Stack spacing={1}>
+            {costReport.materials.map((material) => {
+              const over = material.variance > 0.001;
+              const under = material.variance < -0.001;
+
+              return (
+                <Box
+                  key={material.raw_material_id}
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", md: "1fr 150px 150px 150px" },
+                    alignItems: "center",
+                    gap: 1.2,
+                    p: 1.5,
+                    borderRadius: "15px",
+                    border: "1px solid var(--aa-border)",
+                    backgroundColor: "var(--aa-surface-muted)",
+                  }}
+                >
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 900 }}>
+                      {material.name}
+                    </Typography>
+
+                    <Typography sx={{ mt: 0.2, color: "var(--aa-text-tertiary)", fontSize: 10 }}>
+                      {material.department_name || "Bo‘lim belgilanmagan"} · 1 par uchun{" "}
+                      {material.quantity_per_pair} {material.unit}
+                    </Typography>
+                  </Box>
+
+                  <InfoItem
+                    label="Reja"
+                    value={`${formatNumber(material.expected_quantity)} ${material.unit}`}
+                  />
+
+                  <InfoItem
+                    label="Haqiqatda"
+                    value={`${formatNumber(material.used_quantity)} ${material.unit}`}
+                    valueColor={
+                      over ? "var(--aa-danger)" : under ? "var(--aa-success)" : "var(--aa-text)"
+                    }
+                  />
+
+                  <InfoItem
+                    label="Summa"
+                    value={formatMoney(material.total_cost)}
+                    valueColor="var(--aa-text)"
+                  />
+                </Box>
+              );
+            })}
+          </Stack>
+
+          {costReport.materials.some((material) => Math.abs(material.variance) > 0.001) && (
+            <Alert severity="warning" sx={{ mt: 1.6, borderRadius: "15px", fontSize: 11.5 }}>
+              Ba’zi xomashyolarda reja va haqiqiy sarf farq qilyapti. Farq ish yozuvlarida
+              kiritilgan haqiqiy miqdordan chiqadi — retseptni yangilash kerakmi yoki sexda
+              isrof bormi, shuni tekshiring.
             </Alert>
           )}
         </Surface>

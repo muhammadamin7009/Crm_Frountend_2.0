@@ -6,6 +6,9 @@ export const getProduct = (id) => api.get(`/products/${id}`);
 export const getProductRecipe = (id) => api.get(`/products/${id}/recipe`);
 export const saveProductRecipe = (id, data) => api.put(`/products/${id}/recipe`, data);
 
+// Haqiqiy tannarx: qaysi xomashyodan qancha ketgan va retseptdan qanchaga farq qilgan.
+export const getProductCost = (id) => api.get(`/products/${id}/cost`);
+
 export const getProductDepartmentPrices = (id) => api.get(`/products/${id}/department-prices`);
 
 export const saveProductDepartmentPrices = (id, prices) =>
