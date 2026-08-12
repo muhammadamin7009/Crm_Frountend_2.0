@@ -9,6 +9,9 @@ export const archiveWarehouse = (id) => api.delete(`/warehouses/${id}`);
 export const getInventoryStock = (params) => api.get("/inventory/stock", { params });
 export const getLowInventoryStock = (params) => api.get("/inventory/low-stock", { params });
 export const getInventoryItems = (params) => api.get("/inventory/items", { params });
+
+// Tayyor mahsulot ombori: model > o'lcham > variant (rang, padoj, material).
+export const getFinishedGoods = (params) => api.get("/inventory/finished-goods", { params });
 export const updateInventoryThreshold = (id, minimum_quantity) =>
   api.patch(`/inventory/stock/${id}`, { minimum_quantity });
 

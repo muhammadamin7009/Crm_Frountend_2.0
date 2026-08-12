@@ -49,6 +49,7 @@ import {
 } from "../../api/inventory";
 import { getUsers } from "../../api/getUsers";
 import { getDepartments } from "../../api/departments";
+import FinishedGoodsList from "./FinishedGoodsList";
 import { hasPermission } from "../../utils/permissions";
 
 const emptyMovement = {
@@ -562,6 +563,11 @@ const Inventory = () => {
 
     [activeWarehouses, warehouseId],
   );
+
+  // Guruhlangan ko'rinish faqat tayyor mahsulot omborida ma'noli — xomashyoda
+  // model va o'lcham tushunchasi yo'q.
+  const isFinishedGoodsWarehouse =
+    Boolean(selectedWarehouse) && selectedWarehouse.warehouse_type === "product";
 
   useEffect(() => {
     if (warehouseId) {
@@ -1874,6 +1880,14 @@ const Inventory = () => {
             )}
           </Box>
         </Card>
+      )}
+
+      {/* Tayyor mahsulot omborida tekis jadval o'rniga model va o'lcham bo'yicha
+          guruhlangan ro'yxat: bir model o'nlab qatorga bo'linib ketmasin. */}
+      {!isCountsPage && !isManagementPage && isFinishedGoodsWarehouse && (
+        <Box sx={{ mb: 2.5 }}>
+          <FinishedGoodsList warehouseId={selectedWarehouse.id} />
+        </Box>
       )}
 
       {!isCountsPage && !isManagementPage && selectedWarehouse && (
