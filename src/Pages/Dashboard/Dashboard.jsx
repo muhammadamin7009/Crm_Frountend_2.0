@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Chip,
@@ -20,6 +21,7 @@ import { getWorkerBalance } from "../../api/workerPayments";
 import AdminOverview from "./AdminOverview";
 import ClientDashboard from "./ClientDashboard";
 import { hasPermission } from "../../utils/permissions";
+import { getAccessibleSections } from "../../utils/navigation";
 
 import CheckIcon from "../../images/ui-icons/check.svg";
 import WalletIcon from "../../images/ui-icons/wallet.svg";
@@ -65,18 +67,33 @@ const getMonthRange = () => {
 
 const getToday = () => new Date().toISOString().slice(0, 10);
 
+// Ranglar mavzu o'zgaruvchilaridan olinadi. Ilgari bu yerda qattiq `bg-white` va
+// `text-slate-950` turgan — qorong'i mavzuda matn qora fonda qora bo'lib ko'rinmasdi.
 const StatCard = ({ label, value, helper }) => (
-  <Paper elevation={0} className="rounded-2xl border border-slate-200 bg-white px-5 py-4">
-    <Typography variant="body2" className="text-slate-500">
+  <Paper
+    elevation={0}
+    sx={{
+      px: 2.5,
+      py: 2,
+      borderRadius: "16px",
+      border: "1px solid var(--aa-border)",
+      backgroundColor: "var(--aa-surface-solid)",
+    }}
+  >
+    <Typography variant="body2" sx={{ color: "var(--aa-text-secondary)" }}>
       {label}
     </Typography>
 
-    <Typography variant="h5" fontWeight={800} className="mt-1 text-slate-950">
+    <Typography
+      variant="h5"
+      fontWeight={800}
+      sx={{ mt: 0.5, color: "var(--aa-text)", overflowWrap: "anywhere" }}
+    >
       {value}
     </Typography>
 
     {helper && (
-      <Typography variant="body2" className="mt-1 text-slate-500">
+      <Typography variant="body2" sx={{ mt: 0.5, color: "var(--aa-text-tertiary)" }}>
         {helper}
       </Typography>
     )}
@@ -421,6 +438,15 @@ const WorkerDepartmentList = ({ items }) => {
 };
 
 const WorkerDashboard = ({ user }) => {
+  // Ishchi faqat o'ziga berilgan bo'limlarni ko'radi. Ruxsat bo'lmasa karta umuman
+  // chizilmaydi — ilgari u nol qiymat bilan turaverar edi (masalan ombor xodimida
+  // "Bu oy ishlab topilgan: 0"), bu esa noto'g'ri ma'lumot taassurotini berardi.
+  const canViewProduction = hasPermission(user, "production.view");
+
+  const canViewPayroll = hasPermission(user, "payroll.view");
+
+  const canViewInventory = hasPermission(user, "inventory.view");
+
   const [monthOutputs, setMonthOutputs] = useState([]);
 
   const [monthTotals, setMonthTotals] = useState({
@@ -452,28 +478,40 @@ const WorkerDashboard = ({ user }) => {
 
       const today = getToday();
 
+      const emptyOutputs = { data: { worker_outputs: [], totals: {} } };
+      const emptySummary = { data: { summary: [] } };
+      const emptyBalance = { data: { balance: {} } };
+
+      // Ruxsati yo'q bo'limga so'rov ham yuborilmaydi — aks holda backend 403 qaytaradi
+      // va foydalanuvchi keraksiz xato xabarini ko'radi.
       const [monthRes, todayRes, departmentsRes, balanceRes] = await Promise.all([
-        getWorkerOutputs({
-          ...monthRange,
-          offset: 0,
-          limit: 8,
-          sort_by: "worked_at",
-          sort_order: "desc",
-        }),
+        canViewProduction
+          ? getWorkerOutputs({
+              ...monthRange,
+              offset: 0,
+              limit: 8,
+              sort_by: "worked_at",
+              sort_order: "desc",
+            })
+          : Promise.resolve(emptyOutputs),
 
-        getWorkerOutputs({
-          date_from: today,
-          date_to: today,
-          offset: 0,
-          limit: 1,
-        }),
+        canViewProduction
+          ? getWorkerOutputs({
+              date_from: today,
+              date_to: today,
+              offset: 0,
+              limit: 1,
+            })
+          : Promise.resolve(emptyOutputs),
 
-        getWorkerOutputsSummary({
-          ...monthRange,
-          group_by: "department",
-        }),
+        canViewProduction
+          ? getWorkerOutputsSummary({
+              ...monthRange,
+              group_by: "department",
+            })
+          : Promise.resolve(emptySummary),
 
-        getWorkerBalance(monthRange),
+        canViewPayroll ? getWorkerBalance(monthRange) : Promise.resolve(emptyBalance),
       ]);
 
       setMonthOutputs(monthRes.data.worker_outputs || []);
@@ -507,7 +545,7 @@ const WorkerDashboard = ({ user }) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [canViewProduction, canViewPayroll]);
 
   useEffect(() => {
     fetchDashboard();
@@ -572,7 +610,52 @@ const WorkerDashboard = ({ user }) => {
 
   const month = getMonthRange();
 
-  const hasMonthlyBalance = totalEarned > 0 || totalPaid > 0 || remaining > 0;
+  const hasMonthlyBalance = canViewPayroll && (totalEarned > 0 || totalPaid > 0 || remaining > 0);
+
+  const kpiCards = [
+    canViewProduction && {
+      label: "Bugungi summa",
+      value: formatMoney(todayTotals.total_amount),
+      helper: `${formatNumber(todayTotals.total_quantity)} dona ish bajarildi`,
+      icon: CheckIcon,
+      tone: "red",
+    },
+    canViewProduction && {
+      label: "Bu oy ishlab topilgan",
+      value: formatMoney(totalEarned),
+      helper: `${formatNumber(monthTotals.total_quantity)} dona bajarilgan ish`,
+      icon: TrendUpIcon,
+      tone: "violet",
+    },
+    canViewPayroll && {
+      label: "Olingan to‘lov",
+      value: formatMoney(totalPaid),
+      helper: "Bu oy berilgan jami to‘lov",
+      icon: WalletIcon,
+      tone: "green",
+    },
+    canViewPayroll && {
+      label: "Qolgan summa",
+      value: formatMoney(remaining),
+      helper: "Hali berilmagan ish haqi",
+      icon: WalletIcon,
+      tone: "amber",
+    },
+    canViewPayroll && {
+      label: "Avans qarzi",
+      value: formatMoney(remainingAdvance),
+      helper: "Hali oylikdan ushlanmagan",
+      icon: BoxIcon,
+      tone: "blue",
+    },
+    canViewProduction && {
+      label: "Bu oy bajarilgan",
+      value: `${formatNumber(monthTotals.total_quantity)} dona`,
+      helper: "Oy boshidan jami ishlab chiqarish",
+      icon: CheckIcon,
+      tone: "green",
+    },
+  ].filter(Boolean);
 
   return (
     <Box className="crm-page aa-dashboard-page h-full overflow-auto pr-1">
@@ -724,82 +807,71 @@ const WorkerDashboard = ({ user }) => {
 
       {/* Statistikalar */}
 
-      <Box
-        className="aa-dashboard-kpi-grid"
-        sx={{
-          mb: 2.5,
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "repeat(2,minmax(0,1fr))",
-            sm: "repeat(2,minmax(0,1fr))",
-            xl: "repeat(6,minmax(0,1fr))",
-          },
-          gap: 2,
-        }}
-      >
-        <WorkerKpiCard
-          label="Bugungi summa"
-          value={formatMoney(todayTotals.total_amount)}
-          helper={`${formatNumber(todayTotals.total_quantity)} dona ish bajarildi`}
-          icon={CheckIcon}
-          tone="red"
-        />
+      {kpiCards.length > 0 && (
+        <Box
+          className="aa-dashboard-kpi-grid"
+          sx={{
+            mb: 2.5,
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "repeat(2,minmax(0,1fr))",
+              sm: "repeat(2,minmax(0,1fr))",
+              md: "repeat(3,minmax(0,1fr))",
+              xl: `repeat(${Math.min(kpiCards.length, 6)},minmax(0,1fr))`,
+            },
+            gap: 2,
+          }}
+        >
+          {kpiCards.map((card) => (
+            <WorkerKpiCard
+              key={card.label}
+              label={card.label}
+              value={card.value}
+              helper={card.helper}
+              icon={card.icon}
+              tone={card.tone}
+            />
+          ))}
+        </Box>
+      )}
 
-        <WorkerKpiCard
-          label="Bu oy ishlab topilgan"
-          value={formatMoney(totalEarned)}
-          helper={`${formatNumber(monthTotals.total_quantity)} dona bajarilgan ish`}
-          icon={TrendUpIcon}
-          tone="violet"
-        />
+      {kpiCards.length === 0 && (
+        <Paper
+          elevation={0}
+          sx={{
+            mb: 2.5,
+            p: 3,
+            borderRadius: "24px",
+            border: "1px dashed var(--aa-border)",
+            backgroundColor: "var(--aa-surface-muted)",
+          }}
+        >
+          <Typography sx={{ color: "var(--aa-text)", fontSize: 15, fontWeight: 900 }}>
+            {canViewInventory ? "Ombor bo'limi sizga ochiq" : "Bosh sahifada ko'rsatiladigan ma'lumot yo'q"}
+          </Typography>
 
-        <WorkerKpiCard
-          label="Olingan to‘lov"
-          value={formatMoney(totalPaid)}
-          helper="Bu oy berilgan jami to‘lov"
-          icon={WalletIcon}
-          tone="green"
-        />
-
-        <WorkerKpiCard
-          label="Qolgan summa"
-          value={formatMoney(remaining)}
-          helper="Hali berilmagan ish haqi"
-          icon={WalletIcon}
-          tone="amber"
-        />
-
-        <WorkerKpiCard
-          label="Avans qarzi"
-          value={formatMoney(remainingAdvance)}
-          helper="Hali oylikdan ushlanmagan"
-          icon={BoxIcon}
-          tone="blue"
-        />
-
-        <WorkerKpiCard
-          label="Bu oy bajarilgan"
-          value={`${formatNumber(monthTotals.total_quantity)} dona`}
-          helper="Oy boshidan jami ishlab chiqarish"
-          icon={CheckIcon}
-          tone="green"
-        />
-      </Box>
+          <Typography sx={{ mt: 1, color: "var(--aa-text-secondary)", fontSize: 13 }}>
+            {canViewInventory
+              ? "Ishlab chiqarish va oylik bo'limlari sizga ochilmagan. Chap menyudagi Ombor bo'limidan foydalaning."
+              : "Sizga hali bo'lim ruxsati berilmagan. Administrator bilan bog'laning."}
+          </Typography>
+        </Paper>
+      )}
 
       {/* Balans va bo‘limlar */}
 
       <Box
         sx={{
           mb: 2.5,
-          display: "grid",
+          display: (canViewPayroll || canViewProduction) === true ? "grid" : "none",
           gridTemplateColumns: {
             xs: "1fr",
-            xl: ".85fr 1.15fr",
+            xl: canViewPayroll && canViewProduction ? ".85fr 1.15fr" : "1fr",
           },
           gap: 2,
         }}
       >
-        {hasMonthlyBalance ? (
+        {canViewPayroll && hasMonthlyBalance ? (
           <Paper
             elevation={0}
             sx={{
@@ -988,28 +1060,31 @@ const WorkerDashboard = ({ user }) => {
               </Box>
             </Box>
           </Paper>
-        ) : (
+        ) : canViewPayroll ? (
           <WorkerSection title="Bu oydagi hisob" subtitle="Ishlangan va berilgan summa holati">
             <WorkerEmptyState>
               Bu oy bo‘yicha hali ish yoki to‘lov ma’lumotlari mavjud emas.
             </WorkerEmptyState>
           </WorkerSection>
-        )}
+        ) : null}
 
-        <WorkerSection
-          title="Bo‘limlar bo‘yicha"
-          subtitle="Bu oy bajarilgan ishlar va hisoblangan summa"
-        >
-          {departmentSummary.length ? (
-            <WorkerDepartmentList items={departmentSummary} />
-          ) : (
-            <WorkerEmptyState>Bu oy bo‘yicha hali ish yozuvi yo‘q.</WorkerEmptyState>
-          )}
-        </WorkerSection>
+        {canViewProduction && (
+          <WorkerSection
+            title="Bo‘limlar bo‘yicha"
+            subtitle="Bu oy bajarilgan ishlar va hisoblangan summa"
+          >
+            {departmentSummary.length ? (
+              <WorkerDepartmentList items={departmentSummary} />
+            ) : (
+              <WorkerEmptyState>Bu oy bo‘yicha hali ish yozuvi yo‘q.</WorkerEmptyState>
+            )}
+          </WorkerSection>
+        )}
       </Box>
 
       {/* Oxirgi ishlar */}
 
+      {canViewProduction && (
       <WorkerSection title="Oxirgi ish yozuvlari" subtitle="Bu oy kiritilgan so‘nggi ishlaringiz">
         {monthOutputs.length ? (
           <Box
@@ -1147,6 +1222,7 @@ const WorkerDashboard = ({ user }) => {
           <WorkerEmptyState>Hali ish yozuvi kiritilmagan.</WorkerEmptyState>
         )}
       </WorkerSection>
+      )}
     </Box>
   );
 };
@@ -1154,21 +1230,29 @@ const WorkerDashboard = ({ user }) => {
 const BusinessDashboard = ({ user }) => (
   <Box className="h-full overflow-auto pr-1">
     <Box className="mb-5">
-      <Typography variant="h5" fontWeight={800} className="text-slate-950">
+      <Typography variant="h5" fontWeight={800} sx={{ color: "var(--aa-text)" }}>
         Bosh sahifa
       </Typography>
 
-      <Typography variant="body2" className="mt-1 text-slate-500">
+      <Typography variant="body2" sx={{ mt: 0.5, color: "var(--aa-text-secondary)" }}>
         Salom, {user?.first_name || "Foydalanuvchi"}. Hisobingiz faol.
       </Typography>
     </Box>
 
-    <Paper elevation={0} className="rounded-2xl border border-slate-200 bg-white p-6">
-      <Typography fontWeight={800} className="text-slate-950">
+    <Paper
+      elevation={0}
+      sx={{
+        p: 3,
+        borderRadius: "16px",
+        border: "1px solid var(--aa-border)",
+        backgroundColor: "var(--aa-surface-solid)",
+      }}
+    >
+      <Typography fontWeight={800} sx={{ color: "var(--aa-text)" }}>
         Ma'lumotlaringiz administrator tomonidan boshqariladi
       </Typography>
 
-      <Typography className="mt-2 max-w-2xl text-slate-500">
+      <Typography sx={{ mt: 1, maxWidth: 640, color: "var(--aa-text-secondary)" }}>
         Bu ruxsat turi uchun ish haqi va ishlab chiqarish ma'lumotlari ochilmaydi. Kerakli ma'lumot
         yoki ruxsat o'zgarishi bo'yicha administrator bilan bog'laning.
       </Typography>
@@ -1188,46 +1272,118 @@ const BusinessDashboard = ({ user }) => (
   </Box>
 );
 
-const NoDashboardPermission = ({ user }) => (
-  <Box className="crm-page h-full overflow-auto pr-1">
-    <Box className="mb-5">
-      <Typography variant="h5" fontWeight={900} className="text-slate-950">
-        Xush kelibsiz, {user?.first_name || "Administrator"}!
-      </Typography>
+// Bosh sahifa statistikasi (`dashboard.view`) yopiq bo'lsa ham, foydalanuvchida boshqa
+// bo'limlar ochiq bo'lishi mumkin. Ilgari bu sahifa har doim "hech qanday ruxsatingiz yo'q"
+// deb turgan — yon menyuda bo'limlar ko'rinib turganda bu qarama-qarshi bo'lgan.
+const NoDashboardPermission = ({ user }) => {
+  const navigate = useNavigate();
 
-      <Typography variant="body2" className="mt-1 text-slate-500">
-        Shaxsiy hisobingiz faol. Hozircha sizga boshqaruv bo'limlari ochilmagan.
-      </Typography>
+  const sections = getAccessibleSections(user);
+
+  return (
+    <Box className="crm-page h-full overflow-auto pr-1">
+      <Box className="mb-5">
+        <Typography variant="h5" fontWeight={900} sx={{ color: "var(--aa-text)" }}>
+          Xush kelibsiz, {user?.first_name || "Administrator"}!
+        </Typography>
+
+        <Typography variant="body2" sx={{ mt: 0.5, color: "var(--aa-text-secondary)" }}>
+          {sections.length
+            ? "Quyidagi bo'limlar sizga ochiq. Ishni shulardan boshlashingiz mumkin."
+            : "Shaxsiy hisobingiz faol. Hozircha sizga boshqaruv bo'limlari ochilmagan."}
+        </Typography>
+      </Box>
+
+      <Paper elevation={0} className="crm-card p-6">
+        {sections.length ? (
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2,minmax(0,1fr))",
+                lg: "repeat(3,minmax(0,1fr))",
+              },
+              gap: 1.5,
+            }}
+          >
+            {sections.map((section) => (
+              <Box
+                key={section.path}
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate(section.path)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") navigate(section.path);
+                }}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.5,
+                  minHeight: 62,
+                  px: 2,
+                  py: 1.5,
+                  cursor: "pointer",
+                  borderRadius: "16px",
+                  border: "1px solid var(--aa-border)",
+                  backgroundColor: "var(--aa-surface-solid)",
+                  transition: "border-color .15s ease, transform .15s ease",
+                  "&:hover": { borderColor: "var(--aa-border-strong)", transform: "translateY(-1px)" },
+                }}
+              >
+                <Box
+                  component="img"
+                  src={section.icon}
+                  alt=""
+                  sx={{ width: 20, height: 20, opacity: 0.8 }}
+                />
+
+                <Typography sx={{ color: "var(--aa-text)", fontSize: 14, fontWeight: 800 }}>
+                  {section.label}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              p: 2.5,
+              borderRadius: "16px",
+              border: "1px dashed var(--aa-warning-border, rgba(217,119,6,.45))",
+              backgroundColor: "var(--aa-warning-soft, rgba(217,119,6,.08))",
+            }}
+          >
+            <Typography fontWeight={900} sx={{ color: "var(--aa-text)" }}>
+              Sizda hali hech qanday bo'lim ruxsati yo'q
+            </Typography>
+
+            <Typography
+              variant="body2"
+              sx={{ mt: 1, maxWidth: 640, color: "var(--aa-text-secondary)" }}
+            >
+              Kerakli bo'limlardan foydalanish uchun korxona super administratoriga murojaat
+              qiling. Ruxsat berilgach, shu sahifada faqat sizga ochilgan ma'lumotlar ko'rinadi.
+            </Typography>
+          </Box>
+        )}
+
+        <Box className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <StatCard
+            label="Foydalanuvchi"
+            value={
+              `${user?.first_name || ""} ${user?.last_name || ""}`.trim() || user?.username || "-"
+            }
+            helper={user?.username ? `@${user.username}` : "Shaxsiy profil"}
+          />
+
+          <StatCard label="Ruxsat turi" value="Administrator" helper="Korxona administratori" />
+
+          <StatCard label="Korxona" value={user?.company_name || "Korxona"} helper="Faol hisob" />
+        </Box>
+      </Paper>
     </Box>
-
-    <Paper elevation={0} className="crm-card p-6">
-      <Box className="rounded-2xl border border-dashed border-amber-300 bg-amber-50 p-5">
-        <Typography fontWeight={900} className="text-amber-900">
-          Sizda hali hech qanday bo'lim ruxsati yo'q
-        </Typography>
-
-        <Typography variant="body2" className="mt-2 max-w-2xl text-amber-800">
-          Kerakli bo'limlardan foydalanish uchun korxona super administratoriga murojaat qiling.
-          Ruxsat berilgach, shu sahifada faqat sizga ochilgan ma'lumotlar ko'rinadi.
-        </Typography>
-      </Box>
-
-      <Box className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <StatCard
-          label="Foydalanuvchi"
-          value={
-            `${user?.first_name || ""} ${user?.last_name || ""}`.trim() || user?.username || "-"
-          }
-          helper={user?.username ? `@${user.username}` : "Shaxsiy profil"}
-        />
-
-        <StatCard label="Ruxsat turi" value="Administrator" helper="Korxona administratori" />
-
-        <StatCard label="Korxona" value={user?.company_name || "Korxona"} helper="Faol hisob" />
-      </Box>
-    </Paper>
-  </Box>
-);
+  );
+};
 
 const Dashboard = () => {
   const auth = useAuth();

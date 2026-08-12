@@ -15,13 +15,32 @@ class ErrorBoundary extends Component {
     if (!this.state.hasError) return this.props.children;
 
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10">
-        <section className="w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-7 text-center shadow-xl shadow-slate-200/60 sm:p-10">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-2xl font-black text-red-700">
+      // Ranglar mavzu o'zgaruvchilaridan olinadi — qorong'i mavzuda oq karta ko'zni qamashtirardi.
+      <main
+        className="flex min-h-screen items-center justify-center px-4 py-10"
+        style={{ backgroundColor: "var(--aa-bg)" }}
+      >
+        <section
+          className="w-full max-w-lg rounded-3xl p-7 text-center sm:p-10"
+          style={{
+            border: "1px solid var(--aa-border)",
+            backgroundColor: "var(--aa-surface-solid)",
+            boxShadow: "var(--aa-shadow-md)",
+          }}
+        >
+          <div
+            className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl text-2xl font-black"
+            style={{ backgroundColor: "rgba(153,27,27,.12)", color: "#e06a6a" }}
+          >
             !
           </div>
-          <h1 className="mt-5 text-2xl font-black text-slate-900">Sahifada kutilmagan xatolik</h1>
-          <p className="mt-3 text-sm font-medium leading-6 text-slate-500">
+          <h1 className="mt-5 text-2xl font-black" style={{ color: "var(--aa-text)" }}>
+            Sahifada kutilmagan xatolik
+          </h1>
+          <p
+            className="mt-3 text-sm font-medium leading-6"
+            style={{ color: "var(--aa-text-secondary)" }}
+          >
             Ma'lumotlaringiz o'chmadi. Sahifani yangilab ko'ring. Xato takrorlansa administratorga
             murojaat qiling.
           </p>
@@ -30,13 +49,20 @@ class ErrorBoundary extends Component {
               type="button"
               onClick={() => window.location.reload()}
               className="rounded-xl bg-[#991b1b] px-5 py-3 text-sm font-black text-white transition hover:bg-[#7f1d1d]"
+              style={{ minHeight: 48 }}
             >
               Sahifani yangilash
             </button>
             <button
               type="button"
               onClick={() => window.location.assign("/")}
-              className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50"
+              className="rounded-xl px-5 py-3 text-sm font-black transition"
+              style={{
+                minHeight: 48,
+                border: "1px solid var(--aa-border-strong)",
+                backgroundColor: "var(--aa-surface-muted)",
+                color: "var(--aa-text)",
+              }}
             >
               Bosh sahifaga qaytish
             </button>

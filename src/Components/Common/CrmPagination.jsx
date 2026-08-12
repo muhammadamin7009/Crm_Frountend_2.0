@@ -13,9 +13,12 @@ const CrmPagination = ({
   const to = Math.min((page + 1) * limit, total);
 
   return (
-    <Box className="flex shrink-0 flex-col gap-3 border-t border-slate-200 px-3 py-3 sm:flex-row sm:items-center sm:justify-between">
+    <Box
+      className="flex shrink-0 flex-col gap-3 px-3 py-3 sm:flex-row sm:items-center sm:justify-between"
+      sx={{ borderTop: "1px solid var(--aa-border)" }}
+    >
       <Box className="flex items-center gap-2">
-        <Typography variant="body2" className="text-slate-500">
+        <Typography variant="body2" sx={{ color: "var(--aa-text-secondary)" }}>
           Sahifadagi qatorlar
         </Typography>
         <TextField
@@ -31,7 +34,11 @@ const CrmPagination = ({
             </MenuItem>
           ))}
         </TextField>
-        <Typography variant="body2" className="whitespace-nowrap text-slate-500">
+        <Typography
+          variant="body2"
+          className="whitespace-nowrap"
+          sx={{ color: "var(--aa-text-secondary)" }}
+        >
           {from}-{to} / {total}
         </Typography>
       </Box>
@@ -47,9 +54,10 @@ const CrmPagination = ({
         sx={{
           "& .MuiPagination-ul": { justifyContent: { xs: "center", sm: "flex-end" } },
           "& .MuiPaginationItem-root": {
-            minWidth: 34,
-            height: 34,
-            borderColor: "#cbd5e1",
+            minWidth: 38,
+            height: 38,
+            color: "var(--aa-text)",
+            borderColor: "var(--aa-border-strong)",
             fontWeight: 800,
           },
           "& .Mui-selected": {

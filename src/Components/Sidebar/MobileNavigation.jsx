@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../Context/AuthContext";
 import { hasPermission } from "../../utils/permissions";
+import { getAvailableQuickActions } from "../../utils/navigation";
 
 import DashboardIcon from "../../images/ui-icons/dashboard.svg";
 import BoxIcon from "../../images/ui-icons/box.svg";
@@ -11,57 +12,6 @@ import BriefcaseIcon from "../../images/ui-icons/briefcase.svg";
 import TrendUpIcon from "../../images/ui-icons/trend-up.svg";
 import FinanceIcon from "../../images/ui-icons/finance.svg";
 
-const mobileQuickActions = [
-  {
-    label: "Yangi zakaz",
-    description: "Mijoz zakazini kiritish",
-    path: "/orders",
-    roles: ["super_admin", "admin"],
-    permission: "orders.manage",
-  },
-  {
-    label: "Yangi mijoz",
-    description: "Mijozlar ro‘yxatiga o‘tish",
-    path: "/clients",
-    roles: ["super_admin", "admin"],
-    permission: "users.manage",
-  },
-  {
-    label: "Yangi savdo",
-    description: "Mijoz savdosini kiritish",
-    path: "/client-sales",
-    roles: ["super_admin", "admin"],
-    feature: "client_accounting",
-    permission: "client_sales.manage",
-  },
-  {
-    label: "Mahsulot qo‘shish",
-    description: "Mahsulotlar katalogiga o‘tish",
-    path: "/products",
-    roles: ["super_admin", "admin"],
-    permission: "products.manage",
-  },
-  {
-    label: "Ishlab chiqarish",
-    description: "Yangi ish yozuvini kiritish",
-    path: "/worker-outputs",
-    roles: ["super_admin", "admin"],
-    permission: "production.manage",
-  },
-  {
-    label: "Vazifalarim",
-    description: "Jarayondagi vazifalarni ko‘rish",
-    path: "/my-order-tasks",
-    roles: ["worker"],
-  },
-  {
-    label: "Xarajat kiritish",
-    description: "Mayda va umumiy xarajatlar",
-    path: "/expenses",
-    roles: ["super_admin", "admin"],
-    permission: "finance.manage",
-  },
-];
 
 const MobileNavigation = () => {
   const { user } = useAuth();
@@ -81,7 +31,7 @@ const MobileNavigation = () => {
       user?.role === "worker"
         ? hasPermission(user, "production.view")
           ? "/worker-outputs"
-          : "/my-order-tasks"
+          : null
         : hasPermission(user, "client_sales.view")
           ? "/client-sales"
           : hasPermission(user, "orders.view")
@@ -104,7 +54,7 @@ const MobileNavigation = () => {
           ? "/orders"
           : null;
 
-    return [
+    const items = [
       {
         label: "Bosh sahifa",
         path: "/",
@@ -127,21 +77,23 @@ const MobileNavigation = () => {
         icon: FinanceIcon,
       },
       {
-        label: "Zakazlar",
+        label: user?.role === "worker" ? "Vazifalarim" : "Zakazlar",
         path: ordersPath,
         icon: BriefcaseIcon,
       },
     ].filter((item) => item.exact || item.path);
+
+    // Bir nechta band bitta sahifaga olib borishi mumkin (masalan ombor ishchisida
+    // "Ishlar" ham, "Zakazlar" ham /my-order-tasks ga). Takrorini olib tashlaymiz.
+    const seen = new Set();
+    return items.filter((item) => {
+      if (seen.has(item.path)) return false;
+      seen.add(item.path);
+      return true;
+    });
   }, [user]);
 
-  const availableQuickActions = useMemo(() => {
-    return mobileQuickActions.filter(
-      (item) =>
-        (!item.roles || item.roles.includes(user?.role)) &&
-        (!item.feature || !user?.plan_code || user?.plan_features?.includes(item.feature)) &&
-        hasPermission(user, item.permission),
-    );
-  }, [user]);
+  const availableQuickActions = useMemo(() => getAvailableQuickActions(user), [user]);
 
   const isActive = (item) => {
     if (!item.path) {

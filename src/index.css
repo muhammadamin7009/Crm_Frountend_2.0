@@ -2632,3 +2632,103 @@ textarea,
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ==========================================================================
+   Mobil moslashuv — dialoglar, teginish o'lchamlari va data-label
+   Foydalanuvchilarning aksariyati telefondan kiradi. Bu qatlam sahifaga bog'liq
+   emas: har qanday dialog va har qanday `aa-mobile-records` jadvali unga bo'ysunadi.
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* --- Dialoglar: pastdan chiqadigan varaq --- */
+  .MuiDialog-container {
+    align-items: flex-end !important;
+  }
+
+  .MuiDialog-paper {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 92vh !important;
+    margin: 0 !important;
+    border-width: 1px 0 0 0 !important;
+    border-radius: 20px 20px 0 0 !important;
+  }
+
+  /* Sarlavha tepada yopishib turadi — uzun formada ham qayerdaligi bilinadi. */
+  .MuiDialog-paper .MuiDialogTitle-root {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 16px 16px 10px !important;
+    font-size: 17px !important;
+    background: var(--aa-surface-solid);
+  }
+
+  .MuiDialog-paper .MuiDialogContent-root {
+    padding: 10px 16px 16px !important;
+  }
+
+  /* Tugmalar pastda yopishib turadi va barmoqqa qulay bo'ladi. */
+  .MuiDialog-paper .MuiDialogActions-root {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    gap: 8px;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom)) !important;
+    background: var(--aa-surface-solid);
+    border-top: 1px solid var(--aa-border);
+  }
+
+  .MuiDialog-paper .MuiDialogActions-root .MuiButton-root {
+    flex: 1 1 0;
+    min-height: 48px;
+  }
+
+  /* --- Teginish o'lchami ---
+     Input shrifti (iOS zoom) yuqorida allaqachon 16px qilingan, bu yerda faqat
+     barmoq bilan tegib bo'ladigan o'lcham ta'minlanadi. */
+  .MuiOutlinedInput-root,
+  .MuiSelect-select {
+    min-height: 46px;
+  }
+
+  .MuiIconButton-root {
+    min-width: 42px;
+    min-height: 42px;
+  }
+
+  /* --- Jadval kartalari uchun data-label ---
+     Mavjud jadvallar ustun nomini CSS'dagi nth-child qoidalaridan oladi. Yangi
+     jadval qo'shilganda esa CSS ga tegmasdan `data-label` yozish kifoya. */
+  .aa-mobile-records .MuiTableCell-root[data-label]:not(:first-child)::before {
+    content: attr(data-label);
+  }
+
+  /* Amal tugmalari kartaning pastida alohida qatorda. */
+  .aa-mobile-records .MuiTableCell-root.aa-cell-actions {
+    margin-top: 6px;
+    padding-top: 10px !important;
+    border-top: 1px solid var(--aa-border) !important;
+    justify-content: flex-end;
+  }
+
+  .aa-mobile-records .MuiTableCell-root.aa-cell-actions::before {
+    content: none !important;
+  }
+
+  /* Bo'sh holat qatori karta ko'rinishida bo'lmasin. */
+  .aa-mobile-records .MuiTableRow-root.aa-row-empty {
+    border-style: dashed !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .aa-mobile-records .MuiTableRow-root.aa-row-empty .MuiTableCell-root {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .aa-mobile-records .MuiTableRow-root.aa-row-empty .MuiTableCell-root::before {
+    content: none !important;
+  }
+}

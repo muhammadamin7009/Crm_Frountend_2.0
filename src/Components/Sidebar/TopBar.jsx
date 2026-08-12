@@ -38,6 +38,7 @@ import { deleteCompanyLogo, updateCompanyLogo } from "../../api/companyBranding"
 import { getWarehouses } from "../../api/inventory";
 import { clearSession } from "../../utils/auth";
 import { hasPermission } from "../../utils/permissions";
+import { getAvailableQuickActions } from "../../utils/navigation";
 import { getCompanyLogoUrl } from "../../utils/company";
 
 const roleLabels = {
@@ -141,59 +142,6 @@ const mobileLinks = [
   },
 ];
 
-const quickActionItems = [
-  {
-    label: "Yangi zakaz",
-    description: "Mijoz zakazini kiritish",
-    path: "/orders",
-    roles: ["super_admin", "admin"],
-    permission: "orders.manage",
-  },
-  {
-    label: "Yangi mijoz",
-    description: "Mijozlar ro‘yxatiga o‘tish",
-    path: "/clients",
-    roles: ["super_admin", "admin"],
-    permission: "users.manage",
-  },
-  {
-    label: "Yangi savdo",
-    description: "Mijoz savdosini kiritish",
-    path: "/client-sales",
-    roles: ["super_admin", "admin"],
-    feature: "client_accounting",
-    permission: "client_sales.manage",
-  },
-  {
-    label: "Mahsulot qo‘shish",
-    description: "Mahsulotlar katalogiga o‘tish",
-    path: "/products",
-    roles: ["super_admin", "admin"],
-    permission: "products.manage",
-  },
-  {
-    label: "Ishlab chiqarish",
-    description: "Yangi ish yozuvini kiritish",
-    path: "/worker-outputs",
-    roles: ["super_admin", "admin"],
-    permission: "production.manage",
-  },
-  {
-    label: "Xarajat kiritish",
-    description: "Mayda va umumiy xarajatlar",
-    path: "/expenses",
-    roles: ["super_admin", "admin"],
-    permission: "finance.manage",
-  },
-  {
-    label: "Xomashyo xaridi",
-    description: "Yangi xaridni kiritish",
-    path: "/material-purchases",
-    roles: ["super_admin", "admin"],
-    feature: "supplier_accounting",
-    permission: "material_purchases.manage",
-  },
-];
 
 const getImageUrl = (path) => {
   if (!path) return undefined;
@@ -401,16 +349,7 @@ export default function TopBar() {
     );
   }, [user, warehouses]);
 
-  const availableQuickActions = useMemo(
-    () =>
-      quickActionItems.filter(
-        (item) =>
-          (!item.roles || item.roles.includes(user?.role)) &&
-          (!item.feature || !user?.plan_code || user?.plan_features?.includes(item.feature)) &&
-          hasPermission(user, item.permission),
-      ),
-    [user],
-  );
+  const availableQuickActions = useMemo(() => getAvailableQuickActions(user), [user]);
 
   const fullName = useMemo(() => {
     const name = `${user?.first_name || ""} ${user?.last_name || ""}`.trim();

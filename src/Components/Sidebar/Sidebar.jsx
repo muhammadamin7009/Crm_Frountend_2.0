@@ -1,154 +1,27 @@
-﻿import { Avatar, Box, Button, List, ListItemButton, ListItemText, Typography } from "@mui/material";
-import { NavLink, useNavigate } from "react-router-dom";
+﻿import {
+  Avatar,
+  Box,
+  Button,
+  InputBase,
+  List,
+  ListItemButton,
+  ListItemText,
+  Typography,
+} from "@mui/material";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useAuth } from "../../Context/AuthContext";
 import SiteLogo from "../../images/zerr_02_logo.png";
 
-import DashboardIcon from "../../images/ui-icons/dashboard.svg";
-import UsersIcon from "../../images/ui-icons/users.svg";
-import BriefcaseIcon from "../../images/ui-icons/briefcase.svg";
 import BoxIcon from "../../images/ui-icons/box.svg";
-import CheckIcon from "../../images/ui-icons/check.svg";
-import WalletIcon from "../../images/ui-icons/wallet.svg";
-import TrendUpIcon from "../../images/ui-icons/trend-up.svg";
-import TrendDownIcon from "../../images/ui-icons/trend-down.svg";
-import FinanceIcon from "../../images/ui-icons/finance.svg";
 import HistoryIcon from "../../images/ui-icons/history.svg";
 
 import { clearSession } from "../../utils/auth";
 import { hasPermission } from "../../utils/permissions";
+import { menuGroups, isMenuItemVisible } from "../../utils/navigation";
 import { getCompanyLogoUrl } from "../../utils/company";
 import { getWarehouses } from "../../api/inventory";
-
-const menuGroups = [
-  {
-    label: "Asosiy",
-    items: [
-      {
-        icon: DashboardIcon,
-        label: "Bosh sahifa",
-        path: "/",
-        end: true,
-      },
-    ],
-  },
-  {
-    label: "Boshqaruv",
-    items: [
-      {
-        icon: UsersIcon,
-        label: "Foydalanuvchilar",
-        path: "/users",
-        allowedRoles: ["super_admin", "admin", "worker"],
-        requiredPermission: "users.view",
-      },
-      {
-        icon: UsersIcon,
-        label: "Mijozlar",
-        path: "/clients",
-        allowedRoles: ["super_admin", "admin"],
-        requiredPermission: "clients.view",
-      },
-      {
-        icon: BriefcaseIcon,
-        label: "Lavozimlar",
-        path: "/employees",
-        allowedRoles: ["super_admin", "admin"],
-        requiredPermission: "employees.view",
-      },
-      {
-        icon: BoxIcon,
-        label: "Mahsulotlar",
-        path: "/products",
-        requiredPermission: "products.view",
-      },
-      {
-        icon: HistoryIcon,
-        label: "Ruxsatlar",
-        path: "/permissions",
-        allowedRoles: ["super_admin", "admin"],
-        requiredPermission: "permissions.manage",
-      },
-    ],
-  },
-  {
-    label: "Ishlab chiqarish",
-    items: [
-      {
-        icon: CheckIcon,
-        label: "Zakaz ishlarim",
-        path: "/my-order-tasks",
-        allowedRoles: ["worker"],
-      },
-      {
-        icon: CheckIcon,
-        label: "Ish hisoboti",
-        path: "/worker-outputs",
-        allowedRoles: ["super_admin", "admin", "worker"],
-        requiredPermission: "production.view",
-      },
-      {
-        icon: WalletIcon,
-        label: "Oyliklar",
-        path: "/worker-payments",
-        allowedRoles: ["super_admin", "admin"],
-        requiredPermission: "payroll.view",
-      },
-    ],
-  },
-  {
-    label: "Hisob-kitob",
-    items: [
-      {
-        icon: TrendUpIcon,
-        label: "Zakazlar",
-        path: "/orders",
-        allowedRoles: ["super_admin", "admin"],
-        requiredPermission: "orders.view",
-      },
-      {
-        icon: TrendUpIcon,
-        label: "Mijoz savdo",
-        path: "/client-sales",
-        allowedRoles: ["super_admin", "admin"],
-        requiredFeature: "client_accounting",
-        requiredPermission: "client_sales.view",
-      },
-      {
-        icon: TrendDownIcon,
-        label: "Xomashyo xaridi",
-        path: "/material-purchases",
-        allowedRoles: ["super_admin", "admin"],
-        requiredFeature: "supplier_accounting",
-        requiredPermission: "material_purchases.view",
-      },
-      {
-        icon: FinanceIcon,
-        label: "Xarajatlar",
-        path: "/expenses",
-        allowedRoles: ["super_admin", "admin"],
-        requiredPermission: "finance.view",
-      },
-      {
-        icon: FinanceIcon,
-        label: "Moliya",
-        path: "/finance",
-        allowedRoles: ["super_admin", "admin"],
-        requiredFeature: "finance",
-        requiredPermission: "finance.view",
-      },
-      {
-        icon: HistoryIcon,
-        label: "Amallar tarixi",
-        path: "/audit-logs",
-        allowedRoles: ["super_admin", "admin"],
-        requiredFeature: "audit_logs",
-        requiredPermission: "audit_logs.view",
-      },
-    ],
-  },
-];
 
 const roleNames = {
   super_admin: "Super administrator",
@@ -156,6 +29,48 @@ const roleNames = {
   client: "Mijoz",
   customer: "Xaridor",
   worker: "Ishchi",
+};
+
+// Sidebar guruhlari va ularning tartibi. Bandlar `navigation.js` dan `path` bo'yicha
+// olinadi — ruxsat qoidalari faqat o'sha faylda turadi. "Omborlar" guruhi dinamik:
+// ombor ro'yxati serverdan keladi, shuning uchun unda tayyor `paths` yo'q.
+const GROUP_LAYOUT = [
+  { label: "Asosiy", paths: ["/"] },
+  { label: "Savdo", paths: ["/clients", "/orders", "/client-sales"] },
+  { label: "Ishlab chiqarish", paths: ["/products", "/my-order-tasks", "/worker-outputs"] },
+  { label: "Omborlar", dynamic: true },
+  { label: "Xodimlar", paths: ["/users", "/employees", "/worker-payments"] },
+  { label: "Hisob-kitob", paths: ["/material-purchases", "/expenses", "/finance"] },
+  { label: "Tizim", paths: ["/permissions", "/audit-logs"] },
+];
+
+// Birinchi kirishda faqat "Asosiy" ochiq turadi: super adminda menyu 19 tagacha
+// bandga yetadi va hammasi ochiq bo'lsa kerakli bo'limga yetguncha varaqlashga
+// to'g'ri keladi. Foydalanuvchi ochgan guruhlar keyin eslab qolinadi.
+const DEFAULT_OPEN_GROUP = "Asosiy";
+
+// `_v2` — standart holat o'zgardi (avval hammasi ochiq edi). Eski kalitni qoldirsak,
+// ilgari bir marta bosgan foydalanuvchida yangi standart ishlamay qolardi.
+const COLLAPSED_GROUPS_KEY = "sidebar_collapsed_groups_v2";
+
+const defaultCollapsedGroups = () =>
+  new Set(
+    GROUP_LAYOUT.map((group) => group.label).filter((label) => label !== DEFAULT_OPEN_GROUP),
+  );
+
+const readCollapsedGroups = () => {
+  try {
+    const raw = localStorage.getItem(COLLAPSED_GROUPS_KEY);
+
+    // Hali hech narsa saqlanmagan — standart holatga tushamiz.
+    if (raw === null) return defaultCollapsedGroups();
+
+    const parsed = JSON.parse(raw);
+
+    return Array.isArray(parsed) ? new Set(parsed) : defaultCollapsedGroups();
+  } catch {
+    return defaultCollapsedGroups();
+  }
 };
 
 const getImageUrl = (path) => {
@@ -172,9 +87,24 @@ const getImageUrl = (path) => {
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
 
   const [warehouses, setWarehouses] = useState([]);
+
+  const [menuQuery, setMenuQuery] = useState("");
+
+  const [collapsedGroups, setCollapsedGroups] = useState(readCollapsedGroups);
+
+  const toggleGroup = useCallback((label) => {
+    setCollapsedGroups((previous) => {
+      const next = new Set(previous);
+      if (next.has(label)) next.delete(label);
+      else next.add(label);
+      localStorage.setItem(COLLAPSED_GROUPS_KEY, JSON.stringify([...next]));
+      return next;
+    });
+  }, []);
 
   const loadWarehouses = useCallback(async () => {
     const roleAllowed = ["super_admin", "admin", "worker"].includes(user?.role);
@@ -213,62 +143,95 @@ const Sidebar = () => {
     const canManageWarehouses =
       hasPermission(user, "inventory.warehouses") || hasPermission(user, "inventory.manage");
 
-    const inventoryGroup = {
-      label: "Omborlar",
-      items: [
-        canManageWarehouses && {
-          icon: BoxIcon,
-          label: "Omborlar boshqaruvi",
-          path: "/inventory/warehouses",
-          end: true,
-          allowedRoles: ["super_admin", "admin", "worker"],
-          requiredPermission: "inventory.warehouses",
-        },
+    const inventoryItems = [
+      canManageWarehouses && {
+        icon: BoxIcon,
+        label: "Omborlar boshqaruvi",
+        path: "/inventory/warehouses",
+        end: true,
+        allowedRoles: ["super_admin", "admin", "worker"],
+        requiredPermission: "inventory.warehouses",
+      },
 
-        ...warehouses.map((warehouse) => ({
-          icon: BoxIcon,
-          label: warehouse.name,
-          path: `/inventory/warehouses/${warehouse.id}`,
-          end: true,
-          allowedRoles: ["super_admin", "admin", "worker"],
-          requiredPermission: "inventory.view",
-        })),
+      ...warehouses.map((warehouse) => ({
+        icon: BoxIcon,
+        label: warehouse.name,
+        path: `/inventory/warehouses/${warehouse.id}`,
+        end: true,
+        allowedRoles: ["super_admin", "admin", "worker"],
+        requiredPermission: "inventory.view",
+      })),
 
-        {
-          icon: HistoryIcon,
-          label: "Inventarizatsiya",
-          path: "/inventory/counts",
-          allowedRoles: ["super_admin", "admin", "worker"],
-          requiredPermission: "inventory.view",
-        },
-      ].filter(Boolean),
-    };
+      {
+        icon: HistoryIcon,
+        label: "Inventarizatsiya",
+        path: "/inventory/counts",
+        allowedRoles: ["super_admin", "admin", "worker"],
+        requiredPermission: "inventory.view",
+      },
+    ].filter(Boolean);
 
     const itemByPath = new Map(
       menuGroups.flatMap((group) => group.items).map((item) => [item.path, item]),
     );
 
-    const group = (label, paths) => ({
+    return GROUP_LAYOUT.map(({ label, paths, dynamic }) => ({
       label,
-      items: paths.map((path) => itemByPath.get(path)).filter(Boolean),
-    });
-
-    return [
-      group("Asosiy", ["/"]),
-
-      group("Savdo", ["/clients", "/orders", "/client-sales"]),
-
-      group("Ishlab chiqarish", ["/products", "/my-order-tasks", "/worker-outputs"]),
-
-      inventoryGroup,
-
-      group("Xodimlar", ["/users", "/employees", "/worker-payments"]),
-
-      group("Hisob-kitob", ["/material-purchases", "/expenses", "/finance"]),
-
-      group("Tizim", ["/permissions", "/audit-logs"]),
-    ];
+      items: dynamic ? inventoryItems : paths.map((path) => itemByPath.get(path)).filter(Boolean),
+    }));
   }, [user, warehouses]);
+
+  const searchActive = menuQuery.trim().length > 0;
+
+  // Ishchida 3-4 ta band bo'ladi — unga qidiruv maydoni ortiqcha. Faqat ro'yxat
+  // uzayganda ko'rsatamiz.
+  const totalVisibleItems = useMemo(
+    () =>
+      resolvedMenuGroups.reduce(
+        (count, group) => count + group.items.filter((item) => isMenuItemVisible(user, item)).length,
+        0,
+      ),
+    [resolvedMenuGroups, user],
+  );
+
+  const showMenuSearch = totalVisibleItems >= 8;
+
+  // Guruhlarni bir marta hisoblab qo'yamiz: ruxsat filtri + qidiruv filtri.
+  const renderedGroups = useMemo(() => {
+    const needle = menuQuery.trim().toLowerCase();
+
+    return resolvedMenuGroups
+      .map((group) => {
+        const visibleItems = group.items
+          .filter((item) => isMenuItemVisible(user, item))
+          .filter((item) => !needle || item.label.toLowerCase().includes(needle));
+
+        return { group, visibleItems };
+      })
+      .filter((entry) => entry.visibleItems.length > 0);
+  }, [resolvedMenuGroups, user, menuQuery]);
+
+  // Joriy sahifa yopiq guruhda qolib ketmasin — u avtomatik ochiladi.
+  useEffect(() => {
+    const owner = resolvedMenuGroups.find((group) =>
+      group.items.some(
+        (item) =>
+          item.path !== "/" &&
+          isMenuItemVisible(user, item) &&
+          location.pathname.startsWith(item.path),
+      ),
+    );
+
+    if (!owner) return;
+
+    setCollapsedGroups((previous) => {
+      if (!previous.has(owner.label)) return previous;
+      const next = new Set(previous);
+      next.delete(owner.label);
+      localStorage.setItem(COLLAPSED_GROUPS_KEY, JSON.stringify([...next]));
+      return next;
+    });
+  }, [location.pathname, resolvedMenuGroups, user]);
 
   const handleLogout = () => {
     clearSession();
@@ -413,6 +376,77 @@ const Sidebar = () => {
           </Box>
         </Box>
 
+        {/* Menyu qidiruvi — super adminda 19 tagacha band bo'ladi, varaqlamasdan topish uchun */}
+
+        {showMenuSearch && (
+          <Box sx={{ position: "relative", zIndex: 2, px: 1.5, pb: 1.2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                px: 1.3,
+                height: 38,
+                borderRadius: "11px",
+                border: "1px solid rgba(255,255,255,.08)",
+                background: "rgba(255,255,255,.04)",
+                transition: "border-color .18s ease, background-color .18s ease",
+                "&:focus-within": {
+                  borderColor: "rgba(248,113,113,.35)",
+                  background: "rgba(255,255,255,.06)",
+                },
+              }}
+            >
+              <Box
+                component="span"
+                aria-hidden="true"
+                sx={{ color: "rgba(255,255,255,.35)", fontSize: 13, lineHeight: 1 }}
+              >
+                ⌕
+              </Box>
+
+              <InputBase
+                value={menuQuery}
+                onChange={(event) => setMenuQuery(event.target.value)}
+                placeholder="Bo‘lim qidirish"
+                inputProps={{ "aria-label": "Menyudan bo'lim qidirish" }}
+                sx={{
+                  flex: 1,
+                  color: "#ffffff",
+                  fontSize: 12.5,
+                  fontWeight: 650,
+                  "& input::placeholder": { color: "rgba(255,255,255,.32)", opacity: 1 },
+                }}
+              />
+
+              {menuQuery && (
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={() => setMenuQuery("")}
+                  aria-label="Qidiruvni tozalash"
+                  sx={{
+                    display: "grid",
+                    placeItems: "center",
+                    width: 20,
+                    height: 20,
+                    cursor: "pointer",
+                    color: "rgba(255,255,255,.5)",
+                    border: 0,
+                    borderRadius: "6px",
+                    background: "rgba(255,255,255,.08)",
+                    fontSize: 11,
+                    lineHeight: 1,
+                    "&:hover": { color: "#ffffff" },
+                  }}
+                >
+                  ×
+                </Box>
+              )}
+            </Box>
+          </Box>
+        )}
+
         {/* Menyular */}
 
         <Box
@@ -439,44 +473,112 @@ const Sidebar = () => {
             },
           }}
         >
-          {resolvedMenuGroups.map((group) => {
-            const visibleItems = group.items.filter(
-              (item) =>
-                (!item.allowedRoles || item.allowedRoles.includes(user?.role)) &&
-                (!user?.plan_code ||
-                  !item.requiredFeature ||
-                  user.plan_features?.includes(item.requiredFeature)) &&
-                hasPermission(user, item.requiredPermission),
-            );
+          {searchActive && !renderedGroups.length && (
+            <Typography
+              sx={{
+                px: 1.5,
+                py: 2,
+                color: "rgba(255,255,255,.4)",
+                fontSize: 12,
+                fontWeight: 700,
+              }}
+            >
+              «{menuQuery}» bo‘yicha bo‘lim topilmadi
+            </Typography>
+          )}
 
-            if (!visibleItems.length) {
-              return null;
-            }
+          {renderedGroups.map(({ group, visibleItems }) => {
+            // Qidiruv paytida hamma guruh ochiq turadi — aks holda topilgan band yashirin qoladi.
+            const collapsed = !searchActive && collapsedGroups.has(group.label);
 
             return (
               <Box
                 key={group.label}
                 sx={{
-                  mb: 2.2,
+                  mb: collapsed ? 0.9 : 2.2,
                 }}
               >
-                <Typography
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={() => toggleGroup(group.label)}
+                  aria-expanded={!collapsed}
                   sx={{
-                    display: "block",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 1,
+                    width: "100%",
+                    // Yopiq holatda sarlavha asosiy navigatsiya bo'lib qoladi —
+                    // shuning uchun u band kabi bosiladigan va o'qiladigan bo'lishi kerak.
+                    minHeight: collapsed ? 42 : 28,
                     px: 1.5,
-                    mb: 0.8,
-                    color: "rgba(255,255,255,.3)",
-                    fontSize: 9.5,
-                    lineHeight: 1.4,
-                    fontWeight: 900,
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
+                    py: 0.6,
+                    mb: collapsed ? 0 : 0.8,
+                    cursor: "pointer",
+                    border: "1px solid transparent",
+                    borderRadius: collapsed ? "13px" : "9px",
+                    background: collapsed ? "rgba(255,255,255,.035)" : "transparent",
+                    textAlign: "left",
+                    transition: "background-color .18s ease, border-color .18s ease",
+
+                    "&:hover": {
+                      background: "rgba(255,255,255,.075)",
+                      borderColor: collapsed ? "rgba(255,255,255,.08)" : "transparent",
+                    },
                   }}
                 >
-                  {group.label}
-                </Typography>
+                  <Typography
+                    component="span"
+                    sx={{
+                      color: collapsed ? "rgba(255,255,255,.72)" : "rgba(255,255,255,.3)",
+                      fontSize: collapsed ? 12.5 : 9.5,
+                      lineHeight: 1.4,
+                      fontWeight: collapsed ? 750 : 900,
+                      letterSpacing: collapsed ? "normal" : "0.14em",
+                      textTransform: collapsed ? "none" : "uppercase",
+                      transition: "color .18s ease, font-size .18s ease",
+                    }}
+                  >
+                    {group.label}
+                  </Typography>
 
-                <List disablePadding>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
+                    {/* Yopiq guruhda ichida nechta bo'lim borligi ko'rinib tursin. */}
+                    {collapsed && (
+                      <Typography
+                        component="span"
+                        sx={{
+                          px: 0.8,
+                          color: "rgba(255,255,255,.55)",
+                          fontSize: 10,
+                          fontWeight: 900,
+                          lineHeight: "18px",
+                          borderRadius: "7px",
+                          background: "rgba(255,255,255,.08)",
+                        }}
+                      >
+                        {visibleItems.length}
+                      </Typography>
+                    )}
+
+                    <Box
+                      component="span"
+                      aria-hidden="true"
+                      sx={{
+                        color: collapsed ? "rgba(255,255,255,.5)" : "rgba(255,255,255,.32)",
+                        fontSize: 9,
+                        lineHeight: 1,
+                        transform: collapsed ? "rotate(-90deg)" : "none",
+                        transition: "transform .18s ease",
+                      }}
+                    >
+                      ▼
+                    </Box>
+                  </Box>
+                </Box>
+
+                <List disablePadding sx={{ display: collapsed ? "none" : "block" }}>
                   {visibleItems.map((item) => (
                     <ListItemButton
                       key={item.path}
