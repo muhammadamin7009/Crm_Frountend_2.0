@@ -12,7 +12,6 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useAuth } from "../../Context/AuthContext";
-import SiteLogo from "../../images/zerr_02_logo.png";
 
 import { clearSession } from "../../utils/auth";
 import { hasPermission } from "../../utils/permissions";
@@ -211,9 +210,10 @@ const Sidebar = () => {
 
   const fullName = `${user?.first_name || ""} ${user?.last_name || ""}`.trim();
 
-  const isMainCompany = user?.company_slug === "zerrshoes" || !user?.company_slug;
-
-  const companyName = user?.company_name || (isMainCompany ? "Al-Amin CRM" : "Korxona CRM");
+  // Ilgari `zerrshoes` uchun ilovaga o'rnatilgan logo majburan ko'rsatilardi — korxona
+  // o'z logosini yuklamagan bo'lsa ham begona brend chiqib turardi. Endi faqat
+  // yuklangan logo ko'rsatiladi, bo'lmasa korxona nomining birinchi harfi.
+  const companyName = user?.company_name || "Korxona CRM";
 
   const companyLogo = getCompanyLogoUrl(user?.company_logo_url);
 
@@ -289,11 +289,11 @@ const Sidebar = () => {
                 boxShadow: "0 12px 26px rgba(0,0,0,.3)",
               }}
             >
-              {companyLogo || isMainCompany ? (
+              {companyLogo ? (
                 <img
                   width={35}
                   height={35}
-                  src={companyLogo || SiteLogo}
+                  src={companyLogo}
                   alt={companyName}
                   className="h-8.75 w-8.75 object-contain"
                 />

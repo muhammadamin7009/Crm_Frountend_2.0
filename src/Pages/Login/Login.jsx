@@ -10,7 +10,6 @@ import { getCompanyBranding } from "../../api/companyBranding";
 import { getCompanyApplicationStatus } from "../../api/platform";
 import AuthBrandPanel from "../../Components/Auth/AuthBrandPanel";
 import { useAuth } from "../../Context/AuthContext";
-import SiteLogo from "../../images/zerr_02_logo.png";
 import { setSession } from "../../utils/auth";
 import {
   getCompanyLogoUrl,
@@ -126,17 +125,15 @@ const Login = () => {
 
   const companySlug = watch("company_slug");
   const normalizedSlug = normalizeCompanySlug(companySlug);
-  const isMainCompany = normalizedSlug === "zerrshoes";
-
   const companyTitle =
     branding?.name ||
-    (isMainCompany
-      ? "Al-Amin CRM"
-      : normalizedSlug
-        ? normalizedSlug.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
-        : "Al-Amin CRM");
+    (normalizedSlug
+      ? normalizedSlug.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
+      : "Al-Amin CRM");
 
-  const companyLogo = getCompanyLogoUrl(branding?.logo_url) || (isMainCompany ? SiteLogo : "");
+  // Faqat korxonaning o'z logosi. Ilgari `zerrshoes` uchun ilova logosi majburan
+  // qo'yilardi va korxona logo yuklamagan bo'lsa ham begona brend ko'rinardi.
+  const companyLogo = getCompanyLogoUrl(branding?.logo_url) || "";
 
   useEffect(() => {
     const slug = normalizeCompanySlug(companySlug);
