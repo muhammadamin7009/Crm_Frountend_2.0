@@ -184,7 +184,7 @@ const MyOrderTasks = () => {
                 >
                   <Box>
                     <Typography
-                      sx={{ fontSize: 12, color: "var(--aa-brand-700)", fontWeight: 900 }}
+                      sx={{ fontSize: 12, color: "var(--aa-brand-text)", fontWeight: 900 }}
                     >
                       {task.order_number}
                     </Typography>

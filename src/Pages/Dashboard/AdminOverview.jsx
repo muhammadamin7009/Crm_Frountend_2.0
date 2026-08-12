@@ -111,6 +111,30 @@ const previousMonthRange = () => {
   };
 };
 
+/**
+ * Tanlangan davrni bir qarashda tushunarli qilib yozadi: "Bu oy · Avgust 2026".
+ * Mobil ekranda sana maydonlari yopiq turadi va foydalanuvchi qaysi davrni
+ * ko'rayotganini faqat shu yozuvdan biladi.
+ */
+const describeRange = (range) => {
+  if (!range?.date_from || !range?.date_to) return "Davr tanlanmagan";
+
+  const capitalize = (text) => text.replace(/^./, (letter) => letter.toUpperCase());
+
+  const current = getMonthRangeByOffset(0);
+  const previous = getMonthRangeByOffset(-1);
+
+  if (range.date_from === current.date_from && range.date_to === current.date_to) {
+    return `Bu oy · ${capitalize(current.fullLabel)}`;
+  }
+
+  if (range.date_from === previous.date_from && range.date_to === previous.date_to) {
+    return `O'tgan oy · ${capitalize(previous.fullLabel)}`;
+  }
+
+  return `${date(range.date_from)} — ${date(range.date_to)}`;
+};
+
 const getTrendRanges = (count = 6) =>
   Array.from(
     {
@@ -1188,6 +1212,10 @@ const AdminOverview = ({ user }) => {
 
   const [appliedRange, setAppliedRange] = useState(monthRange);
 
+  // Mobil ekranda sana tanlagich yopiq turadi — ochiq holatda u birinchi ekranning
+  // yarmini egallab, ko'rsatkichlar pastga tushib ketardi.
+  const [periodOpen, setPeriodOpen] = useState(false);
+
   const [sectionFilter, setSectionFilter] = useState("all");
 
   const [clients, setClients] = useState([]);
@@ -1766,10 +1794,11 @@ const AdminOverview = ({ user }) => {
         }}
       >
         <Box>
+          {/* Bezak yozuv mobilda ekranni egallaydi — ko'rsatkichlar tezroq ko'rinsin. */}
           <Box
             sx={{
               mb: 1.2,
-              display: "flex",
+              display: { xs: "none", sm: "flex" },
               alignItems: "center",
               gap: 1.2,
             }}
@@ -1801,7 +1830,7 @@ const AdminOverview = ({ user }) => {
             sx={{
               color: "var(--aa-text)",
               fontSize: {
-                xs: 26,
+                xs: 22,
                 sm: 30,
               },
               lineHeight: 1.15,
@@ -1814,10 +1843,19 @@ const AdminOverview = ({ user }) => {
 
           <Typography
             sx={{
-              mt: 1,
+              mt: {
+                xs: 0.5,
+                sm: 1,
+              },
               color: "var(--aa-text-tertiary)",
-              fontSize: 13,
-              lineHeight: 1.7,
+              fontSize: {
+                xs: 12.5,
+                sm: 13,
+              },
+              lineHeight: {
+                xs: 1.45,
+                sm: 1.7,
+              },
               fontWeight: 600,
             }}
           >
@@ -1831,7 +1869,10 @@ const AdminOverview = ({ user }) => {
             >
               {user?.first_name || "Administrator"}
             </Box>
-            . Sizga ochilgan bo'limlar bo'yicha tanlangan davr natijalari.
+            . {/* Tushuntirish matni mobilda ikki qator joy oladi — faqat kengroq ekranda. */}
+            <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+              Sizga ochilgan bo'limlar bo'yicha tanlangan davr natijalari.
+            </Box>
           </Typography>
         </Box>
 
@@ -1840,9 +1881,7 @@ const AdminOverview = ({ user }) => {
           elevation={0}
           sx={{
             p: 1,
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
+            display: "grid",
             gap: 1,
             borderRadius: "18px",
             border: "1px solid var(--aa-border)",
@@ -1850,84 +1889,165 @@ const AdminOverview = ({ user }) => {
             boxShadow: "0 10px 25px rgba(15,23,42,.045)",
           }}
         >
+          {/* Mobilda: joriy davr bitta qatorda, sozlash faqat bosilganda ochiladi. */}
           <Box
+            component="button"
+            type="button"
+            onClick={() => setPeriodOpen((open) => !open)}
+            aria-expanded={periodOpen}
             sx={{
-              display: "flex",
-              gap: 0.5,
-              pr: {
-                sm: 1,
-              },
-              borderRight: {
-                sm: "1px solid #e2e8f0",
-              },
+              display: { xs: "flex", sm: "none" },
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 1,
+              width: "100%",
+              minHeight: 46,
+              px: 1.4,
+              cursor: "pointer",
+              color: "inherit",
+              border: 0,
+              borderRadius: "13px",
+              background: "var(--aa-surface-muted)",
+              textAlign: "left",
             }}
           >
-            <Button
-              onClick={() => {
-                const range = monthRange();
+            <Box sx={{ minWidth: 0 }}>
+              <Typography
+                component="span"
+                sx={{
+                  display: "block",
+                  color: "var(--aa-text-tertiary)",
+                  fontSize: 9.5,
+                  fontWeight: 800,
+                  letterSpacing: ".1em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Davr
+              </Typography>
 
-                setFilterForm(range);
-                setAppliedRange(range);
+              <Typography
+                component="span"
+                noWrap
+                sx={{
+                  display: "block",
+                  color: "var(--aa-text)",
+                  fontSize: 13,
+                  fontWeight: 900,
+                }}
+              >
+                {describeRange(appliedRange)}
+              </Typography>
+            </Box>
+
+            <Typography
+              component="span"
+              sx={{
+                flexShrink: 0,
+                color: "var(--aa-brand-text)",
+                fontSize: 11,
+                fontWeight: 900,
               }}
-              sx={presetButtonSx}
             >
-              Bu oy
-            </Button>
-
-            <Button
-              onClick={() => {
-                const range = previousMonthRange();
-
-                setFilterForm(range);
-                setAppliedRange(range);
-              }}
-              sx={presetButtonSx}
-            >
-              O'tgan oy
-            </Button>
+              {periodOpen ? "Yopish" : "O'zgartirish"}
+            </Typography>
           </Box>
 
-          <TextField
-            label="Dan"
-            type="date"
-            size="small"
-            value={filterForm.date_from}
-            onChange={(event) =>
-              setFilterForm((current) => ({
-                ...current,
-                date_from: event.target.value,
-              }))
-            }
-            InputLabelProps={{
-              shrink: true,
+          <Box
+            sx={{
+              display: {
+                xs: periodOpen ? "flex" : "none",
+                sm: "flex",
+              },
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: 1,
             }}
-            sx={dateFieldSx}
-          />
-
-          <TextField
-            label="Gacha"
-            type="date"
-            size="small"
-            value={filterForm.date_to}
-            onChange={(event) =>
-              setFilterForm((current) => ({
-                ...current,
-                date_to: event.target.value,
-              }))
-            }
-            InputLabelProps={{
-              shrink: true,
-            }}
-            sx={dateFieldSx}
-          />
-
-          <Button
-            variant="contained"
-            onClick={() => setAppliedRange(filterForm)}
-            sx={applyButtonSx}
           >
-            Ko'rish
-          </Button>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 0.5,
+                pr: {
+                  sm: 1,
+                },
+                borderRight: {
+                  sm: "1px solid var(--aa-border)",
+                },
+              }}
+            >
+              <Button
+                onClick={() => {
+                  const range = monthRange();
+
+                  setFilterForm(range);
+                  setAppliedRange(range);
+                  setPeriodOpen(false);
+                }}
+                sx={presetButtonSx}
+              >
+                Bu oy
+              </Button>
+
+              <Button
+                onClick={() => {
+                  const range = previousMonthRange();
+
+                  setFilterForm(range);
+                  setAppliedRange(range);
+                  setPeriodOpen(false);
+                }}
+                sx={presetButtonSx}
+              >
+                O'tgan oy
+              </Button>
+            </Box>
+
+            <TextField
+              label="Dan"
+              type="date"
+              size="small"
+              value={filterForm.date_from}
+              onChange={(event) =>
+                setFilterForm((current) => ({
+                  ...current,
+                  date_from: event.target.value,
+                }))
+              }
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={dateFieldSx}
+            />
+
+            <TextField
+              label="Gacha"
+              type="date"
+              size="small"
+              value={filterForm.date_to}
+              onChange={(event) =>
+                setFilterForm((current) => ({
+                  ...current,
+                  date_to: event.target.value,
+                }))
+              }
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={dateFieldSx}
+            />
+
+            <Button
+              variant="contained"
+              onClick={() => {
+                setAppliedRange(filterForm);
+                setPeriodOpen(false);
+              }}
+              sx={applyButtonSx}
+            >
+              Ko'rish
+            </Button>
+          </Box>
         </Paper>
       </Box>
 

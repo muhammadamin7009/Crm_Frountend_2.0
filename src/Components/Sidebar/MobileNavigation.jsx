@@ -199,7 +199,7 @@ const MobileNavigation = () => {
                 display: "grid",
                 placeItems: "center",
                 flexShrink: 0,
-                color: "var(--aa-brand-700)",
+                color: "var(--aa-brand-text)",
                 fontSize: 10,
                 fontWeight: 950,
                 borderRadius: "11px",

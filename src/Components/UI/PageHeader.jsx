@@ -15,7 +15,7 @@ const PageHeader = ({ eyebrow, title, description, actions }) => (
         <Typography
           sx={{
             mb: 0.7,
-            color: "var(--aa-brand-700)",
+            color: "var(--aa-brand-text)",
             fontSize: 11,
             fontWeight: 850,
             letterSpacing: ".09em",
