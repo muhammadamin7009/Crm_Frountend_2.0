@@ -181,6 +181,18 @@ const AppRouter = () => {
           >
             <Route path="/inventory" element={page(Inventory)} />
             <Route path="/inventory/warehouses/:warehouseId" element={page(Inventory)} />
+          </Route>
+
+          {/* Inventarizatsiya alohida: `inventory.view` faqat qoldiq va harakatlar
+              tarixini ochadi, o'tkazilgan sanoqlar `inventory.count` ga tegishli. */}
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={["super_admin", "admin", "worker"]}
+                allowedPermissions={["inventory.count"]}
+              />
+            }
+          >
             <Route path="/inventory/counts" element={page(Inventory)} />
           </Route>
           <Route

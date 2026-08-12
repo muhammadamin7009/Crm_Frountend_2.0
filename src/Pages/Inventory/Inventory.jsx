@@ -473,9 +473,9 @@ const Inventory = () => {
           limit: 300,
         }),
 
-        getInventoryCounts({
-          limit: 100,
-        }),
+        // Inventarizatsiya `inventory.count` talab qiladi. Ruxsatsiz so'rasak backend 403
+        // qaytaradi va `Promise.all` butun ombor sahifasini yiqitadi.
+        canCount ? getInventoryCounts({ limit: 100 }) : Promise.resolve({ data: {} }),
       ]);
 
       const warehouseData = warehouseRes?.data || warehouseRes || {};
@@ -504,7 +504,7 @@ const Inventory = () => {
         setLoading(false);
       }
     }
-  }, []);
+  }, [canCount]);
 
   useEffect(() => {
     load();
@@ -548,17 +548,23 @@ const Inventory = () => {
 
   useEffect(() => {
     if (!loading && location.pathname === "/inventory") {
+      // Oxirgi zaxira sifatida inventarizatsiyaga yuborish faqat ruxsat bo'lsa mumkin,
+      // aks holda ProtectedRoute foydalanuvchini bosh sahifaga qaytarib yuboradi.
       const target = canManageWarehouses
         ? "/inventory/warehouses"
         : activeWarehouses[0]
           ? `/inventory/warehouses/${activeWarehouses[0].id}`
-          : "/inventory/counts";
+          : canCount
+            ? "/inventory/counts"
+            : null;
+
+      if (!target) return;
 
       navigate(target, {
         replace: true,
       });
     }
-  }, [activeWarehouses, canManageWarehouses, loading, location.pathname, navigate]);
+  }, [activeWarehouses, canCount, canManageWarehouses, loading, location.pathname, navigate]);
 
   useEffect(() => {
     if (!loading && warehouseId && !selectedWarehouse) {

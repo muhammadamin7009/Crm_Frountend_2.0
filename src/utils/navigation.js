@@ -110,8 +110,10 @@ export const menuGroups = [
         label: "Inventarizatsiya",
         path: "/inventory/counts",
         allowedRoles: ["super_admin", "admin", "worker"],
-        // Marshrut guard'i ham `inventory.view` talab qiladi (AppRouter), Sidebar ham shunday.
-        requiredPermission: "inventory.view",
+        // `inventory.view` emas: u faqat qoldiq va harakatlar tarixini ochadi.
+        // O'tkazilgan inventarizatsiyalar `inventory.count` ga tegishli — AppRouter
+        // va backend `/inventory/counts` marshrutlari ham shuni talab qiladi.
+        requiredPermission: "inventory.count",
       },
     ],
   },
@@ -167,6 +169,44 @@ export const menuGroups = [
     ],
   },
 ];
+
+/**
+ * "Omborlar" guruhi dinamik — bandlar serverdan kelgan ombor ro'yxatidan yasaladi.
+ * Sidebar ham, mobil menyu ham shu funksiyadan oladi: ilgari ikkalasi o'z nusxasini
+ * saqlagani uchun ruxsat qoidalari bir-biridan uzilib qolgandi.
+ */
+export const buildInventoryMenuItems = (user, warehouses = []) => {
+  const canManageWarehouses =
+    hasPermission(user, "inventory.warehouses") || hasPermission(user, "inventory.manage");
+
+  return [
+    canManageWarehouses && {
+      icon: BoxIcon,
+      label: "Omborlar boshqaruvi",
+      path: "/inventory/warehouses",
+      end: true,
+      allowedRoles: ["super_admin", "admin", "worker"],
+      requiredPermission: "inventory.warehouses",
+    },
+
+    ...warehouses.map((warehouse) => ({
+      icon: BoxIcon,
+      label: warehouse.name,
+      path: `/inventory/warehouses/${warehouse.id}`,
+      end: true,
+      allowedRoles: ["super_admin", "admin", "worker"],
+      requiredPermission: "inventory.view",
+    })),
+
+    {
+      icon: HistoryIcon,
+      label: "Inventarizatsiya",
+      path: "/inventory/counts",
+      allowedRoles: ["super_admin", "admin", "worker"],
+      requiredPermission: "inventory.count",
+    },
+  ].filter(Boolean);
+};
 
 /** Bitta menyu bandi shu foydalanuvchiga ochiqmi. */
 export const isMenuItemVisible = (user, item) => {

@@ -38,7 +38,12 @@ import { deleteCompanyLogo, updateCompanyLogo } from "../../api/companyBranding"
 import { getWarehouses } from "../../api/inventory";
 import { clearSession } from "../../utils/auth";
 import { hasPermission } from "../../utils/permissions";
-import { getAvailableQuickActions } from "../../utils/navigation";
+import {
+  buildInventoryMenuItems,
+  getAvailableQuickActions,
+  isMenuItemVisible,
+  menuGroups,
+} from "../../utils/navigation";
 import { getCompanyLogoUrl } from "../../utils/company";
 
 const roleLabels = {
@@ -48,100 +53,6 @@ const roleLabels = {
   customer: "Xaridor",
   worker: "Ishchi",
 };
-
-const mobileLinks = [
-  {
-    label: "Bosh sahifa",
-    path: "/",
-  },
-  {
-    label: "Foydalanuvchilar",
-    path: "/users",
-    roles: ["super_admin", "admin", "worker"],
-    permission: "users.view",
-  },
-  {
-    label: "Mijozlar",
-    path: "/clients",
-    roles: ["super_admin", "admin"],
-    permission: "clients.view",
-  },
-  {
-    label: "Lavozimlar",
-    path: "/employees",
-    roles: ["super_admin", "admin"],
-    permission: "employees.view",
-  },
-  {
-    label: "Mahsulotlar",
-    path: "/products",
-    permission: "products.view",
-  },
-  {
-    label: "Ish hisoboti",
-    path: "/worker-outputs",
-    roles: ["super_admin", "admin", "worker"],
-    permission: "production.view",
-  },
-  {
-    label: "Oyliklar",
-    path: "/worker-payments",
-    roles: ["super_admin", "admin"],
-    permission: "payroll.view",
-  },
-  {
-    label: "Mijoz savdo",
-    path: "/client-sales",
-    roles: ["super_admin", "admin"],
-    feature: "client_accounting",
-    permission: "client_sales.view",
-  },
-  {
-    label: "Zakaz ishlarim",
-    path: "/my-order-tasks",
-    roles: ["worker"],
-  },
-  {
-    label: "Zakazlar",
-    path: "/orders",
-    roles: ["super_admin", "admin"],
-    permission: "orders.view",
-  },
-  {
-    label: "Xomashyo xaridi",
-    path: "/material-purchases",
-    roles: ["super_admin", "admin"],
-    feature: "supplier_accounting",
-    permission: "material_purchases.view",
-  },
-  {
-    label: "Xarajatlar",
-    path: "/expenses",
-    roles: ["super_admin", "admin"],
-    permission: "finance.view",
-  },
-  {
-    label: "Moliya",
-    path: "/finance",
-    roles: ["super_admin", "admin"],
-    feature: "finance",
-    permission: "finance.view",
-  },
-  {
-    label: "Ruxsatlar",
-    path: "/permissions",
-    roles: ["super_admin", "admin"],
-    permission: "permissions.manage",
-  },
-  {
-    label: "Amallar tarixi",
-    path: "/audit-logs",
-    roles: ["super_admin", "admin"],
-    feature: "audit_logs",
-    permission: "audit_logs.view",
-  },
-];
-
 
 const getImageUrl = (path) => {
   if (!path) return undefined;
@@ -317,36 +228,22 @@ export default function TopBar() {
     };
   }, [loadWarehouses]);
 
+  // Menyu ta'rifi `navigation.js` da — ilgari bu yerda uning to'liq nusxasi turgan va
+  // ruxsatlar sidebar'dagidan ayrilib qolgandi (masalan inventarizatsiya `inventory.view`
+  // bilan ochilardi). Endi bitta manbadan olinadi.
   const resolvedMobileLinks = useMemo(() => {
-    const canManageWarehouses =
-      hasPermission(user, "inventory.warehouses") || hasPermission(user, "inventory.manage");
+    const inventoryItems = buildInventoryMenuItems(user, warehouses);
 
-    const inventoryLinks = [
-      canManageWarehouses && {
-        label: "Omborlar boshqaruvi",
-        path: "/inventory/warehouses",
-        roles: ["super_admin", "admin", "worker"],
-        permission: "inventory.warehouses",
-      },
-
-      ...warehouses.map((warehouse) => ({
-        label: warehouse.name,
-        path: `/inventory/warehouses/${warehouse.id}`,
-        roles: ["super_admin", "admin", "worker"],
-        permission: "inventory.view",
-      })),
-
-      {
-        label: "Inventarizatsiya",
-        path: "/inventory/counts",
-        roles: ["super_admin", "admin", "worker"],
-        permission: "inventory.view",
-      },
-    ].filter(Boolean);
-
-    return mobileLinks.flatMap((item) =>
-      item.path === "/expenses" ? [...inventoryLinks, item] : [item],
-    );
+    return menuGroups
+      .flatMap((group) => group.items)
+      .flatMap((item) => {
+        // Statik "Ombor" bandi o'rniga har bir ombor alohida ko'rsatiladi.
+        if (item.path === "/inventory") return inventoryItems;
+        // Inventarizatsiya dinamik ro'yxatda bor — takrorlanmasin.
+        if (item.path === "/inventory/counts") return [];
+        return [item];
+      })
+      .filter((item) => isMenuItemVisible(user, item));
   }, [user, warehouses]);
 
   const availableQuickActions = useMemo(() => getAvailableQuickActions(user), [user]);
@@ -759,14 +656,6 @@ export default function TopBar() {
 
           <List className="aa-mobile-links">
             {resolvedMobileLinks
-              .filter(
-                (item) =>
-                  (!item.roles || item.roles.includes(user?.role)) &&
-                  (!item.feature ||
-                    !user?.plan_code ||
-                    user?.plan_features?.includes(item.feature)) &&
-                  hasPermission(user, item.permission),
-              )
               .map((item, index) => (
                 <ListItemButton
                   key={item.path}

@@ -14,12 +14,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../Context/AuthContext";
 import SiteLogo from "../../images/zerr_02_logo.png";
 
-import BoxIcon from "../../images/ui-icons/box.svg";
-import HistoryIcon from "../../images/ui-icons/history.svg";
-
 import { clearSession } from "../../utils/auth";
 import { hasPermission } from "../../utils/permissions";
-import { menuGroups, isMenuItemVisible } from "../../utils/navigation";
+import { menuGroups, isMenuItemVisible, buildInventoryMenuItems } from "../../utils/navigation";
 import { getCompanyLogoUrl } from "../../utils/company";
 import { getWarehouses } from "../../api/inventory";
 
@@ -140,36 +137,7 @@ const Sidebar = () => {
   }, [loadWarehouses]);
 
   const resolvedMenuGroups = useMemo(() => {
-    const canManageWarehouses =
-      hasPermission(user, "inventory.warehouses") || hasPermission(user, "inventory.manage");
-
-    const inventoryItems = [
-      canManageWarehouses && {
-        icon: BoxIcon,
-        label: "Omborlar boshqaruvi",
-        path: "/inventory/warehouses",
-        end: true,
-        allowedRoles: ["super_admin", "admin", "worker"],
-        requiredPermission: "inventory.warehouses",
-      },
-
-      ...warehouses.map((warehouse) => ({
-        icon: BoxIcon,
-        label: warehouse.name,
-        path: `/inventory/warehouses/${warehouse.id}`,
-        end: true,
-        allowedRoles: ["super_admin", "admin", "worker"],
-        requiredPermission: "inventory.view",
-      })),
-
-      {
-        icon: HistoryIcon,
-        label: "Inventarizatsiya",
-        path: "/inventory/counts",
-        allowedRoles: ["super_admin", "admin", "worker"],
-        requiredPermission: "inventory.view",
-      },
-    ].filter(Boolean);
+    const inventoryItems = buildInventoryMenuItems(user, warehouses);
 
     const itemByPath = new Map(
       menuGroups.flatMap((group) => group.items).map((item) => [item.path, item]),
