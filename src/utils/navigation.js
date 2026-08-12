@@ -13,7 +13,7 @@ import TrendDownIcon from "../images/ui-icons/trend-down.svg";
 import FinanceIcon from "../images/ui-icons/finance.svg";
 import HistoryIcon from "../images/ui-icons/history.svg";
 
-import { hasPermission } from "./permissions";
+import { hasAnyPermission, hasPermission } from "./permissions";
 
 export const menuGroups = [
   {
@@ -82,6 +82,14 @@ export const menuGroups = [
         path: "/worker-outputs",
         allowedRoles: ["super_admin", "admin", "worker"],
         requiredPermission: "production.view",
+      },
+      {
+        icon: BoxIcon,
+        label: "Partiyalar",
+        path: "/production-batches",
+        allowedRoles: ["super_admin", "admin", "worker"],
+        // Omborchi ham ko'radi: yopiq karobka ichida nima borligini u tekshiradi.
+        requiredPermission: ["production.view", "inventory.view"],
       },
       {
         icon: WalletIcon,
@@ -214,7 +222,11 @@ export const isMenuItemVisible = (user, item) => {
   if (user?.plan_code && item.requiredFeature) {
     if (!user.plan_features?.includes(item.requiredFeature)) return false;
   }
-  return hasPermission(user, item.requiredPermission);
+
+  // `requiredPermission` bitta kalit ham, ro'yxat ham bo'lishi mumkin. Ayrim
+  // bo'limlar bir nechta ruxsatning istalgan biri bilan ochiladi: partiyani
+  // ishlab chiqarish ruxsati bor ham, ombor ruxsati bor ham ko'radi.
+  return hasAnyPermission(user, [item.requiredPermission].flat().filter(Boolean));
 };
 
 /** Faqat ochiq bandlari qolgan guruhlar. Bo'sh guruhlar tashlab yuboriladi. */

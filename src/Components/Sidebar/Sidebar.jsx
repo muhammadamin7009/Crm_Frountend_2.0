@@ -34,7 +34,10 @@ const roleNames = {
 const GROUP_LAYOUT = [
   { label: "Asosiy", paths: ["/"] },
   { label: "Savdo", paths: ["/clients", "/orders", "/client-sales"] },
-  { label: "Ishlab chiqarish", paths: ["/products", "/my-order-tasks", "/worker-outputs"] },
+  {
+    label: "Ishlab chiqarish",
+    paths: ["/products", "/my-order-tasks", "/worker-outputs", "/production-batches"],
+  },
   { label: "Omborlar", dynamic: true },
   { label: "Xodimlar", paths: ["/users", "/employees", "/worker-payments"] },
   { label: "Hisob-kitob", paths: ["/material-purchases", "/expenses", "/finance"] },

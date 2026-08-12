@@ -28,6 +28,7 @@ import { hasPermission } from "../../utils/permissions";
 import { getUsers } from "../../api/getUsers";
 import { getProducts } from "../../api/products";
 import { getDepartments } from "../../api/departments";
+import { getProductionBatches } from "../../api/productionBatches";
 import {
   createBulkWorkerOutputs,
   deleteWorkerOutput,
@@ -41,6 +42,8 @@ const emptyForm = {
   product_id: "",
   department_id: "",
   quantity: "",
+  // Qaysi partiyaga ishlandi. Bo'sh bo'lsa partiyasiz yozuv — eski uslub.
+  batch_id: "",
   worked_at: new Date().toISOString().slice(0, 10),
   note: "",
 };
@@ -48,6 +51,7 @@ const emptyForm = {
 const emptyBatchItem = {
   product_id: "",
   quantity: "",
+  batch_id: "",
 };
 
 const getLocalUser = () => {
@@ -167,6 +171,11 @@ const WorkerOutputs = () => {
   const [products, setProducts] = useState([]);
   const [departments, setDepartments] = useState([]);
 
+  // Ochiq partiyalar. Ish yozuvi partiyaga biriktirilsa, omborga tushadigan
+  // tayyor mahsulot ham o'sha partiya nomidan kiradi — 055 padojli va 046
+  // padojli bir xil mahsulot omborda aralashib ketmaydi.
+  const [openBatches, setOpenBatches] = useState([]);
+
   // Shu bosqichda sarflanadigan xomashyolar va ularning haqiqiy miqdori.
   const [stageMaterials, setStageMaterials] = useState([]);
   const [stageLoading, setStageLoading] = useState(false);
@@ -265,6 +274,42 @@ const WorkerOutputs = () => {
     }
   }, []);
 
+  // Partiyalar alohida yuklanadi: ro'yxat bo'sh qolsa ham ish yozuvi eskicha,
+  // partiyasiz kiritilaveradi.
+  useEffect(() => {
+    getProductionBatches({ status: "in_progress", limit: 200 })
+      .then(({ data }) => setOpenBatches(data.production_batches || []))
+      .catch(() => setOpenBatches([]));
+  }, []);
+
+  /**
+   * Shu mahsulotga ochilgan partiyalar.
+   *
+   * Tahrirlashda yozuvning o'z partiyasi ro'yxatga qo'shiladi: u allaqachon
+   * yopilgan bo'lishi mumkin, ro'yxatda bo'lmasa tanlov "Partiyasiz" ga sakrab
+   * ketardi va saqlashda biriktirilgan partiya jimgina yo'qolardi.
+   */
+  const batchOptionsFor = useCallback(
+    (productId, current) => {
+      const options = openBatches.filter(
+        (batch) => Number(batch.product_id) === Number(productId),
+      );
+
+      if (
+        current?.batch_id &&
+        !options.some((batch) => Number(batch.id) === Number(current.batch_id))
+      ) {
+        return [
+          { id: current.batch_id, batch_number: current.batch_number || "Tanlangan partiya" },
+          ...options,
+        ];
+      }
+
+      return options;
+    },
+    [openBatches],
+  );
+
   const buildParams = useCallback(
     (offset = 0, limit = pageInfo.limit) => {
       const params = {
@@ -340,6 +385,10 @@ const WorkerOutputs = () => {
     setForm((previous) => ({
       ...previous,
       [field]: event.target.value,
+
+      // Partiya bitta mahsulotga tegishli: mahsulot almashsa eskisi yaroqsiz
+      // bo'lib qoladi va server uni rad etadi.
+      ...(field === "product_id" ? { batch_id: "" } : null),
     }));
   };
 
@@ -362,6 +411,7 @@ const WorkerOutputs = () => {
       product_id: output.product_id || "",
       department_id: output.department_id || "",
       quantity: output.quantity ?? "",
+      batch_id: output.batch_id || "",
 
       worked_at: output.worked_at ? String(output.worked_at).slice(0, 10) : emptyForm.worked_at,
 
@@ -430,6 +480,10 @@ const WorkerOutputs = () => {
           ? {
               ...item,
               [field]: value,
+
+              // Mahsulot almashsa qatordagi partiya boshqa mahsulotniki bo'lib
+              // qoladi — server uni rad etadi, shuning uchun tozalanadi.
+              ...(field === "product_id" ? { batch_id: "" } : null),
             }
           : item,
       ),
@@ -489,6 +543,7 @@ const WorkerOutputs = () => {
     product_id: Number(form.product_id),
     department_id: Number(form.department_id),
     quantity: Number(form.quantity),
+    batch_id: form.batch_id ? Number(form.batch_id) : null,
     worked_at: form.worked_at || undefined,
     note: form.note.trim() || null,
 
@@ -525,6 +580,7 @@ const WorkerOutputs = () => {
           items: batchItems.map((item) => ({
             product_id: Number(item.product_id),
             quantity: Number(item.quantity),
+            batch_id: item.batch_id ? Number(item.batch_id) : null,
           })),
         });
 
@@ -1153,7 +1209,25 @@ const WorkerOutputs = () => {
                         {output.product_sku || output.product_model || "-"}
                       </Typography>
 
-                      <DepartmentChip label={output.department_name} />
+                      <Stack direction="row" spacing={0.7} useFlexGap sx={{ flexWrap: "wrap" }}>
+                        <DepartmentChip label={output.department_name} />
+
+                        {output.batch_number && (
+                          <Chip
+                            size="small"
+                            label={output.batch_number}
+                            sx={{
+                              height: 25,
+                              px: 0.35,
+                              color: "var(--aa-text-secondary)",
+                              fontSize: 9.5,
+                              fontWeight: 900,
+                              backgroundColor: "var(--aa-surface-muted)",
+                              border: "1px solid var(--aa-border)",
+                            }}
+                          />
+                        )}
+                      </Stack>
                     </TableCell>
 
                     <TableCell>
@@ -1404,6 +1478,27 @@ const WorkerOutputs = () => {
                     },
                   }}
                 />
+
+                <TextField
+                  select
+                  label="Partiya"
+                  value={form.batch_id}
+                  onChange={handleFormChange("batch_id")}
+                  disabled={!form.product_id}
+                  helperText={
+                    form.product_id
+                      ? "Tayyor mahsulot shu partiya nomidan omborga tushadi"
+                      : "Avval mahsulotni tanlang"
+                  }
+                >
+                  <MenuItem value="">Partiyasiz</MenuItem>
+
+                  {batchOptionsFor(form.product_id, selectedOutput).map((batch) => (
+                    <MenuItem key={batch.id} value={batch.id}>
+                      {batch.batch_number}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Box>
 
               {/* Haqiqiy xomashyo sarfi. Maydonlar retsept × miqdor bilan to'ldirilgan;
@@ -1597,7 +1692,7 @@ const WorkerOutputs = () => {
 
                       gridTemplateColumns: {
                         xs: "1fr",
-                        sm: "1fr 180px auto",
+                        sm: "1fr 150px 150px auto",
                       },
 
                       gap: 1.3,
@@ -1647,6 +1742,22 @@ const WorkerOutputs = () => {
                         },
                       }}
                     />
+
+                    <TextField
+                      select
+                      label="Partiya"
+                      value={item.batch_id}
+                      onChange={changeBatchItem(index, "batch_id")}
+                      disabled={!item.product_id}
+                    >
+                      <MenuItem value="">Partiyasiz</MenuItem>
+
+                      {batchOptionsFor(item.product_id).map((batch) => (
+                        <MenuItem key={batch.id} value={batch.id}>
+                          {batch.batch_number}
+                        </MenuItem>
+                      ))}
+                    </TextField>
 
                     <Button
                       color="error"

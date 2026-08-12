@@ -12,6 +12,7 @@ const User = lazy(() => import("../Pages/User/User"));
 const Products = lazy(() => import("../Pages/Product/Products"));
 const Product = lazy(() => import("../Pages/Product/Product"));
 const WorkerOutputs = lazy(() => import("../Pages/WorkerOutput/WorkerOutputs"));
+const ProductionBatches = lazy(() => import("../Pages/ProductionBatch/ProductionBatches"));
 const WorkerPayments = lazy(() => import("../Pages/WorkerPayment/WorkerPayments"));
 const ClientSales = lazy(() => import("../Pages/ClientSale/ClientSales"));
 const MaterialPurchases = lazy(() => import("../Pages/MaterialPurchase/MaterialPurchases"));
@@ -101,6 +102,20 @@ const AppRouter = () => {
             }
           >
             <Route path="/worker-outputs" element={page(WorkerOutputs)} />
+          </Route>
+
+          {/* Partiyani omborchi ham ko'radi: yopiq karobka ichida nima borligini
+              aynan u tekshiradi. Shuning uchun `inventory.view` ham yetarli —
+              backend `/production-batches` marshruti ham shu ikkisini qabul qiladi. */}
+          <Route
+            element={
+              <ProtectedRoute
+                allowedRoles={["super_admin", "admin", "worker"]}
+                allowedPermissions={["production.view", "inventory.view"]}
+              />
+            }
+          >
+            <Route path="/production-batches" element={page(ProductionBatches)} />
           </Route>
 
           <Route
