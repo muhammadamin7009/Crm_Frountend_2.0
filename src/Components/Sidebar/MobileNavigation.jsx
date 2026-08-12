@@ -125,22 +125,25 @@ const MobileNavigation = () => {
 
   return (
     <>
-      <Button
-        className="aa-mobile-fab"
-        disabled={!availableQuickActions.length}
-        onClick={(event) => {
-          const anchor = event.currentTarget;
-          anchor.blur();
-          setQuickActionsAnchor(anchor);
-        }}
-        aria-label="Tezkor amal"
-        aria-haspopup="menu"
-        aria-expanded={Boolean(quickActionsAnchor)}
-      >
-        <Box component="span" aria-hidden="true">
-          +
-        </Box>
-      </Button>
+      {/* Tezkor amal yo'q bo'lsa suzuvchi tugma ham chizilmaydi — o'chirilgan holatda
+          u faqat ekranni egallaydi va bosganda hech narsa bo'lmaydi. */}
+      {availableQuickActions.length > 0 && (
+        <Button
+          className="aa-mobile-fab"
+          onClick={(event) => {
+            const anchor = event.currentTarget;
+            anchor.blur();
+            setQuickActionsAnchor(anchor);
+          }}
+          aria-label="Tezkor amal"
+          aria-haspopup="menu"
+          aria-expanded={Boolean(quickActionsAnchor)}
+        >
+          <Box component="span" aria-hidden="true">
+            +
+          </Box>
+        </Button>
+      )}
 
       <Menu
         anchorEl={quickActionsAnchor}

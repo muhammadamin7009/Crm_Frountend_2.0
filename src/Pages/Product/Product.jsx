@@ -329,8 +329,28 @@ const Product = () => {
 
   const currentUser = auth.user || getLocalUser();
 
-  const canManagePrices =
-    MANAGER_ROLES.includes(currentUser?.role) && hasPermission(currentUser, "products.manage");
+  const isManagerRole = MANAGER_ROLES.includes(currentUser?.role);
+
+  // Uchta alohida ruxsat. Ilgari uchalasi ham `products.manage` ostida edi va katalogni
+  // boshqara oladigan har bir admin bir birlik ish haqini hamda mahsulotning xomashyo
+  // tarkibini ham ko'rar edi.
+  const canManageProduct = isManagerRole && hasPermission(currentUser, "products.manage");
+
+  const canViewPrices = isManagerRole && hasPermission(currentUser, "products.prices");
+
+  const canViewRecipe = isManagerRole && hasPermission(currentUser, "products.recipe");
+
+  // Bo'limlar ro'yxati ikkala bo'limga ham kerak: narxlar jadvaliga ham,
+  // retseptdagi "Yakunlovchi bo'lim" tanlagichiga ham.
+  const needsDepartments = canViewPrices || canViewRecipe;
+
+  // "+ Bo'lim qo'shish" yangi ishlab chiqarish bo'limi yaratadi — bu departments
+  // modulining ruxsati, `products.prices` uni qamramaydi (POST /departments 403 beradi).
+  const canCreateDepartment =
+    isManagerRole &&
+    ["products.manage", "production.manage", "employees.manage", "orders.manage"].some((key) =>
+      hasPermission(currentUser, key),
+    );
 
   const [product, setProduct] = useState(null);
 
@@ -380,7 +400,7 @@ const Product = () => {
       const [{ data }, departmentsRes, recipeRes] = await Promise.all([
         getProduct(id),
 
-        canManagePrices
+        needsDepartments
           ? getDepartments({
               is_active: true,
               limit: 100,
@@ -393,7 +413,7 @@ const Product = () => {
               },
             }),
 
-        canManagePrices
+        canViewRecipe
           ? getProductRecipe(id)
           : Promise.resolve({
               data: {
@@ -448,7 +468,7 @@ const Product = () => {
     } finally {
       setLoading(false);
     }
-  }, [canManagePrices, id]);
+  }, [canViewRecipe, id, needsDepartments]);
 
   useEffect(() => {
     fetchProduct();
@@ -996,7 +1016,7 @@ const Product = () => {
               tone="green"
             />
 
-            {canManagePrices && (
+            {canManageProduct && (
               <HeroMetric
                 label="Xarid narxi"
                 value={formatMoney(product.purchase_price)}
@@ -1005,19 +1025,25 @@ const Product = () => {
               />
             )}
 
-            <HeroMetric
-              label="Bo‘limlar"
-              value={formatNumber(priceRows.length)}
-              helper="Narx biriktirilgan bo‘limlar"
-              tone="amber"
-            />
+            {/* Ruxsat bo'lmasa karta umuman chizilmaydi — nol qiymat bilan turishi
+                ma'lumot yo'q degan noto'g'ri taassurot beradi. */}
+            {canViewPrices && (
+              <HeroMetric
+                label="Bo‘limlar"
+                value={formatNumber(priceRows.length)}
+                helper="Narx biriktirilgan bo‘limlar"
+                tone="amber"
+              />
+            )}
 
-            <HeroMetric
-              label="Retsept"
-              value={`${formatNumber(recipeRows.length)} ta`}
-              helper="Biriktirilgan xomashyolar"
-              tone="red"
-            />
+            {canViewRecipe && (
+              <HeroMetric
+                label="Retsept"
+                value={`${formatNumber(recipeRows.length)} ta`}
+                helper="Biriktirilgan xomashyolar"
+                tone="red"
+              />
+            )}
           </Box>
         </Box>
       </Box>
@@ -1178,13 +1204,13 @@ const Product = () => {
               gridTemplateColumns: {
                 xs: "1fr",
 
-                sm: canManagePrices ? "repeat(3,minmax(0,1fr))" : "1fr",
+                sm: canManageProduct ? "repeat(3,minmax(0,1fr))" : "1fr",
               },
 
               gap: 1.3,
             }}
           >
-            {canManagePrices && (
+            {canManageProduct && (
               <PricePanel
                 label="Xarid narxi"
                 value={formatMoney(product.purchase_price)}
@@ -1200,7 +1226,7 @@ const Product = () => {
               tone="green"
             />
 
-            {canManagePrices && (
+            {canManageProduct && (
               <PricePanel
                 label="Narx farqi"
                 value={formatMoney(profitAmount)}
@@ -1278,7 +1304,7 @@ const Product = () => {
         </Surface>
       </Box>
 
-      {canManagePrices && (
+      {canViewPrices && (
         <Surface
           sx={{
             mb: 2.5,
@@ -1296,9 +1322,11 @@ const Product = () => {
                 }}
                 spacing={1}
               >
-                <Button variant="outlined" onClick={openDepartmentModal} sx={secondaryButtonSx}>
-                  + Bo‘lim qo‘shish
-                </Button>
+                {canCreateDepartment && (
+                  <Button variant="outlined" onClick={openDepartmentModal} sx={secondaryButtonSx}>
+                    + Bo‘lim qo‘shish
+                  </Button>
+                )}
 
                 <Button
                   variant="contained"
@@ -1434,7 +1462,7 @@ const Product = () => {
         </Surface>
       )}
 
-      {canManagePrices && (
+      {canViewRecipe && (
         <Surface sx={{ p: 2.4 }}>
           <SectionHeader
             title="Ishlab chiqarish retsepti"

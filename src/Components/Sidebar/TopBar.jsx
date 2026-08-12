@@ -520,23 +520,27 @@ export default function TopBar() {
             <span aria-hidden="true">{mode === "dark" ? "☀" : "☾"}</span>
           </Button>
 
-          <Button
-            disabled={!availableQuickActions.length}
-            onClick={(event) => {
-              const anchor = event.currentTarget;
-              anchor.blur();
-              setQuickActionsAnchor(anchor);
-            }}
-            className="aa-quick-action-button"
-            aria-haspopup="menu"
-            aria-expanded={Boolean(quickActionsAnchor)}
-          >
-            <span className="aa-plus">+</span>
+          {/* Ruxsati bo'yicha birorta tezkor amal chiqmasa, tugma umuman chizilmaydi.
+              Ilgari u o'chirilgan holatda turardi — bosib bo'lmaydigan tugma
+              foydalanuvchini nima yetishmayotganini o'ylashga majbur qiladi. */}
+          {availableQuickActions.length > 0 && (
+            <Button
+              onClick={(event) => {
+                const anchor = event.currentTarget;
+                anchor.blur();
+                setQuickActionsAnchor(anchor);
+              }}
+              className="aa-quick-action-button"
+              aria-haspopup="menu"
+              aria-expanded={Boolean(quickActionsAnchor)}
+            >
+              <span className="aa-plus">+</span>
 
-            <span>Tezkor amal</span>
+              <span>Tezkor amal</span>
 
-            <span className="aa-arrow">↓</span>
-          </Button>
+              <span className="aa-arrow">↓</span>
+            </Button>
+          )}
 
           <Menu
             anchorEl={quickActionsAnchor}
