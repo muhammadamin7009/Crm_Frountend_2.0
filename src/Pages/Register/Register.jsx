@@ -453,7 +453,7 @@ const Register = () => {
                 <Typography
                   noWrap
                   sx={{
-                    color: "#111827",
+                    color: "var(--aa-text)",
                     fontSize: 18,
                     fontWeight: 950,
                   }}
@@ -516,7 +516,7 @@ const Register = () => {
                 component="h1"
                 sx={{
                   m: 0,
-                  color: "#111827",
+                  color: "var(--aa-text)",
                   fontSize: {
                     xs: 33,
                     sm: 42,

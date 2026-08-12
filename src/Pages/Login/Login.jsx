@@ -421,7 +421,7 @@ const Login = () => {
                 <Typography
                   noWrap
                   sx={{
-                    color: "#111827",
+                    color: "var(--aa-text)",
                     fontSize: 18,
                     fontWeight: 950,
                   }}
@@ -432,7 +432,7 @@ const Login = () => {
                 <Typography
                   sx={{
                     mt: 0.4,
-                    color: "#7b8494",
+                    color: "var(--aa-text-secondary)",
                     fontSize: 12,
                     fontWeight: 600,
                   }}
@@ -447,7 +447,7 @@ const Login = () => {
                 component="h2"
                 sx={{
                   m: 0,
-                  color: "#111827",
+                  color: "var(--aa-text)",
                   fontSize: { xs: 34, sm: 43 },
                   lineHeight: 1.08,
                   fontWeight: 950,
@@ -509,8 +509,10 @@ const Login = () => {
                     gap: 1,
                     p: 2,
                     borderRadius: "18px",
-                    border: "1px solid #fde68a",
-                    backgroundColor: "#fffbeb",
+                    // Yarim shaffof sariq ikkala mavzuda ham ishlaydi: yorug'da
+                    // #fffbeb ga yaqin, qorong'ida esa fon ko'rinib turadi.
+                    border: "1px solid rgba(245,158,11,.32)",
+                    backgroundColor: "rgba(245,158,11,.10)",
                   }}
                 >
                   {setupResult.recovery_codes.map((recoveryCode) => (
@@ -521,10 +523,10 @@ const Login = () => {
                         px: 1,
                         py: 1.2,
                         textAlign: "center",
-                        color: "#172033",
+                        color: "var(--aa-text)",
                         fontWeight: 850,
                         borderRadius: "10px",
-                        border: "1px solid #fef3c7",
+                        border: "1px solid rgba(245,158,11,.22)",
                         backgroundColor: "var(--aa-surface-solid)",
                       }}
                     >

@@ -136,9 +136,9 @@ const Surface = ({ children, sx = {} }) => (
     sx={{
       overflow: "hidden",
       borderRadius: "22px",
-      border: "1px solid #e4e9ef",
+      border: "1px solid var(--aa-border)",
       backgroundColor: "var(--aa-surface-solid)",
-      boxShadow: "0 14px 40px rgba(15,23,42,.045)",
+      boxShadow: "var(--aa-shadow-md)",
       ...sx,
     }}
   >
@@ -392,11 +392,11 @@ const Section = ({ title, subtitle, action, children, sx = {} }) => (
   </Surface>
 );
 
-const InfoItem = ({ label, value, valueColor = "#334155" }) => (
+const InfoItem = ({ label, value, valueColor = "var(--aa-text)" }) => (
   <Box
     sx={{
       py: 1.4,
-      borderBottom: "1px solid #edf0f3",
+      borderBottom: "1px solid var(--aa-border)",
 
       "&:last-of-type": {
         borderBottom: 0,
@@ -437,7 +437,7 @@ const EmptyState = ({ children }) => (
       placeItems: "center",
       textAlign: "center",
       borderRadius: "17px",
-      border: "1px dashed #cbd5e1",
+      border: "1px dashed var(--aa-border-strong)",
       backgroundColor: "var(--aa-surface-muted)",
     }}
   >
@@ -507,7 +507,7 @@ const ProgressRows = ({ items = [], color = "#7c3aed", empty = "Ma’lumot topil
             sx={{
               height: 8,
               borderRadius: 99,
-              backgroundColor: "#edf1f5",
+              backgroundColor: "var(--aa-surface-hover)",
 
               "& .MuiLinearProgress-bar": {
                 borderRadius: 99,
@@ -535,7 +535,7 @@ const AccountProgress = ({
     sx={{
       p: 2.2,
       borderRadius: "18px",
-      border: "1px solid #e7ebf0",
+      border: "1px solid var(--aa-border)",
       background: "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
     }}
   >
@@ -588,7 +588,7 @@ const AccountProgress = ({
         mt: 2.2,
         height: 11,
         borderRadius: 99,
-        backgroundColor: "#e9eef3",
+        backgroundColor: "var(--aa-surface-hover)",
 
         "& .MuiLinearProgress-bar": {
           borderRadius: 99,
@@ -604,7 +604,7 @@ const AccountProgress = ({
         display: "grid",
         gridTemplateColumns: "repeat(2,minmax(0,1fr))",
         gap: 1.3,
-        borderTop: "1px solid #edf0f3",
+        borderTop: "1px solid var(--aa-border)",
       }}
     >
       <Box>
@@ -668,7 +668,7 @@ const HistoryTable = ({ title, subtitle, rows = [], columns = [], empty }) => (
         alignItems: "center",
         justifyContent: "space-between",
         gap: 2,
-        borderBottom: "1px solid #edf0f3",
+        borderBottom: "1px solid var(--aa-border)",
       }}
     >
       <Box>
@@ -722,7 +722,7 @@ const HistoryTable = ({ title, subtitle, rows = [], columns = [], empty }) => (
             letterSpacing: ".035em",
             textTransform: "uppercase",
             backgroundColor: "var(--aa-surface-muted)",
-            borderColor: "#edf0f3",
+            borderColor: "var(--aa-border)",
           },
 
           "& td": {
@@ -730,7 +730,7 @@ const HistoryTable = ({ title, subtitle, rows = [], columns = [], empty }) => (
             color: "var(--aa-text-secondary)",
             fontSize: 10.5,
             fontWeight: 700,
-            borderColor: "#edf0f3",
+            borderColor: "var(--aa-border)",
           },
 
           "& tbody tr:hover": {
@@ -1089,7 +1089,7 @@ const User = ({ backTo = "/users" }) => {
             size={34}
             thickness={4.5}
             sx={{
-              color: "#991b1b",
+              color: "var(--aa-brand-500)",
             }}
           />
         </Box>
@@ -1753,9 +1753,9 @@ const User = ({ backTo = "/users" }) => {
                 flexDirection: "column",
                 justifyContent: "center",
                 borderRadius: "18px",
-                border: "1px solid #e7ebf0",
+                border: "1px solid var(--aa-border)",
                 background:
-                  "radial-gradient(circle at 100% 0%,rgba(153,27,27,.07),transparent 31%),linear-gradient(145deg,#ffffff,#f8fafc)",
+                  "radial-gradient(circle at 100% 0%,rgba(153,27,27,.07),transparent 31%),linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
               }}
             >
               <Box
@@ -1816,10 +1816,10 @@ const User = ({ backTo = "/users" }) => {
                   label={employee.is_deleted ? "O‘chirilgan" : "Faol"}
                   sx={{
                     ...genericChipSx,
-                    color: employee.is_deleted ? "#b91c1c" : "#15803d",
+                    color: employee.is_deleted ? "var(--aa-danger)" : "var(--aa-success)",
                     backgroundColor: employee.is_deleted
-                      ? "rgba(220,38,38,.08)"
-                      : "rgba(34,197,94,.08)",
+                      ? "rgba(220,38,38,.12)"
+                      : "rgba(34,197,94,.12)",
                   }}
                 />
               </Box>
