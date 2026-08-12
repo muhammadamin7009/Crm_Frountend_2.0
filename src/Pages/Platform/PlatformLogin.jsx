@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { platformLogin } from "../../api/platform";
+import AppLogo from "../../images/al-amin-crm-logo.png";
 
 const PlatformFeature = ({ value, label, description }) => (
   <Box
@@ -257,21 +258,25 @@ const PlatformLogin = () => {
                 backgroundColor: "rgba(255,255,255,.045)",
               }}
             >
+              {/* Loyihaning o'z logosi. Ilgari bu yerda shunchaki "A" harfi turardi. */}
               <Box
                 sx={{
                   width: 38,
                   height: 38,
                   display: "grid",
                   placeItems: "center",
-                  color: "#ffffff",
+                  overflow: "hidden",
                   borderRadius: "11px",
-                  background: "linear-gradient(135deg,#991b1b,#dc2626)",
+                  backgroundColor: "#ffffff",
                   boxShadow: "0 10px 24px rgba(127,29,29,.30)",
-                  fontSize: 15,
-                  fontWeight: 950,
                 }}
               >
-                A
+                <Box
+                  component="img"
+                  src={AppLogo}
+                  alt="Al-Amin CRM"
+                  sx={{ width: 30, height: 30, objectFit: "contain" }}
+                />
               </Box>
 
               <Box>
@@ -499,15 +504,18 @@ const PlatformLogin = () => {
                 height: 48,
                 display: "grid",
                 placeItems: "center",
-                color: "#991b1b",
+                overflow: "hidden",
                 borderRadius: "15px",
                 border: "1px solid rgba(153,27,27,.12)",
                 backgroundColor: "rgba(153,27,27,.055)",
-                fontSize: 16,
-                fontWeight: 950,
               }}
             >
-              P
+              <Box
+                component="img"
+                src={AppLogo}
+                alt="Al-Amin CRM"
+                sx={{ width: 38, height: 38, objectFit: "contain" }}
+              />
             </Box>
 
             <Typography
