@@ -182,9 +182,7 @@ const MaterialPurchases = () => {
 
   const currentUser = auth?.user || getLocalUser();
 
-  const canManage =
-    ["super_admin", "admin"].includes(currentUser?.role) &&
-    hasPermission(currentUser, "material_purchases.manage");
+  const canManage = hasPermission(currentUser, "material_purchases.manage");
 
   const [suppliers, setSuppliers] = useState([]);
 
@@ -2137,7 +2135,9 @@ const MaterialPurchases = () => {
                   address: event.target.value,
                 }))
               }
-              helperText={selectedSupplierForEdit ? " " : "Oxirgi kiritilgan manzil taklif qilinadi"}
+              helperText={
+                selectedSupplierForEdit ? " " : "Oxirgi kiritilgan manzil taklif qilinadi"
+              }
             />
 
             <MoneyTextField
@@ -2391,7 +2391,11 @@ const MaterialPurchases = () => {
                 helperText={index === 0 ? "dona, kg, metr yoki litr" : " "}
               />
 
-              <TextField label="Izoh" value={row.note} onChange={changeMaterialRow(index, "note")} />
+              <TextField
+                label="Izoh"
+                value={row.note}
+                onChange={changeMaterialRow(index, "note")}
+              />
 
               <Button
                 color="error"

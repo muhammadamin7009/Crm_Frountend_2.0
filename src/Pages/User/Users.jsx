@@ -273,7 +273,7 @@ const Users = () => {
 
   const canManageUsers = hasPermission(currentUser, "users.manage");
 
-  const canCreateUser = ["super_admin", "admin"].includes(currentUser?.role) && canManageUsers;
+  const canCreateUser = canManageUsers;
 
   const createRoleOptions = useMemo(() => {
     if (currentUser?.role === "super_admin") {

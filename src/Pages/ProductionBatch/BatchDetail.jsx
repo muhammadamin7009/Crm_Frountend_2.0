@@ -20,9 +20,11 @@ const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(val
 
 const formatDate = (value) =>
   value
-    ? new Intl.DateTimeFormat("uz-UZ", { day: "2-digit", month: "2-digit", year: "numeric" }).format(
-        new Date(value),
-      )
+    ? new Intl.DateTimeFormat("uz-UZ", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }).format(new Date(value))
     : "-";
 
 const Field = ({ label, value, strong }) => (
@@ -240,7 +242,12 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
                 </Typography>
 
                 <Typography
-                  sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 900, textAlign: "right" }}
+                  sx={{
+                    color: "var(--aa-text)",
+                    fontSize: 12,
+                    fontWeight: 900,
+                    textAlign: "right",
+                  }}
                 >
                   {formatNumber(stage.quantity)} {stage.unit || ""}
                 </Typography>
@@ -274,9 +281,15 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
                 {Number(batch.quantity) > 0 && (
                   <Typography
                     component="span"
-                    sx={{ ml: 0.8, color: "var(--aa-text-tertiary)", fontSize: 10, fontWeight: 700 }}
+                    sx={{
+                      ml: 0.8,
+                      color: "var(--aa-text-tertiary)",
+                      fontSize: 10,
+                      fontWeight: 700,
+                    }}
                   >
-                    ({formatMoney(Number(batch.total_material_cost) / Number(batch.quantity))} / par)
+                    ({formatMoney(Number(batch.total_material_cost) / Number(batch.quantity))} /
+                    par)
                   </Typography>
                 )}
               </Typography>

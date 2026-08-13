@@ -847,7 +847,9 @@ const WorkerDashboard = ({ user }) => {
           }}
         >
           <Typography sx={{ color: "var(--aa-text)", fontSize: 15, fontWeight: 900 }}>
-            {canViewInventory ? "Ombor bo'limi sizga ochiq" : "Bosh sahifada ko'rsatiladigan ma'lumot yo'q"}
+            {canViewInventory
+              ? "Ombor bo'limi sizga ochiq"
+              : "Bosh sahifada ko'rsatiladigan ma'lumot yo'q"}
           </Typography>
 
           <Typography sx={{ mt: 1, color: "var(--aa-text-secondary)", fontSize: 13 }}>
@@ -1085,143 +1087,143 @@ const WorkerDashboard = ({ user }) => {
       {/* Oxirgi ishlar */}
 
       {canViewProduction && (
-      <WorkerSection title="Oxirgi ish yozuvlari" subtitle="Bu oy kiritilgan so‘nggi ishlaringiz">
-        {monthOutputs.length ? (
-          <Box
-            className="aa-mobile-cards aa-worker-output-table"
-            sx={{
-              overflowX: "auto",
-            }}
-          >
-            <Table
-              size="small"
+        <WorkerSection title="Oxirgi ish yozuvlari" subtitle="Bu oy kiritilgan so‘nggi ishlaringiz">
+          {monthOutputs.length ? (
+            <Box
+              className="aa-mobile-cards aa-worker-output-table"
               sx={{
-                minWidth: 720,
-
-                "& .MuiTableCell-root": {
-                  px: 1.5,
-                  py: 1.5,
-                  color: "var(--aa-text-secondary)",
-                  fontSize: 11,
-                  borderColor: "#edf0f3",
-                },
-
-                "& .MuiTableHead-root .MuiTableCell-root": {
-                  color: "var(--aa-text-tertiary)",
-                  fontSize: 9.5,
-                  fontWeight: 900,
-                  letterSpacing: ".04em",
-                  textTransform: "uppercase",
-                  backgroundColor: "var(--aa-surface-muted)",
-                },
-
-                "& .MuiTableBody-root .MuiTableRow-root": {
-                  transition: "background-color .18s ease",
-                },
-
-                "& .MuiTableBody-root .MuiTableRow-root:hover": {
-                  backgroundColor: "rgba(143,29,32,.025)",
-                },
+                overflowX: "auto",
               }}
             >
-              <TableHead>
-                <TableRow>
-                  <TableCell>Mahsulot</TableCell>
+              <Table
+                size="small"
+                sx={{
+                  minWidth: 720,
 
-                  <TableCell>Bo‘lim</TableCell>
+                  "& .MuiTableCell-root": {
+                    px: 1.5,
+                    py: 1.5,
+                    color: "var(--aa-text-secondary)",
+                    fontSize: 11,
+                    borderColor: "#edf0f3",
+                  },
 
-                  <TableCell>Miqdor</TableCell>
+                  "& .MuiTableHead-root .MuiTableCell-root": {
+                    color: "var(--aa-text-tertiary)",
+                    fontSize: 9.5,
+                    fontWeight: 900,
+                    letterSpacing: ".04em",
+                    textTransform: "uppercase",
+                    backgroundColor: "var(--aa-surface-muted)",
+                  },
 
-                  <TableCell>Summa</TableCell>
+                  "& .MuiTableBody-root .MuiTableRow-root": {
+                    transition: "background-color .18s ease",
+                  },
 
-                  <TableCell>Sana</TableCell>
-                </TableRow>
-              </TableHead>
+                  "& .MuiTableBody-root .MuiTableRow-root:hover": {
+                    backgroundColor: "rgba(143,29,32,.025)",
+                  },
+                }}
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Mahsulot</TableCell>
 
-              <TableBody>
-                {monthOutputs.map((item) => (
-                  <TableRow key={item.id} hover>
-                    <TableCell>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1.2,
-                        }}
-                      >
+                    <TableCell>Bo‘lim</TableCell>
+
+                    <TableCell>Miqdor</TableCell>
+
+                    <TableCell>Summa</TableCell>
+
+                    <TableCell>Sana</TableCell>
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {monthOutputs.map((item) => (
+                    <TableRow key={item.id} hover>
+                      <TableCell>
                         <Box
                           sx={{
-                            width: 34,
-                            height: 34,
-                            display: "grid",
-                            placeItems: "center",
-                            flexShrink: 0,
-                            borderRadius: "11px",
-                            backgroundColor: "rgba(143,29,32,.07)",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1.2,
                           }}
                         >
                           <Box
-                            component="img"
-                            src={BoxIcon}
-                            alt=""
                             sx={{
-                              width: 15,
-                              height: 15,
-                              opacity: 0.75,
+                              width: 34,
+                              height: 34,
+                              display: "grid",
+                              placeItems: "center",
+                              flexShrink: 0,
+                              borderRadius: "11px",
+                              backgroundColor: "rgba(143,29,32,.07)",
                             }}
-                          />
-                        </Box>
+                          >
+                            <Box
+                              component="img"
+                              src={BoxIcon}
+                              alt=""
+                              sx={{
+                                width: 15,
+                                height: 15,
+                                opacity: 0.75,
+                              }}
+                            />
+                          </Box>
 
+                          <Typography
+                            sx={{
+                              color: "var(--aa-text)",
+                              fontSize: 11.5,
+                              fontWeight: 850,
+                            }}
+                          >
+                            {item.product_name || "Mahsulot"}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+
+                      <TableCell>{item.department_name || "-"}</TableCell>
+
+                      <TableCell>
                         <Typography
                           sx={{
                             color: "var(--aa-text)",
-                            fontSize: 11.5,
+                            fontSize: 11,
                             fontWeight: 850,
                           }}
                         >
-                          {item.product_name || "Mahsulot"}
+                          {formatNumber(item.quantity)}
                         </Typography>
-                      </Box>
-                    </TableCell>
+                      </TableCell>
 
-                    <TableCell>{item.department_name || "-"}</TableCell>
+                      <TableCell>
+                        <Chip
+                          size="small"
+                          label={formatMoney(item.total_amount)}
+                          sx={{
+                            height: 24,
+                            color: "#16804d",
+                            fontSize: 9.5,
+                            fontWeight: 900,
+                            backgroundColor: "rgba(34,197,94,.10)",
+                          }}
+                        />
+                      </TableCell>
 
-                    <TableCell>
-                      <Typography
-                        sx={{
-                          color: "var(--aa-text)",
-                          fontSize: 11,
-                          fontWeight: 850,
-                        }}
-                      >
-                        {formatNumber(item.quantity)}
-                      </Typography>
-                    </TableCell>
-
-                    <TableCell>
-                      <Chip
-                        size="small"
-                        label={formatMoney(item.total_amount)}
-                        sx={{
-                          height: 24,
-                          color: "#16804d",
-                          fontSize: 9.5,
-                          fontWeight: 900,
-                          backgroundColor: "rgba(34,197,94,.10)",
-                        }}
-                      />
-                    </TableCell>
-
-                    <TableCell>{formatDate(item.worked_at)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
-        ) : (
-          <WorkerEmptyState>Hali ish yozuvi kiritilmagan.</WorkerEmptyState>
-        )}
-      </WorkerSection>
+                      <TableCell>{formatDate(item.worked_at)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
+          ) : (
+            <WorkerEmptyState>Hali ish yozuvi kiritilmagan.</WorkerEmptyState>
+          )}
+        </WorkerSection>
       )}
     </Box>
   );
@@ -1328,7 +1330,10 @@ const NoDashboardPermission = ({ user }) => {
                   border: "1px solid var(--aa-border)",
                   backgroundColor: "var(--aa-surface-solid)",
                   transition: "border-color .15s ease, transform .15s ease",
-                  "&:hover": { borderColor: "var(--aa-border-strong)", transform: "translateY(-1px)" },
+                  "&:hover": {
+                    borderColor: "var(--aa-border-strong)",
+                    transform: "translateY(-1px)",
+                  },
                 }}
               >
                 <Box
@@ -1361,8 +1366,8 @@ const NoDashboardPermission = ({ user }) => {
               variant="body2"
               sx={{ mt: 1, maxWidth: 640, color: "var(--aa-text-secondary)" }}
             >
-              Kerakli bo'limlardan foydalanish uchun korxona super administratoriga murojaat
-              qiling. Ruxsat berilgach, shu sahifada faqat sizga ochilgan ma'lumotlar ko'rinadi.
+              Kerakli bo'limlardan foydalanish uchun korxona super administratoriga murojaat qiling.
+              Ruxsat berilgach, shu sahifada faqat sizga ochilgan ma'lumotlar ko'rinadi.
             </Typography>
           </Box>
         )}

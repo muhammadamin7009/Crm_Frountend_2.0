@@ -501,59 +501,62 @@ const Inventory = () => {
 
   const [countProductChoice, setCountProductChoice] = useState(null);
 
-  const load = useCallback(async (quiet = false) => {
-    if (!quiet) {
-      setLoading(true);
-    }
-
-    try {
-      const [warehouseRes, stockRes, movementRes, itemRes, countRes] = await Promise.all([
-        getWarehouses(),
-
-        getInventoryStock({
-          limit: 200,
-        }),
-
-        getInventoryMovements({
-          limit: 150,
-        }),
-
-        getInventoryItems({
-          limit: 300,
-        }),
-
-        // Inventarizatsiya `inventory.count` talab qiladi. Ruxsatsiz so'rasak backend 403
-        // qaytaradi va `Promise.all` butun ombor sahifasini yiqitadi.
-        canCount ? getInventoryCounts({ limit: 100 }) : Promise.resolve({ data: {} }),
-      ]);
-
-      const warehouseData = warehouseRes?.data || warehouseRes || {};
-
-      const stockData = stockRes?.data || stockRes || {};
-
-      const movementData = movementRes?.data || movementRes || {};
-
-      const itemData = itemRes?.data || itemRes || {};
-
-      const countData = countRes?.data || countRes || {};
-
-      setWarehouses(warehouseData.warehouses || []);
-
-      setStock(stockData.stock || []);
-
-      setMovements(movementData.inventory_movements || movementData.movements || []);
-
-      setItems(itemData.items || []);
-
-      setCounts(countData.inventory_counts || []);
-    } catch (error) {
-      toast.error(errorMessage(error, "Ombor ma’lumotlarini olishda xato."));
-    } finally {
+  const load = useCallback(
+    async (quiet = false) => {
       if (!quiet) {
-        setLoading(false);
+        setLoading(true);
       }
-    }
-  }, [canCount]);
+
+      try {
+        const [warehouseRes, stockRes, movementRes, itemRes, countRes] = await Promise.all([
+          getWarehouses(),
+
+          getInventoryStock({
+            limit: 200,
+          }),
+
+          getInventoryMovements({
+            limit: 150,
+          }),
+
+          getInventoryItems({
+            limit: 300,
+          }),
+
+          // Inventarizatsiya `inventory.count` talab qiladi. Ruxsatsiz so'rasak backend 403
+          // qaytaradi va `Promise.all` butun ombor sahifasini yiqitadi.
+          canCount ? getInventoryCounts({ limit: 100 }) : Promise.resolve({ data: {} }),
+        ]);
+
+        const warehouseData = warehouseRes?.data || warehouseRes || {};
+
+        const stockData = stockRes?.data || stockRes || {};
+
+        const movementData = movementRes?.data || movementRes || {};
+
+        const itemData = itemRes?.data || itemRes || {};
+
+        const countData = countRes?.data || countRes || {};
+
+        setWarehouses(warehouseData.warehouses || []);
+
+        setStock(stockData.stock || []);
+
+        setMovements(movementData.inventory_movements || movementData.movements || []);
+
+        setItems(itemData.items || []);
+
+        setCounts(countData.inventory_counts || []);
+      } catch (error) {
+        toast.error(errorMessage(error, "Ombor ma’lumotlarini olishda xato."));
+      } finally {
+        if (!quiet) {
+          setLoading(false);
+        }
+      }
+    },
+    [canCount],
+  );
 
   useEffect(() => {
     load();
@@ -3581,9 +3584,7 @@ const Inventory = () => {
         maxWidth="sm"
         slotProps={{ paper: { sx: dialogPaperSx } }}
       >
-        <DialogTitle sx={dialogTitleSx}>
-          {assignmentWarehouse?.name} — biriktirish
-        </DialogTitle>
+        <DialogTitle sx={dialogTitleSx}>{assignmentWarehouse?.name} — biriktirish</DialogTitle>
 
         <DialogContent sx={dialogContentSx}>
           {assignmentLoading ? (
@@ -3593,9 +3594,8 @@ const Inventory = () => {
           ) : (
             <Stack spacing={2.2} sx={{ mt: 0.5 }}>
               <Alert severity="info" sx={{ fontSize: 11.5 }}>
-                Biriktirilgan ishchi faqat shu ombor qoldig‘ini va glavniy omborda unga
-                tegishli xomashyolarni ko‘radi. Hech kim biriktirilmasa, ombor hozirgidek
-                hammaga ko‘rinadi.
+                Biriktirilgan ishchi faqat shu ombor qoldig‘ini va glavniy omborda unga tegishli
+                xomashyolarni ko‘radi. Hech kim biriktirilmasa, ombor hozirgidek hammaga ko‘rinadi.
               </Alert>
 
               <Autocomplete

@@ -338,18 +338,16 @@ const Clients = () => {
 
   const canManageDebt = hasPermission(currentUser, "client_sales.manage");
 
-  const canCreateClient = ["super_admin", "admin"].includes(currentUser?.role) && canManageUsers;
+  const canCreateClient = canManageUsers;
 
+  // Amalni rol emas, ruxsat hal qiladi: ishchiga ham mijoz bilan ishlash
+  // vazifasi topshirilishi mumkin. O'chirilgan mijozni tiklash esa faqat
+  // super adminda qoladi — bu qaytarib bo'lmaydigan amal.
   const canEditClient = (client) => {
     if (!client || !currentUser) return false;
+    if (client.is_deleted) return currentUser.role === "super_admin";
 
-    if (client.is_deleted) {
-      return currentUser.role === "super_admin";
-    }
-
-    if (!canManageUsers) return false;
-
-    return ["super_admin", "admin"].includes(currentUser.role);
+    return canManageUsers;
   };
 
   const canDeleteClient = (client) => currentUser?.role === "super_admin" && !client?.is_deleted;

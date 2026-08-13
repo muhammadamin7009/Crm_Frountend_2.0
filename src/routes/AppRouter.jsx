@@ -73,7 +73,7 @@ const AppRouter = () => {
           <Route
             element={
               <ProtectedRoute
-                allowedRoles={["super_admin", "admin"]}
+                allowedRoles={["super_admin", "admin", "worker"]}
                 allowedPermissions={["orders.view"]}
               />
             }
@@ -84,7 +84,7 @@ const AppRouter = () => {
           <Route
             element={
               <ProtectedRoute
-                allowedRoles={["super_admin", "admin"]}
+                allowedRoles={["super_admin", "admin", "worker"]}
                 allowedPermissions={["clients.view"]}
               />
             }
@@ -121,7 +121,7 @@ const AppRouter = () => {
           <Route
             element={
               <ProtectedRoute
-                allowedRoles={["super_admin", "admin"]}
+                allowedRoles={["super_admin", "admin", "worker"]}
                 allowedPermissions={["payroll.view"]}
               />
             }
@@ -132,7 +132,7 @@ const AppRouter = () => {
           <Route
             element={
               <ProtectedRoute
-                allowedRoles={["super_admin", "admin"]}
+                allowedRoles={["super_admin", "admin", "worker"]}
                 allowedPermissions={["employees.view"]}
               />
             }
@@ -143,7 +143,7 @@ const AppRouter = () => {
           <Route
             element={
               <ProtectedRoute
-                allowedRoles={["super_admin", "admin"]}
+                allowedRoles={["super_admin", "admin", "worker"]}
                 allowedPermissions={["users.view"]}
               />
             }
@@ -154,7 +154,7 @@ const AppRouter = () => {
           <Route
             element={
               <ProtectedRoute
-                allowedRoles={["super_admin", "admin"]}
+                allowedRoles={["super_admin", "admin", "worker"]}
                 allowedPermissions={["permissions.manage"]}
               />
             }
@@ -165,7 +165,7 @@ const AppRouter = () => {
           <Route
             element={
               <ProtectedRoute
-                allowedRoles={["super_admin", "admin"]}
+                allowedRoles={["super_admin", "admin", "worker"]}
                 allowedFeatures={["client_accounting"]}
                 allowedPermissions={["client_sales.view"]}
               />
@@ -177,7 +177,7 @@ const AppRouter = () => {
           <Route
             element={
               <ProtectedRoute
-                allowedRoles={["super_admin", "admin"]}
+                allowedRoles={["super_admin", "admin", "worker"]}
                 allowedFeatures={["supplier_accounting"]}
                 allowedPermissions={["material_purchases.view"]}
               />
@@ -224,7 +224,7 @@ const AppRouter = () => {
           <Route
             element={
               <ProtectedRoute
-                allowedRoles={["super_admin", "admin"]}
+                allowedRoles={["super_admin", "admin", "worker"]}
                 allowedPermissions={["finance.view"]}
               />
             }
@@ -235,7 +235,7 @@ const AppRouter = () => {
           <Route
             element={
               <ProtectedRoute
-                allowedRoles={["super_admin", "admin"]}
+                allowedRoles={["super_admin", "admin", "worker"]}
                 allowedFeatures={["finance"]}
                 allowedPermissions={["finance.view"]}
               />
@@ -247,7 +247,7 @@ const AppRouter = () => {
           <Route
             element={
               <ProtectedRoute
-                allowedRoles={["super_admin", "admin"]}
+                allowedRoles={["super_admin", "admin", "worker"]}
                 allowedFeatures={["audit_logs"]}
                 allowedPermissions={["audit_logs.view"]}
               />

@@ -23,7 +23,8 @@ import { getDashboardBreakdown } from "../../api/dashboard";
  * hech qachon bir-biriga zid bo'lmaydi.
  */
 
-const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Math.round(Number(value || 0)))} so'm`;
+const money = (value) =>
+  `${new Intl.NumberFormat("uz-UZ").format(Math.round(Number(value || 0)))} so'm`;
 const qty = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 /** Har bir tur uchun: sarlavha, jami satri va jadval ustunlari. */
@@ -213,7 +214,10 @@ const KpiBreakdownDialog = ({ type, range, onClose }) => {
               mb: 2.2,
               p: 1.8,
               display: "grid",
-              gridTemplateColumns: { xs: "repeat(2,minmax(0,1fr))", sm: "repeat(auto-fit,minmax(140px,1fr))" },
+              gridTemplateColumns: {
+                xs: "repeat(2,minmax(0,1fr))",
+                sm: "repeat(auto-fit,minmax(140px,1fr))",
+              },
               gap: 1.8,
               borderRadius: "16px",
               border: "1px solid var(--aa-border)",
@@ -328,7 +332,9 @@ const KpiBreakdownDialog = ({ type, range, onClose }) => {
                 border: "1px dashed var(--aa-border-strong)",
               }}
             >
-              <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 11.5, fontWeight: 700 }}>
+              <Typography
+                sx={{ color: "var(--aa-text-tertiary)", fontSize: 11.5, fontWeight: 700 }}
+              >
                 Tanlangan davrda yozuv yo‘q
               </Typography>
             </Box>

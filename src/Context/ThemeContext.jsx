@@ -67,6 +67,22 @@ export const ThemeModeProvider = ({ children }) => {
               disableRipple: true,
             },
           },
+          MuiSelect: {
+            defaultProps: {
+              // MUI sukut bo'yicha menyuni TANLANGAN band kursor ostiga
+              // tushadigan qilib ochadi ("selectedMenu"). Sichqoncha qo'yib
+              // yuborilganda o'sha band bosilib qoladi — foydalanuvchi hech
+              // nima tanlamagan holda qiymat o'zgarib ketadi.
+              //
+              // `variant: "menu"` menyuni maydon OSTIDAN ochadi: kursor ostida
+              // hech qanday band bo'lmaydi va tasodifiy tanlash yo'qoladi.
+              MenuProps: {
+                variant: "menu",
+                anchorOrigin: { vertical: "bottom", horizontal: "left" },
+                transformOrigin: { vertical: "top", horizontal: "left" },
+              },
+            },
+          },
           MuiPaper: {
             styleOverrides: {
               root: {

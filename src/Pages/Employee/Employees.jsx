@@ -257,9 +257,7 @@ const Employees = () => {
 
   const currentUser = auth?.user || getLocalUser();
 
-  const canManage =
-    ["super_admin", "admin"].includes(currentUser?.role) &&
-    hasPermission(currentUser, "employees.manage");
+  const canManage = hasPermission(currentUser, "employees.manage");
 
   const [positions, setPositions] = useState([]);
 

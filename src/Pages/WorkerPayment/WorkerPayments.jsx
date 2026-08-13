@@ -159,9 +159,7 @@ const WorkerPayments = () => {
 
   const currentUser = auth?.user || getLocalUser();
 
-  const canManage =
-    ["super_admin", "admin"].includes(currentUser?.role) &&
-    hasPermission(currentUser, "payroll.manage");
+  const canManage = hasPermission(currentUser, "payroll.manage");
 
   const [payments, setPayments] = useState([]);
 

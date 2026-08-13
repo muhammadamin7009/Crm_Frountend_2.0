@@ -159,9 +159,7 @@ const ClientSales = () => {
 
   const currentUser = auth?.user || getLocalUser();
 
-  const canManage =
-    ["super_admin", "admin"].includes(currentUser?.role) &&
-    hasPermission(currentUser, "client_sales.manage");
+  const canManage = hasPermission(currentUser, "client_sales.manage");
 
   const isSuperAdmin = currentUser?.role === "super_admin";
 

@@ -148,9 +148,7 @@ const WorkerOutputs = () => {
   const auth = useAuth();
   const currentUser = auth?.user || getLocalUser();
 
-  const canManage =
-    ["super_admin", "admin"].includes(currentUser?.role) &&
-    hasPermission(currentUser, "production.manage");
+  const canManage = hasPermission(currentUser, "production.manage");
 
   const [outputs, setOutputs] = useState([]);
 
@@ -291,9 +289,7 @@ const WorkerOutputs = () => {
    */
   const batchOptionsFor = useCallback(
     (productId, current) => {
-      const options = openBatches.filter(
-        (batch) => Number(batch.product_id) === Number(productId),
-      );
+      const options = openBatches.filter((batch) => Number(batch.product_id) === Number(productId));
 
       if (
         current?.batch_id &&
@@ -1512,17 +1508,13 @@ const WorkerOutputs = () => {
                     background: "var(--aa-surface-muted)",
                   }}
                 >
-                  <Typography
-                    sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 950 }}
-                  >
+                  <Typography sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 950 }}>
                     Sarflangan xomashyo
                   </Typography>
 
-                  <Typography
-                    sx={{ mt: 0.4, color: "var(--aa-text-tertiary)", fontSize: 10.5 }}
-                  >
-                    Retsept bo‘yicha hisoblangan miqdor turibdi. Haqiqatda boshqacha ketgan
-                    bo‘lsa o‘zgartiring.
+                  <Typography sx={{ mt: 0.4, color: "var(--aa-text-tertiary)", fontSize: 10.5 }}>
+                    Retsept bo‘yicha hisoblangan miqdor turibdi. Haqiqatda boshqacha ketgan bo‘lsa
+                    o‘zgartiring.
                   </Typography>
 
                   {stageLoading ? (

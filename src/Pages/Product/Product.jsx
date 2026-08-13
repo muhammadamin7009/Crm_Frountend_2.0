@@ -1796,8 +1796,8 @@ const Product = () => {
           {costReport.materials.some((material) => Math.abs(material.variance) > 0.001) && (
             <Alert severity="warning" sx={{ mt: 1.6, borderRadius: "15px", fontSize: 11.5 }}>
               Ba’zi xomashyolarda reja va haqiqiy sarf farq qilyapti. Farq ish yozuvlarida
-              kiritilgan haqiqiy miqdordan chiqadi — retseptni yangilash kerakmi yoki sexda
-              isrof bormi, shuni tekshiring.
+              kiritilgan haqiqiy miqdordan chiqadi — retseptni yangilash kerakmi yoki sexda isrof
+              bormi, shuni tekshiring.
             </Alert>
           )}
         </Surface>

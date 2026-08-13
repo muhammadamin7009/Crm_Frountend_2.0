@@ -389,9 +389,7 @@ const Finance = () => {
 
   const currentUser = auth?.user || getLocalUser();
 
-  const canManage =
-    ["super_admin", "admin"].includes(currentUser?.role) &&
-    hasPermission(currentUser, "finance.manage");
+  const canManage = hasPermission(currentUser, "finance.manage");
 
   const [tab, setTab] = useState("payroll");
 

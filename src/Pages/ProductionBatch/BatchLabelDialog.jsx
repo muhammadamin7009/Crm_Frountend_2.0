@@ -154,7 +154,12 @@ const BatchLabelDialog = ({ open, batch, onClose }) => {
               </Typography>
 
               <Typography
-                sx={{ color: "var(--aa-text)", fontSize: 13, fontWeight: 800, whiteSpace: "nowrap" }}
+                sx={{
+                  color: "var(--aa-text)",
+                  fontSize: 13,
+                  fontWeight: 800,
+                  whiteSpace: "nowrap",
+                }}
               >
                 {formatSize(batch)}
               </Typography>

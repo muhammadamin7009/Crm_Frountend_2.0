@@ -68,9 +68,11 @@ const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(val
 
 const formatDate = (value) =>
   value
-    ? new Intl.DateTimeFormat("uz-UZ", { day: "2-digit", month: "2-digit", year: "numeric" }).format(
-        new Date(value),
-      )
+    ? new Intl.DateTimeFormat("uz-UZ", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }).format(new Date(value))
     : "-";
 
 const StatusChip = ({ status }) => {
@@ -88,8 +90,7 @@ const StatusChip = ({ status }) => {
 const ProductionBatches = () => {
   const { user } = useAuth();
 
-  const canManage =
-    ["super_admin", "admin"].includes(user?.role) && hasPermission(user, "production.manage");
+  const canManage = hasPermission(user, "production.manage");
 
   const canSeeOutputs = hasPermission(user, "production.view");
 
@@ -377,9 +378,7 @@ const ProductionBatches = () => {
         </Box>
       </Box>
 
-      <Card
-        sx={{ minHeight: 0, flex: 1, display: "flex", flexDirection: "column" }}
-      >
+      <Card sx={{ minHeight: 0, flex: 1, display: "flex", flexDirection: "column" }}>
         <Box
           sx={{
             p: 2,
@@ -397,7 +396,13 @@ const ProductionBatches = () => {
             onChange={handleFilter("q")}
           />
 
-          <TextField size="small" select label="Holat" value={filters.status} onChange={handleFilter("status")}>
+          <TextField
+            size="small"
+            select
+            label="Holat"
+            value={filters.status}
+            onChange={handleFilter("status")}
+          >
             <MenuItem value="">Barchasi</MenuItem>
             {Object.entries(STATUS_LABELS).map(([value, label]) => (
               <MenuItem key={value} value={value}>
@@ -511,7 +516,9 @@ const ProductionBatches = () => {
                     <TableCell>
                       {batch.material_name || batch.sole_name ? (
                         <>
-                          <Typography sx={{ color: "var(--aa-text)", fontSize: 11.5, fontWeight: 800 }}>
+                          <Typography
+                            sx={{ color: "var(--aa-text)", fontSize: 11.5, fontWeight: 800 }}
+                          >
                             {batch.material_name || "—"}
                           </Typography>
 
@@ -652,7 +659,12 @@ const ProductionBatches = () => {
               slotProps={{ htmlInput: { min: 0, step: 1 } }}
             />
 
-            <TextField select label="Zakaz (ixtiyoriy)" value={form.order_id} onChange={handleForm("order_id")}>
+            <TextField
+              select
+              label="Zakaz (ixtiyoriy)"
+              value={form.order_id}
+              onChange={handleForm("order_id")}
+            >
               <MenuItem value="">Zakazsiz</MenuItem>
               {orders.map((order) => (
                 <MenuItem key={order.id} value={order.id}>

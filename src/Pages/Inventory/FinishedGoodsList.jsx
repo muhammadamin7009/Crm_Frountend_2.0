@@ -250,7 +250,9 @@ const FinishedGoodsList = ({ warehouseId, lowOnly = false, onClearLowOnly }) => 
                       />
                     )}
 
-                    <Typography sx={{ color: "var(--aa-text-secondary)", fontSize: 11.5, fontWeight: 800 }}>
+                    <Typography
+                      sx={{ color: "var(--aa-text-secondary)", fontSize: 11.5, fontWeight: 800 }}
+                    >
                       {formatNumber(group.total_quantity)} par
                     </Typography>
 
@@ -306,11 +308,19 @@ const FinishedGoodsList = ({ warehouseId, lowOnly = false, onClearLowOnly }) => 
                               "&:hover": { backgroundColor: "var(--aa-surface-hover)" },
                             }}
                           >
-                            <Typography sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 850 }}>
+                            <Typography
+                              sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 850 }}
+                            >
                               {size.label}
                             </Typography>
 
-                            <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 10.5, fontWeight: 750 }}>
+                            <Typography
+                              sx={{
+                                color: "var(--aa-text-tertiary)",
+                                fontSize: 10.5,
+                                fontWeight: 750,
+                              }}
+                            >
                               {size.variant_count} variant · {formatNumber(size.total_quantity)} par
                             </Typography>
                           </Box>

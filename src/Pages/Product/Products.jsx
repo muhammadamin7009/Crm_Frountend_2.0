@@ -127,9 +127,7 @@ const Products = () => {
   const auth = useAuth();
   const currentUser = auth?.user || getLocalUser();
 
-  const canManage =
-    ["super_admin", "admin"].includes(currentUser?.role) &&
-    hasPermission(currentUser, "products.manage");
+  const canManage = hasPermission(currentUser, "products.manage");
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
