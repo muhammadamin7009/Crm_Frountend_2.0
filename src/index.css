@@ -986,58 +986,20 @@ textarea,
   -webkit-backdrop-filter: blur(24px);
 }
 
-.auth-brand-panel,
-.auth-hero {
+/* Kirish panelining RANGI bu yerda emas — AuthBrandPanel.jsx ichida.
+ *
+ * Ilgari fon va bezaklar shu yerda ham, komponentda ham ta'riflangan edi.
+ * Bu fayl komponentdan keyin yuklangani uchun har doim shu yerdagisi yutar
+ * va komponentdagi o'zgarish umuman ko'rinmasdi. Rang bitta joyda turishi
+ * kerak, aks holda tuzatish qayerga yozilganini topib bo'lmaydi.
+ *
+ * Bu yerda faqat tuzilma qoldi. (`.auth-hero` hech qayerda ishlatilmasdi.) */
+.auth-brand-panel {
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 85% 16%, rgba(220, 38, 38, 0.3), transparent 25%),
-    radial-gradient(circle at 70% 78%, rgba(143, 29, 32, 0.28), transparent 30%),
-    linear-gradient(145deg, #111116 0%, #17151a 48%, #5d0b12 100%);
 }
 
-.auth-brand-panel::before,
-.auth-brand-panel::after,
-.auth-hero::before,
-.auth-hero::after {
-  position: absolute;
-  content: "";
-  pointer-events: none;
-}
-
-.auth-brand-panel::before,
-.auth-hero::before {
-  top: -190px;
-  right: -170px;
-  width: 470px;
-  height: 470px;
-  border: 1px solid rgba(239, 68, 68, 0.34);
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(220, 38, 38, 0.07) 1px, transparent 1px);
-  background-size: 12px 12px;
-}
-
-.auth-brand-panel::after,
-.auth-hero::after {
-  right: -8%;
-  bottom: -18%;
-  width: 108%;
-  height: 42%;
-  opacity: 0.62;
-  background:
-    linear-gradient(155deg, transparent 0 28%, rgba(239, 68, 68, 0.2) 28.5% 29.5%, transparent 30%),
-    linear-gradient(
-      25deg,
-      transparent 0 44%,
-      rgba(255, 255, 255, 0.06) 44.5% 45.5%,
-      transparent 46%
-    ),
-    linear-gradient(160deg, transparent 0 48%, #09090d 48.5% 100%);
-  transform: rotate(-2deg);
-}
-
-.auth-brand-panel > *,
-.auth-hero > * {
+.auth-brand-panel > * {
   position: relative;
   z-index: 1;
 }
