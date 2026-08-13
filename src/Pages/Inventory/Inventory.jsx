@@ -136,7 +136,7 @@ const tableSx = {
     py: 1.55,
     color: "var(--aa-text-tertiary)",
     fontSize: 9.5,
-    fontWeight: 900,
+    fontWeight: 700,
     textTransform: "uppercase",
     letterSpacing: ".045em",
     background: "var(--aa-surface-muted)",
@@ -171,7 +171,7 @@ const dialogTitleSx = {
   color: "#ffffff !important",
 
   fontSize: 18,
-  fontWeight: 950,
+  fontWeight: 700,
 
   backgroundColor: "#151211 !important",
 
@@ -199,7 +199,7 @@ const primaryButtonSx = {
   color: "#ffffff",
   borderRadius: "11px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",
@@ -218,7 +218,7 @@ const secondaryButtonSx = {
   borderRadius: "11px",
   borderColor: "#d8cec1",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
@@ -235,7 +235,7 @@ const tableActionSx = {
   minHeight: 30,
   borderRadius: "9px",
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 };
 
@@ -247,7 +247,7 @@ const heroPrimaryButtonSx = {
 
   borderRadius: "13px",
   fontSize: 11,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
@@ -272,7 +272,7 @@ const heroSecondaryButtonSx = {
   backgroundColor: "rgba(255,255,255,.055)",
 
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   "&:hover": {
@@ -340,7 +340,7 @@ const MetricCard = ({ label, value, hint, tone = "red", onClick, active = false 
           border: `1px solid ${current[2]}`,
 
           fontSize: 12,
-          fontWeight: 950,
+          fontWeight: 700,
         }}
       >
         {label.charAt(0)}
@@ -351,7 +351,7 @@ const MetricCard = ({ label, value, hint, tone = "red", onClick, active = false 
           mt: 1.2,
           color: "var(--aa-text-tertiary)",
           fontSize: 9.5,
-          fontWeight: 800,
+          fontWeight: 600,
         }}
       >
         {label}
@@ -360,11 +360,12 @@ const MetricCard = ({ label, value, hint, tone = "red", onClick, active = false 
       <Typography
         noWrap
         sx={{
-          mt: 0.5,
+          mt: 0.6,
           color: current[0],
-          fontSize: 19,
-          fontWeight: 950,
-          letterSpacing: "-.035em",
+          fontFamily: "var(--aa-display)",
+          fontSize: 21,
+          fontWeight: 400,
+          letterSpacing: "-.018em",
         }}
       >
         {value}
@@ -1283,7 +1284,7 @@ const Inventory = () => {
           sx={{
             color: "var(--aa-text-tertiary)",
             fontSize: 11,
-            fontWeight: 800,
+            fontWeight: 600,
           }}
         >
           Ombor ma’lumotlari yuklanmoqda...
@@ -1404,7 +1405,7 @@ const Inventory = () => {
                   color: "#d9b782 !important",
 
                   fontSize: 10,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: ".13em",
                   textTransform: "uppercase",
                 }}
@@ -1426,8 +1427,9 @@ const Inventory = () => {
                 },
 
                 lineHeight: 1.08,
-                fontWeight: 950,
-                letterSpacing: "-.045em",
+                fontFamily: "var(--aa-display)",
+                fontWeight: 400,
+                letterSpacing: "-.024em",
               }}
             >
               {pageTitle}
@@ -1609,7 +1611,7 @@ const Inventory = () => {
                 sx={{
                   color: "var(--aa-text)",
                   fontSize: 15,
-                  fontWeight: 950,
+                  fontWeight: 700,
                 }}
               >
                 Omborlar ro‘yxati
@@ -1634,7 +1636,7 @@ const Inventory = () => {
                 height: 25,
                 color: "#6e1622",
                 fontSize: 9.5,
-                fontWeight: 900,
+                fontWeight: 700,
 
                 backgroundColor: "rgba(110, 22, 34,.07)",
               }}
@@ -1745,7 +1747,7 @@ const Inventory = () => {
 
                         fontSize: 13,
 
-                        fontWeight: 950,
+                        fontWeight: 700,
                       }}
                     >
                       {warehouse.name}
@@ -1759,7 +1761,7 @@ const Inventory = () => {
 
                         fontSize: 9.5,
 
-                        fontWeight: 750,
+                        fontWeight: 600,
                       }}
                     >
                       {warehouse.code} • {warehouseTypeLabel(warehouse.warehouse_type)}
@@ -1775,7 +1777,7 @@ const Inventory = () => {
                       color: warehouse.is_active ? "#2f6b45" : "#7d716a",
 
                       fontSize: 9.5,
-                      fontWeight: 900,
+                      fontWeight: 700,
 
                       backgroundColor: warehouse.is_active ? "rgba(78, 156, 107,.09)" : "#f4f0ea",
 
@@ -1793,7 +1795,7 @@ const Inventory = () => {
                     color: "#6e1622",
 
                     fontSize: 25,
-                    fontWeight: 950,
+                    fontWeight: 700,
                     letterSpacing: "-.04em",
                   }}
                 >
@@ -1911,7 +1913,7 @@ const Inventory = () => {
                   sx={{
                     color: "var(--aa-text-tertiary)",
                     fontSize: 10.5,
-                    fontWeight: 800,
+                    fontWeight: 600,
                   }}
                 >
                   Hozircha ombor yaratilmagan.
@@ -2044,7 +2046,7 @@ const Inventory = () => {
                     height: 28,
                     color: "#6e1622",
                     fontSize: 10.5,
-                    fontWeight: 900,
+                    fontWeight: 700,
                     backgroundColor: "rgba(110, 22, 34,.08)",
                     border: "1px solid rgba(110, 22, 34,.2)",
                   }}
@@ -2096,7 +2098,7 @@ const Inventory = () => {
 
                                 fontSize: 10.5,
 
-                                fontWeight: 900,
+                                fontWeight: 700,
                               }}
                             >
                               {row.item_name || `#${row.item_id}`}
@@ -2114,7 +2116,7 @@ const Inventory = () => {
 
                                 fontSize: 9.5,
 
-                                fontWeight: 900,
+                                fontWeight: 700,
 
                                 backgroundColor:
                                   row.item_type === "product"
@@ -2137,7 +2139,7 @@ const Inventory = () => {
 
                                 fontSize: 10.5,
 
-                                fontWeight: 950,
+                                fontWeight: 700,
                               }}
                             >
                               {quantity(row.quantity)} {row.unit}
@@ -2159,7 +2161,7 @@ const Inventory = () => {
 
                                 fontSize: 9.5,
 
-                                fontWeight: 900,
+                                fontWeight: 700,
 
                                 backgroundColor: row.is_low
                                   ? "rgba(140, 29, 43,.08)"
@@ -2200,7 +2202,7 @@ const Inventory = () => {
                           sx={{
                             py: 7,
                             color: "var(--aa-text-tertiary)",
-                            fontWeight: 800,
+                            fontWeight: 600,
                           }}
                         >
                           {lowOnly
@@ -2258,7 +2260,7 @@ const Inventory = () => {
 
                                 fontSize: 10.5,
 
-                                fontWeight: 900,
+                                fontWeight: 700,
                               }}
                             >
                               {row.item_name || `#${row.item_id}`}
@@ -2278,7 +2280,7 @@ const Inventory = () => {
 
                                 fontSize: 9.5,
 
-                                fontWeight: 900,
+                                fontWeight: 700,
 
                                 backgroundColor:
                                   Number(row.quantity_delta) < 0
@@ -2295,7 +2297,7 @@ const Inventory = () => {
 
                                 fontSize: 10.5,
 
-                                fontWeight: 950,
+                                fontWeight: 700,
                               }}
                             >
                               {Number(row.quantity_delta) > 0 ? "+" : ""}
@@ -2330,7 +2332,7 @@ const Inventory = () => {
                           sx={{
                             py: 7,
                             color: "var(--aa-text-tertiary)",
-                            fontWeight: 800,
+                            fontWeight: 600,
                           }}
                         >
                           Harakatlar topilmadi.
@@ -2380,7 +2382,7 @@ const Inventory = () => {
                 sx={{
                   color: "var(--aa-text)",
                   fontSize: 15,
-                  fontWeight: 950,
+                  fontWeight: 700,
                 }}
               >
                 Inventarizatsiya tarixi
@@ -2494,7 +2496,7 @@ const Inventory = () => {
 
                             fontSize: 10.5,
 
-                            fontWeight: 900,
+                            fontWeight: 700,
                           }}
                         >
                           {count.warehouse_name || "-"}
@@ -2518,7 +2520,7 @@ const Inventory = () => {
 
                             fontSize: 9.5,
 
-                            fontWeight: 900,
+                            fontWeight: 700,
 
                             backgroundColor: Number(count.variance_lines)
                               ? "rgba(160, 106, 18,.09)"
@@ -2567,7 +2569,7 @@ const Inventory = () => {
                       sx={{
                         py: 6,
                         color: "var(--aa-text-tertiary)",
-                        fontWeight: 800,
+                        fontWeight: 600,
                       }}
                     >
                       Hozircha inventarizatsiya o‘tkazilmagan.
@@ -2678,7 +2680,7 @@ const Inventory = () => {
 
                               fontSize: 10.5,
 
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             {row.item_name}
@@ -2729,7 +2731,7 @@ const Inventory = () => {
 
                               fontSize: 10.5,
 
-                              fontWeight: 950,
+                              fontWeight: 700,
                             }}
                           >
                             {difference > 0 ? "+" : ""}
@@ -2900,7 +2902,7 @@ const Inventory = () => {
 
                             fontSize: 10.5,
 
-                            fontWeight: 900,
+                            fontWeight: 700,
                           }}
                         >
                           {row.item_name}
@@ -2926,7 +2928,7 @@ const Inventory = () => {
 
                             fontSize: 10.5,
 
-                            fontWeight: 950,
+                            fontWeight: 700,
                           }}
                         >
                           {Number(row.difference_quantity) > 0 ? "+" : ""}
@@ -3673,7 +3675,7 @@ const Inventory = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 12,
-                fontWeight: 900,
+                fontWeight: 700,
               }}
             >
               {warehousePendingDelete?.name || "Tanlangan ombor"} o‘chirilsinmi?
@@ -3706,7 +3708,7 @@ const Inventory = () => {
               minHeight: 40,
               borderRadius: "11px",
               fontSize: 10.5,
-              fontWeight: 900,
+              fontWeight: 700,
               textTransform: "none",
             }}
           >
@@ -3776,7 +3778,7 @@ const Inventory = () => {
                               height: 25,
                               color: shortage > 0 ? "#7a1826" : "#a06a12",
                               fontSize: 9.5,
-                              fontWeight: 900,
+                              fontWeight: 700,
                               backgroundColor:
                                 shortage > 0 ? "rgba(140, 29, 43,.08)" : "rgba(160, 106, 18,.09)",
                             }}
@@ -3937,7 +3939,7 @@ const inventoryPageStyles = `
     min-height: 48px;
     color: #8a807a;
     font-size: 10.5px;
-    font-weight: 900;
+    font-weight: 700;
     text-transform: none;
   }
 

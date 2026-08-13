@@ -184,7 +184,7 @@ const MyOrderTasks = () => {
                 >
                   <Box>
                     <Typography
-                      sx={{ fontSize: 12, color: "var(--aa-brand-text)", fontWeight: 900 }}
+                      sx={{ fontSize: 12, color: "var(--aa-brand-text)", fontWeight: 700 }}
                     >
                       {task.order_number}
                     </Typography>
@@ -197,11 +197,11 @@ const MyOrderTasks = () => {
                           height: 22,
                           color: "#7a1826",
                           bgcolor: "#faf5ef",
-                          fontWeight: 850,
+                          fontWeight: 600,
                         }}
                       />
                     )}
-                    <Typography sx={{ mt: 0.3, fontSize: 18, fontWeight: 900 }}>
+                    <Typography sx={{ mt: 0.3, fontSize: 18, fontWeight: 700 }}>
                       {task.product_name}
                     </Typography>
                     <Typography sx={{ mt: 0.3, color: "var(--aa-text-secondary)", fontSize: 13 }}>
@@ -213,12 +213,12 @@ const MyOrderTasks = () => {
                   </Box>
                   <Chip
                     label={labels[task.status]}
-                    sx={{ color: colors[task.status], fontWeight: 850 }}
+                    sx={{ color: colors[task.status], fontWeight: 600 }}
                   />
                 </Box>
                 <Box sx={{ mt: 2 }}>
                   <Box sx={{ mb: 0.7, display: "flex", justifyContent: "space-between" }}>
-                    <Typography sx={{ fontSize: 12.5, fontWeight: 750 }}>
+                    <Typography sx={{ fontSize: 12.5, fontWeight: 600 }}>
                       {task.status === "pending" ? (
                         <>
                           Keyingi ishga tayyor: {availableQuantity} {task.product_unit || "ta"}
@@ -230,7 +230,7 @@ const MyOrderTasks = () => {
                         </>
                       )}
                     </Typography>
-                    <Typography sx={{ fontSize: 12.5, fontWeight: 850 }}>{percent}%</Typography>
+                    <Typography sx={{ fontSize: 12.5, fontWeight: 600 }}>{percent}%</Typography>
                   </Box>
                   <LinearProgress
                     variant="determinate"
@@ -280,7 +280,7 @@ const MyOrderTasks = () => {
                         variant="contained"
                         disabled={savingId === task.id}
                         onClick={() => claim(task)}
-                        sx={{ textTransform: "none", fontWeight: 850 }}
+                        sx={{ textTransform: "none", fontWeight: 600 }}
                       >
                         Shu miqdorni olish
                       </Button>
@@ -313,7 +313,7 @@ const MyOrderTasks = () => {
                             worker_note: task.worker_note || "",
                           })
                         }
-                        sx={{ textTransform: "none", fontWeight: 850 }}
+                        sx={{ textTransform: "none", fontWeight: 600 }}
                       >
                         Saqlash
                       </Button>
@@ -328,7 +328,7 @@ const MyOrderTasks = () => {
                             worker_note: task.worker_note || "",
                           })
                         }
-                        sx={{ textTransform: "none", fontWeight: 850 }}
+                        sx={{ textTransform: "none", fontWeight: 600 }}
                       >
                         Tugatish
                       </Button>

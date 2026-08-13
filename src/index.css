@@ -63,6 +63,27 @@
      ochroq qilib bo'lmaydi. */
   --aa-brand-text: #7a1826;
 
+  /* --------------------------------------------------------------------
+     SHRIFTLAR
+
+     DIQQAT: ilgari hamma joyda `Inter` yozilgan edi, lekin u HECH QAYERDA
+     yuklanmaydi — na @font-face, na CDN havolasi. Ya'ni brauzer uni
+     tashlab, tizim shriftiga (Windows'da Segoe UI) tushardi.
+
+     Segoe UI'da faqat 400 / 600 / 700 og'irlik bor. Kodda esa 750, 800,
+     850, 900, 950 ishlatilardi — ularning hammasi bitta qalin ko'rinishga
+     aylanar, ba'zilari esa sun'iy qalinlashib xira chiqardi. Shuning uchun
+     matn hamma joyda bir xil ko'rinardi.
+
+     Endi og'irliklar shriftda haqiqatan bor pog'onalarga keltirildi va
+     ierarxiya o'lcham, rang va shrift OILASI orqali beriladi.
+
+     Antiqa shrift (Georgia) hamma tizimda mavjud — yuklab olish shart emas
+     va yirik o'lchamda haqiqiy xarakterga ega. */
+  --aa-display: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --aa-sans:
+    "Segoe UI", -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, system-ui, sans-serif;
+
   --aa-radius-xs: 8px;
   --aa-radius-sm: 10px;
   --aa-radius-md: 12px;
@@ -89,14 +110,7 @@
   --aa-text-muted: var(--aa-text-secondary);
   --aa-shadow-card: var(--aa-shadow-md);
 
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Display",
-    "SF Pro Text",
-    "Segoe UI",
-    sans-serif;
+  font-family: var(--aa-sans);
   color: var(--aa-text);
   background: var(--aa-bg);
   font-synthesis: none;

@@ -176,7 +176,7 @@ const InfoItem = ({ label, value, accent = false }) => (
       sx={{
         color: "var(--aa-text-tertiary)",
         fontSize: 9.5,
-        fontWeight: 750,
+        fontWeight: 600,
       }}
     >
       {label}
@@ -190,7 +190,7 @@ const InfoItem = ({ label, value, accent = false }) => (
         color: accent ? "var(--aa-brand-600)" : "var(--aa-text)",
 
         fontSize: 12,
-        fontWeight: 900,
+        fontWeight: 700,
       }}
     >
       {value || "-"}
@@ -237,7 +237,7 @@ const PricePanel = ({ label, value, tone = "green", helper }) => {
         sx={{
           color: "var(--aa-text-secondary)",
           fontSize: 10,
-          fontWeight: 800,
+          fontWeight: 600,
         }}
       >
         {label}
@@ -249,7 +249,7 @@ const PricePanel = ({ label, value, tone = "green", helper }) => {
           mt: 0.8,
           color: current.color,
           fontSize: 21,
-          fontWeight: 950,
+          fontWeight: 700,
           letterSpacing: "-.04em",
         }}
       >
@@ -298,7 +298,7 @@ const SectionHeader = ({ title, subtitle, actions }) => (
         sx={{
           color: "var(--aa-text)",
           fontSize: 16,
-          fontWeight: 950,
+          fontWeight: 700,
           letterSpacing: "-.02em",
         }}
       >
@@ -754,7 +754,7 @@ const Product = () => {
           sx={{
             color: "var(--aa-text-tertiary)",
             fontSize: 12.5,
-            fontWeight: 750,
+            fontWeight: 600,
           }}
         >
           Mahsulot ma'lumotlari yuklanmoqda...
@@ -774,7 +774,7 @@ const Product = () => {
           sx={{
             mt: 2,
             borderRadius: "12px",
-            fontWeight: 900,
+            fontWeight: 700,
             textTransform: "none",
           }}
         >
@@ -885,7 +885,7 @@ const Product = () => {
                   color: "#d9b782 !important",
 
                   fontSize: 10,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: ".13em",
                   textTransform: "uppercase",
                 }}
@@ -921,7 +921,7 @@ const Product = () => {
                   flexShrink: 0,
                   color: "#ffffff",
                   fontSize: 26,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   borderRadius: "20px",
 
                   border: "4px solid rgba(255,255,255,.11)",
@@ -962,8 +962,9 @@ const Product = () => {
                     },
 
                     lineHeight: 1.06,
-                    fontWeight: 950,
-                    letterSpacing: "-.05em",
+                    fontFamily: "var(--aa-display)",
+                    fontWeight: 400,
+                    letterSpacing: "-.024em",
                     wordBreak: "break-word",
                   }}
                 >
@@ -1002,7 +1003,7 @@ const Product = () => {
                 backgroundColor: "rgba(255,255,255,.055)",
 
                 fontSize: 11,
-                fontWeight: 900,
+                fontWeight: 700,
                 textTransform: "none",
 
                 "&:hover": {
@@ -1126,7 +1127,7 @@ const Product = () => {
                   borderRadius: "28px",
                   color: "#ffffff",
                   fontSize: 42,
-                  fontWeight: 950,
+                  fontWeight: 700,
 
                   background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
@@ -1199,7 +1200,7 @@ const Product = () => {
                 sx={{
                   color: "var(--aa-text-tertiary)",
                   fontSize: 11,
-                  fontWeight: 750,
+                  fontWeight: 600,
                 }}
               >
                 Mahsulot rasmi yuklanmagan.
@@ -1301,7 +1302,7 @@ const Product = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 12,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               Mahsulot tavsifi
@@ -1424,7 +1425,7 @@ const Product = () => {
 
                           fontSize: 12.5,
 
-                          fontWeight: 950,
+                          fontWeight: 700,
                         }}
                       >
                         {index + 1}. {row.department_name}
@@ -1634,7 +1635,7 @@ const Product = () => {
 
                       textTransform: "none",
 
-                      fontWeight: 850,
+                      fontWeight: 600,
                     }}
                   >
                     O‘chirish
@@ -1677,7 +1678,7 @@ const Product = () => {
               sx={{
                 color: "var(--aa-text-tertiary)",
                 fontSize: 10,
-                fontWeight: 750,
+                fontWeight: 600,
               }}
             >
               {formatNumber(recipeRows.length)} / {formatNumber(rawMaterials.length)} ta xomashyo
@@ -1761,7 +1762,7 @@ const Product = () => {
                   }}
                 >
                   <Box sx={{ minWidth: 0 }}>
-                    <Typography sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 900 }}>
+                    <Typography sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 700 }}>
                       {material.name}
                     </Typography>
 
@@ -1839,7 +1840,7 @@ const Product = () => {
               color: "#ffffff !important",
 
               fontSize: 19,
-              fontWeight: 950,
+              fontWeight: 700,
             }}
           >
             Yangi bo‘lim qo‘shish
@@ -1913,7 +1914,7 @@ const Product = () => {
             disabled={departmentSaving}
             sx={{
               color: "var(--aa-text-secondary)",
-              fontWeight: 850,
+              fontWeight: 600,
               textTransform: "none",
             }}
           >
@@ -1942,7 +1943,7 @@ const darkChipSx = {
   color: "rgba(255,255,255,.66) !important",
 
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
 
   border: "1px solid rgba(255,255,255,.09)",
 
@@ -1956,7 +1957,7 @@ const secondaryButtonSx = {
   borderRadius: "12px",
   borderColor: "#d8cec1",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
@@ -1975,7 +1976,7 @@ const primaryButtonSx = {
   color: "#ffffff",
   borderRadius: "12px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",

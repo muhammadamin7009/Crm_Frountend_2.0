@@ -54,11 +54,13 @@ export const ThemeModeProvider = ({ children }) => {
           borderRadius: 14,
         },
         typography: {
+          // `Inter` olib tashlandi: u hech qayerda yuklanmaydi va brauzer
+          // baribir tizim shriftiga tushardi. Endi ro'yxat halol.
           fontFamily:
-            'Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif',
+            '"Segoe UI", -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, system-ui, sans-serif',
           button: {
             textTransform: "none",
-            fontWeight: 700,
+            fontWeight: 600,
           },
         },
         components: {

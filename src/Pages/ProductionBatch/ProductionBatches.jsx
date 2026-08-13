@@ -82,7 +82,7 @@ const StatusChip = ({ status }) => {
     <Chip
       size="small"
       label={STATUS_LABELS[status] || status}
-      sx={{ height: 24, px: 0.3, color, backgroundColor, fontSize: 9.5, fontWeight: 900 }}
+      sx={{ height: 24, px: 0.3, color, backgroundColor, fontSize: 9.5, fontWeight: 700 }}
     />
   );
 };
@@ -285,7 +285,7 @@ const ProductionBatches = () => {
                 sx={{
                   color: "#d9b782 !important",
                   fontSize: 10,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: ".13em",
                   textTransform: "uppercase",
                 }}
@@ -301,8 +301,9 @@ const ProductionBatches = () => {
                 color: "#ffffff !important",
                 fontSize: { xs: 29, md: 36 },
                 lineHeight: 1.08,
-                fontWeight: 950,
-                letterSpacing: "-.045em",
+                fontFamily: "var(--aa-display)",
+                fontWeight: 400,
+                letterSpacing: "-.024em",
               }}
             >
               Partiyalar
@@ -332,7 +333,7 @@ const ProductionBatches = () => {
                   color: "#ffffff !important",
                   borderRadius: "13px",
                   fontSize: 11.5,
-                  fontWeight: 900,
+                  fontWeight: 700,
                   textTransform: "none",
                   background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
                   boxShadow: "0 12px 26px rgba(77, 15, 24,.30)",
@@ -436,7 +437,7 @@ const ProductionBatches = () => {
                 py: 1.55,
                 color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
-                fontWeight: 900,
+                fontWeight: 700,
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
                 backgroundColor: "var(--aa-surface-muted)",
@@ -482,7 +483,7 @@ const ProductionBatches = () => {
                         sx={{
                           color: "var(--aa-text)",
                           fontSize: 14,
-                          fontWeight: 950,
+                          fontWeight: 700,
                           letterSpacing: ".04em",
                         }}
                       >
@@ -495,7 +496,7 @@ const ProductionBatches = () => {
                     </TableCell>
 
                     <TableCell>
-                      <Typography sx={{ color: "var(--aa-text)", fontSize: 13, fontWeight: 900 }}>
+                      <Typography sx={{ color: "var(--aa-text)", fontSize: 13, fontWeight: 700 }}>
                         {batch.product_name}
                       </Typography>
 
@@ -517,7 +518,7 @@ const ProductionBatches = () => {
                       {batch.material_name || batch.sole_name ? (
                         <>
                           <Typography
-                            sx={{ color: "var(--aa-text)", fontSize: 11.5, fontWeight: 800 }}
+                            sx={{ color: "var(--aa-text)", fontSize: 11.5, fontWeight: 600 }}
                           >
                             {batch.material_name || "—"}
                           </Typography>
@@ -536,12 +537,12 @@ const ProductionBatches = () => {
                     </TableCell>
 
                     <TableCell>
-                      <Typography sx={{ color: "var(--aa-text)", fontSize: 13, fontWeight: 900 }}>
+                      <Typography sx={{ color: "var(--aa-text)", fontSize: 13, fontWeight: 700 }}>
                         {formatNumber(batch.quantity)} par
                       </Typography>
                     </TableCell>
 
-                    <TableCell sx={{ fontWeight: 800 }}>{formatDate(batch.started_at)}</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>{formatDate(batch.started_at)}</TableCell>
 
                     <TableCell align="right" onClick={(event) => event.stopPropagation()}>
                       <Stack
@@ -579,7 +580,7 @@ const ProductionBatches = () => {
                   <TableCell
                     colSpan={6}
                     align="center"
-                    sx={{ py: 7, color: "var(--aa-text-tertiary)", fontWeight: 850 }}
+                    sx={{ py: 7, color: "var(--aa-text-tertiary)", fontWeight: 600 }}
                   >
                     Partiya topilmadi
                   </TableCell>
@@ -733,7 +734,7 @@ const tableActionSx = {
   px: 1.4,
   borderRadius: "9px",
   fontSize: 10,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   borderColor: "var(--aa-border-strong)",
   color: "var(--aa-text-secondary)",
@@ -745,7 +746,7 @@ const dialogCancelSx = {
   color: "var(--aa-text-secondary)",
   borderRadius: "12px",
   fontSize: 11.5,
-  fontWeight: 850,
+  fontWeight: 600,
   textTransform: "none",
 };
 
@@ -755,7 +756,7 @@ const dialogPrimarySx = {
   color: "#ffffff !important",
   borderRadius: "12px",
   fontSize: 11.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
   boxShadow: "0 12px 26px rgba(77, 15, 24,.28)",

@@ -397,7 +397,7 @@ const Expenses = () => {
                   color: "#d9b782 !important",
 
                   fontSize: 10,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: ".13em",
                   textTransform: "uppercase",
                 }}
@@ -418,8 +418,9 @@ const Expenses = () => {
                 },
 
                 lineHeight: 1.08,
-                fontWeight: 950,
-                letterSpacing: "-.045em",
+                fontFamily: "var(--aa-display)",
+                fontWeight: 400,
+                letterSpacing: "-.024em",
               }}
             >
               Mayda xarajatlar
@@ -452,7 +453,7 @@ const Expenses = () => {
 
                   borderRadius: "13px",
                   fontSize: 11.5,
-                  fontWeight: 900,
+                  fontWeight: 700,
                   textTransform: "none",
 
                   background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
@@ -628,7 +629,7 @@ const Expenses = () => {
                 sx={{
                   color: "var(--aa-text)",
                   fontSize: 15,
-                  fontWeight: 950,
+                  fontWeight: 700,
                 }}
               >
                 Xarajatlar ro‘yxati
@@ -652,7 +653,7 @@ const Expenses = () => {
                 height: 25,
                 color: "#6e1622",
                 fontSize: 9.5,
-                fontWeight: 900,
+                fontWeight: 700,
 
                 backgroundColor: "rgba(110, 22, 34,.07)",
               }}
@@ -700,7 +701,7 @@ const Expenses = () => {
                     border: "1px solid rgba(110, 22, 34,.12)",
 
                     fontSize: 20,
-                    fontWeight: 950,
+                    fontWeight: 700,
                   }}
                 >
                   0
@@ -711,7 +712,7 @@ const Expenses = () => {
                     mt: 1.6,
                     color: "var(--aa-text)",
                     fontSize: 14,
-                    fontWeight: 950,
+                    fontWeight: 700,
                   }}
                 >
                   Tanlangan davrda xarajat yo‘q
@@ -745,7 +746,7 @@ const Expenses = () => {
                     py: 1.55,
                     color: "var(--aa-text-tertiary)",
                     fontSize: 9.5,
-                    fontWeight: 900,
+                    fontWeight: 700,
                     letterSpacing: ".045em",
                     textTransform: "uppercase",
                     backgroundColor: "var(--aa-surface-muted)",
@@ -810,7 +811,7 @@ const Expenses = () => {
                               boxShadow: "0 8px 20px rgba(77, 15, 24,.16)",
 
                               fontSize: 12,
-                              fontWeight: 950,
+                              fontWeight: 700,
                             }}
                           >
                             {initial(item.title)}
@@ -821,7 +822,7 @@ const Expenses = () => {
                               sx={{
                                 color: "var(--aa-text)",
                                 fontSize: 12,
-                                fontWeight: 900,
+                                fontWeight: 700,
                               }}
                             >
                               {item.title || "-"}
@@ -852,7 +853,7 @@ const Expenses = () => {
                             color: item.account_name ? "#1f6f8b" : "#7d716a",
 
                             fontSize: 9.5,
-                            fontWeight: 900,
+                            fontWeight: 700,
 
                             backgroundColor: item.account_name
                               ? "rgba(31, 111, 139,.08)"
@@ -881,7 +882,7 @@ const Expenses = () => {
                               color: "#ffffff",
 
                               fontSize: 10,
-                              fontWeight: 950,
+                              fontWeight: 700,
 
                               background: "linear-gradient(135deg,#5c514b,#17110f)",
                             }}
@@ -893,7 +894,7 @@ const Expenses = () => {
                             sx={{
                               color: "var(--aa-text-secondary)",
                               fontSize: 10,
-                              fontWeight: 850,
+                              fontWeight: 600,
                             }}
                           >
                             {item.created_by_name || "-"}
@@ -906,7 +907,7 @@ const Expenses = () => {
                           sx={{
                             color: "var(--aa-text-secondary)",
                             fontSize: 10.5,
-                            fontWeight: 850,
+                            fontWeight: 600,
                           }}
                         >
                           {displayDate(item.spent_at)}
@@ -919,7 +920,7 @@ const Expenses = () => {
                           sx={{
                             color: "#7a1826",
                             fontSize: 12,
-                            fontWeight: 950,
+                            fontWeight: 700,
                           }}
                         >
                           - {money(item.amount)}
@@ -959,7 +960,7 @@ const Expenses = () => {
               sx={{
                 color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
-                fontWeight: 850,
+                fontWeight: 600,
                 textTransform: "uppercase",
                 letterSpacing: ".08em",
               }}
@@ -972,7 +973,7 @@ const Expenses = () => {
                 mt: 0.8,
                 color: "#7a1826",
                 fontSize: 25,
-                fontWeight: 950,
+                fontWeight: 700,
                 letterSpacing: "-.045em",
               }}
             >
@@ -1013,7 +1014,7 @@ const Expenses = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 13,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               Moliyaviy hisoblar
@@ -1056,7 +1057,7 @@ const Expenses = () => {
                         minWidth: 0,
                         color: "var(--aa-text-secondary)",
                         fontSize: 10,
-                        fontWeight: 850,
+                        fontWeight: 600,
                       }}
                     >
                       {account.name}
@@ -1068,7 +1069,7 @@ const Expenses = () => {
                         color: Number(account.balance || 0) > 0 ? "#2f6b45" : "#7a1826",
 
                         fontSize: 10,
-                        fontWeight: 950,
+                        fontWeight: 700,
                       }}
                     >
                       {money(account.balance)}
@@ -1091,7 +1092,7 @@ const Expenses = () => {
                     sx={{
                       color: "var(--aa-text-tertiary)",
                       fontSize: 10,
-                      fontWeight: 800,
+                      fontWeight: 600,
                     }}
                   >
                     Moliyaviy hisoblar topilmadi.
@@ -1138,7 +1139,7 @@ const Expenses = () => {
               color: "#ffffff !important",
 
               fontSize: 19,
-              fontWeight: 950,
+              fontWeight: 700,
             }}
           >
             {selectedExpense ? "Xarajatni tahrirlash" : "Yangi mayda xarajat"}
@@ -1276,7 +1277,7 @@ const Expenses = () => {
                 <Typography
                   sx={{
                     fontSize: 10.5,
-                    fontWeight: 900,
+                    fontWeight: 700,
                     lineHeight: 1.6,
                   }}
                 >
@@ -1312,7 +1313,7 @@ const Expenses = () => {
             sx={{
               color: "var(--aa-text-secondary)",
               borderRadius: "11px",
-              fontWeight: 850,
+              fontWeight: 600,
               textTransform: "none",
             }}
           >
@@ -1330,7 +1331,7 @@ const Expenses = () => {
               color: "#ffffff",
               borderRadius: "11px",
               fontSize: 10.5,
-              fontWeight: 900,
+              fontWeight: 700,
               textTransform: "none",
 
               background: "linear-gradient(135deg,#4d0f18,#7a1826)",
@@ -1380,7 +1381,7 @@ const filterButtonSx = {
   borderRadius: "11px",
   borderColor: "#d8cec1",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 

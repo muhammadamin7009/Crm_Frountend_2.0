@@ -15,7 +15,7 @@ const ActiveStatusChip = ({
       height,
       px,
       fontSize: 9.5,
-      fontWeight: 900,
+      fontWeight: 700,
       color: dark
         ? active
           ? "#a8dcbc !important"

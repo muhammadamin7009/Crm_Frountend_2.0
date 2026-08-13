@@ -32,7 +32,7 @@ const FounderCredit = ({ tone = "light", sx }) => {
         sx={{
           color: text,
           fontSize: 9.5,
-          fontWeight: 650,
+          fontWeight: 600,
           letterSpacing: ".17em",
           textTransform: "uppercase",
           whiteSpace: "nowrap",

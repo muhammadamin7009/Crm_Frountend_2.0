@@ -78,7 +78,7 @@ const HeroMetric = ({
           backgroundColor: current[1],
           border: `1px solid ${toneBorder}`,
           fontSize: 13,
-          fontWeight: 950,
+          fontWeight: 700,
         }}
       >
         {label.charAt(0)}
@@ -89,22 +89,24 @@ const HeroMetric = ({
           mt: 1.35,
           color: "rgba(255,255,255,.44) !important",
           fontSize: 9.5,
-          fontWeight: 750,
+          fontWeight: 600,
           ...labelSx,
         }}
       >
         {label}
       </Typography>
 
+      {/* Raqam antiqa shriftda — yorliq va izoh grotesk. */}
       <Typography
         noWrap
         sx={{
-          mt: 0.6,
+          mt: 0.7,
           color: "#ffffff !important",
-          fontSize: 18,
-          lineHeight: 1.2,
-          fontWeight: 950,
-          letterSpacing: "-.035em",
+          fontFamily: "var(--aa-display)",
+          fontSize: 21,
+          lineHeight: 1.15,
+          fontWeight: 400,
+          letterSpacing: "-.018em",
           ...valueSx,
         }}
       >

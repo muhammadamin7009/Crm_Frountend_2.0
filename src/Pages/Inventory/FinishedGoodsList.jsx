@@ -127,7 +127,7 @@ const FinishedGoodsList = ({ warehouseId, lowOnly = false, onClearLowOnly }) => 
         }}
       >
         <Box>
-          <Typography sx={{ color: "var(--aa-text)", fontSize: 15, fontWeight: 950 }}>
+          <Typography sx={{ color: "var(--aa-text)", fontSize: 15, fontWeight: 700 }}>
             Tayyor mahsulotlar
           </Typography>
 
@@ -146,7 +146,7 @@ const FinishedGoodsList = ({ warehouseId, lowOnly = false, onClearLowOnly }) => 
                 height: 24,
                 color: "#6e1622",
                 fontSize: 9.5,
-                fontWeight: 900,
+                fontWeight: 700,
                 backgroundColor: "rgba(110, 22, 34,.08)",
                 border: "1px solid rgba(110, 22, 34,.2)",
               }}
@@ -231,7 +231,7 @@ const FinishedGoodsList = ({ warehouseId, lowOnly = false, onClearLowOnly }) => 
                     "&:hover": { backgroundColor: "var(--aa-surface-hover)" },
                   }}
                 >
-                  <Typography sx={{ color: "var(--aa-text)", fontSize: 13.5, fontWeight: 900 }}>
+                  <Typography sx={{ color: "var(--aa-text)", fontSize: 13.5, fontWeight: 700 }}>
                     {group.model}
                   </Typography>
 
@@ -244,14 +244,14 @@ const FinishedGoodsList = ({ warehouseId, lowOnly = false, onClearLowOnly }) => 
                           height: 22,
                           color: "var(--aa-danger)",
                           fontSize: 9.5,
-                          fontWeight: 900,
+                          fontWeight: 700,
                           backgroundColor: "rgba(140, 29, 43,.12)",
                         }}
                       />
                     )}
 
                     <Typography
-                      sx={{ color: "var(--aa-text-secondary)", fontSize: 11.5, fontWeight: 800 }}
+                      sx={{ color: "var(--aa-text-secondary)", fontSize: 11.5, fontWeight: 600 }}
                     >
                       {formatNumber(group.total_quantity)} par
                     </Typography>
@@ -309,7 +309,7 @@ const FinishedGoodsList = ({ warehouseId, lowOnly = false, onClearLowOnly }) => 
                             }}
                           >
                             <Typography
-                              sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 850 }}
+                              sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 600 }}
                             >
                               {size.label}
                             </Typography>
@@ -318,7 +318,7 @@ const FinishedGoodsList = ({ warehouseId, lowOnly = false, onClearLowOnly }) => 
                               sx={{
                                 color: "var(--aa-text-tertiary)",
                                 fontSize: 10.5,
-                                fontWeight: 750,
+                                fontWeight: 600,
                               }}
                             >
                               {size.variant_count} variant · {formatNumber(size.total_quantity)} par
@@ -379,14 +379,14 @@ const VariantRow = ({ variant }) => (
           sx={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       ) : (
-        <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 15, fontWeight: 900 }}>
+        <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 15, fontWeight: 700 }}>
           {(variant.color || variant.product_name || "?").charAt(0).toUpperCase()}
         </Typography>
       )}
     </Box>
 
     <Box sx={{ minWidth: 0 }}>
-      <Typography noWrap sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 850 }}>
+      <Typography noWrap sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 600 }}>
         {variant.product_name}
         {variant.color ? ` · ${variant.color}` : ""}
       </Typography>
@@ -408,7 +408,7 @@ const VariantRow = ({ variant }) => (
             height: 22,
             color: "var(--aa-text-secondary)",
             fontSize: 9.5,
-            fontWeight: 900,
+            fontWeight: 700,
             backgroundColor: "var(--aa-surface-muted)",
           }}
         />
@@ -420,7 +420,7 @@ const VariantRow = ({ variant }) => (
         sx={{
           color: variant.is_low ? "var(--aa-danger)" : "var(--aa-text)",
           fontSize: 13,
-          fontWeight: 950,
+          fontWeight: 700,
         }}
       >
         {formatNumber(variant.quantity)} {variant.unit || "par"}

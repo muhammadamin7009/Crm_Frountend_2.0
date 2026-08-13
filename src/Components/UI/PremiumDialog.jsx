@@ -43,8 +43,10 @@ const PremiumDialog = ({
       <Typography
         sx={{
           color: "#ffffff !important",
-          fontSize: 19,
-          fontWeight: 950,
+          fontFamily: "var(--aa-display)",
+          fontSize: 21,
+          fontWeight: 400,
+          letterSpacing: "-.015em",
         }}
       >
         {title}

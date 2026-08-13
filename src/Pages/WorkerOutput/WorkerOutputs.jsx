@@ -81,7 +81,7 @@ const ProductOptionLabel = ({ product }) => (
       sx={{
         color: "var(--aa-text)",
         fontSize: 14,
-        fontWeight: 850,
+        fontWeight: 600,
       }}
     >
       {formatProductName(product)}
@@ -94,7 +94,7 @@ const ProductOptionLabel = ({ product }) => (
           mt: 0.15,
           color: "var(--aa-text-tertiary)",
           fontSize: 11.5,
-          fontWeight: 650,
+          fontWeight: 600,
         }}
       >
         SKU: {product.sku}
@@ -129,7 +129,7 @@ const DepartmentChip = ({ label }) => (
       px: 0.35,
       color: "#1f6f8b",
       fontSize: 9.5,
-      fontWeight: 900,
+      fontWeight: 700,
       backgroundColor: "rgba(31, 111, 139,.09)",
       border: "1px solid rgba(31, 111, 139,.16)",
     }}
@@ -726,7 +726,7 @@ const WorkerOutputs = () => {
                 sx={{
                   color: "#d9b782 !important",
                   fontSize: 10,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: ".13em",
                   textTransform: "uppercase",
                 }}
@@ -747,8 +747,9 @@ const WorkerOutputs = () => {
                 },
 
                 lineHeight: 1.08,
-                fontWeight: 950,
-                letterSpacing: "-.045em",
+                fontFamily: "var(--aa-display)",
+                fontWeight: 400,
+                letterSpacing: "-.024em",
               }}
             >
               Ish hisoboti
@@ -781,7 +782,7 @@ const WorkerOutputs = () => {
 
                   borderRadius: "13px",
                   fontSize: 11.5,
-                  fontWeight: 900,
+                  fontWeight: 700,
                   textTransform: "none",
 
                   background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
@@ -1045,7 +1046,7 @@ const WorkerOutputs = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 15,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               Ish yozuvlari ro‘yxati
@@ -1069,7 +1070,7 @@ const WorkerOutputs = () => {
               height: 25,
               color: "#6e1622",
               fontSize: 9.5,
-              fontWeight: 900,
+              fontWeight: 700,
               backgroundColor: "rgba(110, 22, 34,.07)",
             }}
           />
@@ -1091,7 +1092,7 @@ const WorkerOutputs = () => {
                 py: 1.55,
                 color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
-                fontWeight: 900,
+                fontWeight: 700,
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
                 backgroundColor: "var(--aa-surface-muted)",
@@ -1145,7 +1146,7 @@ const WorkerOutputs = () => {
                             height: 48,
                             color: "#ffffff",
                             fontSize: 13,
-                            fontWeight: 950,
+                            fontWeight: 700,
 
                             background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
@@ -1162,7 +1163,7 @@ const WorkerOutputs = () => {
                             sx={{
                               color: "var(--aa-text)",
                               fontSize: 14.5,
-                              fontWeight: 900,
+                              fontWeight: 700,
                               lineHeight: 1.15,
                             }}
                           >
@@ -1188,7 +1189,7 @@ const WorkerOutputs = () => {
                         sx={{
                           color: "var(--aa-text)",
                           fontSize: 14.5,
-                          fontWeight: 900,
+                          fontWeight: 700,
                         }}
                       >
                         {output.product_name || "-"}
@@ -1218,7 +1219,7 @@ const WorkerOutputs = () => {
                               px: 0.35,
                               color: "var(--aa-text-secondary)",
                               fontSize: 9.5,
-                              fontWeight: 900,
+                              fontWeight: 700,
                               backgroundColor: "var(--aa-surface-muted)",
                               border: "1px solid var(--aa-border)",
                             }}
@@ -1232,7 +1233,7 @@ const WorkerOutputs = () => {
                         sx={{
                           color: "var(--aa-text)",
                           fontSize: 14.5,
-                          fontWeight: 950,
+                          fontWeight: 700,
                         }}
                       >
                         {formatMoney(output.total_amount)}
@@ -1254,7 +1255,7 @@ const WorkerOutputs = () => {
                     <TableCell
                       sx={{
                         color: "var(--aa-text-secondary)",
-                        fontWeight: 800,
+                        fontWeight: 600,
                       }}
                     >
                       {formatDate(output.worked_at)}
@@ -1305,7 +1306,7 @@ const WorkerOutputs = () => {
                     sx={{
                       py: 7,
                       color: "var(--aa-text-tertiary)",
-                      fontWeight: 850,
+                      fontWeight: 600,
                     }}
                   >
                     Ish yozuvlari topilmadi
@@ -1509,7 +1510,7 @@ const WorkerOutputs = () => {
                     background: "var(--aa-surface-muted)",
                   }}
                 >
-                  <Typography sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 950 }}>
+                  <Typography sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 700 }}>
                     Sarflangan xomashyo
                   </Typography>
 
@@ -1539,7 +1540,7 @@ const WorkerOutputs = () => {
                           >
                             <Box sx={{ minWidth: 0 }}>
                               <Typography
-                                sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 800 }}
+                                sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 600 }}
                               >
                                 {material.name}
                               </Typography>
@@ -1599,7 +1600,7 @@ const WorkerOutputs = () => {
                   sx={{
                     color: "var(--aa-text-tertiary)",
                     fontSize: 10,
-                    fontWeight: 800,
+                    fontWeight: 600,
                   }}
                 >
                   Tanlangan ish
@@ -1610,7 +1611,7 @@ const WorkerOutputs = () => {
                     mt: 0.6,
                     color: "var(--aa-text)",
                     fontSize: 13,
-                    fontWeight: 950,
+                    fontWeight: 700,
                   }}
                 >
                   {selectedProduct?.name || "Mahsulot tanlanmagan"} /{" "}
@@ -1653,7 +1654,7 @@ const WorkerOutputs = () => {
                     sx={{
                       color: "var(--aa-text)",
                       fontSize: 16,
-                      fontWeight: 950,
+                      fontWeight: 700,
                     }}
                   >
                     Mahsulot va miqdorlar
@@ -1759,7 +1760,7 @@ const WorkerOutputs = () => {
                       sx={{
                         borderRadius: "11px",
                         fontSize: 10,
-                        fontWeight: 850,
+                        fontWeight: 600,
                         textTransform: "none",
                       }}
                     >
@@ -1801,7 +1802,7 @@ const WorkerOutputs = () => {
               disabled={deleting}
               sx={{
                 borderRadius: "11px",
-                fontWeight: 900,
+                fontWeight: 700,
                 textTransform: "none",
               }}
             >
@@ -1833,7 +1834,7 @@ const filterButtonSx = {
   borderRadius: "11px",
   borderColor: "#d8cec1",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
@@ -1847,14 +1848,14 @@ const filterButtonSx = {
 const tableActionSx = {
   borderRadius: "9px",
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 };
 
 const dialogCancelSx = {
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  fontWeight: 850,
+  fontWeight: 600,
   textTransform: "none",
 };
 
@@ -1865,7 +1866,7 @@ const dialogPrimarySx = {
   color: "#ffffff",
   borderRadius: "11px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",

@@ -114,7 +114,7 @@ const RoleChip = ({ role, dark = false }) => {
             : "#1f6f8b",
 
         fontSize: 9.5,
-        fontWeight: 900,
+        fontWeight: 700,
 
         backgroundColor: dark
           ? worker
@@ -189,7 +189,7 @@ const PresetCard = ({ preset, onClick }) => (
           boxShadow: "0 8px 18px rgba(77, 15, 24,.18)",
 
           fontSize: 12,
-          fontWeight: 950,
+          fontWeight: 700,
         }}
       >
         {preset.label.charAt(0)}
@@ -200,7 +200,7 @@ const PresetCard = ({ preset, onClick }) => (
           mt: 1.15,
           color: "inherit",
           fontSize: 11.5,
-          fontWeight: 950,
+          fontWeight: 700,
         }}
       >
         {preset.label}
@@ -259,7 +259,7 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
             sx={{
               color: "var(--aa-text)",
               fontSize: 13,
-              fontWeight: 950,
+              fontWeight: 700,
             }}
           >
             {group.group}
@@ -288,7 +288,7 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
             borderColor: allSelected ? "rgba(140, 29, 43,.20)" : "var(--aa-border)",
 
             fontSize: 9.5,
-            fontWeight: 900,
+            fontWeight: 700,
             textTransform: "none",
 
             "&:hover": {
@@ -373,7 +373,7 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
                         color: checked ? "var(--aa-brand-600)" : "var(--aa-text)",
 
                         fontSize: 10.5,
-                        fontWeight: 900,
+                        fontWeight: 700,
                       }}
                     >
                       {permission.label}
@@ -395,7 +395,7 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
                         mt: 0.5,
                         color: "#c0cad6",
                         fontSize: 8.5,
-                        fontWeight: 750,
+                        fontWeight: 600,
                       }}
                     >
                       {permission.key}
@@ -710,7 +710,7 @@ const Permissions = () => {
           sx={{
             color: "var(--aa-text-tertiary)",
             fontSize: 12.5,
-            fontWeight: 750,
+            fontWeight: 600,
           }}
         >
           Ruxsatlar yuklanmoqda...
@@ -813,7 +813,7 @@ const Permissions = () => {
                   color: "#d9b782 !important",
 
                   fontSize: 10,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: ".13em",
                   textTransform: "uppercase",
                 }}
@@ -835,8 +835,9 @@ const Permissions = () => {
                 },
 
                 lineHeight: 1.08,
-                fontWeight: 950,
-                letterSpacing: "-.045em",
+                fontFamily: "var(--aa-display)",
+                fontWeight: 400,
+                letterSpacing: "-.024em",
               }}
             >
               Ruxsatlar
@@ -874,7 +875,7 @@ const Permissions = () => {
                     height: 38,
                     color: "#ffffff",
                     fontSize: 12,
-                    fontWeight: 950,
+                    fontWeight: 700,
 
                     background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
@@ -890,7 +891,7 @@ const Permissions = () => {
                       color: "#ffffff !important",
 
                       fontSize: 11,
-                      fontWeight: 900,
+                      fontWeight: 700,
                     }}
                   >
                     {getFullName(selectedAdmin) || selectedAdmin.username}
@@ -999,7 +1000,7 @@ const Permissions = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 14,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               Foydalanuvchilar
@@ -1093,7 +1094,7 @@ const Permissions = () => {
                         flexShrink: 0,
                         color: "#ffffff",
                         fontSize: 12,
-                        fontWeight: 950,
+                        fontWeight: 700,
 
                         background: active
                           ? "linear-gradient(135deg,#4d0f18,#8c1d2b)"
@@ -1119,7 +1120,7 @@ const Permissions = () => {
                           color: "inherit",
 
                           fontSize: 10.5,
-                          fontWeight: 950,
+                          fontWeight: 700,
                         }}
                       >
                         {getFullName(admin) || admin.username}
@@ -1163,7 +1164,7 @@ const Permissions = () => {
                   sx={{
                     color: "var(--aa-text-tertiary)",
                     fontSize: 10,
-                    fontWeight: 800,
+                    fontWeight: 600,
                   }}
                 >
                   Foydalanuvchi topilmadi.
@@ -1217,7 +1218,7 @@ const Permissions = () => {
                       height: 55,
                       color: "#ffffff",
                       fontSize: 16,
-                      fontWeight: 950,
+                      fontWeight: 700,
 
                       background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
@@ -1242,7 +1243,7 @@ const Permissions = () => {
                         sx={{
                           color: "var(--aa-text)",
                           fontSize: 16,
-                          fontWeight: 950,
+                          fontWeight: 700,
                         }}
                       >
                         {getFullName(selectedAdmin) || selectedAdmin.username}
@@ -1340,7 +1341,7 @@ const Permissions = () => {
                         color: hasChanges ? "#a06a12" : "#2f6b45",
 
                         fontSize: 10.5,
-                        fontWeight: 950,
+                        fontWeight: 700,
                       }}
                     >
                       {hasChanges
@@ -1365,7 +1366,7 @@ const Permissions = () => {
                       color: hasChanges ? "#a06a12" : "#2f6b45",
 
                       fontSize: 18,
-                      fontWeight: 950,
+                      fontWeight: 700,
                     }}
                   >
                     {permissionPercent}%
@@ -1398,7 +1399,7 @@ const Permissions = () => {
                     sx={{
                       color: "var(--aa-text)",
                       fontSize: 13,
-                      fontWeight: 950,
+                      fontWeight: 700,
                     }}
                   >
                     Tayyor ruxsat shablonlari
@@ -1448,7 +1449,7 @@ const Permissions = () => {
                   sx={{
                     color: "var(--aa-text)",
                     fontSize: 14,
-                    fontWeight: 950,
+                    fontWeight: 700,
                   }}
                 >
                   Ruxsat guruhlari
@@ -1510,7 +1511,7 @@ const Permissions = () => {
                     sx={{
                       color: "var(--aa-text-tertiary)",
                       fontSize: 11,
-                      fontWeight: 800,
+                      fontWeight: 600,
                     }}
                   >
                     Ushbu foydalanuvchi uchun ruxsat guruhlari topilmadi.
@@ -1543,7 +1544,7 @@ const Permissions = () => {
                     backgroundColor: "rgba(110, 22, 34,.06)",
 
                     fontSize: 20,
-                    fontWeight: 950,
+                    fontWeight: 700,
                   }}
                 >
                   R
@@ -1554,7 +1555,7 @@ const Permissions = () => {
                     mt: 1.7,
                     color: "var(--aa-text)",
                     fontSize: 14,
-                    fontWeight: 950,
+                    fontWeight: 700,
                   }}
                 >
                   Foydalanuvchini tanlang
@@ -1588,7 +1589,7 @@ const secondaryButtonSx = {
   borderRadius: "11px",
   borderColor: "var(--aa-border)",
   fontSize: 10,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
@@ -1607,7 +1608,7 @@ const primaryButtonSx = {
   color: "#ffffff",
   borderRadius: "11px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",

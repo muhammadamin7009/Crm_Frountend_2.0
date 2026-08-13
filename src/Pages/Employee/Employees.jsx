@@ -213,7 +213,7 @@ const RoleChip = ({ role }) => {
         px: 0.3,
         color: current.color,
         fontSize: 9.5,
-        fontWeight: 900,
+        fontWeight: 700,
         backgroundColor: current.background,
         border: `1px solid ${current.border}`,
       }}
@@ -235,7 +235,7 @@ const AgreementChip = ({ agreement }) => {
         color: hasAgreement ? "#2f6b45" : "#7a1826",
 
         fontSize: 9.5,
-        fontWeight: 900,
+        fontWeight: 700,
 
         backgroundColor: hasAgreement ? "rgba(78, 156, 107,.09)" : "rgba(140, 29, 43,.08)",
 
@@ -659,7 +659,7 @@ const Employees = () => {
                   color: "#d9b782 !important",
 
                   fontSize: 10,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: ".13em",
                   textTransform: "uppercase",
                 }}
@@ -680,8 +680,9 @@ const Employees = () => {
                 },
 
                 lineHeight: 1.08,
-                fontWeight: 950,
-                letterSpacing: "-.045em",
+                fontFamily: "var(--aa-display)",
+                fontWeight: 400,
+                letterSpacing: "-.024em",
               }}
             >
               Xodimlar va kelishuvlar
@@ -836,7 +837,7 @@ const Employees = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 14,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               Xodimlarni qidirish
@@ -919,7 +920,7 @@ const Employees = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 15,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               Xodimlar ro‘yxati
@@ -943,7 +944,7 @@ const Employees = () => {
               height: 25,
               color: "#6e1622",
               fontSize: 9.5,
-              fontWeight: 900,
+              fontWeight: 700,
 
               backgroundColor: "rgba(110, 22, 34,.07)",
             }}
@@ -967,7 +968,7 @@ const Employees = () => {
                 py: 1.55,
                 color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
-                fontWeight: 900,
+                fontWeight: 700,
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
                 backgroundColor: "var(--aa-surface-muted)",
@@ -1039,7 +1040,7 @@ const Employees = () => {
                             flexShrink: 0,
                             color: "#ffffff",
                             fontSize: 13,
-                            fontWeight: 950,
+                            fontWeight: 700,
 
                             background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
@@ -1062,7 +1063,7 @@ const Employees = () => {
                               maxWidth: 210,
                               color: "var(--aa-text)",
                               fontSize: 12.5,
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             {getFullName(employee)}
@@ -1092,7 +1093,7 @@ const Employees = () => {
                         sx={{
                           color: "var(--aa-text)",
                           fontSize: 10.5,
-                          fontWeight: 900,
+                          fontWeight: 700,
                         }}
                       >
                         {employee.position_name || "-"}
@@ -1121,7 +1122,7 @@ const Employees = () => {
                           height: 25,
                           color: "#1f6f8b",
                           fontSize: 9.5,
-                          fontWeight: 900,
+                          fontWeight: 700,
 
                           backgroundColor: "rgba(31, 111, 139,.08)",
 
@@ -1141,7 +1142,7 @@ const Employees = () => {
                           color: employee.agreement ? "#2f6b45" : "#8a807a",
 
                           fontSize: 10.5,
-                          fontWeight: 950,
+                          fontWeight: 700,
                           lineHeight: 1.55,
                         }}
                       >
@@ -1154,7 +1155,7 @@ const Employees = () => {
                         sx={{
                           color: "var(--aa-text-secondary)",
                           fontSize: 10.5,
-                          fontWeight: 850,
+                          fontWeight: 600,
                         }}
                       >
                         {employee.agreement
@@ -1168,7 +1169,7 @@ const Employees = () => {
                         sx={{
                           color: "var(--aa-text-secondary)",
                           fontSize: 10.5,
-                          fontWeight: 850,
+                          fontWeight: 600,
                         }}
                       >
                         {date(employee.hired_at)}
@@ -1197,7 +1198,7 @@ const Employees = () => {
                     sx={{
                       py: 8,
                       color: "var(--aa-text-tertiary)",
-                      fontWeight: 850,
+                      fontWeight: 600,
                     }}
                   >
                     {query
@@ -1569,7 +1570,7 @@ const Employees = () => {
               sx={{
                 color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
-                fontWeight: 800,
+                fontWeight: 600,
               }}
             >
               KELISHUV KO‘RINISHI
@@ -1580,7 +1581,7 @@ const Employees = () => {
                 mt: 0.6,
                 color: "var(--aa-text)",
                 fontSize: 13,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               {typeLabels[agreementForm.payment_type] || "-"} ·{" "}
@@ -1592,7 +1593,7 @@ const Employees = () => {
                 mt: 0.45,
                 color: "#2f6b45",
                 fontSize: 11,
-                fontWeight: 900,
+                fontWeight: 700,
               }}
             >
               {getAgreementValue(agreementForm)}
@@ -1624,7 +1625,7 @@ const heroPrimaryButtonSx = {
   color: "#ffffff !important",
   borderRadius: "13px",
   fontSize: 11,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
@@ -1649,7 +1650,7 @@ const heroSecondaryButtonSx = {
   backgroundColor: "rgba(255,255,255,.055)",
 
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   "&:hover": {
@@ -1664,7 +1665,7 @@ const secondaryButtonSx = {
   borderRadius: "11px",
   borderColor: "#d8cec1",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
@@ -1680,14 +1681,14 @@ const secondaryButtonSx = {
 const tableActionSx = {
   borderRadius: "9px",
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 };
 
 const dialogCancelSx = {
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  fontWeight: 850,
+  fontWeight: 600,
   textTransform: "none",
 };
 
@@ -1698,7 +1699,7 @@ const dialogPrimarySx = {
   color: "#ffffff",
   borderRadius: "11px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",

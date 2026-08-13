@@ -139,7 +139,7 @@ const PaymentTypeChip = ({ type }) => {
         height: 25,
         color: current[0],
         fontSize: 9.5,
-        fontWeight: 900,
+        fontWeight: 700,
         backgroundColor: current[1],
         border: `1px solid ${current[2]}`,
       }}
@@ -977,7 +977,7 @@ const WorkerPayments = () => {
                   sx={{
                     color: "var(--aa-text)",
                     fontSize: 14,
-                    fontWeight: 950,
+                    fontWeight: 700,
                   }}
                 >
                   Oyligi qolgan ishchilar
@@ -1000,7 +1000,7 @@ const WorkerPayments = () => {
                 sx={{
                   color: "#6e1622",
                   fontSize: 9.5,
-                  fontWeight: 900,
+                  fontWeight: 700,
 
                   backgroundColor: "rgba(110, 22, 34,.07)",
                 }}
@@ -1024,7 +1024,7 @@ const WorkerPayments = () => {
                       width: 45,
                       height: 45,
                       color: "#fff",
-                      fontWeight: 950,
+                      fontWeight: 700,
 
                       background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
                     }}
@@ -1043,7 +1043,7 @@ const WorkerPayments = () => {
                       sx={{
                         color: "var(--aa-text)",
                         fontSize: 12,
-                        fontWeight: 900,
+                        fontWeight: 700,
                       }}
                     >
                       {item.first_name} {item.last_name}
@@ -1054,7 +1054,7 @@ const WorkerPayments = () => {
                         mt: 0.3,
                         color: "#6e1622",
                         fontSize: 14,
-                        fontWeight: 950,
+                        fontWeight: 700,
                       }}
                     >
                       {money(item.remaining)}
@@ -1096,7 +1096,7 @@ const WorkerPayments = () => {
               sx={{
                 color: "var(--aa-text-tertiary)",
                 fontSize: 11,
-                fontWeight: 800,
+                fontWeight: 600,
               }}
             >
               Oyligi qolgan ishchilar yo‘q.
@@ -1119,7 +1119,7 @@ const WorkerPayments = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 15,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               To‘lovlar tarixi
@@ -1143,7 +1143,7 @@ const WorkerPayments = () => {
               height: 25,
               color: "#6e1622",
               fontSize: 9.5,
-              fontWeight: 900,
+              fontWeight: 700,
 
               backgroundColor: "rgba(110, 22, 34,.07)",
             }}
@@ -1207,7 +1207,7 @@ const WorkerPayments = () => {
                             width: 47,
                             height: 47,
                             color: "#fff",
-                            fontWeight: 950,
+                            fontWeight: 700,
 
                             background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
@@ -1230,7 +1230,7 @@ const WorkerPayments = () => {
 
                               fontSize: 12.5,
 
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             {payment.worker_name || "-"}
@@ -1261,7 +1261,7 @@ const WorkerPayments = () => {
 
                           fontSize: 11.5,
 
-                          fontWeight: 950,
+                          fontWeight: 700,
                         }}
                       >
                         Naqd: {money(payment.amount)}
@@ -1275,7 +1275,7 @@ const WorkerPayments = () => {
 
                             fontSize: 9.5,
 
-                            fontWeight: 800,
+                            fontWeight: 600,
                           }}
                         >
                           Avansdan: {money(payment.advance_deduction)}
@@ -1341,7 +1341,7 @@ const WorkerPayments = () => {
                     sx={{
                       py: 8,
                       color: "var(--aa-text-tertiary)",
-                      fontWeight: 850,
+                      fontWeight: 600,
                     }}
                   >
                     To‘lovlar topilmadi
@@ -1444,7 +1444,7 @@ const WorkerPayments = () => {
                   sx={{
                     color: "var(--aa-text)",
                     fontSize: 14,
-                    fontWeight: 950,
+                    fontWeight: 700,
                   }}
                 >
                   Tanlangan ishchi balansi
@@ -1634,7 +1634,7 @@ const WorkerPayments = () => {
               <Typography
                 sx={{
                   fontSize: 11,
-                  fontWeight: 900,
+                  fontWeight: 700,
                 }}
               >
                 Kiritilgan {money(enteredPaymentTotal)} summa ishchining qolgan{" "}
@@ -1756,7 +1756,7 @@ const WorkerPayments = () => {
                     <TableRow key={advance.id} hover>
                       <TableCell
                         sx={{
-                          fontWeight: 900,
+                          fontWeight: 700,
 
                           color: "var(--aa-text)",
                         }}
@@ -1766,7 +1766,7 @@ const WorkerPayments = () => {
 
                       <TableCell
                         sx={{
-                          fontWeight: 950,
+                          fontWeight: 700,
 
                           color: "#6e1622",
                         }}
@@ -1787,7 +1787,7 @@ const WorkerPayments = () => {
                       sx={{
                         py: 6,
                         color: "var(--aa-text-tertiary)",
-                        fontWeight: 850,
+                        fontWeight: 600,
                       }}
                     >
                       Avans yozuvlari topilmadi
@@ -1943,7 +1943,7 @@ const WorkerPayments = () => {
 const eyebrowSx = {
   color: "#d9b782 !important",
   fontSize: 10,
-  fontWeight: 950,
+  fontWeight: 700,
   letterSpacing: ".13em",
   textTransform: "uppercase",
 };
@@ -1958,7 +1958,7 @@ const heroTitleSx = {
   },
 
   lineHeight: 1.08,
-  fontWeight: 950,
+  fontWeight: 700,
   letterSpacing: "-.045em",
 };
 
@@ -2020,7 +2020,7 @@ const heroPrimaryButtonSx = {
   color: "#fff !important",
   borderRadius: "13px",
   fontSize: 11.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
@@ -2045,7 +2045,7 @@ const heroSecondaryButtonSx = {
   backgroundColor: "rgba(255,255,255,.055)",
 
   fontSize: 11,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   "&:hover": {
@@ -2060,7 +2060,7 @@ const filterButtonSx = {
   borderRadius: "11px",
   borderColor: "#d8cec1",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
@@ -2103,14 +2103,14 @@ const tableHeaderBoxSx = {
 const tableActionSx = {
   borderRadius: "9px",
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 };
 
 const dialogCancelSx = {
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  fontWeight: 850,
+  fontWeight: 600,
   textTransform: "none",
 };
 
@@ -2121,7 +2121,7 @@ const dialogPrimarySx = {
   color: "#fff",
   borderRadius: "11px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",
@@ -2135,7 +2135,7 @@ const dialogPrimarySx = {
 
 const deleteButtonSx = {
   borderRadius: "11px",
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 };
 
@@ -2146,7 +2146,7 @@ const tableSx = {
     py: 1.55,
     color: "var(--aa-text-tertiary)",
     fontSize: 9.5,
-    fontWeight: 900,
+    fontWeight: 700,
     letterSpacing: ".045em",
     textTransform: "uppercase",
 
@@ -2174,7 +2174,7 @@ const smallTableSx = {
     py: 1.45,
     color: "var(--aa-text-tertiary)",
     fontSize: 9.5,
-    fontWeight: 900,
+    fontWeight: 700,
     textTransform: "uppercase",
 
     backgroundColor: "var(--aa-surface-muted)",

@@ -235,7 +235,7 @@ const ClientMetric = ({ label, value, helper, tone = "red" }) => {
           color: currentTone.color,
           backgroundColor: currentTone.background,
           fontSize: 13,
-          fontWeight: 950,
+          fontWeight: 700,
         }}
       >
         {label.charAt(0)}
@@ -246,7 +246,7 @@ const ClientMetric = ({ label, value, helper, tone = "red" }) => {
           mt: 1.5,
           color: "rgba(255,255,255,.46) !important",
           fontSize: 10,
-          fontWeight: 750,
+          fontWeight: 600,
         }}
       >
         {label}
@@ -258,7 +258,7 @@ const ClientMetric = ({ label, value, helper, tone = "red" }) => {
           mt: 0.65,
           color: "#ffffff !important",
           fontSize: 19,
-          fontWeight: 950,
+          fontWeight: 700,
           letterSpacing: "-.035em",
         }}
       >
@@ -290,7 +290,7 @@ const ClientRoleChip = ({ role }) => {
         height: 25,
         color: isClient ? "#2f6b45" : "#6d28d9",
         fontSize: 10,
-        fontWeight: 900,
+        fontWeight: 700,
         border: `1px solid ${isClient ? "rgba(78, 156, 107,.20)" : "rgba(139,92,246,.20)"}`,
         backgroundColor: isClient ? "rgba(78, 156, 107,.10)" : "rgba(139,92,246,.10)",
       }}
@@ -738,7 +738,7 @@ const Clients = () => {
                 sx={{
                   color: "#d9b782 !important",
                   fontSize: 10,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: ".13em",
                   textTransform: "uppercase",
                 }}
@@ -757,8 +757,9 @@ const Clients = () => {
                   md: 36,
                 },
                 lineHeight: 1.08,
-                fontWeight: 950,
-                letterSpacing: "-.045em",
+                fontFamily: "var(--aa-display)",
+                fontWeight: 400,
+                letterSpacing: "-.024em",
               }}
             >
               Mijozlar va hisob-kitoblar
@@ -786,7 +787,7 @@ const Clients = () => {
                   color: "#ffffff !important",
                   borderRadius: "13px",
                   fontSize: 12,
-                  fontWeight: 900,
+                  fontWeight: 700,
                   textTransform: "none",
                   background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
                   boxShadow: "0 12px 26px rgba(77, 15, 24,.30)",
@@ -943,7 +944,7 @@ const Clients = () => {
               borderRadius: "11px",
               border: "1px solid #d8cec1",
               fontSize: 11.5,
-              fontWeight: 850,
+              fontWeight: 600,
               textTransform: "none",
 
               "&:hover": {
@@ -986,7 +987,7 @@ const Clients = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 15,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               Mijozlar ro‘yxati
@@ -1010,7 +1011,7 @@ const Clients = () => {
               height: 25,
               color: "#6e1622",
               fontSize: 9.5,
-              fontWeight: 900,
+              fontWeight: 700,
               backgroundColor: "rgba(110, 22, 34,.07)",
             }}
           />
@@ -1025,7 +1026,7 @@ const Clients = () => {
                 py: 1.6,
                 color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
-                fontWeight: 900,
+                fontWeight: 700,
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
                 backgroundColor: "var(--aa-surface-muted)",
@@ -1108,7 +1109,7 @@ const Clients = () => {
                               height: 45,
                               color: "#ffffff",
                               fontSize: 12,
-                              fontWeight: 900,
+                              fontWeight: 700,
                               background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
                               border: "3px solid #ffffff",
                               boxShadow: "0 8px 20px rgba(77, 15, 24,.16)",
@@ -1123,7 +1124,7 @@ const Clients = () => {
                               sx={{
                                 color: "var(--aa-text)",
                                 fontSize: 12.5,
-                                fontWeight: 900,
+                                fontWeight: 700,
                               }}
                             >
                               {client.first_name} {client.last_name}
@@ -1156,7 +1157,7 @@ const Clients = () => {
                           sx={{
                             color: "var(--aa-text)",
                             fontSize: 10.5,
-                            fontWeight: 850,
+                            fontWeight: 600,
                           }}
                         >
                           {money(finance.total_amount)}
@@ -1168,7 +1169,7 @@ const Clients = () => {
                           sx={{
                             color: "#2f6b45",
                             fontSize: 10.5,
-                            fontWeight: 850,
+                            fontWeight: 600,
                           }}
                         >
                           {money(finance.paid_amount)}
@@ -1183,7 +1184,7 @@ const Clients = () => {
                             height: 24,
                             color: debt > 0 ? "#a06a12" : "#2f6b45",
                             fontSize: 9,
-                            fontWeight: 900,
+                            fontWeight: 700,
                             backgroundColor:
                               debt > 0 ? "rgba(160, 106, 18,.12)" : "rgba(78, 156, 107,.10)",
                           }}
@@ -1237,7 +1238,7 @@ const Clients = () => {
                                     color: "#6e1622",
                                     borderColor: "rgba(110, 22, 34,.20)",
                                     fontSize: 9.5,
-                                    fontWeight: 900,
+                                    fontWeight: 700,
                                     textTransform: "none",
                                   }}
                                 >
@@ -1258,7 +1259,7 @@ const Clients = () => {
                                   sx={{
                                     borderRadius: "9px",
                                     fontSize: 9.5,
-                                    fontWeight: 900,
+                                    fontWeight: 700,
                                     textTransform: "none",
                                   }}
                                 >
@@ -1280,7 +1281,7 @@ const Clients = () => {
                     sx={{
                       py: 8,
                       color: "var(--aa-text-tertiary)",
-                      fontWeight: 850,
+                      fontWeight: 600,
                     }}
                   >
                     Mijozlar topilmadi
@@ -1411,7 +1412,7 @@ const ClientFormDialog = ({
         sx={{
           color: "#ffffff !important",
           fontSize: 19,
-          fontWeight: 950,
+          fontWeight: 700,
         }}
       >
         {title}
@@ -1448,7 +1449,7 @@ const ClientFormDialog = ({
               width: 54,
               height: 54,
               backgroundColor: "#6e1622",
-              fontWeight: 900,
+              fontWeight: 700,
             }}
           >
             {getInitials(selectedClient)}
@@ -1459,7 +1460,7 @@ const ClientFormDialog = ({
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 13.5,
-                fontWeight: 900,
+                fontWeight: 700,
               }}
             >
               {selectedClient.first_name} {selectedClient.last_name}
@@ -1573,7 +1574,7 @@ const ClientFormDialog = ({
         onClick={onClose}
         sx={{
           color: "var(--aa-text-secondary)",
-          fontWeight: 850,
+          fontWeight: 600,
           textTransform: "none",
         }}
       >
@@ -1588,7 +1589,7 @@ const ClientFormDialog = ({
           minWidth: 170,
           minHeight: 42,
           borderRadius: "12px",
-          fontWeight: 900,
+          fontWeight: 700,
           textTransform: "none",
           background: "linear-gradient(135deg,#4d0f18,#7a1826)",
         }}
@@ -1623,7 +1624,7 @@ const ConfirmDialog = ({
     <DialogTitle
       sx={{
         fontSize: 18,
-        fontWeight: 950,
+        fontWeight: 700,
       }}
     >
       {title}
@@ -1646,7 +1647,7 @@ const ConfirmDialog = ({
         onClick={onClose}
         sx={{
           color: "var(--aa-text-secondary)",
-          fontWeight: 850,
+          fontWeight: 600,
           textTransform: "none",
         }}
       >
@@ -1660,7 +1661,7 @@ const ConfirmDialog = ({
         disabled={loading}
         sx={{
           borderRadius: "11px",
-          fontWeight: 900,
+          fontWeight: 700,
           textTransform: "none",
         }}
       >

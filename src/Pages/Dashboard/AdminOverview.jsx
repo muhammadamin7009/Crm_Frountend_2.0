@@ -279,7 +279,7 @@ const KpiCard = ({ label, value, helper, icon, tone = "red", onClick }) => {
             sx={{
               color: "var(--aa-text-secondary)",
               fontSize: 12,
-              fontWeight: 750,
+              fontWeight: 600,
             }}
           >
             {label}
@@ -288,12 +288,13 @@ const KpiCard = ({ label, value, helper, icon, tone = "red", onClick }) => {
           <Typography
             noWrap
             sx={{
-              mt: 1.1,
+              mt: 1.2,
               color: "var(--aa-text)",
-              fontSize: 21,
-              lineHeight: 1.2,
-              fontWeight: 950,
-              letterSpacing: "-.035em",
+              fontFamily: "var(--aa-display)",
+              fontSize: 24,
+              lineHeight: 1.15,
+              fontWeight: 400,
+              letterSpacing: "-.018em",
             }}
           >
             {value}
@@ -371,7 +372,7 @@ const Section = ({ title, subtitle, action, children, className = "" }) => (
           sx={{
             color: "var(--aa-text)",
             fontSize: 15,
-            fontWeight: 900,
+            fontWeight: 700,
             letterSpacing: "-.02em",
           }}
         >
@@ -429,7 +430,7 @@ const Empty = ({ children }) => (
       sx={{
         color: "var(--aa-text-tertiary)",
         fontSize: 12,
-        fontWeight: 650,
+        fontWeight: 600,
       }}
     >
       {children}
@@ -466,7 +467,7 @@ const ProgressList = ({ items, valueKey, color, quantity = false }) => {
                 sx={{
                   color: "var(--aa-text-secondary)",
                   fontSize: 11,
-                  fontWeight: 900,
+                  fontWeight: 700,
                 }}
               >
                 {item.group_name || "Noma'lum"}
@@ -476,7 +477,7 @@ const ProgressList = ({ items, valueKey, color, quantity = false }) => {
                 sx={{
                   color: "var(--aa-text-tertiary)",
                   fontSize: 10,
-                  fontWeight: 750,
+                  fontWeight: 600,
                 }}
               >
                 {quantity ? number(value) : money(value)}
@@ -614,7 +615,7 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#8c1d2b" }) => {
                 sm: 27,
               },
               lineHeight: 1.1,
-              fontWeight: 950,
+              fontWeight: 700,
               letterSpacing: "-.04em",
             }}
           >
@@ -634,7 +635,7 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#8c1d2b" }) => {
               sx={{
                 color: growth >= 0 ? "#2f6b45" : "#7a1826",
                 fontSize: 11,
-                fontWeight: 900,
+                fontWeight: 700,
               }}
             >
               {growth >= 0 ? "+" : ""}
@@ -645,7 +646,7 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#8c1d2b" }) => {
               sx={{
                 color: "var(--aa-text-tertiary)",
                 fontSize: 10.5,
-                fontWeight: 650,
+                fontWeight: 600,
               }}
             >
               o‘tgan oyga nisbatan
@@ -667,7 +668,7 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#8c1d2b" }) => {
             sx={{
               color: "var(--aa-text-tertiary)",
               fontSize: 9,
-              fontWeight: 850,
+              fontWeight: 600,
               letterSpacing: ".07em",
               textTransform: "uppercase",
             }}
@@ -680,7 +681,7 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#8c1d2b" }) => {
               mt: 0.55,
               color,
               fontSize: 12,
-              fontWeight: 950,
+              fontWeight: 700,
             }}
           >
             {money(activeItem.value)}
@@ -829,7 +830,7 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#8c1d2b" }) => {
                 py: 1,
                 color: "var(--aa-text-tertiary)",
                 fontSize: 11,
-                fontWeight: 750,
+                fontWeight: 600,
                 borderRadius: "999px",
                 backgroundColor: "var(--aa-surface-elevated)",
                 border: "1px solid var(--aa-border)",
@@ -943,7 +944,7 @@ const ActivityDonut = ({ items }) => {
             sx={{
               color: "var(--aa-text)",
               fontSize: 18,
-              fontWeight: 950,
+              fontWeight: 700,
               letterSpacing: "-.035em",
             }}
           >
@@ -955,7 +956,7 @@ const ActivityDonut = ({ items }) => {
               mt: 0.4,
               color: "var(--aa-text-tertiary)",
               fontSize: 9.5,
-              fontWeight: 750,
+              fontWeight: 600,
             }}
           >
             umumiy hajm
@@ -1004,7 +1005,7 @@ const ActivityDonut = ({ items }) => {
                 sx={{
                   color: "var(--aa-text-secondary)",
                   fontSize: 10.5,
-                  fontWeight: 900,
+                  fontWeight: 700,
                 }}
               >
                 {item.label}
@@ -1026,7 +1027,7 @@ const ActivityDonut = ({ items }) => {
               sx={{
                 color: item.color,
                 fontSize: 11,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               {item.percentage}%
@@ -1137,7 +1138,7 @@ const TrendSummaryCards = ({ items = [] }) => {
               sx={{
                 color: "var(--aa-text-secondary)",
                 fontSize: 9.5,
-                fontWeight: 850,
+                fontWeight: 600,
               }}
             >
               {card.label}
@@ -1149,7 +1150,7 @@ const TrendSummaryCards = ({ items = [] }) => {
             sx={{
               color: card.color,
               fontSize: 15,
-              fontWeight: 950,
+              fontWeight: 700,
               letterSpacing: "-.025em",
             }}
           >
@@ -1182,7 +1183,7 @@ const LinkButton = ({ children, onClick }) => (
       color: "#6e1622",
       borderRadius: 2,
       fontSize: 11,
-      fontWeight: 900,
+      fontWeight: 700,
       textTransform: "none",
 
       "&:hover": {
@@ -1749,7 +1750,7 @@ const AdminOverview = ({ user }) => {
           sx={{
             color: "var(--aa-text-tertiary)",
             fontSize: 13,
-            fontWeight: 750,
+            fontWeight: 600,
           }}
         >
           Bosh sahifa ma’lumotlari yuklanmoqda...
@@ -1873,7 +1874,7 @@ const AdminOverview = ({ user }) => {
               sx={{
                 color: "#6e1622",
                 fontSize: 10,
-                fontWeight: 950,
+                fontWeight: 700,
                 letterSpacing: ".13em",
                 textTransform: "uppercase",
               }}
@@ -1891,8 +1892,9 @@ const AdminOverview = ({ user }) => {
                 sm: 30,
               },
               lineHeight: 1.15,
-              fontWeight: 950,
-              letterSpacing: "-.04em",
+              fontFamily: "var(--aa-display)",
+              fontWeight: 400,
+              letterSpacing: "-.024em",
             }}
           >
             Asosiy ko'rsatkichlar
@@ -1921,7 +1923,7 @@ const AdminOverview = ({ user }) => {
               component="span"
               sx={{
                 color: "#6e1622",
-                fontWeight: 850,
+                fontWeight: 600,
               }}
             >
               {user?.first_name || "Administrator"}
@@ -1975,7 +1977,7 @@ const AdminOverview = ({ user }) => {
                   display: "block",
                   color: "var(--aa-text-tertiary)",
                   fontSize: 9.5,
-                  fontWeight: 800,
+                  fontWeight: 600,
                   letterSpacing: ".1em",
                   textTransform: "uppercase",
                 }}
@@ -1990,7 +1992,7 @@ const AdminOverview = ({ user }) => {
                   display: "block",
                   color: "var(--aa-text)",
                   fontSize: 13,
-                  fontWeight: 900,
+                  fontWeight: 700,
                 }}
               >
                 {describeRange(appliedRange)}
@@ -2003,7 +2005,7 @@ const AdminOverview = ({ user }) => {
                 flexShrink: 0,
                 color: "var(--aa-brand-text)",
                 fontSize: 11,
-                fontWeight: 900,
+                fontWeight: 700,
               }}
             >
               {periodOpen ? "Yopish" : "O'zgartirish"}
@@ -2301,7 +2303,7 @@ const AdminOverview = ({ user }) => {
                         sx={{
                           color: "var(--aa-text-secondary)",
                           fontSize: 10.5,
-                          fontWeight: 900,
+                          fontWeight: 700,
                         }}
                       >
                         {item.label}
@@ -2325,7 +2327,7 @@ const AdminOverview = ({ user }) => {
                         maxWidth: 125,
                         color: "var(--aa-text)",
                         fontSize: 10,
-                        fontWeight: 950,
+                        fontWeight: 700,
                       }}
                     >
                       {item.value}
@@ -2470,7 +2472,7 @@ const AdminOverview = ({ user }) => {
                               sx={{
                                 color: "var(--aa-text-secondary)",
                                 fontSize: 11,
-                                fontWeight: 900,
+                                fontWeight: 700,
                               }}
                             >
                               {client.group_name || "Mijoz"}
@@ -2550,7 +2552,7 @@ const AdminOverview = ({ user }) => {
                             sx={{
                               color: "var(--aa-text-secondary)",
                               fontSize: 11,
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             {purchase.supplier_name || "Ta’minotchi"}
@@ -2665,7 +2667,7 @@ const AdminOverview = ({ user }) => {
                               sx={{
                                 color: "var(--aa-text)",
                                 fontSize: 13,
-                                fontWeight: 950,
+                                fontWeight: 700,
                               }}
                             >
                               {warehouse.name}
@@ -2714,7 +2716,7 @@ const AdminOverview = ({ user }) => {
                                 sx={{
                                   color: "var(--aa-text-tertiary)",
                                   fontSize: 9,
-                                  fontWeight: 750,
+                                  fontWeight: 600,
                                 }}
                               >
                                 {label}
@@ -2725,7 +2727,7 @@ const AdminOverview = ({ user }) => {
                                   mt: 0.6,
                                   color: "var(--aa-text)",
                                   fontSize: 14,
-                                  fontWeight: 950,
+                                  fontWeight: 700,
                                 }}
                               >
                                 {number(value)}
@@ -2809,7 +2811,7 @@ const AdminOverview = ({ user }) => {
                     sx={{
                       color: "#ffffff !important",
                       fontSize: 18,
-                      fontWeight: 950,
+                      fontWeight: 700,
                     }}
                   >
                     Moliyaviy holat
@@ -2833,7 +2835,7 @@ const AdminOverview = ({ user }) => {
                     sx={{
                       color: "rgba(255,255,255,.68) !important",
                       fontSize: 10,
-                      fontWeight: 850,
+                      fontWeight: 600,
                     }}
                   >
                     Jonli ma’lumot
@@ -2933,7 +2935,7 @@ const DarkBalanceItem = ({ icon, iconTone, label, value, valueColor = "#ffffff",
           borderRadius: "12px",
           color: tone.color,
           fontSize: 14,
-          fontWeight: 950,
+          fontWeight: 700,
           backgroundColor: tone.bg,
           border: `1px solid ${tone.border}`,
         }}
@@ -3039,7 +3041,7 @@ const presetButtonSx = {
   color: "#7d716a",
   borderRadius: 2.5,
   fontSize: 11,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   "&:hover": {
@@ -3085,7 +3087,7 @@ const applyButtonSx = {
   color: "#ffffff",
   borderRadius: 2.7,
   fontSize: 11.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",
   boxShadow: "0 9px 20px rgba(77, 15, 24,.17)",
@@ -3102,7 +3104,7 @@ const tabSx = {
   color: "#747e8e",
   borderRadius: 2.5,
   fontSize: 11,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 };
 
@@ -3131,7 +3133,7 @@ const warningChipSx = {
   color: "#a55b0b",
   backgroundColor: "rgba(160, 106, 18,.12)",
   fontSize: 9,
-  fontWeight: 900,
+  fontWeight: 700,
 };
 
 const successChipSx = {
@@ -3139,14 +3141,14 @@ const successChipSx = {
   color: "#2f6b45",
   backgroundColor: "rgba(78, 156, 107,.10)",
   fontSize: 9,
-  fontWeight: 900,
+  fontWeight: 700,
 };
 
 const redSoftChipSx = {
   height: 25,
   color: "#6e1622",
   fontSize: 9,
-  fontWeight: 900,
+  fontWeight: 700,
   backgroundColor: "rgba(110, 22, 34,.07)",
 };
 
@@ -3154,7 +3156,7 @@ const neutralChipSx = {
   height: 24,
   color: "var(--aa-text-secondary)",
   fontSize: 8.5,
-  fontWeight: 850,
+  fontWeight: 600,
   border: "1px solid var(--aa-border)",
   backgroundColor: "var(--aa-surface-muted)",
 };
@@ -3164,7 +3166,7 @@ const clientAvatarSx = {
   height: 31,
   color: "#6e1622",
   fontSize: 11,
-  fontWeight: 900,
+  fontWeight: 700,
   backgroundColor: "rgba(110, 22, 34,.075)",
 };
 
@@ -3216,7 +3218,7 @@ const darkBalanceLabelSx = {
   color: "rgba(255,255,255,.50) !important",
   fontSize: 10.5,
   lineHeight: 1.3,
-  fontWeight: 750,
+  fontWeight: 600,
 };
 
 const darkBalanceValueSx = {
@@ -3228,7 +3230,7 @@ const darkBalanceValueSx = {
     sm: 21,
   },
   lineHeight: 1.15,
-  fontWeight: 950,
+  fontWeight: 700,
   letterSpacing: "-.035em",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
@@ -3257,7 +3259,7 @@ const tableSx = {
     color: "var(--aa-text-tertiary)",
     backgroundColor: "var(--aa-surface-muted)",
     fontSize: 9.5,
-    fontWeight: 900,
+    fontWeight: 700,
     letterSpacing: ".035em",
     textTransform: "uppercase",
   },

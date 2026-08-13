@@ -65,7 +65,7 @@ const primaryButtonSx = {
   borderRadius: "15px",
   color: "#ffffff",
   fontSize: 15,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   background: "linear-gradient(135deg,#4d0f18 0%,#7a1826 100%)",
   boxShadow: "0 14px 30px rgba(77, 15, 24,.22)",
@@ -88,7 +88,7 @@ const secondaryButtonSx = {
   minHeight: 48,
   borderRadius: "13px",
   color: "#4d0f18",
-  fontWeight: 850,
+  fontWeight: 600,
   textTransform: "none",
 
   "&:hover": {
@@ -408,7 +408,7 @@ const Login = () => {
                     sx={{
                       color: "#6e1622",
                       fontSize: 20,
-                      fontWeight: 950,
+                      fontWeight: 700,
                     }}
                   >
                     {companyTitle.charAt(0)}
@@ -422,7 +422,7 @@ const Login = () => {
                   sx={{
                     color: "var(--aa-text)",
                     fontSize: 18,
-                    fontWeight: 950,
+                    fontWeight: 700,
                   }}
                 >
                   {companyTitle}
@@ -449,7 +449,7 @@ const Login = () => {
                   color: "var(--aa-text)",
                   fontSize: { xs: 34, sm: 43 },
                   lineHeight: 1.08,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: "-0.045em",
                 }}
               >
@@ -523,7 +523,7 @@ const Login = () => {
                         py: 1.2,
                         textAlign: "center",
                         color: "var(--aa-text)",
-                        fontWeight: 850,
+                        fontWeight: 600,
                         borderRadius: "10px",
                         border: "1px solid rgba(160, 106, 18,.22)",
                         backgroundColor: "var(--aa-surface-solid)",
@@ -545,7 +545,7 @@ const Login = () => {
                     borderRadius: "13px",
                     color: "#4d0f18",
                     borderColor: "rgba(110, 22, 34,.22)",
-                    fontWeight: 850,
+                    fontWeight: 600,
                     textTransform: "none",
                   }}
                 >
@@ -608,7 +608,7 @@ const Login = () => {
                         py: 1.2,
                         wordBreak: "break-all",
                         color: "#241d1a",
-                        fontWeight: 850,
+                        fontWeight: 600,
                         letterSpacing: ".08em",
                         borderRadius: "10px",
                         backgroundColor: "var(--aa-surface-solid)",
@@ -623,7 +623,7 @@ const Login = () => {
                       sx={{
                         mt: 1,
                         color: "#6e1622",
-                        fontWeight: 850,
+                        fontWeight: 600,
                         textTransform: "none",
                       }}
                     >
@@ -842,7 +842,7 @@ const Login = () => {
                   style={{
                     color: "#6e1622",
                     fontSize: "13.5px",
-                    fontWeight: 900,
+                    fontWeight: 700,
                     textDecoration: "none",
                   }}
                 >

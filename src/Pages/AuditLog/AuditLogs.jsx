@@ -158,7 +158,7 @@ const ActionChip = ({ action }) => {
         px: 0.3,
         color: current.color,
         fontSize: 9.5,
-        fontWeight: 900,
+        fontWeight: 700,
 
         backgroundColor: current.background,
 
@@ -177,7 +177,7 @@ const EntityChip = ({ entity }) => (
       px: 0.3,
       color: "#1f6f8b",
       fontSize: 9.5,
-      fontWeight: 900,
+      fontWeight: 700,
 
       backgroundColor: "rgba(31, 111, 139,.08)",
 
@@ -204,7 +204,7 @@ const StatusChip = ({ status }) => {
         color: unknown ? "#7d716a" : success ? "#2f6b45" : "#7a1826",
 
         fontSize: 9,
-        fontWeight: 900,
+        fontWeight: 700,
 
         backgroundColor: unknown
           ? "#f4f0ea"
@@ -238,7 +238,7 @@ const DetailItem = ({ label, value, accent = false }) => (
       sx={{
         color: "var(--aa-text-tertiary)",
         fontSize: 9,
-        fontWeight: 800,
+        fontWeight: 600,
       }}
     >
       {label}
@@ -251,7 +251,7 @@ const DetailItem = ({ label, value, accent = false }) => (
         color: accent ? "var(--aa-brand-500)" : "var(--aa-text)",
 
         fontSize: 10.5,
-        fontWeight: 900,
+        fontWeight: 700,
         lineHeight: 1.55,
         wordBreak: "break-word",
       }}
@@ -451,7 +451,7 @@ const AuditLogs = () => {
                   color: "#d9b782 !important",
 
                   fontSize: 10,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: ".13em",
                   textTransform: "uppercase",
                 }}
@@ -473,8 +473,9 @@ const AuditLogs = () => {
                 },
 
                 lineHeight: 1.08,
-                fontWeight: 950,
-                letterSpacing: "-.045em",
+                fontFamily: "var(--aa-display)",
+                fontWeight: 400,
+                letterSpacing: "-.024em",
               }}
             >
               Amallar tarixi
@@ -512,7 +513,7 @@ const AuditLogs = () => {
                 backgroundColor: "rgba(255,255,255,.055)",
 
                 fontSize: 11,
-                fontWeight: 900,
+                fontWeight: 700,
                 textTransform: "none",
 
                 "&:hover": {
@@ -690,7 +691,7 @@ const AuditLogs = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 15,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               Tizim amallari
@@ -714,7 +715,7 @@ const AuditLogs = () => {
               height: 25,
               color: "#6e1622",
               fontSize: 9.5,
-              fontWeight: 900,
+              fontWeight: 700,
 
               backgroundColor: "rgba(110, 22, 34,.07)",
             }}
@@ -738,7 +739,7 @@ const AuditLogs = () => {
                 py: 1.55,
                 color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
-                fontWeight: 900,
+                fontWeight: 700,
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
                 backgroundColor: "var(--aa-surface-muted)",
@@ -801,7 +802,7 @@ const AuditLogs = () => {
                         sx={{
                           color: "var(--aa-text-secondary)",
                           fontSize: 10,
-                          fontWeight: 850,
+                          fontWeight: 600,
                           whiteSpace: "nowrap",
                         }}
                       >
@@ -824,7 +825,7 @@ const AuditLogs = () => {
                             flexShrink: 0,
                             color: "#ffffff",
                             fontSize: 12,
-                            fontWeight: 950,
+                            fontWeight: 700,
 
                             background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
@@ -847,7 +848,7 @@ const AuditLogs = () => {
                               maxWidth: 205,
                               color: "var(--aa-text)",
                               fontSize: 12,
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             {getFullName(row)}
@@ -882,7 +883,7 @@ const AuditLogs = () => {
                           sx={{
                             color: "var(--aa-text-secondary)",
                             fontSize: 10,
-                            fontWeight: 900,
+                            fontWeight: 700,
                           }}
                         >
                           #{row.entity_id || "-"}
@@ -898,7 +899,7 @@ const AuditLogs = () => {
                           maxWidth: 380,
                           color: "var(--aa-text-secondary)",
                           fontSize: 10,
-                          fontWeight: 750,
+                          fontWeight: 600,
                           lineHeight: 1.55,
                           wordBreak: "break-word",
                         }}
@@ -916,7 +917,7 @@ const AuditLogs = () => {
                     sx={{
                       py: 8,
                       color: "var(--aa-text-tertiary)",
-                      fontWeight: 850,
+                      fontWeight: 600,
                     }}
                   >
                     Amallar tarixi topilmadi
@@ -997,7 +998,7 @@ const AuditLogs = () => {
                   color: "#ffffff !important",
 
                   fontSize: 19,
-                  fontWeight: 950,
+                  fontWeight: 700,
                 }}
               >
                 Amal tafsiloti
@@ -1049,7 +1050,7 @@ const AuditLogs = () => {
                     flexShrink: 0,
                     color: "#ffffff",
                     fontSize: 15,
-                    fontWeight: 950,
+                    fontWeight: 700,
 
                     background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
@@ -1064,7 +1065,7 @@ const AuditLogs = () => {
                     sx={{
                       color: "var(--aa-text)",
                       fontSize: 15,
-                      fontWeight: 950,
+                      fontWeight: 700,
                     }}
                   >
                     {getFullName(selectedLog)}
@@ -1133,7 +1134,7 @@ const AuditLogs = () => {
                   sx={{
                     color: "var(--aa-text-tertiary)",
                     fontSize: 9,
-                    fontWeight: 800,
+                    fontWeight: 600,
                   }}
                 >
                   API MANZIL
@@ -1144,7 +1145,7 @@ const AuditLogs = () => {
                     mt: 0.6,
                     color: "var(--aa-text-secondary)",
                     fontSize: 10.5,
-                    fontWeight: 850,
+                    fontWeight: 600,
                     lineHeight: 1.6,
                     wordBreak: "break-word",
                     userSelect: "text",
@@ -1163,7 +1164,7 @@ const AuditLogs = () => {
                         mb: 0.9,
                         color: "var(--aa-text)",
                         fontSize: 11,
-                        fontWeight: 950,
+                        fontWeight: 700,
                       }}
                     >
                       Qo‘shimcha ma’lumot
@@ -1220,7 +1221,7 @@ const AuditLogs = () => {
               color: "#ffffff",
               borderRadius: "11px",
               fontSize: 10.5,
-              fontWeight: 900,
+              fontWeight: 700,
               textTransform: "none",
 
               background: "linear-gradient(135deg,#4d0f18,#7a1826)",
@@ -1247,7 +1248,7 @@ const filterButtonSx = {
   borderRadius: "11px",
   borderColor: "#d8cec1",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 

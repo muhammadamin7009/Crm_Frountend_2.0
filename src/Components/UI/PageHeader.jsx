@@ -17,7 +17,7 @@ const PageHeader = ({ eyebrow, title, description, actions }) => (
             mb: 0.7,
             color: "var(--aa-brand-text)",
             fontSize: 11,
-            fontWeight: 850,
+            fontWeight: 600,
             letterSpacing: ".09em",
             textTransform: "uppercase",
           }}
@@ -25,14 +25,18 @@ const PageHeader = ({ eyebrow, title, description, actions }) => (
           {eyebrow}
         </Typography>
       )}
+      {/* Sahifa sarlavhasi antiqa shriftda. Ierarxiya og'irlikdan emas,
+          shrift OILASIDAN keladi: yonidagi yorliqlar grotesk, sarlavha esa
+          antiqa — farq darrov ko'zga tashlanadi. */}
       <Typography
         component="h1"
         sx={{
           color: "var(--aa-text)",
-          fontSize: { xs: 22, md: 32 },
-          fontWeight: 850,
-          letterSpacing: "-.04em",
-          lineHeight: 1.08,
+          fontFamily: "var(--aa-display)",
+          fontSize: { xs: 25, md: 36 },
+          fontWeight: 400,
+          letterSpacing: "-.022em",
+          lineHeight: 1.12,
         }}
       >
         {title}

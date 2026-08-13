@@ -97,7 +97,7 @@ const BatchLabelDialog = ({ open, batch, onClose }) => {
                 <Box
                   component="span"
                   onClick={() => setCopies(String(suggestedCopies))}
-                  sx={{ cursor: "pointer", fontWeight: 900, color: "var(--aa-brand-text)" }}
+                  sx={{ cursor: "pointer", fontWeight: 700, color: "var(--aa-brand-text)" }}
                 >
                   {suggestedCopies} ta qilib qo‘yish
                 </Box>
@@ -115,7 +115,7 @@ const BatchLabelDialog = ({ open, batch, onClose }) => {
               mb: 1,
               color: "var(--aa-text-tertiary)",
               fontSize: 9.5,
-              fontWeight: 900,
+              fontWeight: 700,
               letterSpacing: ".05em",
               textTransform: "uppercase",
             }}
@@ -146,7 +146,7 @@ const BatchLabelDialog = ({ open, batch, onClose }) => {
                 sx={{
                   color: "var(--aa-text)",
                   fontSize: 15,
-                  fontWeight: 900,
+                  fontWeight: 700,
                   textTransform: "uppercase",
                 }}
               >
@@ -157,7 +157,7 @@ const BatchLabelDialog = ({ open, batch, onClose }) => {
                 sx={{
                   color: "var(--aa-text)",
                   fontSize: 13,
-                  fontWeight: 800,
+                  fontWeight: 600,
                   whiteSpace: "nowrap",
                 }}
               >
@@ -180,7 +180,7 @@ const BatchLabelDialog = ({ open, batch, onClose }) => {
                     {key}
                   </Typography>
 
-                  <Typography sx={{ color: "var(--aa-text)", fontSize: 11, fontWeight: 800 }}>
+                  <Typography sx={{ color: "var(--aa-text)", fontSize: 11, fontWeight: 600 }}>
                     {value}
                   </Typography>
                 </Box>
@@ -200,7 +200,7 @@ const BatchLabelDialog = ({ open, batch, onClose }) => {
                 sx={{
                   color: "var(--aa-text)",
                   fontSize: 16,
-                  fontWeight: 900,
+                  fontWeight: 700,
                   letterSpacing: ".07em",
                 }}
               >
@@ -208,7 +208,7 @@ const BatchLabelDialog = ({ open, batch, onClose }) => {
               </Typography>
 
               {pairsPerBox.trim() && (
-                <Typography sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 800 }}>
+                <Typography sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 600 }}>
                   {pairsPerBox.trim()} par
                 </Typography>
               )}
@@ -230,7 +230,7 @@ const cancelSx = {
   color: "var(--aa-text-secondary)",
   borderRadius: "12px",
   fontSize: 11.5,
-  fontWeight: 850,
+  fontWeight: 600,
   textTransform: "none",
 };
 
@@ -240,7 +240,7 @@ const primarySx = {
   color: "#ffffff !important",
   borderRadius: "12px",
   fontSize: 11.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
   boxShadow: "0 12px 26px rgba(77, 15, 24,.28)",

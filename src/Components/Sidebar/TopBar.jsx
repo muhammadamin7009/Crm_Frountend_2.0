@@ -1079,7 +1079,7 @@ const topBarStyles = `
     color: #6e1622;
     font-size: 18px;
     line-height: 1.05;
-    font-weight: 950;
+    font-weight: 700;
     letter-spacing: -.035em;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1090,7 +1090,7 @@ const topBarStyles = `
     color: #b5873b;
     font-size: 9px;
     line-height: 1;
-    font-weight: 850;
+    font-weight: 600;
     letter-spacing: .18em;
   }
 
@@ -1103,7 +1103,7 @@ const topBarStyles = `
     color: #17110f;
     font-size: 21px !important;
     line-height: 1.15 !important;
-    font-weight: 900 !important;
+    font-weight: 700 !important;
     letter-spacing: -0.025em !important;
     white-space: nowrap;
   }
@@ -1123,7 +1123,7 @@ const topBarStyles = `
     color: #7d716a;
     font-size: 12px;
     line-height: 1;
-    font-weight: 650;
+    font-weight: 600;
     text-transform: capitalize;
   }
 
@@ -1170,7 +1170,7 @@ const topBarStyles = `
     flex: 0 0 auto;
     border-radius: 9px;
     font-size: 13px;
-    font-weight: 950;
+    font-weight: 700;
   }
 
   .aa-subscription-notice.warning
@@ -1190,7 +1190,7 @@ const topBarStyles = `
   .aa-subscription-notice p {
     font-size: 12px;
     line-height: 1.4;
-    font-weight: 800;
+    font-weight: 600;
   }
 
   .aa-subscription-notice.warning p {
@@ -1240,7 +1240,7 @@ const topBarStyles = `
     border-radius: 14px !important;
     text-transform: none !important;
     font-size: 13px !important;
-    font-weight: 850 !important;
+    font-weight: 600 !important;
     background:
       linear-gradient(
         135deg,
@@ -1309,7 +1309,7 @@ const topBarStyles = `
   .aa-quick-menu-header p:first-child {
     color: var(--aa-text);
     font-size: 14px;
-    font-weight: 900;
+    font-weight: 700;
   }
 
   .aa-quick-menu-header p:last-child {
@@ -1340,7 +1340,7 @@ const topBarStyles = `
     border-radius: 10px;
     color: #6e1622;
     font-size: 10px;
-    font-weight: 900;
+    font-weight: 700;
     background:
       rgba(110, 22, 34, 0.075);
   }
@@ -1353,7 +1353,7 @@ const topBarStyles = `
   .aa-quick-copy p:first-child {
     color: var(--aa-text);
     font-size: 13px;
-    font-weight: 850;
+    font-weight: 600;
   }
 
   .aa-quick-copy p:last-child {
@@ -1404,7 +1404,7 @@ const topBarStyles = `
     color: #17110f;
     font-size: 12.5px !important;
     line-height: 1.2 !important;
-    font-weight: 900 !important;
+    font-weight: 700 !important;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -1422,7 +1422,7 @@ const topBarStyles = `
     color: #7d716a;
     font-size: 10.5px;
     line-height: 1;
-    font-weight: 650;
+    font-weight: 600;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -1441,7 +1441,7 @@ const topBarStyles = `
     flex: 0 0 auto;
     color: #ffffff !important;
     font-size: 14px !important;
-    font-weight: 900 !important;
+    font-weight: 700 !important;
     background:
       linear-gradient(
         135deg,
@@ -1496,7 +1496,7 @@ const topBarStyles = `
     border-radius: 14px;
     background: #ffffff;
     font-size: 18px;
-    font-weight: 950;
+    font-weight: 700;
   }
 
   .aa-drawer-brand img {
@@ -1514,7 +1514,7 @@ const topBarStyles = `
     overflow: hidden;
     color: var(--aa-text);
     font-size: 14px;
-    font-weight: 900;
+    font-weight: 700;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -1546,7 +1546,7 @@ const topBarStyles = `
     padding: 0 10px;
     color: var(--aa-text-tertiary);
     font-size: 9px !important;
-    font-weight: 900 !important;
+    font-weight: 700 !important;
     letter-spacing: 0.14em !important;
     text-transform: uppercase;
   }
@@ -1586,7 +1586,7 @@ const topBarStyles = `
   .aa-drawer-theme-switch > div p:first-child {
     color: var(--aa-text);
     font-size: 12px;
-    font-weight: 850;
+    font-weight: 600;
   }
 
   .aa-drawer-theme-switch > div p:last-child {
@@ -1656,7 +1656,7 @@ const topBarStyles = `
     border-radius: 9px;
     color: var(--aa-text-tertiary);
     font-size: 9px;
-    font-weight: 900;
+    font-weight: 700;
     background: var(--aa-surface-muted);
   }
 
@@ -1664,7 +1664,7 @@ const topBarStyles = `
   .MuiListItemText-primary {
     color: inherit;
     font-size: 13px;
-    font-weight: 750;
+    font-weight: 600;
   }
 
   .aa-mobile-link-arrow {
@@ -1690,14 +1690,14 @@ const topBarStyles = `
     width: 39px;
     height: 39px;
     font-size: 13px;
-    font-weight: 900;
+    font-weight: 700;
     background: #6e1622;
   }
 
   .aa-mobile-user p:first-child {
     color: var(--aa-text);
     font-size: 12.5px;
-    font-weight: 850;
+    font-weight: 600;
   }
 
   .aa-mobile-user p:last-child {
@@ -1714,7 +1714,7 @@ const topBarStyles = `
     border-radius: 10px !important;
     text-transform: none !important;
     font-size: 12px !important;
-    font-weight: 800 !important;
+    font-weight: 600 !important;
     background:
       rgba(140, 29, 43, 0.09) !important;
   }
@@ -1756,7 +1756,7 @@ const topBarStyles = `
     color: #ffffff;
     font-size: 19px;
     line-height: 1.2;
-    font-weight: 900;
+    font-weight: 700;
   }
 
   .aa-dialog-title p {
@@ -1803,7 +1803,7 @@ const topBarStyles = `
   > p:first-child {
     color: var(--aa-text);
     font-size: 14px;
-    font-weight: 900;
+    font-weight: 700;
   }
 
   .aa-settings-heading
@@ -1818,7 +1818,7 @@ const topBarStyles = `
     height: 24px !important;
     color: #6e1622 !important;
     font-size: 10px !important;
-    font-weight: 850 !important;
+    font-weight: 600 !important;
     background:
       rgba(110, 22, 34, 0.07) !important;
   }
@@ -1836,7 +1836,7 @@ const topBarStyles = `
     flex: 0 0 auto;
     color: #6e1622 !important;
     font-size: 20px !important;
-    font-weight: 900 !important;
+    font-weight: 700 !important;
     border:
       1px solid var(--aa-border);
     border-radius: 17px !important;
@@ -1865,7 +1865,7 @@ const topBarStyles = `
     border-radius: 11px !important;
     text-transform: none !important;
     font-size: 12px !important;
-    font-weight: 850 !important;
+    font-weight: 600 !important;
   }
 
   .aa-outline-button {
@@ -1921,7 +1921,7 @@ const topBarStyles = `
     flex: 0 0 auto;
     color: #ffffff !important;
     font-size: 21px !important;
-    font-weight: 900 !important;
+    font-weight: 700 !important;
     background:
       linear-gradient(
         135deg,
@@ -1941,7 +1941,7 @@ const topBarStyles = `
   > p:first-child {
     color: var(--aa-text);
     font-size: 14px;
-    font-weight: 900;
+    font-weight: 700;
   }
 
   .aa-profile-main-copy
@@ -2019,7 +2019,7 @@ const topBarStyles = `
   > p:first-child {
     color: var(--aa-text);
     font-size: 14px;
-    font-weight: 900;
+    font-weight: 700;
   }
 
   .aa-session-heading
@@ -2069,7 +2069,7 @@ const topBarStyles = `
     color: #6e1622;
     border-radius: 11px;
     font-size: 12px;
-    font-weight: 900;
+    font-weight: 700;
     background:
       rgba(110, 22, 34, 0.07);
   }
@@ -2090,7 +2090,7 @@ const topBarStyles = `
     overflow: hidden;
     color: var(--aa-text);
     font-size: 12.5px;
-    font-weight: 850;
+    font-weight: 600;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -2099,7 +2099,7 @@ const topBarStyles = `
     height: 21px !important;
     color: #2f6b45 !important;
     font-size: 9px !important;
-    font-weight: 850 !important;
+    font-weight: 600 !important;
     background:
       rgba(78, 156, 107, 0.1) !important;
   }
@@ -2118,7 +2118,7 @@ const topBarStyles = `
     border-radius: 9px !important;
     text-transform: none !important;
     font-size: 11px !important;
-    font-weight: 800 !important;
+    font-weight: 600 !important;
     background:
       rgba(140, 29, 43, 0.045) !important;
   }

@@ -157,7 +157,7 @@ const RoleChip = ({ role }) => {
         height: 27,
         color: `${style.color} !important`,
         fontSize: 10,
-        fontWeight: 900,
+        fontWeight: 700,
         border: `1px solid ${style.borderColor}`,
         backgroundColor: `${style.backgroundColor} !important`,
       }}
@@ -180,7 +180,7 @@ const HeroInfoItem = ({ label, value }) => (
       sx={{
         color: "rgba(255,255,255,.40) !important",
         fontSize: 9.5,
-        fontWeight: 750,
+        fontWeight: 600,
       }}
     >
       {label}
@@ -192,7 +192,7 @@ const HeroInfoItem = ({ label, value }) => (
         mt: 0.7,
         color: "#ffffff !important",
         fontSize: 13,
-        fontWeight: 900,
+        fontWeight: 700,
       }}
     >
       {value || "-"}
@@ -285,7 +285,7 @@ const StatCard = ({ label, value, helper, tone = "red" }) => {
             sx={{
               color: "var(--aa-text-secondary)",
               fontSize: 11,
-              fontWeight: 750,
+              fontWeight: 600,
             }}
           >
             {label}
@@ -300,7 +300,7 @@ const StatCard = ({ label, value, helper, tone = "red" }) => {
                 xs: 18,
                 sm: 21,
               },
-              fontWeight: 950,
+              fontWeight: 700,
               letterSpacing: "-.035em",
             }}
           >
@@ -320,7 +320,7 @@ const StatCard = ({ label, value, helper, tone = "red" }) => {
             background: current.gradient,
             boxShadow: `0 11px 25px ${current.shadow}`,
             fontSize: 15,
-            fontWeight: 950,
+            fontWeight: 700,
           }}
         >
           {current.symbol}
@@ -364,7 +364,7 @@ const Section = ({ title, subtitle, action, children, sx = {} }) => (
           sx={{
             color: "var(--aa-text)",
             fontSize: 15,
-            fontWeight: 950,
+            fontWeight: 700,
             letterSpacing: "-.02em",
           }}
         >
@@ -407,7 +407,7 @@ const InfoItem = ({ label, value, valueColor = "var(--aa-text)" }) => (
       sx={{
         color: "var(--aa-text-tertiary)",
         fontSize: 9.5,
-        fontWeight: 750,
+        fontWeight: 600,
       }}
     >
       {label}
@@ -419,7 +419,7 @@ const InfoItem = ({ label, value, valueColor = "var(--aa-text)" }) => (
         color: valueColor,
         fontSize: 12,
         lineHeight: 1.5,
-        fontWeight: 900,
+        fontWeight: 700,
         wordBreak: "break-word",
       }}
     >
@@ -445,7 +445,7 @@ const EmptyState = ({ children }) => (
       sx={{
         color: "var(--aa-text-tertiary)",
         fontSize: 11.5,
-        fontWeight: 750,
+        fontWeight: 600,
       }}
     >
       {children}
@@ -483,7 +483,7 @@ const ProgressRows = ({ items = [], color = "#7c3aed", empty = "Ma’lumot topil
               sx={{
                 color: "var(--aa-text-secondary)",
                 fontSize: 10.5,
-                fontWeight: 900,
+                fontWeight: 700,
               }}
             >
               {item.label}
@@ -494,7 +494,7 @@ const ProgressRows = ({ items = [], color = "#7c3aed", empty = "Ma’lumot topil
               sx={{
                 color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
-                fontWeight: 750,
+                fontWeight: 600,
               }}
             >
               {item.display}
@@ -552,7 +552,7 @@ const AccountProgress = ({
           sx={{
             color: "var(--aa-text)",
             fontSize: 12.5,
-            fontWeight: 950,
+            fontWeight: 700,
           }}
         >
           {title}
@@ -573,7 +573,7 @@ const AccountProgress = ({
         sx={{
           color,
           fontSize: 22,
-          fontWeight: 950,
+          fontWeight: 700,
           letterSpacing: "-.04em",
         }}
       >
@@ -612,7 +612,7 @@ const AccountProgress = ({
           sx={{
             color: "var(--aa-text-tertiary)",
             fontSize: 9,
-            fontWeight: 750,
+            fontWeight: 600,
           }}
         >
           {leftLabel}
@@ -624,7 +624,7 @@ const AccountProgress = ({
             mt: 0.6,
             color: "var(--aa-text)",
             fontSize: 12,
-            fontWeight: 900,
+            fontWeight: 700,
           }}
         >
           {leftValue}
@@ -636,7 +636,7 @@ const AccountProgress = ({
           sx={{
             color: "var(--aa-text-tertiary)",
             fontSize: 9,
-            fontWeight: 750,
+            fontWeight: 600,
           }}
         >
           {rightLabel}
@@ -648,7 +648,7 @@ const AccountProgress = ({
             mt: 0.6,
             color,
             fontSize: 12,
-            fontWeight: 900,
+            fontWeight: 700,
           }}
         >
           {rightValue}
@@ -676,7 +676,7 @@ const HistoryTable = ({ title, subtitle, rows = [], columns = [], empty }) => (
           sx={{
             color: "var(--aa-text)",
             fontSize: 14,
-            fontWeight: 950,
+            fontWeight: 700,
           }}
         >
           {title}
@@ -702,7 +702,7 @@ const HistoryTable = ({ title, subtitle, rows = [], columns = [], empty }) => (
           height: 24,
           color: "var(--aa-text-secondary)",
           fontSize: 9,
-          fontWeight: 900,
+          fontWeight: 700,
           backgroundColor: "var(--aa-surface-muted)",
         }}
       />
@@ -718,7 +718,7 @@ const HistoryTable = ({ title, subtitle, rows = [], columns = [], empty }) => (
             py: 1.45,
             color: "var(--aa-text-tertiary)",
             fontSize: 9.5,
-            fontWeight: 900,
+            fontWeight: 700,
             letterSpacing: ".035em",
             textTransform: "uppercase",
             backgroundColor: "var(--aa-surface-muted)",
@@ -765,7 +765,7 @@ const HistoryTable = ({ title, subtitle, rows = [], columns = [], empty }) => (
                 sx={{
                   py: 7,
                   color: "var(--aa-text-tertiary)",
-                  fontWeight: 800,
+                  fontWeight: 600,
                 }}
               >
                 {empty}
@@ -1098,7 +1098,7 @@ const User = ({ backTo = "/users" }) => {
           sx={{
             color: "var(--aa-text-tertiary)",
             fontSize: 12.5,
-            fontWeight: 750,
+            fontWeight: 600,
           }}
         >
           Foydalanuvchi ma’lumotlari yuklanmoqda...
@@ -1118,7 +1118,7 @@ const User = ({ backTo = "/users" }) => {
           sx={{
             mt: 2,
             borderRadius: "12px",
-            fontWeight: 850,
+            fontWeight: 600,
             textTransform: "none",
           }}
         >
@@ -1236,7 +1236,7 @@ const User = ({ backTo = "/users" }) => {
                 flexShrink: 0,
                 color: "#ffffff",
                 fontSize: 30,
-                fontWeight: 950,
+                fontWeight: 700,
                 background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
                 border: "5px solid rgba(255,255,255,.12)",
                 boxShadow: "0 18px 42px rgba(77, 15, 24,.32)",
@@ -1263,7 +1263,7 @@ const User = ({ backTo = "/users" }) => {
                     height: 27,
                     color: employee.is_deleted ? "#ecd9bd !important" : "#a8dcbc !important",
                     fontSize: 9.5,
-                    fontWeight: 900,
+                    fontWeight: 700,
                     border: employee.is_deleted
                       ? "1px solid rgba(201, 168, 117,.18)"
                       : "1px solid rgba(108, 191, 139,.16)",
@@ -1284,8 +1284,9 @@ const User = ({ backTo = "/users" }) => {
                     md: 36,
                   },
                   lineHeight: 1.08,
-                  fontWeight: 950,
-                  letterSpacing: "-.045em",
+                  fontFamily: "var(--aa-display)",
+                  fontWeight: 400,
+                  letterSpacing: "-.024em",
                   wordBreak: "break-word",
                 }}
               >
@@ -1348,7 +1349,7 @@ const User = ({ backTo = "/users" }) => {
                 border: "1px solid rgba(255,255,255,.10)",
                 backgroundColor: "rgba(255,255,255,.055)",
                 fontSize: 11,
-                fontWeight: 900,
+                fontWeight: 700,
                 textTransform: "none",
 
                 "&:hover": {
@@ -1385,7 +1386,7 @@ const User = ({ backTo = "/users" }) => {
             sx={{
               color: "var(--aa-text)",
               fontSize: 17,
-              fontWeight: 950,
+              fontWeight: 700,
             }}
           >
             Ma’lumotlar yopiq
@@ -1770,7 +1771,7 @@ const User = ({ backTo = "/users" }) => {
                   background: "linear-gradient(135deg,#4d0f18,#7a1826)",
                   boxShadow: "0 12px 26px rgba(77, 15, 24,.20)",
                   fontSize: 17,
-                  fontWeight: 950,
+                  fontWeight: 700,
                 }}
               >
                 {roleName.charAt(0)}
@@ -1781,7 +1782,7 @@ const User = ({ backTo = "/users" }) => {
                   mt: 2,
                   color: "var(--aa-text)",
                   fontSize: 18,
-                  fontWeight: 950,
+                  fontWeight: 700,
                 }}
               >
                 {roleName}
@@ -1836,7 +1837,7 @@ const genericChipSx = {
   height: 25,
   color: "var(--aa-text-secondary)",
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
   backgroundColor: "var(--aa-surface-muted)",
 };
 

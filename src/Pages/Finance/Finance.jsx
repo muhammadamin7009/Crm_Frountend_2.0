@@ -143,7 +143,7 @@ const StatusChip = ({ status }) => {
         color: closed ? "#7d716a" : "#2f6b45",
 
         fontSize: 9.5,
-        fontWeight: 900,
+        fontWeight: 700,
 
         backgroundColor: closed ? "#f4f0ea" : "rgba(78, 156, 107,.09)",
 
@@ -167,7 +167,7 @@ const TypeChip = ({ type }) => {
         color: income ? "#2f6b45" : "#7a1826",
 
         fontSize: 9.5,
-        fontWeight: 900,
+        fontWeight: 700,
 
         backgroundColor: income ? "rgba(78, 156, 107,.09)" : "rgba(140, 29, 43,.08)",
 
@@ -211,7 +211,7 @@ const StatCard = ({ label, value, tone = "default", helper }) => {
         sx={{
           color: "var(--aa-text-tertiary)",
           fontSize: 9.5,
-          fontWeight: 800,
+          fontWeight: 600,
         }}
       >
         {label}
@@ -223,7 +223,7 @@ const StatCard = ({ label, value, tone = "default", helper }) => {
           mt: 0.6,
           color: current[0],
           fontSize: 16,
-          fontWeight: 950,
+          fontWeight: 700,
           letterSpacing: "-.035em",
         }}
       >
@@ -272,7 +272,7 @@ const SectionHeader = ({ title, subtitle, actions }) => (
         sx={{
           color: "var(--aa-text)",
           fontSize: 15,
-          fontWeight: 950,
+          fontWeight: 700,
         }}
       >
         {title}
@@ -316,7 +316,7 @@ const Grid = ({ heads, rows, onRow, minWidth = 820 }) => (
             py: 1.55,
             color: "var(--aa-text-tertiary)",
             fontSize: 9.5,
-            fontWeight: 900,
+            fontWeight: 700,
             letterSpacing: ".045em",
             textTransform: "uppercase",
 
@@ -371,7 +371,7 @@ const Grid = ({ heads, rows, onRow, minWidth = 820 }) => (
                 sx={{
                   py: 7,
                   color: "var(--aa-text-tertiary)",
-                  fontWeight: 850,
+                  fontWeight: 600,
                 }}
               >
                 Ma’lumot topilmadi
@@ -913,7 +913,7 @@ const Finance = () => {
                   color: "#d9b782 !important",
 
                   fontSize: 10,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: ".13em",
                   textTransform: "uppercase",
                 }}
@@ -935,8 +935,9 @@ const Finance = () => {
                 },
 
                 lineHeight: 1.08,
-                fontWeight: 950,
-                letterSpacing: "-.045em",
+                fontFamily: "var(--aa-display)",
+                fontWeight: 400,
+                letterSpacing: "-.024em",
               }}
             >
               Moliya va hisob
@@ -977,7 +978,7 @@ const Finance = () => {
                   color: "rgba(255,255,255,.42) !important",
 
                   fontSize: 9.5,
-                  fontWeight: 800,
+                  fontWeight: 600,
                 }}
               >
                 Faol bo‘lim
@@ -988,7 +989,7 @@ const Finance = () => {
                   color: "#ffffff !important",
 
                   fontSize: 10.5,
-                  fontWeight: 950,
+                  fontWeight: 700,
                 }}
               >
                 {tabTitle}
@@ -1077,7 +1078,7 @@ const Finance = () => {
                       : "1px solid var(--aa-border)",
 
                     fontSize: 10.5,
-                    fontWeight: 900,
+                    fontWeight: 700,
                     textTransform: "none",
 
                     background: active
@@ -1192,7 +1193,7 @@ const Finance = () => {
                   mt: 1.3,
                   color: "var(--aa-text-tertiary)",
                   fontSize: 10.5,
-                  fontWeight: 800,
+                  fontWeight: 600,
                 }}
               >
                 Moliyaviy ma’lumotlar yuklanmoqda...
@@ -1783,7 +1784,7 @@ const Profit = ({ report = {} }) => {
           border: "1px solid rgba(31, 111, 139,.14)",
 
           fontSize: 10.5,
-          fontWeight: 750,
+          fontWeight: 600,
         }}
       >
         Xomashyo tannarxi xaridlarning o‘rtacha narxi va ishlab chiqarishda real sarflangan miqdor
@@ -1862,7 +1863,7 @@ const Profit = ({ report = {} }) => {
               color: "rgba(255,255,255,.58) !important",
 
               fontSize: 9.5,
-              fontWeight: 850,
+              fontWeight: 600,
               textTransform: "uppercase",
               letterSpacing: ".08em",
             }}
@@ -1881,7 +1882,7 @@ const Profit = ({ report = {} }) => {
                 md: 34,
               },
 
-              fontWeight: 950,
+              fontWeight: 700,
               letterSpacing: "-.05em",
             }}
           >
@@ -2246,7 +2247,7 @@ const primaryButtonSx = {
   color: "#ffffff",
   borderRadius: "11px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",
@@ -2265,7 +2266,7 @@ const secondaryButtonSx = {
   borderRadius: "11px",
   borderColor: "#d8cec1",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
@@ -2281,14 +2282,14 @@ const secondaryButtonSx = {
 const tableActionSx = {
   borderRadius: "9px",
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 };
 
 const dialogCancelSx = {
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  fontWeight: 850,
+  fontWeight: 600,
   textTransform: "none",
 };
 
@@ -2299,7 +2300,7 @@ const dialogPrimarySx = {
   color: "#ffffff",
   borderRadius: "11px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",
@@ -2314,19 +2315,19 @@ const dialogPrimarySx = {
 const strongCellSx = {
   color: "var(--aa-text)",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
 };
 
 const greenCellSx = {
   color: "#2f6b45",
   fontSize: 10.5,
-  fontWeight: 950,
+  fontWeight: 700,
 };
 
 const redCellSx = {
   color: "#7a1826",
   fontSize: 10.5,
-  fontWeight: 950,
+  fontWeight: 700,
 };
 
 const financePageStyles = `

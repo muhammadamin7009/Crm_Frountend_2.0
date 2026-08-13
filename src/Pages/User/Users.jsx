@@ -216,7 +216,7 @@ const RoleChip = ({ role }) => {
         height: 25,
         color: style.color,
         fontSize: 9.5,
-        fontWeight: 900,
+        fontWeight: 700,
         backgroundColor: style.background,
       }}
     />
@@ -721,7 +721,7 @@ const Users = () => {
                 sx={{
                   color: "#d9b782 !important",
                   fontSize: 10,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: ".13em",
                   textTransform: "uppercase",
                 }}
@@ -740,8 +740,9 @@ const Users = () => {
                   md: 36,
                 },
                 lineHeight: 1.08,
-                fontWeight: 950,
-                letterSpacing: "-.045em",
+                fontFamily: "var(--aa-display)",
+                fontWeight: 400,
+                letterSpacing: "-.024em",
               }}
             >
               Foydalanuvchilar
@@ -769,7 +770,7 @@ const Users = () => {
                   color: "#ffffff",
                   borderRadius: "13px",
                   fontSize: 12,
-                  fontWeight: 900,
+                  fontWeight: 700,
                   textTransform: "none",
                   background: "linear-gradient(135deg,#4d0f18,#7a1826)",
                   boxShadow: "0 12px 26px rgba(77, 15, 24,.20)",
@@ -921,7 +922,7 @@ const Users = () => {
               color: "var(--aa-text-secondary)",
               borderRadius: "11px",
               border: "1px solid #d8cec1",
-              fontWeight: 850,
+              fontWeight: 600,
               textTransform: "none",
 
               "&:hover": {
@@ -957,7 +958,7 @@ const Users = () => {
             sx={{
               color: "var(--aa-text)",
               fontSize: 15,
-              fontWeight: 950,
+              fontWeight: 700,
             }}
           >
             Korxona jamoasi
@@ -986,7 +987,7 @@ const Users = () => {
                 py: 1.6,
                 color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
-                fontWeight: 900,
+                fontWeight: 700,
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
                 backgroundColor: "var(--aa-surface-muted)",
@@ -1074,7 +1075,7 @@ const Users = () => {
                             height: 45,
                             color: "#ffffff",
                             fontSize: 12,
-                            fontWeight: 900,
+                            fontWeight: 700,
 
                             background: "linear-gradient(135deg,#4b413c,#17110f)",
 
@@ -1092,7 +1093,7 @@ const Users = () => {
                             sx={{
                               color: "var(--aa-text)",
                               fontSize: 12.5,
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             {user.first_name} {user.last_name}
@@ -1127,7 +1128,7 @@ const Users = () => {
                             sx={{
                               color: "var(--aa-text)",
                               fontSize: 10.5,
-                              fontWeight: 850,
+                              fontWeight: 600,
                             }}
                           >
                             {user.username || "-"}
@@ -1223,7 +1224,7 @@ const Users = () => {
                     sx={{
                       py: 8,
                       color: "var(--aa-text-tertiary)",
-                      fontWeight: 850,
+                      fontWeight: 600,
                     }}
                   >
                     Foydalanuvchilar topilmadi
@@ -1374,7 +1375,7 @@ const UserFormDialog = ({
         sx={{
           color: "#ffffff !important",
           fontSize: 19,
-          fontWeight: 950,
+          fontWeight: 700,
         }}
       >
         {title}
@@ -1424,7 +1425,7 @@ const UserFormDialog = ({
                 height: 58,
                 color: "#ffffff",
                 background: "linear-gradient(135deg,#4b413c,#17110f)",
-                fontWeight: 900,
+                fontWeight: 700,
               }}
             >
               {getInitials(selectedUser)}
@@ -1435,7 +1436,7 @@ const UserFormDialog = ({
                 sx={{
                   color: "var(--aa-text)",
                   fontSize: 13.5,
-                  fontWeight: 900,
+                  fontWeight: 700,
                 }}
               >
                 {selectedUser.first_name} {selectedUser.last_name}
@@ -1450,7 +1451,7 @@ const UserFormDialog = ({
                     mt: 0.8,
                     borderRadius: "9px",
                     fontSize: 9.5,
-                    fontWeight: 850,
+                    fontWeight: 600,
                     textTransform: "none",
                   }}
                 >
@@ -1589,7 +1590,7 @@ const UserConfirmDialog = ({
         py: 2.25,
         color: "#ffffff !important",
         fontSize: 18,
-        fontWeight: 950,
+        fontWeight: 700,
         backgroundColor: "#151211 !important",
         backgroundImage:
           "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.28),transparent 36%),linear-gradient(135deg,#151211,#2a1117) !important",
@@ -1636,7 +1637,7 @@ const UserConfirmDialog = ({
           minWidth: 120,
           minHeight: 40,
           borderRadius: "11px",
-          fontWeight: 900,
+          fontWeight: 700,
           textTransform: "none",
         }}
       >
@@ -1649,14 +1650,14 @@ const UserConfirmDialog = ({
 const tableActionSx = {
   borderRadius: "9px",
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 };
 
 const dialogCancelSx = {
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  fontWeight: 850,
+  fontWeight: 600,
   textTransform: "none",
 };
 
@@ -1667,7 +1668,7 @@ const dialogPrimarySx = {
   color: "#ffffff",
   borderRadius: "12px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",

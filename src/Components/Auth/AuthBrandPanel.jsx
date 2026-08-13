@@ -375,7 +375,7 @@ export default function AuthBrandPanel({
                 sx={{
                   color: "#d9b782",
                   fontSize: 11,
-                  fontWeight: 650,
+                  fontWeight: 600,
                   letterSpacing: ".05em",
                 }}
               >
@@ -458,7 +458,7 @@ export default function AuthBrandPanel({
                   sx={{
                     color: "rgba(255,255,255,.42)",
                     fontSize: 10,
-                    fontWeight: 800,
+                    fontWeight: 600,
                     letterSpacing: ".12em",
                     textTransform: "uppercase",
                   }}
@@ -471,7 +471,7 @@ export default function AuthBrandPanel({
                     mt: 0.7,
                     color: "#ffffff",
                     fontSize: 14,
-                    fontWeight: 850,
+                    fontWeight: 600,
                   }}
                 >
                   Ma’lumotlaringiz himoyalangan
@@ -568,7 +568,7 @@ export default function AuthBrandPanel({
                 sx={{
                   color: "#fdf8f2",
                   fontSize: 15.5,
-                  fontWeight: 650,
+                  fontWeight: 600,
                 }}
               >
                 {item.value}
@@ -612,7 +612,7 @@ export default function AuthBrandPanel({
             sx={{
               color: "rgba(255,255,255,.48)",
               fontSize: 11,
-              fontWeight: 650,
+              fontWeight: 600,
               letterSpacing: ".025em",
             }}
           >

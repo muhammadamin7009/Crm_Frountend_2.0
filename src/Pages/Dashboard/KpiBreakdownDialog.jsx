@@ -230,7 +230,7 @@ const KpiBreakdownDialog = ({ type, range, onClose }) => {
                   sx={{
                     color: "var(--aa-text-tertiary)",
                     fontSize: 9.5,
-                    fontWeight: 900,
+                    fontWeight: 700,
                     letterSpacing: ".05em",
                     textTransform: "uppercase",
                   }}
@@ -262,7 +262,7 @@ const KpiBreakdownDialog = ({ type, range, onClose }) => {
                     py: 1.1,
                     color: "var(--aa-text-tertiary)",
                     fontSize: 9.5,
-                    fontWeight: 900,
+                    fontWeight: 700,
                     letterSpacing: ".045em",
                     textTransform: "uppercase",
                     borderColor: "var(--aa-border)",
@@ -349,7 +349,7 @@ const KpiBreakdownDialog = ({ type, range, onClose }) => {
                 height: 24,
                 color: "var(--aa-text-secondary)",
                 fontSize: 9.5,
-                fontWeight: 900,
+                fontWeight: 700,
                 backgroundColor: "var(--aa-surface-muted)",
               }}
             />
@@ -366,7 +366,7 @@ const closeSx = {
   color: "var(--aa-text-secondary)",
   borderRadius: "12px",
   fontSize: 11.5,
-  fontWeight: 850,
+  fontWeight: 600,
   textTransform: "none",
 };
 

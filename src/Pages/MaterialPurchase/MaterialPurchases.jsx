@@ -159,7 +159,7 @@ const DebtChip = ({ value }) => {
         color: hasDebt ? "#a06a12" : "#2f6b45",
 
         fontSize: 9.5,
-        fontWeight: 900,
+        fontWeight: 700,
 
         backgroundColor: hasDebt ? "rgba(160, 106, 18,.10)" : "rgba(78, 156, 107,.09)",
 
@@ -1012,7 +1012,7 @@ const MaterialPurchases = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 15,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               Xomashyo kirim hisoboti
@@ -1089,7 +1089,7 @@ const MaterialPurchases = () => {
 
                       background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
-                      fontWeight: 950,
+                      fontWeight: 700,
                     }}
                   >
                     {initial(item.name)}
@@ -1107,7 +1107,7 @@ const MaterialPurchases = () => {
 
                         fontSize: 12,
 
-                        fontWeight: 950,
+                        fontWeight: 700,
                       }}
                     >
                       {item.name}
@@ -1392,7 +1392,7 @@ const MaterialPurchases = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 15,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               Xomashyo xaridlari
@@ -1467,7 +1467,7 @@ const MaterialPurchases = () => {
 
                             color: "#ffffff",
 
-                            fontWeight: 950,
+                            fontWeight: 700,
 
                             background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
@@ -1490,7 +1490,7 @@ const MaterialPurchases = () => {
 
                               fontSize: 12.5,
 
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             {purchase.supplier_name || "-"}
@@ -1535,7 +1535,7 @@ const MaterialPurchases = () => {
 
                                 fontSize: 10.5,
 
-                                fontWeight: 850,
+                                fontWeight: 600,
                               }}
                             >
                               {item.material_name}
@@ -1548,7 +1548,7 @@ const MaterialPurchases = () => {
 
                                 fontSize: 9.5,
 
-                                fontWeight: 750,
+                                fontWeight: 600,
                               }}
                             >
                               {number(item.quantity)} {item.unit} × {money(item.unit_price)}
@@ -1563,7 +1563,7 @@ const MaterialPurchases = () => {
 
                               fontSize: 9.5,
 
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             +{purchase.items.length - 4} ta boshqa xomashyo
@@ -1579,7 +1579,7 @@ const MaterialPurchases = () => {
 
                           fontSize: 11.5,
 
-                          fontWeight: 950,
+                          fontWeight: 700,
                         }}
                       >
                         Jami: {money(purchase.subtotal)}
@@ -1593,7 +1593,7 @@ const MaterialPurchases = () => {
 
                           fontSize: 9.5,
 
-                          fontWeight: 850,
+                          fontWeight: 600,
                         }}
                       >
                         Berildi: {money(purchase.paid_amount)}
@@ -1611,7 +1611,7 @@ const MaterialPurchases = () => {
 
                           fontSize: 10.5,
 
-                          fontWeight: 850,
+                          fontWeight: 600,
                         }}
                       >
                         {date(purchase.purchased_at)}
@@ -1661,7 +1661,7 @@ const MaterialPurchases = () => {
                     sx={{
                       py: 8,
                       color: "var(--aa-text-tertiary)",
-                      fontWeight: 850,
+                      fontWeight: 600,
                     }}
                   >
                     Xaridlar topilmadi
@@ -1798,7 +1798,7 @@ const MaterialPurchases = () => {
 
                     fontSize: 15,
 
-                    fontWeight: 950,
+                    fontWeight: 700,
                   }}
                 >
                   Xomashyo qatorlari
@@ -1886,7 +1886,7 @@ const MaterialPurchases = () => {
 
                         fontSize: 9.5,
 
-                        fontWeight: 900,
+                        fontWeight: 700,
 
                         textTransform: "none",
                       }}
@@ -2071,7 +2071,7 @@ const MaterialPurchases = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 15,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               {selectedSupplierForEdit ? "Ta’minotchini tahrirlash" : "Yangi ta’minotchi"}
@@ -2250,7 +2250,7 @@ const MaterialPurchases = () => {
 
                               fontSize: 11,
 
-                              fontWeight: 950,
+                              fontWeight: 700,
 
                               background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
                             }}
@@ -2264,7 +2264,7 @@ const MaterialPurchases = () => {
 
                               fontSize: 10.5,
 
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             {supplier.name}
@@ -2322,7 +2322,7 @@ const MaterialPurchases = () => {
 
                         color: "var(--aa-text-tertiary)",
 
-                        fontWeight: 850,
+                        fontWeight: 600,
                       }}
                     >
                       Ta’minotchilar topilmadi
@@ -2405,7 +2405,7 @@ const MaterialPurchases = () => {
                   mt: { xs: 0, sm: 1 },
                   borderRadius: "11px",
                   fontSize: 10,
-                  fontWeight: 850,
+                  fontWeight: 600,
                   textTransform: "none",
                   whiteSpace: "nowrap",
                 }}
@@ -2651,7 +2651,7 @@ const MaterialPurchases = () => {
 const eyebrowSx = {
   color: "#d9b782 !important",
   fontSize: 10,
-  fontWeight: 950,
+  fontWeight: 700,
   letterSpacing: ".13em",
   textTransform: "uppercase",
 };
@@ -2666,7 +2666,7 @@ const heroTitleSx = {
   },
 
   lineHeight: 1.08,
-  fontWeight: 950,
+  fontWeight: 700,
   letterSpacing: "-.045em",
 };
 
@@ -2728,7 +2728,7 @@ const heroPrimaryButtonSx = {
   color: "#ffffff !important",
   borderRadius: "13px",
   fontSize: 11.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
@@ -2753,7 +2753,7 @@ const heroSecondaryButtonSx = {
   backgroundColor: "rgba(255,255,255,.055)",
 
   fontSize: 11,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   "&:hover": {
@@ -2768,7 +2768,7 @@ const filterButtonSx = {
   borderRadius: "11px",
   borderColor: "#d8cec1",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
@@ -2787,7 +2787,7 @@ const primaryButtonSx = {
   color: "#ffffff",
   borderRadius: "11px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",
@@ -2814,7 +2814,7 @@ const countChipSx = {
   height: 25,
   color: "#6e1622",
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
 
   backgroundColor: "rgba(110, 22, 34,.07)",
 };
@@ -2823,7 +2823,7 @@ const softBlueChipSx = {
   height: 25,
   color: "#1f6f8b",
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
 
   backgroundColor: "rgba(31, 111, 139,.08)",
 
@@ -2834,7 +2834,7 @@ const softGreenChipSx = {
   height: 25,
   color: "#2f6b45",
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
 
   backgroundColor: "rgba(78, 156, 107,.08)",
 
@@ -2867,21 +2867,21 @@ const stockCardSx = {
 const tinyLabelSx = {
   color: "var(--aa-text-tertiary)",
   fontSize: 8.8,
-  fontWeight: 800,
+  fontWeight: 600,
 };
 
 const greenValueSx = {
   mt: 0.4,
   color: "#2f6b45",
   fontSize: 10,
-  fontWeight: 950,
+  fontWeight: 700,
 };
 
 const darkValueSx = {
   mt: 0.4,
   color: "var(--aa-text-secondary)",
   fontSize: 10,
-  fontWeight: 900,
+  fontWeight: 700,
 };
 
 const emptyStateSx = {
@@ -2898,13 +2898,13 @@ const emptyStateSx = {
 const emptyTextSx = {
   color: "var(--aa-text-tertiary)",
   fontSize: 11,
-  fontWeight: 800,
+  fontWeight: 600,
 };
 
 const tableActionSx = {
   borderRadius: "9px",
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 };
 
@@ -2915,7 +2915,7 @@ const tableSx = {
     py: 1.55,
     color: "var(--aa-text-tertiary)",
     fontSize: 9.5,
-    fontWeight: 900,
+    fontWeight: 700,
     letterSpacing: ".045em",
     textTransform: "uppercase",
 
@@ -2943,7 +2943,7 @@ const supplierTableSx = {
     py: 1.45,
     color: "var(--aa-text-tertiary)",
     fontSize: 9.5,
-    fontWeight: 900,
+    fontWeight: 700,
     textTransform: "uppercase",
 
     backgroundColor: "var(--aa-surface-muted)",
@@ -2986,7 +2986,7 @@ const purchaseItemRowSx = {
 const removeButtonSx = {
   borderRadius: "11px",
   fontSize: 9.5,
-  fontWeight: 850,
+  fontWeight: 600,
   textTransform: "none",
 };
 
@@ -2996,7 +2996,7 @@ const addRowSx = {
   px: 2,
   borderRadius: "12px",
   fontSize: 11,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   borderColor: "var(--aa-border-strong)",
   color: "var(--aa-text-secondary)",
@@ -3039,7 +3039,7 @@ const balanceGridSx = {
 const dialogCancelSx = {
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  fontWeight: 850,
+  fontWeight: 600,
   textTransform: "none",
 };
 
@@ -3050,7 +3050,7 @@ const dialogPrimarySx = {
   color: "#ffffff",
   borderRadius: "11px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",
@@ -3065,7 +3065,7 @@ const dialogPrimarySx = {
 const deleteButtonSx = {
   minWidth: 110,
   borderRadius: "11px",
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 };
 

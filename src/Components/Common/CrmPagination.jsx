@@ -58,7 +58,7 @@ const CrmPagination = ({
             height: 38,
             color: "var(--aa-text)",
             borderColor: "var(--aa-border-strong)",
-            fontWeight: 800,
+            fontWeight: 600,
           },
           "& .Mui-selected": {
             color: "#fff",

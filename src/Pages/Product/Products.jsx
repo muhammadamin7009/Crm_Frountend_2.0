@@ -704,7 +704,7 @@ const Products = () => {
           mb: 1.5,
           color: "var(--aa-text)",
           fontSize: 14,
-          fontWeight: 950,
+          fontWeight: 700,
         }}
       >
         Mahsulot rasmi
@@ -767,7 +767,7 @@ const Products = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 12,
-                fontWeight: 900,
+                fontWeight: 700,
               }}
             >
               Yangi rasm tanlandi
@@ -852,7 +852,7 @@ const Products = () => {
                       sx={{
                         color: "var(--aa-text)",
                         fontSize: 11,
-                        fontWeight: 900,
+                        fontWeight: 700,
                       }}
                     >
                       {image.is_primary ? "Asosiy rasm" : "Qo'shimcha rasm"}
@@ -918,7 +918,7 @@ const Products = () => {
                 sx={{
                   color: "var(--aa-text-tertiary)",
                   fontSize: 10.5,
-                  fontWeight: 750,
+                  fontWeight: 600,
                 }}
               >
                 Hozircha rasm yuklanmagan.
@@ -942,7 +942,7 @@ const Products = () => {
             mb: 0.5,
             color: "var(--aa-text)",
             fontSize: 16,
-            fontWeight: 950,
+            fontWeight: 700,
           }}
         >
           {title}
@@ -1001,7 +1001,7 @@ const Products = () => {
                         flex: 1,
                         color: "var(--aa-text)",
                         fontSize: 11,
-                        fontWeight: 900,
+                        fontWeight: 700,
                       }}
                     >
                       {value}
@@ -1057,7 +1057,7 @@ const Products = () => {
                 color: "var(--aa-text-tertiary)",
                 textAlign: "center",
                 fontSize: 11,
-                fontWeight: 800,
+                fontWeight: 600,
               }}
             >
               Hozircha {type === "model" ? "model" : "rang"} yo'q
@@ -1304,7 +1304,7 @@ const Products = () => {
                 sx={{
                   color: "#d9b782 !important",
                   fontSize: 10,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: ".13em",
                   textTransform: "uppercase",
                 }}
@@ -1323,8 +1323,9 @@ const Products = () => {
                   md: 36,
                 },
                 lineHeight: 1.08,
-                fontWeight: 950,
-                letterSpacing: "-.045em",
+                fontFamily: "var(--aa-display)",
+                fontWeight: 400,
+                letterSpacing: "-.024em",
               }}
             >
               Mahsulotlar
@@ -1360,7 +1361,7 @@ const Products = () => {
                     color: "#ffffff !important",
                     borderRadius: "13px",
                     fontSize: 11.5,
-                    fontWeight: 900,
+                    fontWeight: 700,
                     textTransform: "none",
                     background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
                     boxShadow: "0 12px 26px rgba(77, 15, 24,.30)",
@@ -1383,7 +1384,7 @@ const Products = () => {
                     border: "1px solid rgba(255,255,255,.10)",
                     backgroundColor: "rgba(255,255,255,.055)",
                     fontSize: 11,
-                    fontWeight: 900,
+                    fontWeight: 700,
                     textTransform: "none",
 
                     "&:hover": {
@@ -1605,7 +1606,7 @@ const Products = () => {
               sx={{
                 color: "var(--aa-text)",
                 fontSize: 15,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               Mahsulotlar ro‘yxati
@@ -1629,7 +1630,7 @@ const Products = () => {
               height: 25,
               color: "#6e1622",
               fontSize: 9.5,
-              fontWeight: 900,
+              fontWeight: 700,
               backgroundColor: "rgba(110, 22, 34,.07)",
             }}
           />
@@ -1651,7 +1652,7 @@ const Products = () => {
                 py: 1.55,
                 color: "var(--aa-text-tertiary)",
                 fontSize: 9.5,
-                fontWeight: 900,
+                fontWeight: 700,
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
                 backgroundColor: "var(--aa-surface-muted)",
@@ -1714,7 +1715,7 @@ const Products = () => {
                             borderRadius: "15px",
                             color: "#ffffff",
                             fontSize: 13,
-                            fontWeight: 950,
+                            fontWeight: 700,
                             background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
                             border: "3px solid #ffffff",
                             boxShadow: "0 8px 20px rgba(77, 15, 24,.16)",
@@ -1729,7 +1730,7 @@ const Products = () => {
                             sx={{
                               color: "var(--aa-text)",
                               fontSize: 12.5,
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             {product.name || "-"}
@@ -1757,7 +1758,7 @@ const Products = () => {
                           height: 25,
                           color: "#6d28d9",
                           fontSize: 9.5,
-                          fontWeight: 900,
+                          fontWeight: 700,
                           backgroundColor: "rgba(139,92,246,.09)",
                         }}
                       />
@@ -1768,7 +1769,7 @@ const Products = () => {
                         sx={{
                           color: "var(--aa-text)",
                           fontSize: 10.5,
-                          fontWeight: 850,
+                          fontWeight: 600,
                         }}
                       >
                         {product.model || "Model yo‘q"}
@@ -1790,7 +1791,7 @@ const Products = () => {
                         sx={{
                           color: "#2f6b45",
                           fontSize: 10.5,
-                          fontWeight: 900,
+                          fontWeight: 700,
                         }}
                       >
                         Sotuv: {formatMoney(product.sale_price)}
@@ -1802,7 +1803,7 @@ const Products = () => {
                             mt: 0.4,
                             color: "var(--aa-text-secondary)",
                             fontSize: 9.5,
-                            fontWeight: 750,
+                            fontWeight: 600,
                           }}
                         >
                           Xarid: {formatMoney(product.purchase_price)}
@@ -1874,7 +1875,7 @@ const Products = () => {
                     sx={{
                       py: 8,
                       color: "var(--aa-text-tertiary)",
-                      fontWeight: 850,
+                      fontWeight: 600,
                     }}
                   >
                     Mahsulotlar topilmadi
@@ -1978,7 +1979,7 @@ const Products = () => {
               disabled={deleting}
               sx={{
                 borderRadius: "11px",
-                fontWeight: 900,
+                fontWeight: 700,
                 textTransform: "none",
               }}
             >
@@ -2046,7 +2047,7 @@ const Products = () => {
               minHeight: 42,
               color: "var(--aa-text-secondary)",
               fontSize: 11,
-              fontWeight: 900,
+              fontWeight: 700,
               textTransform: "none",
             },
 
@@ -2149,7 +2150,7 @@ const Products = () => {
                       py: 1.45,
                       color: "var(--aa-text-tertiary)",
                       fontSize: 9.5,
-                      fontWeight: 900,
+                      fontWeight: 700,
                       textTransform: "uppercase",
                       backgroundColor: "var(--aa-surface-muted)",
                     },
@@ -2178,7 +2179,7 @@ const Products = () => {
                             sx={{
                               color: "var(--aa-text)",
                               fontSize: 11,
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             {category.name}
@@ -2263,7 +2264,7 @@ const filterButtonSx = {
   borderRadius: "11px",
   borderColor: "#d8cec1",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
@@ -2281,7 +2282,7 @@ const secondaryButtonSx = {
   borderRadius: "11px",
   borderColor: "#d8cec1",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
@@ -2298,7 +2299,7 @@ const primaryButtonSx = {
   color: "#ffffff",
   borderRadius: "11px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",
   boxShadow: "0 10px 24px rgba(77, 15, 24,.18)",
@@ -2311,14 +2312,14 @@ const primaryButtonSx = {
 const tableActionSx = {
   borderRadius: "9px",
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 };
 
 const dialogCancelSx = {
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  fontWeight: 850,
+  fontWeight: 600,
   textTransform: "none",
 };
 
@@ -2328,7 +2329,7 @@ const dialogPrimarySx = {
   color: "#ffffff",
   borderRadius: "11px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",
   boxShadow: "0 10px 24px rgba(77, 15, 24,.18)",

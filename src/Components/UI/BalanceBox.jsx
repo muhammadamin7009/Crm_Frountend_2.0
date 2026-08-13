@@ -29,8 +29,10 @@ const BalanceBox = ({ label, value, tone = "default", variant = "compact" }) => 
       >
         <Typography
           sx={{
-            fontSize: 12,
-            fontWeight: 800,
+            fontSize: 10,
+            fontWeight: 600,
+            letterSpacing: ".05em",
+            textTransform: "uppercase",
             color: "var(--aa-text-tertiary)",
           }}
         >
@@ -39,11 +41,12 @@ const BalanceBox = ({ label, value, tone = "default", variant = "compact" }) => 
 
         <Typography
           sx={{
-            mt: 0.45,
-            fontSize: 15,
-            fontWeight: 850,
+            mt: 0.6,
+            fontFamily: "var(--aa-display)",
+            fontSize: 17,
+            fontWeight: 400,
             color: surfaceColors[tone] || surfaceColors.default,
-            letterSpacing: "-0.035em",
+            letterSpacing: "-0.018em",
           }}
         >
           {value}
@@ -68,7 +71,7 @@ const BalanceBox = ({ label, value, tone = "default", variant = "compact" }) => 
         sx={{
           color: "var(--aa-text-tertiary)",
           fontSize: 9.5,
-          fontWeight: 800,
+          fontWeight: 600,
         }}
       >
         {label}
@@ -80,7 +83,7 @@ const BalanceBox = ({ label, value, tone = "default", variant = "compact" }) => 
           mt: 0.55,
           color: current[0],
           fontSize: 13,
-          fontWeight: 950,
+          fontWeight: 700,
         }}
       >
         {value}

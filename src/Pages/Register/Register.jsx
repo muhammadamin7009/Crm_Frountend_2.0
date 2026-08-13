@@ -55,7 +55,7 @@ const primaryButtonSx = {
   borderRadius: "15px",
   color: "#ffffff",
   fontSize: 15,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   background: "linear-gradient(135deg,#4d0f18 0%,#7a1826 100%)",
   boxShadow: "0 14px 30px rgba(77, 15, 24,.22)",
@@ -443,7 +443,7 @@ const Register = () => {
                     sx={{
                       color: "#6e1622",
                       fontSize: 20,
-                      fontWeight: 950,
+                      fontWeight: 700,
                     }}
                   >
                     {companyTitle.charAt(0)}
@@ -457,7 +457,7 @@ const Register = () => {
                   sx={{
                     color: "var(--aa-text)",
                     fontSize: 18,
-                    fontWeight: 950,
+                    fontWeight: 700,
                   }}
                 >
                   {companyTitle}
@@ -506,7 +506,7 @@ const Register = () => {
                 <Typography
                   sx={{
                     fontSize: 10.5,
-                    fontWeight: 850,
+                    fontWeight: 600,
                     letterSpacing: ".04em",
                   }}
                 >
@@ -524,7 +524,8 @@ const Register = () => {
                     sm: 42,
                   },
                   lineHeight: 1.08,
-                  fontWeight: 950,
+                  fontFamily: "var(--aa-display)",
+                  fontWeight: 400,
                   letterSpacing: "-0.045em",
                 }}
               >
@@ -555,7 +556,7 @@ const Register = () => {
                   py: 0.25,
                   borderRadius: "14px",
                   fontSize: 12,
-                  fontWeight: 750,
+                  fontWeight: 600,
 
                   "& .MuiAlert-message": { py: 0.5 },
                 }}
@@ -760,7 +761,7 @@ const Register = () => {
                       borderRadius: "11px",
                       color: "#2f6b45",
                       fontSize: 15,
-                      fontWeight: 950,
+                      fontWeight: 700,
                       backgroundColor: "rgba(78, 156, 107,.10)",
                     }}
                   >
@@ -772,7 +773,7 @@ const Register = () => {
                       sx={{
                         color: "#241d1a",
                         fontSize: 12.5,
-                        fontWeight: 850,
+                        fontWeight: 600,
                       }}
                     >
                       Xavfsiz ro‘yxatdan o‘tish
@@ -834,7 +835,7 @@ const Register = () => {
                 style={{
                   color: "#6e1622",
                   fontSize: "13.5px",
-                  fontWeight: 900,
+                  fontWeight: 700,
                   textDecoration: "none",
                 }}
               >

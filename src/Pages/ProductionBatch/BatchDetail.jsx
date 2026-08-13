@@ -33,7 +33,7 @@ const Field = ({ label, value, strong }) => (
       sx={{
         color: "var(--aa-text-tertiary)",
         fontSize: 9.5,
-        fontWeight: 900,
+        fontWeight: 700,
         letterSpacing: ".05em",
         textTransform: "uppercase",
       }}
@@ -56,7 +56,7 @@ const Field = ({ label, value, strong }) => (
 
 const Section = ({ title, hint, children }) => (
   <Box>
-    <Typography sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 950 }}>
+    <Typography sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 700 }}>
       {title}
     </Typography>
 
@@ -149,7 +149,7 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
             sx={{
               color: "var(--aa-text)",
               fontSize: 24,
-              fontWeight: 950,
+              fontWeight: 700,
               letterSpacing: ".05em",
             }}
           >
@@ -166,7 +166,7 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
           <Chip
             size="small"
             label={`${formatNumber(batch.quantity)} par`}
-            sx={{ height: 26, fontSize: 10.5, fontWeight: 900 }}
+            sx={{ height: 26, fontSize: 10.5, fontWeight: 700 }}
           />
 
           <Chip
@@ -175,7 +175,7 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
             sx={{
               height: 26,
               fontSize: 10.5,
-              fontWeight: 900,
+              fontWeight: 700,
               color: isCompleted ? "#255738" : "#7d5210",
               backgroundColor: isCompleted ? "rgba(47, 107, 69,.12)" : "rgba(160, 106, 18,.12)",
             }}
@@ -224,7 +224,7 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
               >
                 <Typography
                   noWrap
-                  sx={{ color: "var(--aa-text-secondary)", fontSize: 11, fontWeight: 900 }}
+                  sx={{ color: "var(--aa-text-secondary)", fontSize: 11, fontWeight: 700 }}
                 >
                   {stage.department_name}
                 </Typography>
@@ -235,7 +235,7 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
                     display: { xs: "none", sm: "block" },
                     color: "var(--aa-text)",
                     fontSize: 12,
-                    fontWeight: 800,
+                    fontWeight: 600,
                   }}
                 >
                   {stage.material_name}
@@ -245,7 +245,7 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
                   sx={{
                     color: "var(--aa-text)",
                     fontSize: 12,
-                    fontWeight: 900,
+                    fontWeight: 700,
                     textAlign: "right",
                   }}
                 >
@@ -257,7 +257,7 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
                     minWidth: 96,
                     color: "var(--aa-text-secondary)",
                     fontSize: 11,
-                    fontWeight: 800,
+                    fontWeight: 600,
                     textAlign: "right",
                   }}
                 >
@@ -276,7 +276,7 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
                 gap: 1,
               }}
             >
-              <Typography sx={{ color: "var(--aa-text-secondary)", fontSize: 11, fontWeight: 900 }}>
+              <Typography sx={{ color: "var(--aa-text-secondary)", fontSize: 11, fontWeight: 700 }}>
                 Xomashyo tannarxi
                 {Number(batch.quantity) > 0 && (
                   <Typography
@@ -294,7 +294,7 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
                 )}
               </Typography>
 
-              <Typography sx={{ color: "var(--aa-text)", fontSize: 15, fontWeight: 950 }}>
+              <Typography sx={{ color: "var(--aa-text)", fontSize: 15, fontWeight: 700 }}>
                 {formatMoney(batch.total_material_cost)}
               </Typography>
             </Box>
@@ -329,7 +329,7 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
                   <Box sx={{ minWidth: 0 }}>
                     <Typography
                       noWrap
-                      sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 850 }}
+                      sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 600 }}
                     >
                       {output.worker_name}
                     </Typography>
@@ -340,7 +340,7 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
                   </Box>
 
                   <Typography
-                    sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 900, flexShrink: 0 }}
+                    sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 700, flexShrink: 0 }}
                   >
                     {formatNumber(output.quantity)} par
                   </Typography>

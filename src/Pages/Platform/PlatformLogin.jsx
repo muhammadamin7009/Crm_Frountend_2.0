@@ -23,7 +23,7 @@ const PlatformFeature = ({ value, label, description }) => (
       sx={{
         color: "#ffffff !important",
         fontSize: 12,
-        fontWeight: 950,
+        fontWeight: 700,
       }}
     >
       {value}
@@ -34,7 +34,7 @@ const PlatformFeature = ({ value, label, description }) => (
         mt: 0.6,
         color: "#d9b782 !important",
         fontSize: 9.5,
-        fontWeight: 850,
+        fontWeight: 600,
       }}
     >
       {label}
@@ -290,7 +290,7 @@ const PlatformLogin = () => {
                     color: "#ffffff !important",
                     fontSize: 11,
                     lineHeight: 1.2,
-                    fontWeight: 950,
+                    fontWeight: 700,
                     letterSpacing: ".08em",
                   }}
                 >
@@ -302,7 +302,7 @@ const PlatformLogin = () => {
                     mt: 0.25,
                     color: "rgba(255,255,255,.34) !important",
                     fontSize: 8,
-                    fontWeight: 800,
+                    fontWeight: 600,
                     letterSpacing: ".12em",
                   }}
                 >
@@ -361,6 +361,7 @@ const PlatformLogin = () => {
                     lg: 53,
                   },
                   lineHeight: 1.1,
+                  fontFamily: "var(--aa-display)",
                   fontWeight: 400,
                   letterSpacing: "-.028em",
                 }}
@@ -461,7 +462,7 @@ const PlatformLogin = () => {
                   sx={{
                     color: "rgba(255,255,255,.72) !important",
                     fontSize: 9.5,
-                    fontWeight: 900,
+                    fontWeight: 700,
                   }}
                 >
                   Himoyalangan platforma kirishi
@@ -530,7 +531,7 @@ const PlatformLogin = () => {
                 mt: 2.5,
                 color: "#6e1622",
                 fontSize: 9.5,
-                fontWeight: 950,
+                fontWeight: 700,
                 letterSpacing: ".13em",
                 textTransform: "uppercase",
               }}
@@ -548,7 +549,7 @@ const PlatformLogin = () => {
                   sm: 34,
                 },
                 lineHeight: 1.15,
-                fontWeight: 950,
+                fontWeight: 700,
                 letterSpacing: "-.045em",
               }}
             >
@@ -624,7 +625,7 @@ const PlatformLogin = () => {
                             px: 1,
                             color: "var(--aa-text-secondary)",
                             fontSize: 9.5,
-                            fontWeight: 900,
+                            fontWeight: 700,
                             textTransform: "none",
                             "&:hover": {
                               color: "#6e1622",
@@ -711,7 +712,7 @@ const PlatformLogin = () => {
                   borderRadius: "10px",
                   backgroundColor: "rgba(110, 22, 34,.07)",
                   fontSize: 11,
-                  fontWeight: 950,
+                  fontWeight: 700,
                 }}
               >
                 !
@@ -722,7 +723,7 @@ const PlatformLogin = () => {
                   sx={{
                     color: "var(--aa-text-secondary)",
                     fontSize: 10,
-                    fontWeight: 900,
+                    fontWeight: 700,
                   }}
                 >
                   Cheklangan boshqaruv sahifasi
@@ -764,7 +765,7 @@ const fieldLabelSx = {
   mb: 0.8,
   color: "var(--aa-text-secondary)",
   fontSize: 10,
-  fontWeight: 900,
+  fontWeight: 700,
 };
 
 const inputSx = {
@@ -796,7 +797,7 @@ const inputSx = {
   "& input": {
     color: "var(--aa-text)",
     fontSize: 11.5,
-    fontWeight: 750,
+    fontWeight: 600,
   },
 
   "& input::placeholder": {

@@ -109,7 +109,7 @@ const ClientStatCard = ({ label, value, helper, icon, tone = "red" }) => {
             sx={{
               color: "var(--aa-text-secondary)",
               fontSize: 12,
-              fontWeight: 750,
+              fontWeight: 600,
             }}
           >
             {label}
@@ -122,7 +122,7 @@ const ClientStatCard = ({ label, value, helper, icon, tone = "red" }) => {
               color: "var(--aa-text)",
               fontSize: 21,
               lineHeight: 1.2,
-              fontWeight: 950,
+              fontWeight: 700,
               letterSpacing: "-0.035em",
             }}
           >
@@ -199,7 +199,7 @@ const ClientSection = ({ title, subtitle, action, children }) => (
           sx={{
             color: "var(--aa-text)",
             fontSize: 15,
-            fontWeight: 900,
+            fontWeight: 700,
             letterSpacing: "-0.02em",
           }}
         >
@@ -269,7 +269,7 @@ const ClientEmptyState = ({ title, description }) => (
       sx={{
         color: "var(--aa-text)",
         fontSize: 13,
-        fontWeight: 900,
+        fontWeight: 700,
       }}
     >
       {title}
@@ -384,7 +384,7 @@ const ClientDashboard = ({ user }) => {
           sx={{
             color: "var(--aa-text-tertiary)",
             fontSize: 13,
-            fontWeight: 750,
+            fontWeight: 600,
           }}
         >
           Hisob ma’lumotlari yuklanmoqda...
@@ -447,7 +447,7 @@ const ClientDashboard = ({ user }) => {
               sx={{
                 color: "#6e1622",
                 fontSize: 10,
-                fontWeight: 950,
+                fontWeight: 700,
                 letterSpacing: ".13em",
                 textTransform: "uppercase",
               }}
@@ -465,7 +465,8 @@ const ClientDashboard = ({ user }) => {
                 sm: 30,
               },
               lineHeight: 1.15,
-              fontWeight: 950,
+              fontFamily: "var(--aa-display)",
+              fontWeight: 400,
               letterSpacing: "-0.04em",
             }}
           >
@@ -487,7 +488,7 @@ const ClientDashboard = ({ user }) => {
               component="span"
               sx={{
                 color: "#6e1622",
-                fontWeight: 850,
+                fontWeight: 600,
               }}
             >
               {user?.first_name || "Mijoz"}
@@ -506,7 +507,7 @@ const ClientDashboard = ({ user }) => {
             border: "1px solid rgba(110, 22, 34,.13)",
             backgroundColor: "rgba(110, 22, 34,.045)",
             fontSize: 11.5,
-            fontWeight: 900,
+            fontWeight: 700,
             textTransform: "none",
 
             "&:hover": {
@@ -680,7 +681,7 @@ const ClientDashboard = ({ user }) => {
                 sx={{
                   color: "rgba(255,255,255,.52) !important",
                   fontSize: 10,
-                  fontWeight: 850,
+                  fontWeight: 600,
                   letterSpacing: ".09em",
                   textTransform: "uppercase",
                 }}
@@ -698,7 +699,7 @@ const ClientDashboard = ({ user }) => {
                   sm: 34,
                 },
                 lineHeight: 1.1,
-                fontWeight: 950,
+                fontWeight: 700,
                 letterSpacing: "-.045em",
               }}
             >
@@ -787,7 +788,7 @@ const ClientDashboard = ({ user }) => {
                   sx={{
                     color: "rgba(255,255,255,.48) !important",
                     fontSize: 10.5,
-                    fontWeight: 750,
+                    fontWeight: 600,
                   }}
                 >
                   To‘lov bajarilishi
@@ -799,7 +800,7 @@ const ClientDashboard = ({ user }) => {
                     color: "#ffffff !important",
                     fontSize: 25,
                     lineHeight: 1,
-                    fontWeight: 950,
+                    fontWeight: 700,
                     letterSpacing: "-.04em",
                   }}
                 >
@@ -836,7 +837,7 @@ const ClientDashboard = ({ user }) => {
                   sx={{
                     color: "rgba(255,255,255,.62) !important",
                     fontSize: 9.5,
-                    fontWeight: 800,
+                    fontWeight: 600,
                   }}
                 >
                   {paymentPercent >= 100 ? "To‘liq to‘langan" : "To‘lov davom etmoqda"}
@@ -881,7 +882,7 @@ const ClientDashboard = ({ user }) => {
                     mt: 0.8,
                     color: "#8fd4a8 !important",
                     fontSize: 15,
-                    fontWeight: 950,
+                    fontWeight: 700,
                   }}
                 >
                   {money(paidAmount)}
@@ -896,7 +897,7 @@ const ClientDashboard = ({ user }) => {
                     mt: 0.8,
                     color: debtAmount > 0 ? "#d9b782 !important" : "#8fd4a8 !important",
                     fontSize: 15,
-                    fontWeight: 950,
+                    fontWeight: 700,
                   }}
                 >
                   {money(debtAmount)}
@@ -968,7 +969,7 @@ const ClientDashboard = ({ user }) => {
                             sx={{
                               color: "var(--aa-text)",
                               fontSize: 11.5,
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             {sale.product_name || "Mahsulot"}
@@ -991,7 +992,7 @@ const ClientDashboard = ({ user }) => {
                           sx={{
                             color: "var(--aa-text)",
                             fontSize: 11,
-                            fontWeight: 850,
+                            fontWeight: 600,
                           }}
                         >
                           {number(sale.quantity)}
@@ -1005,7 +1006,7 @@ const ClientDashboard = ({ user }) => {
                           sx={{
                             color: "var(--aa-text)",
                             fontSize: 11,
-                            fontWeight: 900,
+                            fontWeight: 700,
                           }}
                         >
                           {money(sale.total_amount)}
@@ -1106,7 +1107,7 @@ const ClientDashboard = ({ user }) => {
                       sx={{
                         color: "var(--aa-text)",
                         fontSize: 12,
-                        fontWeight: 900,
+                        fontWeight: 700,
                       }}
                     >
                       {money(payment.amount)}
@@ -1145,7 +1146,7 @@ const ClientDashboard = ({ user }) => {
                       flexShrink: 0,
                       color: "var(--aa-text-tertiary)",
                       fontSize: 9.5,
-                      fontWeight: 650,
+                      fontWeight: 600,
                     }}
                   >
                     {date(payment.paid_at)}
@@ -1190,7 +1191,7 @@ const clientDarkValueSx = {
     sm: 16,
   },
   lineHeight: 1.2,
-  fontWeight: 950,
+  fontWeight: 700,
   letterSpacing: "-.025em",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
@@ -1200,7 +1201,7 @@ const neutralChipSx = {
   height: 24,
   color: "var(--aa-text-secondary)",
   fontSize: 9.5,
-  fontWeight: 850,
+  fontWeight: 600,
   backgroundColor: "var(--aa-surface-muted)",
 };
 
@@ -1208,7 +1209,7 @@ const debtChipSx = {
   height: 24,
   color: "#a06a12",
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
   backgroundColor: "rgba(160, 106, 18,.12)",
 };
 
@@ -1216,7 +1217,7 @@ const paidChipSx = {
   height: 24,
   color: "#2f6b45",
   fontSize: 9.5,
-  fontWeight: 900,
+  fontWeight: 700,
   backgroundColor: "rgba(78, 156, 107,.10)",
 };
 
@@ -1232,7 +1233,7 @@ const tableSx = {
   "& .MuiTableHead-root .MuiTableCell-root": {
     color: "var(--aa-text-tertiary)",
     fontSize: 9.5,
-    fontWeight: 900,
+    fontWeight: 700,
     letterSpacing: ".04em",
     textTransform: "uppercase",
     backgroundColor: "var(--aa-surface-muted)",

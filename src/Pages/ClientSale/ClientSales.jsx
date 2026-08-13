@@ -137,7 +137,7 @@ const DebtChip = ({ debt }) => {
         height: 26,
         px: 0.35,
         fontSize: 12,
-        fontWeight: 850,
+        fontWeight: 600,
         color: hasDebt ? "var(--aa-warning)" : "var(--aa-success)",
         background: hasDebt ? "rgba(160, 106, 18,.12)" : "rgba(78, 156, 107,.12)",
         border: hasDebt ? "1px solid rgba(160, 106, 18,.24)" : "1px solid rgba(78, 156, 107,.24)",
@@ -1029,7 +1029,7 @@ const ClientSales = () => {
                   color: "#d9b782 !important",
 
                   fontSize: 10,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: ".13em",
                   textTransform: "uppercase",
                 }}
@@ -1050,8 +1050,9 @@ const ClientSales = () => {
                 },
 
                 lineHeight: 1.08,
-                fontWeight: 950,
-                letterSpacing: "-.045em",
+                fontFamily: "var(--aa-display)",
+                fontWeight: 400,
+                letterSpacing: "-.024em",
               }}
             >
               Mijoz savdolari
@@ -1197,7 +1198,7 @@ const ClientSales = () => {
                 height: 42,
                 borderRadius: "var(--aa-radius-md)",
                 textTransform: "none",
-                fontWeight: 800,
+                fontWeight: 600,
 
                 color: "var(--aa-text-secondary)",
 
@@ -1222,7 +1223,7 @@ const ClientSales = () => {
                 height: 42,
                 borderRadius: "var(--aa-radius-md)",
                 textTransform: "none",
-                fontWeight: 800,
+                fontWeight: 600,
 
                 color: "var(--aa-text-secondary)",
 
@@ -1349,7 +1350,7 @@ const ClientSales = () => {
                   borderRadius: "var(--aa-radius-md)",
 
                   textTransform: "none",
-                  fontWeight: 800,
+                  fontWeight: 600,
 
                   color: "var(--aa-text-secondary)",
 
@@ -1377,7 +1378,7 @@ const ClientSales = () => {
                   borderRadius: "var(--aa-radius-md)",
 
                   textTransform: "none",
-                  fontWeight: 850,
+                  fontWeight: 600,
 
                   background: "var(--aa-brand-800)",
 
@@ -1445,7 +1446,7 @@ const ClientSales = () => {
                   <Typography
                     sx={{
                       fontSize: 13,
-                      fontWeight: 800,
+                      fontWeight: 600,
 
                       color: "var(--aa-text-secondary)",
 
@@ -1461,7 +1462,7 @@ const ClientSales = () => {
                     sx={{
                       mt: 0.45,
                       fontSize: 18,
-                      fontWeight: 850,
+                      fontWeight: 600,
 
                       color: "var(--aa-text)",
 
@@ -1475,7 +1476,7 @@ const ClientSales = () => {
                     sx={{
                       mt: 0.45,
                       fontSize: 12.5,
-                      fontWeight: 750,
+                      fontWeight: 600,
 
                       color: "var(--aa-text-tertiary)",
                     }}
@@ -1496,7 +1497,7 @@ const ClientSales = () => {
               <Typography
                 sx={{
                   fontSize: 14,
-                  fontWeight: 750,
+                  fontWeight: 600,
 
                   color: "var(--aa-text-tertiary)",
                 }}
@@ -1530,7 +1531,7 @@ const ClientSales = () => {
               "& th": {
                 py: 1.7,
                 fontSize: 11.5,
-                fontWeight: 850,
+                fontWeight: 600,
 
                 color: "var(--aa-text-tertiary)",
 
@@ -1596,7 +1597,7 @@ const ClientSales = () => {
                             bgcolor: "var(--aa-brand-800)",
 
                             color: "#fff",
-                            fontWeight: 850,
+                            fontWeight: 600,
 
                             border: "3px solid #fff",
 
@@ -1614,7 +1615,7 @@ const ClientSales = () => {
                           <Typography
                             sx={{
                               fontSize: 14.5,
-                              fontWeight: 850,
+                              fontWeight: 600,
 
                               color: "var(--aa-text)",
 
@@ -1643,7 +1644,7 @@ const ClientSales = () => {
                       <Typography
                         sx={{
                           fontSize: 14.5,
-                          fontWeight: 850,
+                          fontWeight: 600,
 
                           color: "var(--aa-text)",
                         }}
@@ -1667,7 +1668,7 @@ const ClientSales = () => {
                         sx={{
                           mt: 0.35,
                           fontSize: 12.5,
-                          fontWeight: 750,
+                          fontWeight: 600,
 
                           color: "var(--aa-info)",
                         }}
@@ -1693,7 +1694,7 @@ const ClientSales = () => {
                       <Typography
                         sx={{
                           fontSize: 14.5,
-                          fontWeight: 850,
+                          fontWeight: 600,
 
                           color: "var(--aa-text)",
                         }}
@@ -1705,7 +1706,7 @@ const ClientSales = () => {
                         sx={{
                           mt: 0.35,
                           fontSize: 12.5,
-                          fontWeight: 800,
+                          fontWeight: 600,
                           color: "#2f6b45",
                         }}
                       >
@@ -1739,7 +1740,7 @@ const ClientSales = () => {
                       <Typography
                         sx={{
                           fontSize: 13.5,
-                          fontWeight: 800,
+                          fontWeight: 600,
                           color: "var(--aa-text)",
                         }}
                       >
@@ -1782,7 +1783,7 @@ const ClientSales = () => {
 
                               textTransform: "none",
 
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             To'lov
@@ -1797,7 +1798,7 @@ const ClientSales = () => {
 
                               textTransform: "none",
 
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             O'zgartirish
@@ -1817,7 +1818,7 @@ const ClientSales = () => {
 
                               textTransform: "none",
 
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             O'chirish
@@ -1837,7 +1838,7 @@ const ClientSales = () => {
 
                       color: "var(--aa-text-tertiary)",
 
-                      fontWeight: 850,
+                      fontWeight: 600,
                     }}
                   >
                     Savdo yozuvlari topilmadi
@@ -1876,7 +1877,7 @@ const ClientSales = () => {
               sx={{
                 borderRadius: "12px",
                 textTransform: "none",
-                fontWeight: 850,
+                fontWeight: 600,
               }}
             >
               Bekor qilish
@@ -1910,7 +1911,7 @@ const ClientSales = () => {
                 minWidth: 120,
                 borderRadius: "12px",
                 textTransform: "none",
-                fontWeight: 850,
+                fontWeight: 600,
 
                 background: "var(--aa-brand-800)",
 
@@ -2080,7 +2081,7 @@ const ClientSales = () => {
                   <Typography
                     sx={{
                       fontSize: 16,
-                      fontWeight: 950,
+                      fontWeight: 700,
                       color: "var(--aa-text)",
                     }}
                   >
@@ -2091,7 +2092,7 @@ const ClientSales = () => {
                     sx={{
                       mt: 0.4,
                       fontSize: 13,
-                      fontWeight: 650,
+                      fontWeight: 600,
                       color: "var(--aa-text-secondary)",
                     }}
                   >
@@ -2130,7 +2131,7 @@ const ClientSales = () => {
                   sx={{
                     borderRadius: "12px",
                     textTransform: "none",
-                    fontWeight: 900,
+                    fontWeight: 700,
                   }}
                 >
                   Yana mahsulot
@@ -2235,7 +2236,7 @@ const ClientSales = () => {
                       sx={{
                         borderRadius: "12px",
                         textTransform: "none",
-                        fontWeight: 850,
+                        fontWeight: 600,
                       }}
                     >
                       Olib tashlash
@@ -2257,7 +2258,7 @@ const ClientSales = () => {
                 border: "1px solid rgba(160, 106, 18,.25)",
 
                 fontSize: 13,
-                fontWeight: 750,
+                fontWeight: 600,
               }}
             >
               Bu eski savdo ombor hisobi yoqilishidan oldin yaratilgan. Uni tahrirlash qoldiqni
@@ -2356,7 +2357,7 @@ const ClientSales = () => {
               sx={{
                 borderRadius: "12px",
                 textTransform: "none",
-                fontWeight: 850,
+                fontWeight: 600,
               }}
             >
               Bekor qilish
@@ -2370,7 +2371,7 @@ const ClientSales = () => {
               sx={{
                 borderRadius: "12px",
                 textTransform: "none",
-                fontWeight: 900,
+                fontWeight: 700,
               }}
             >
               {deleting ? "O'chirilmoqda..." : "O'chirish"}
@@ -2400,7 +2401,7 @@ const ClientSales = () => {
               sx={{
                 borderRadius: "12px",
                 textTransform: "none",
-                fontWeight: 850,
+                fontWeight: 600,
               }}
             >
               Bekor qilish
@@ -2419,7 +2420,7 @@ const ClientSales = () => {
                 minWidth: 120,
                 borderRadius: "12px",
                 textTransform: "none",
-                fontWeight: 900,
+                fontWeight: 700,
 
                 background: "linear-gradient(135deg,#8b0101,#7a1826)",
 
@@ -2544,7 +2545,7 @@ const ClientSales = () => {
               <Typography
                 sx={{
                   fontSize: 16,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   color: "var(--aa-text)",
                 }}
               >

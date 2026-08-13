@@ -135,7 +135,7 @@ const StatusChip = ({ value }) => {
         bgcolor: (theme) => (theme.palette.mode === "dark" ? status.darkBg : status.bg),
         border: (theme) =>
           `1px solid ${theme.palette.mode === "dark" ? status.darkBorder : `${status.color}28`}`,
-        fontWeight: 800,
+        fontWeight: 600,
       }}
     />
   );
@@ -588,7 +588,7 @@ const Orders = () => {
               <Button
                 variant="outlined"
                 onClick={openDepartmentOrder}
-                sx={{ minHeight: 44, textTransform: "none", fontWeight: 850 }}
+                sx={{ minHeight: 44, textTransform: "none", fontWeight: 600 }}
               >
                 <Box component="span" className="orders-action-label-desktop">
                   Bo'limlar va xodimlar
@@ -604,7 +604,7 @@ const Orders = () => {
                   minHeight: 44,
                   px: 2.5,
                   bgcolor: "var(--aa-brand-700)",
-                  fontWeight: 850,
+                  fontWeight: 600,
                   textTransform: "none",
                   borderRadius: 2.5,
                 }}
@@ -645,10 +645,10 @@ const Orders = () => {
               bgcolor: "var(--aa-surface)",
             }}
           >
-            <Typography sx={{ color: "var(--aa-text-secondary)", fontSize: 12.5, fontWeight: 750 }}>
+            <Typography sx={{ color: "var(--aa-text-secondary)", fontSize: 12.5, fontWeight: 600 }}>
               {label}
             </Typography>
-            <Typography sx={{ mt: 0.7, color: "var(--aa-text)", fontSize: 25, fontWeight: 900 }}>
+            <Typography sx={{ mt: 0.7, color: "var(--aa-text)", fontSize: 25, fontWeight: 700 }}>
               {value}
             </Typography>
             <Typography sx={{ mt: 0.25, color: "var(--aa-text-muted)", fontSize: 11.5 }}>
@@ -734,7 +734,7 @@ const Orders = () => {
                       bgcolor: "var(--aa-surface-muted)",
                       color: "var(--aa-text-secondary)",
                       fontSize: 11.5,
-                      fontWeight: 850,
+                      fontWeight: 600,
                     }}
                   >
                     {head}
@@ -763,7 +763,7 @@ const Orders = () => {
                 orders.map((order) => (
                   <TableRow key={order.id} hover>
                     <TableCell>
-                      <Typography sx={{ fontWeight: 900, color: "var(--aa-text)" }}>
+                      <Typography sx={{ fontWeight: 700, color: "var(--aa-text)" }}>
                         {order.order_number}
                       </Typography>
                       <Typography sx={{ fontSize: 11.5, color: "var(--aa-text-muted)" }}>
@@ -779,13 +779,13 @@ const Orders = () => {
                             color: "#7a1826",
                             bgcolor: "rgba(110, 22, 34,.12)",
                             border: "1px solid rgba(163, 40, 58,.22)",
-                            fontWeight: 850,
+                            fontWeight: 600,
                           }}
                         />
                       )}
                     </TableCell>
                     <TableCell>
-                      <Typography sx={{ fontWeight: 750 }}>{order.client_name || "—"}</Typography>
+                      <Typography sx={{ fontWeight: 600 }}>{order.client_name || "—"}</Typography>
                       <Typography sx={{ fontSize: 11.5, color: "var(--aa-text-muted)" }}>
                         {order.client_phone || ""}
                       </Typography>
@@ -809,11 +809,11 @@ const Orders = () => {
                     <TableCell>{Number(order.item_count || 0)} ta</TableCell>
                     <TableCell sx={{ minWidth: 130 }}>
                       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
-                        <Typography sx={{ fontSize: 11.5, fontWeight: 750 }}>
+                        <Typography sx={{ fontSize: 11.5, fontWeight: 600 }}>
                           {Number(order.completed_task_count || 0)}/{Number(order.task_count || 0)}{" "}
                           vazifa
                         </Typography>
-                        <Typography sx={{ fontSize: 11.5, fontWeight: 850 }}>
+                        <Typography sx={{ fontSize: 11.5, fontWeight: 600 }}>
                           {Number(order.progress_percent || 0)}%
                         </Typography>
                       </Box>
@@ -823,7 +823,7 @@ const Orders = () => {
                         sx={{ height: 6, borderRadius: 6 }}
                       />
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 850 }}>{money(order.total_amount)}</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>{money(order.total_amount)}</TableCell>
                     <TableCell>
                       {canManage &&
                       !order.converted_batch_id &&
@@ -870,7 +870,7 @@ const Orders = () => {
                             variant="outlined"
                             onClick={() => openTasks(order)}
                             disabled={taskLoading}
-                            sx={{ textTransform: "none", fontWeight: 800 }}
+                            sx={{ textTransform: "none", fontWeight: 600 }}
                           >
                             Vazifalar
                           </Button>
@@ -883,7 +883,7 @@ const Orders = () => {
                                 whiteSpace: "nowrap",
                                 bgcolor: "#2f6b45",
                                 textTransform: "none",
-                                fontWeight: 850,
+                                fontWeight: 600,
                               }}
                             >
                               Savdoga o'tkazish
@@ -895,7 +895,7 @@ const Orders = () => {
                                 variant="outlined"
                                 size="small"
                                 onClick={() => openEdit(order.id)}
-                                sx={{ textTransform: "none", fontWeight: 800 }}
+                                sx={{ textTransform: "none", fontWeight: 600 }}
                               >
                                 Tahrirlash
                               </Button>
@@ -929,7 +929,7 @@ const Orders = () => {
       </Paper>
 
       <Dialog open={open} onClose={() => !saving && setOpen(false)} fullWidth maxWidth="md">
-        <DialogTitle sx={{ fontWeight: 900 }}>
+        <DialogTitle sx={{ fontWeight: 700 }}>
           {editingId ? "Zakazni tahrirlash" : "Yangi zakaz"}
         </DialogTitle>
         <DialogContent dividers>
@@ -1000,7 +1000,7 @@ const Orders = () => {
               <MenuItem value="normal">Oddiy</MenuItem>
               <MenuItem value="urgent">Shoshilinch</MenuItem>
             </TextField>
-            <Typography sx={{ fontWeight: 900 }}>Mahsulotlar</Typography>
+            <Typography sx={{ fontWeight: 700 }}>Mahsulotlar</Typography>
             {form.items.map((item, index) => (
               <Box
                 key={index}
@@ -1062,7 +1062,7 @@ const Orders = () => {
               onClick={() =>
                 setForm((current) => ({ ...current, items: [...current.items, { ...emptyItem }] }))
               }
-              sx={{ alignSelf: "flex-start", textTransform: "none", fontWeight: 850 }}
+              sx={{ alignSelf: "flex-start", textTransform: "none", fontWeight: 600 }}
             >
               + Mahsulot qo'shish
             </Button>
@@ -1083,10 +1083,10 @@ const Orders = () => {
                 justifyContent: "space-between",
               }}
             >
-              <Typography sx={{ color: "var(--aa-text-secondary)", fontWeight: 750 }}>
+              <Typography sx={{ color: "var(--aa-text-secondary)", fontWeight: 600 }}>
                 Zakaz summasi
               </Typography>
-              <Typography sx={{ fontSize: 20, fontWeight: 900 }}>{money(formTotal)}</Typography>
+              <Typography sx={{ fontSize: 20, fontWeight: 700 }}>{money(formTotal)}</Typography>
             </Box>
           </Stack>
         </DialogContent>
@@ -1103,7 +1103,7 @@ const Orders = () => {
               !form.items.length ||
               form.items.some((item) => !item.product_id || Number(item.quantity || 0) <= 0)
             }
-            sx={{ bgcolor: "var(--aa-brand-700)", textTransform: "none", fontWeight: 850 }}
+            sx={{ bgcolor: "var(--aa-brand-700)", textTransform: "none", fontWeight: 600 }}
           >
             {saving ? <CircularProgress size={20} color="inherit" /> : "Saqlash"}
           </Button>
@@ -1116,7 +1116,7 @@ const Orders = () => {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle sx={{ fontWeight: 900 }}>Ishlab chiqarish bo'limlari tartibi</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 700 }}>Ishlab chiqarish bo'limlari tartibi</DialogTitle>
         <DialogContent dividers>
           <Typography sx={{ mb: 2, color: "var(--aa-text-secondary)", fontSize: 13 }}>
             Zakaz yuqoridan pastga shu tartibda yuradi. Yangi tasdiqlangan zakazlarga qo'llanadi.
@@ -1139,12 +1139,12 @@ const Orders = () => {
                     color: "var(--aa-brand-400)",
                     bgcolor: "var(--aa-brand-100)",
                     border: "1px solid var(--aa-brand-200)",
-                    fontWeight: 900,
+                    fontWeight: 700,
                   }}
                 >
                   {index + 1}
                 </Box>
-                <Typography sx={{ flex: 1, fontWeight: 850 }}>{department.name}</Typography>
+                <Typography sx={{ flex: 1, fontWeight: 600 }}>{department.name}</Typography>
                 <Button
                   size="small"
                   disabled={index === 0}
@@ -1163,7 +1163,7 @@ const Orders = () => {
             ))}
           </Stack>
           <Box sx={{ mt: 3, pt: 2.5, borderTop: "1px solid var(--aa-border)" }}>
-            <Typography sx={{ mb: 0.5, fontWeight: 900 }}>
+            <Typography sx={{ mb: 0.5, fontWeight: 700 }}>
               Xodimlarni bo'limlarga biriktirish
             </Typography>
             <Typography sx={{ mb: 2, color: "var(--aa-text-secondary)", fontSize: 13 }}>
@@ -1183,7 +1183,7 @@ const Orders = () => {
                   }}
                 >
                   <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography noWrap sx={{ fontWeight: 850 }}>
+                    <Typography noWrap sx={{ fontWeight: 600 }}>
                       {[worker.first_name, worker.last_name].filter(Boolean).join(" ") ||
                         worker.username}
                     </Typography>
@@ -1233,7 +1233,7 @@ const Orders = () => {
             variant="contained"
             onClick={saveDepartmentOrder}
             disabled={departmentOrderSaving}
-            sx={{ textTransform: "none", fontWeight: 850 }}
+            sx={{ textTransform: "none", fontWeight: 600 }}
           >
             {departmentOrderSaving ? (
               <CircularProgress size={19} color="inherit" />
@@ -1257,7 +1257,7 @@ const Orders = () => {
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle sx={{ fontWeight: 900 }}>
+        <DialogTitle sx={{ fontWeight: 700 }}>
           Xodimlarga vazifa biriktirish · {taskOrder?.order_number}
         </DialogTitle>
         <DialogContent dividers>
@@ -1267,7 +1267,7 @@ const Orders = () => {
               !taskOrder.converted_batch_id &&
               !["completed", "cancelled"].includes(taskOrder.status) && (
                 <Paper variant="outlined" sx={{ p: 2, borderRadius: 2.5 }}>
-                  <Typography sx={{ mb: 1.5, fontWeight: 900 }}>Yangi vazifa</Typography>
+                  <Typography sx={{ mb: 1.5, fontWeight: 700 }}>Yangi vazifa</Typography>
                   <Box
                     sx={{
                       display: "grid",
@@ -1380,7 +1380,7 @@ const Orders = () => {
                         !taskForm.assigned_to ||
                         Number(taskForm.planned_quantity || 0) <= 0
                       }
-                      sx={{ textTransform: "none", fontWeight: 850 }}
+                      sx={{ textTransform: "none", fontWeight: 600 }}
                     >
                       {taskSaving ? <CircularProgress size={19} color="inherit" /> : "Biriktirish"}
                     </Button>
@@ -1388,7 +1388,7 @@ const Orders = () => {
                 </Paper>
               )}
 
-            <Typography sx={{ fontWeight: 900 }}>Avtomatik ishlab chiqarish marshruti</Typography>
+            <Typography sx={{ fontWeight: 700 }}>Avtomatik ishlab chiqarish marshruti</Typography>
             {tasks.length === 0 ? (
               <Typography sx={{ py: 3, textAlign: "center", color: "var(--aa-text-secondary)" }}>
                 Zakaz «Tasdiqlandi» holatiga o‘tganda marshrut avtomatik yaratiladi
@@ -1410,7 +1410,7 @@ const Orders = () => {
                       }}
                     >
                       <Box>
-                        <Typography sx={{ fontWeight: 850 }}>
+                        <Typography sx={{ fontWeight: 600 }}>
                           {task.product_name} · {task.department_name}
                         </Typography>
                         <Typography
@@ -1467,7 +1467,7 @@ const Orders = () => {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle sx={{ fontWeight: 900 }}>Zakazni savdoga o'tkazish</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 700 }}>Zakazni savdoga o'tkazish</DialogTitle>
         <DialogContent dividers>
           <Stack spacing={2} sx={{ pt: 0.5 }}>
             <Paper
@@ -1479,7 +1479,7 @@ const Orders = () => {
                 borderColor: "var(--aa-border)",
               }}
             >
-              <Typography sx={{ fontWeight: 900 }}>
+              <Typography sx={{ fontWeight: 700 }}>
                 {conversionOrder?.order_number} · {conversionOrder?.client_name}
               </Typography>
               <Typography sx={{ mt: 0.4, color: "var(--aa-text-secondary)", fontSize: 13 }}>
@@ -1526,7 +1526,7 @@ const Orders = () => {
                     }}
                   >
                     <Box>
-                      <Typography sx={{ fontSize: 13.5, fontWeight: 800 }}>
+                      <Typography sx={{ fontSize: 13.5, fontWeight: 600 }}>
                         {item.product_name}
                       </Typography>
                       <Typography sx={{ fontSize: 11.5, color: "var(--aa-text-muted)" }}>
@@ -1537,7 +1537,7 @@ const Orders = () => {
                       sx={{
                         color: enough ? "#2f6b45" : "#8c1d2b",
                         fontSize: 12.5,
-                        fontWeight: 850,
+                        fontWeight: 600,
                       }}
                     >
                       {stockLoading ? "Tekshirilmoqda..." : <>Omborda: {available}</>}
@@ -1562,7 +1562,7 @@ const Orders = () => {
                         : "rgba(140, 29, 43,.14)"
                     }`,
                   fontSize: 12.5,
-                  fontWeight: 750,
+                  fontWeight: 600,
                 }}
               >
                 Tanlangan omborda mahsulot yetarli emas.
@@ -1646,7 +1646,7 @@ const Orders = () => {
               insufficientItems.length > 0 ||
               conversionPaidTooMuch
             }
-            sx={{ bgcolor: "#2f6b45", textTransform: "none", fontWeight: 850 }}
+            sx={{ bgcolor: "#2f6b45", textTransform: "none", fontWeight: 600 }}
           >
             {converting ? (
               <CircularProgress size={20} color="inherit" />

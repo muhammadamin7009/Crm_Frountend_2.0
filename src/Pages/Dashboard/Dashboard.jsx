@@ -187,7 +187,7 @@ const WorkerKpiCard = ({ label, value, helper, icon, tone = "red" }) => {
             sx={{
               color: "var(--aa-text-secondary)",
               fontSize: 12,
-              fontWeight: 750,
+              fontWeight: 600,
             }}
           >
             {label}
@@ -200,7 +200,7 @@ const WorkerKpiCard = ({ label, value, helper, icon, tone = "red" }) => {
               color: "var(--aa-text)",
               fontSize: 21,
               lineHeight: 1.2,
-              fontWeight: 950,
+              fontWeight: 700,
               letterSpacing: "-0.035em",
             }}
           >
@@ -276,7 +276,7 @@ const WorkerSection = ({ title, subtitle, action, children, className = "" }) =>
           sx={{
             color: "var(--aa-text)",
             fontSize: 15,
-            fontWeight: 900,
+            fontWeight: 700,
             letterSpacing: "-0.02em",
           }}
         >
@@ -334,7 +334,7 @@ const WorkerEmptyState = ({ children }) => (
       sx={{
         color: "var(--aa-text-tertiary)",
         fontSize: 12,
-        fontWeight: 650,
+        fontWeight: 600,
       }}
     >
       {children}
@@ -386,7 +386,7 @@ const WorkerDepartmentList = ({ items }) => {
                   sx={{
                     color: "var(--aa-text)",
                     fontSize: 12.5,
-                    fontWeight: 900,
+                    fontWeight: 700,
                   }}
                 >
                   {item.group_name || "Bo‘lim"}
@@ -409,7 +409,7 @@ const WorkerDepartmentList = ({ items }) => {
                 sx={{
                   color: "var(--aa-text)",
                   fontSize: 11,
-                  fontWeight: 900,
+                  fontWeight: 700,
                 }}
               >
                 {formatMoney(amount)}
@@ -588,7 +588,7 @@ const WorkerDashboard = ({ user }) => {
           sx={{
             color: "var(--aa-text-tertiary)",
             fontSize: 13,
-            fontWeight: 750,
+            fontWeight: 600,
           }}
         >
           Ish ma’lumotlari yuklanmoqda...
@@ -710,7 +710,7 @@ const WorkerDashboard = ({ user }) => {
               sx={{
                 color: "#6e1622",
                 fontSize: 10,
-                fontWeight: 950,
+                fontWeight: 700,
                 letterSpacing: ".13em",
                 textTransform: "uppercase",
               }}
@@ -728,7 +728,8 @@ const WorkerDashboard = ({ user }) => {
                 sm: 30,
               },
               lineHeight: 1.15,
-              fontWeight: 950,
+              fontFamily: "var(--aa-display)",
+              fontWeight: 400,
               letterSpacing: "-0.04em",
             }}
           >
@@ -749,7 +750,7 @@ const WorkerDashboard = ({ user }) => {
               component="span"
               sx={{
                 color: "#6e1622",
-                fontWeight: 850,
+                fontWeight: 600,
               }}
             >
               {user?.first_name || "Ishchi"}
@@ -785,7 +786,7 @@ const WorkerDashboard = ({ user }) => {
               sx={{
                 color: "var(--aa-text-secondary)",
                 fontSize: 9.5,
-                fontWeight: 750,
+                fontWeight: 600,
               }}
             >
               Hisobot davri
@@ -796,7 +797,7 @@ const WorkerDashboard = ({ user }) => {
                 mt: 0.3,
                 color: "var(--aa-text)",
                 fontSize: 11,
-                fontWeight: 900,
+                fontWeight: 700,
               }}
             >
               {month.date_from} — {month.date_to}
@@ -846,7 +847,7 @@ const WorkerDashboard = ({ user }) => {
             backgroundColor: "var(--aa-surface-muted)",
           }}
         >
-          <Typography sx={{ color: "var(--aa-text)", fontSize: 15, fontWeight: 900 }}>
+          <Typography sx={{ color: "var(--aa-text)", fontSize: 15, fontWeight: 700 }}>
             {canViewInventory
               ? "Ombor bo'limi sizga ochiq"
               : "Bosh sahifada ko'rsatiladigan ma'lumot yo'q"}
@@ -899,7 +900,7 @@ const WorkerDashboard = ({ user }) => {
                 sx={{
                   color: "#ffffff !important",
                   fontSize: 16,
-                  fontWeight: 900,
+                  fontWeight: 700,
                 }}
               >
                 Bu oydagi hisob
@@ -924,7 +925,7 @@ const WorkerDashboard = ({ user }) => {
                     sm: 31,
                   },
                   lineHeight: 1.1,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   letterSpacing: "-0.04em",
                 }}
               >
@@ -964,7 +965,7 @@ const WorkerDashboard = ({ user }) => {
                     sx={{
                       color: "#ffffff !important",
                       fontSize: 11,
-                      fontWeight: 900,
+                      fontWeight: 700,
                     }}
                   >
                     {paymentProgress}%
@@ -1021,7 +1022,7 @@ const WorkerDashboard = ({ user }) => {
                       mt: 0.8,
                       color: "#8fd4a8 !important",
                       fontSize: 14,
-                      fontWeight: 900,
+                      fontWeight: 700,
                       overflowWrap: "anywhere",
                     }}
                   >
@@ -1052,7 +1053,7 @@ const WorkerDashboard = ({ user }) => {
                       mt: 0.8,
                       color: "#d9b782 !important",
                       fontSize: 14,
-                      fontWeight: 900,
+                      fontWeight: 700,
                       overflowWrap: "anywhere",
                     }}
                   >
@@ -1111,7 +1112,7 @@ const WorkerDashboard = ({ user }) => {
                   "& .MuiTableHead-root .MuiTableCell-root": {
                     color: "var(--aa-text-tertiary)",
                     fontSize: 9.5,
-                    fontWeight: 900,
+                    fontWeight: 700,
                     letterSpacing: ".04em",
                     textTransform: "uppercase",
                     backgroundColor: "var(--aa-surface-muted)",
@@ -1178,7 +1179,7 @@ const WorkerDashboard = ({ user }) => {
                             sx={{
                               color: "var(--aa-text)",
                               fontSize: 11.5,
-                              fontWeight: 850,
+                              fontWeight: 600,
                             }}
                           >
                             {item.product_name || "Mahsulot"}
@@ -1193,7 +1194,7 @@ const WorkerDashboard = ({ user }) => {
                           sx={{
                             color: "var(--aa-text)",
                             fontSize: 11,
-                            fontWeight: 850,
+                            fontWeight: 600,
                           }}
                         >
                           {formatNumber(item.quantity)}
@@ -1208,7 +1209,7 @@ const WorkerDashboard = ({ user }) => {
                             height: 24,
                             color: "#2f6b45",
                             fontSize: 9.5,
-                            fontWeight: 900,
+                            fontWeight: 700,
                             backgroundColor: "rgba(78, 156, 107,.10)",
                           }}
                         />
@@ -1343,7 +1344,7 @@ const NoDashboardPermission = ({ user }) => {
                   sx={{ width: 20, height: 20, opacity: 0.8 }}
                 />
 
-                <Typography sx={{ color: "var(--aa-text)", fontSize: 14, fontWeight: 800 }}>
+                <Typography sx={{ color: "var(--aa-text)", fontSize: 14, fontWeight: 600 }}>
                   {section.label}
                 </Typography>
               </Box>

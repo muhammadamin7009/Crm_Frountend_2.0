@@ -193,7 +193,7 @@ const PlanChip = ({ code, name }) => {
         color: current[0],
 
         fontSize: 9.5,
-        fontWeight: 900,
+        fontWeight: 700,
 
         backgroundColor: current[1],
 
@@ -243,7 +243,7 @@ const UsageBar = ({ label, value, limit, tone = "red" }) => {
           sx={{
             color: "var(--aa-text-secondary)",
             fontSize: 9,
-            fontWeight: 800,
+            fontWeight: 600,
           }}
         >
           {label}
@@ -253,7 +253,7 @@ const UsageBar = ({ label, value, limit, tone = "red" }) => {
           sx={{
             color: "var(--aa-text)",
             fontSize: 9,
-            fontWeight: 950,
+            fontWeight: 700,
           }}
         >
           {number(value)} / {number(limit)}
@@ -317,7 +317,7 @@ const SummaryBox = ({ label, value, tone = "default" }) => {
         sx={{
           color: "var(--aa-text-tertiary)",
           fontSize: 9,
-          fontWeight: 800,
+          fontWeight: 600,
         }}
       >
         {label}
@@ -329,7 +329,7 @@ const SummaryBox = ({ label, value, tone = "default" }) => {
           mt: 0.55,
           color: "inherit",
           fontSize: 13,
-          fontWeight: 950,
+          fontWeight: 700,
         }}
       >
         {value}
@@ -890,7 +890,7 @@ const PlatformDashboard = () => {
                     color: "#d9b782 !important",
 
                     fontSize: 10,
-                    fontWeight: 950,
+                    fontWeight: 700,
                     letterSpacing: ".13em",
 
                     textTransform: "uppercase",
@@ -913,8 +913,9 @@ const PlatformDashboard = () => {
                   },
 
                   lineHeight: 1.08,
-                  fontWeight: 950,
-                  letterSpacing: "-.045em",
+                  fontFamily: "var(--aa-display)",
+                  fontWeight: 400,
+                  letterSpacing: "-.024em",
                 }}
               >
                 Korxonalar boshqaruvi
@@ -972,7 +973,7 @@ const PlatformDashboard = () => {
                         borderRadius: 99,
                         color: "#ffffff",
                         fontSize: 9,
-                        fontWeight: 950,
+                        fontWeight: 700,
                         backgroundColor: "#8c1d2b",
                         boxShadow: "0 0 0 3px rgba(140, 29, 43,.16)",
                       }}
@@ -1003,7 +1004,7 @@ const PlatformDashboard = () => {
                     color: "#ffffff",
 
                     fontSize: 10,
-                    fontWeight: 950,
+                    fontWeight: 700,
 
                     background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
@@ -1021,7 +1022,7 @@ const PlatformDashboard = () => {
                       color: "rgba(255,255,255,.72) !important",
 
                       fontSize: 9.5,
-                      fontWeight: 900,
+                      fontWeight: 700,
                     }}
                   >
                     {platformAdmin?.first_name || platformAdmin?.name || "Platforma administratori"}
@@ -1226,7 +1227,7 @@ const PlatformDashboard = () => {
                 sx={{
                   color: "var(--aa-text)",
                   fontSize: 15,
-                  fontWeight: 950,
+                  fontWeight: 700,
                 }}
               >
                 Platformadagi korxonalar
@@ -1250,7 +1251,7 @@ const PlatformDashboard = () => {
                 height: 25,
                 color: "#6e1622",
                 fontSize: 9.5,
-                fontWeight: 900,
+                fontWeight: 700,
 
                 backgroundColor: "rgba(110, 22, 34,.07)",
               }}
@@ -1282,7 +1283,7 @@ const PlatformDashboard = () => {
                     mt: 1.3,
                     color: "var(--aa-text-tertiary)",
                     fontSize: 10.5,
-                    fontWeight: 800,
+                    fontWeight: 600,
                   }}
                 >
                   Korxonalar yuklanmoqda...
@@ -1304,7 +1305,7 @@ const PlatformDashboard = () => {
                     py: 1.55,
                     color: "var(--aa-text-tertiary)",
                     fontSize: 9.5,
-                    fontWeight: 900,
+                    fontWeight: 700,
 
                     letterSpacing: ".045em",
 
@@ -1373,7 +1374,7 @@ const PlatformDashboard = () => {
 
                                 fontSize: 13,
 
-                                fontWeight: 950,
+                                fontWeight: 700,
 
                                 background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
@@ -1399,7 +1400,7 @@ const PlatformDashboard = () => {
 
                                   fontSize: 12.5,
 
-                                  fontWeight: 900,
+                                  fontWeight: 700,
                                 }}
                               >
                                 {company.name}
@@ -1442,7 +1443,7 @@ const PlatformDashboard = () => {
 
                               fontSize: 9.5,
 
-                              fontWeight: 850,
+                              fontWeight: 600,
                             }}
                           >
                             {company.slug || "-"}
@@ -1460,7 +1461,7 @@ const PlatformDashboard = () => {
 
                               fontSize: 9.5,
 
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             {money(company.monthly_price)} / oy
@@ -1504,7 +1505,7 @@ const PlatformDashboard = () => {
 
                               fontSize: 10.5,
 
-                              fontWeight: 900,
+                              fontWeight: 700,
                             }}
                           >
                             {date(company.ends_at || company.subscription_ends_at)}
@@ -1530,7 +1531,7 @@ const PlatformDashboard = () => {
 
                               fontSize: 11.5,
 
-                              fontWeight: 950,
+                              fontWeight: 700,
                             }}
                           >
                             {money(company.total_paid)}
@@ -1682,7 +1683,7 @@ const PlatformDashboard = () => {
 
                           color: "var(--aa-text-tertiary)",
 
-                          fontWeight: 850,
+                          fontWeight: 600,
                         }}
                       >
                         Korxonalar topilmadi
@@ -1769,7 +1770,7 @@ const ApplicationInbox = ({ open, applications, actionId, onClose, onReview }) =
                   }}
                 >
                   <Box>
-                    <Typography sx={{ color: "var(--aa-text)", fontSize: 15, fontWeight: 950 }}>
+                    <Typography sx={{ color: "var(--aa-text)", fontSize: 15, fontWeight: 700 }}>
                       {application.company_name}
                     </Typography>
                     <Typography
@@ -1784,7 +1785,7 @@ const ApplicationInbox = ({ open, applications, actionId, onClose, onReview }) =
                     color={statusColor[application.status] || "default"}
                     label={statusLabel[application.status] || application.status}
                     variant="outlined"
-                    sx={{ fontWeight: 850 }}
+                    sx={{ fontWeight: 600 }}
                   />
                 </Box>
 
@@ -1865,7 +1866,7 @@ const ApplicationInbox = ({ open, applications, actionId, onClose, onReview }) =
           })
         ) : (
           <Box sx={{ py: 6, textAlign: "center" }}>
-            <Typography sx={{ color: "var(--aa-text)", fontWeight: 900 }}>
+            <Typography sx={{ color: "var(--aa-text)", fontWeight: 700 }}>
               Hozircha korxona arizalari yo‘q
             </Typography>
           </Box>
@@ -1884,10 +1885,10 @@ const ApplicationDetail = ({ label, value }) => (
       backgroundColor: "var(--aa-surface-solid)",
     }}
   >
-    <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 9, fontWeight: 850 }}>
+    <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 9, fontWeight: 600 }}>
       {label}
     </Typography>
-    <Typography sx={{ mt: 0.35, color: "var(--aa-text)", fontSize: 11.5, fontWeight: 850 }}>
+    <Typography sx={{ mt: 0.35, color: "var(--aa-text)", fontSize: 11.5, fontWeight: 600 }}>
       {value}
     </Typography>
   </Box>
@@ -2036,7 +2037,7 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
                     borderRadius: "11px",
 
                     fontSize: 10.5,
-                    fontWeight: 900,
+                    fontWeight: 700,
 
                     textTransform: "none",
                   }
@@ -2193,7 +2194,7 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
                 sx={{
                   color: "var(--aa-text)",
                   fontSize: 11.5,
-                  fontWeight: 950,
+                  fontWeight: 700,
                 }}
               >
                 Google Authenticator
@@ -2206,7 +2207,7 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
                   color: form.totp_enabled ? "#a06a12" : "#2f6b45",
 
                   fontSize: 9.5,
-                  fontWeight: 850,
+                  fontWeight: 600,
                 }}
               >
                 Holati: {form.totp_enabled ? "Ulangan" : "Hali ulanmagan"}
@@ -2242,7 +2243,7 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
             <Typography
               sx={{
                 fontSize: 11.5,
-                fontWeight: 950,
+                fontWeight: 700,
               }}
             >
               Bu amalni ortga qaytarib bo‘lmaydi
@@ -2315,7 +2316,7 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
                   height: 25,
                   color: "#2f6b45",
                   fontSize: 9.5,
-                  fontWeight: 900,
+                  fontWeight: 700,
 
                   backgroundColor: "rgba(78, 156, 107,.08)",
 
@@ -2473,7 +2474,7 @@ const heroPrimaryButtonSx = {
 
   borderRadius: "13px",
   fontSize: 11,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
@@ -2498,7 +2499,7 @@ const heroSecondaryButtonSx = {
   backgroundColor: "rgba(255,255,255,.055)",
 
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   "&:hover": {
@@ -2512,7 +2513,7 @@ const primaryButtonSx = {
   color: "#ffffff",
   borderRadius: "11px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",
@@ -2531,7 +2532,7 @@ const secondaryButtonSx = {
   borderRadius: "11px",
   borderColor: "#d8cec1",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
@@ -2548,14 +2549,14 @@ const tableActionSx = {
   minHeight: 30,
   borderRadius: "9px",
   fontSize: 9,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 };
 
 const dialogCancelSx = {
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  fontWeight: 850,
+  fontWeight: 600,
   textTransform: "none",
 };
 
@@ -2566,7 +2567,7 @@ const dialogPrimarySx = {
   color: "#ffffff",
   borderRadius: "11px",
   fontSize: 10.5,
-  fontWeight: 900,
+  fontWeight: 700,
   textTransform: "none",
 
   background: "linear-gradient(135deg,#4d0f18,#7a1826)",
@@ -2590,7 +2591,7 @@ const dialogSectionSx = {
 const sectionTitleSx = {
   color: "var(--aa-text)",
   fontSize: 14,
-  fontWeight: 950,
+  fontWeight: 700,
 };
 
 const sectionSubtitleSx = {

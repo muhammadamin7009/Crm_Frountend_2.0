@@ -169,7 +169,7 @@ const MobileNavigation = () => {
         }}
       >
         <Box sx={{ px: 1.25, pt: 0.75, pb: 1.25 }}>
-          <Typography sx={{ color: "var(--aa-text)", fontSize: 14, fontWeight: 950 }}>
+          <Typography sx={{ color: "var(--aa-text)", fontSize: 14, fontWeight: 700 }}>
             Tezkor amallar
           </Typography>
           <Typography sx={{ mt: 0.35, color: "var(--aa-text-tertiary)", fontSize: 10.5 }}>
@@ -203,7 +203,7 @@ const MobileNavigation = () => {
                 flexShrink: 0,
                 color: "var(--aa-brand-text)",
                 fontSize: 10,
-                fontWeight: 950,
+                fontWeight: 700,
                 borderRadius: "11px",
                 backgroundColor: "rgba(110, 22, 34,.08)",
               }}
@@ -212,7 +212,7 @@ const MobileNavigation = () => {
             </Box>
 
             <Box sx={{ minWidth: 0, flex: 1 }}>
-              <Typography sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 900 }}>
+              <Typography sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 700 }}>
                 {item.label}
               </Typography>
               <Typography noWrap sx={{ mt: 0.3, color: "var(--aa-text-tertiary)", fontSize: 9.5 }}>
@@ -220,7 +220,7 @@ const MobileNavigation = () => {
               </Typography>
             </Box>
 
-            <Typography aria-hidden="true" sx={{ color: "#7a1826", fontWeight: 900 }}>
+            <Typography aria-hidden="true" sx={{ color: "#7a1826", fontWeight: 700 }}>
               →
             </Typography>
           </MenuItem>

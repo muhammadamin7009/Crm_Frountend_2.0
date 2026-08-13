@@ -314,7 +314,7 @@ const Sidebar = () => {
                   color: "#ffffff",
                   fontSize: 16,
                   lineHeight: 1.15,
-                  fontWeight: 900,
+                  fontWeight: 700,
                   letterSpacing: "-0.02em",
                 }}
               >
@@ -374,7 +374,7 @@ const Sidebar = () => {
                   flex: 1,
                   color: "#ffffff",
                   fontSize: 12.5,
-                  fontWeight: 650,
+                  fontWeight: 600,
                   "& input::placeholder": { color: "rgba(255,255,255,.32)", opacity: 1 },
                 }}
               />
@@ -512,7 +512,7 @@ const Sidebar = () => {
                           px: 0.8,
                           color: "rgba(255,255,255,.55)",
                           fontSize: 10,
-                          fontWeight: 900,
+                          fontWeight: 700,
                           lineHeight: "18px",
                           borderRadius: "7px",
                           background: "rgba(255,255,255,.08)",
@@ -587,7 +587,7 @@ const Sidebar = () => {
                           color: "inherit",
                           fontSize: 13.5,
                           lineHeight: "20px",
-                          fontWeight: 720,
+                          fontWeight: 600,
                           whiteSpace: "nowrap",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
@@ -705,7 +705,7 @@ const Sidebar = () => {
                   sx={{
                     color: "#ffffff",
                     fontSize: 12.5,
-                    fontWeight: 850,
+                    fontWeight: 600,
                   }}
                 >
                   {user?.plan_name ? `${user.plan_name} rejasi` : "Faol tarif"}
@@ -749,7 +749,7 @@ const Sidebar = () => {
                   flexShrink: 0,
                   color: "#ffffff",
                   fontSize: 15,
-                  fontWeight: 900,
+                  fontWeight: 700,
                   bgcolor: "#6e1622",
                   border: "2px solid rgba(255,255,255,.1)",
                   boxShadow: "0 8px 18px rgba(0,0,0,.24)",
@@ -770,7 +770,7 @@ const Sidebar = () => {
                     color: "#ffffff",
                     fontSize: 13.5,
                     lineHeight: 1.2,
-                    fontWeight: 850,
+                    fontWeight: 600,
                   }}
                 >
                   {fullName || user?.username || "Foydalanuvchi"}
@@ -799,7 +799,7 @@ const Sidebar = () => {
                 py: 0.5,
                 color: "#d9b782 !important",
                 fontSize: 12,
-                fontWeight: 800,
+                fontWeight: 600,
                 textTransform: "none",
                 borderRadius: "10px !important",
                 backgroundColor: "rgba(140, 29, 43,.08)",
