@@ -51,11 +51,11 @@ import {
 const statuses = {
   new: {
     label: "Yangi",
-    color: "#1d4ed8",
-    bg: "#eff6ff",
+    color: "#1f6f8b",
+    bg: "#eef4f6",
     darkColor: "#93c5fd",
-    darkBg: "rgba(37,99,235,.16)",
-    darkBorder: "rgba(96,165,250,.30)",
+    darkBg: "rgba(31, 111, 139,.16)",
+    darkBorder: "rgba(107, 179, 201,.30)",
   },
   confirmed: {
     label: "Tasdiqlandi",
@@ -67,35 +67,35 @@ const statuses = {
   },
   in_production: {
     label: "Ishlab chiqarishda",
-    color: "#b45309",
-    bg: "#fffbeb",
+    color: "#a06a12",
+    bg: "#faf5e9",
     darkColor: "#fbbf24",
-    darkBg: "rgba(217,119,6,.16)",
-    darkBorder: "rgba(251,191,36,.30)",
+    darkBg: "rgba(160, 106, 18,.16)",
+    darkBorder: "rgba(201, 168, 117,.30)",
   },
   ready: {
     label: "Tayyor",
     color: "#047857",
     bg: "#ecfdf5",
     darkColor: "#6ee7b7",
-    darkBg: "rgba(5,150,105,.16)",
+    darkBg: "rgba(47, 107, 69,.16)",
     darkBorder: "rgba(52,211,153,.30)",
   },
   completed: {
     label: "Bajarildi",
-    color: "#15803d",
-    bg: "#f0fdf4",
-    darkColor: "#86efac",
+    color: "#2f6b45",
+    bg: "#eef5f0",
+    darkColor: "#8fd4a8",
     darkBg: "rgba(21,128,61,.18)",
-    darkBorder: "rgba(74,222,128,.30)",
+    darkBorder: "rgba(108, 191, 139,.30)",
   },
   cancelled: {
     label: "Bekor qilindi",
-    color: "#dc2626",
-    bg: "#fef2f2",
-    darkColor: "#fca5a5",
-    darkBg: "rgba(220,38,38,.16)",
-    darkBorder: "rgba(248,113,113,.30)",
+    color: "#8c1d2b",
+    bg: "#faf5ef",
+    darkColor: "#d9b782",
+    darkBg: "rgba(140, 29, 43,.16)",
+    darkBorder: "rgba(201, 168, 117,.30)",
   },
 };
 const editableStatuses = Object.entries(statuses).filter(([value]) => value !== "completed");
@@ -776,9 +776,9 @@ const Orders = () => {
                           sx={{
                             mt: 0.6,
                             height: 22,
-                            color: "#b91c1c",
-                            bgcolor: "rgba(185,28,28,.12)",
-                            border: "1px solid rgba(239,68,68,.22)",
+                            color: "#7a1826",
+                            bgcolor: "rgba(110, 22, 34,.12)",
+                            border: "1px solid rgba(163, 40, 58,.22)",
                             fontWeight: 850,
                           }}
                         />
@@ -799,7 +799,7 @@ const Orders = () => {
                             order.due_date &&
                             String(order.due_date).slice(0, 10) < today() &&
                             !["completed", "cancelled"].includes(order.status)
-                              ? "#dc2626"
+                              ? "#8c1d2b"
                               : "var(--aa-text-muted)",
                         }}
                       >
@@ -881,7 +881,7 @@ const Orders = () => {
                               onClick={() => openConversion(order)}
                               sx={{
                                 whiteSpace: "nowrap",
-                                bgcolor: "#15803d",
+                                bgcolor: "#2f6b45",
                                 textTransform: "none",
                                 fontWeight: 850,
                               }}
@@ -1051,7 +1051,7 @@ const Orders = () => {
                       items: current.items.filter((_, itemIndex) => itemIndex !== index),
                     }))
                   }
-                  sx={{ color: "#dc2626" }}
+                  sx={{ color: "#8c1d2b" }}
                 >
                   ×
                 </IconButton>
@@ -1436,7 +1436,7 @@ const Orders = () => {
                             size="small"
                             disabled={task.status === "completed"}
                             onClick={() => removeTask(task)}
-                            sx={{ color: "#dc2626" }}
+                            sx={{ color: "#8c1d2b" }}
                           >
                             ×
                           </IconButton>
@@ -1535,7 +1535,7 @@ const Orders = () => {
                     </Box>
                     <Typography
                       sx={{
-                        color: enough ? "#15803d" : "#dc2626",
+                        color: enough ? "#2f6b45" : "#8c1d2b",
                         fontSize: 12.5,
                         fontWeight: 850,
                       }}
@@ -1552,14 +1552,14 @@ const Orders = () => {
                 sx={{
                   p: 1.4,
                   borderRadius: 2,
-                  color: (theme) => (theme.palette.mode === "dark" ? "#fca5a5" : "#b91c1c"),
+                  color: (theme) => (theme.palette.mode === "dark" ? "#d9b782" : "#7a1826"),
                   bgcolor: (theme) =>
-                    theme.palette.mode === "dark" ? "rgba(220,38,38,.16)" : "#fef2f2",
+                    theme.palette.mode === "dark" ? "rgba(140, 29, 43,.16)" : "#faf5ef",
                   border: (theme) =>
                     `1px solid ${
                       theme.palette.mode === "dark"
-                        ? "rgba(248,113,113,.28)"
-                        : "rgba(220,38,38,.14)"
+                        ? "rgba(201, 168, 117,.28)"
+                        : "rgba(140, 29, 43,.14)"
                     }`,
                   fontSize: 12.5,
                   fontWeight: 750,
@@ -1621,7 +1621,7 @@ const Orders = () => {
               </TextField>
             )}
             <Typography
-              sx={{ p: 1.4, borderRadius: 2, color: "#92400e", bgcolor: "#fffbeb", fontSize: 12.5 }}
+              sx={{ p: 1.4, borderRadius: 2, color: "#7d5210", bgcolor: "#faf5e9", fontSize: 12.5 }}
             >
               Tasdiqlangach zakaz savdoga yoziladi, ombor qoldig‘i kamayadi va mijoz qarzi
               hisoblanadi. Bu amal takrorlanmaydi.
@@ -1646,7 +1646,7 @@ const Orders = () => {
               insufficientItems.length > 0 ||
               conversionPaidTooMuch
             }
-            sx={{ bgcolor: "#15803d", textTransform: "none", fontWeight: 850 }}
+            sx={{ bgcolor: "#2f6b45", textTransform: "none", fontWeight: 850 }}
           >
             {converting ? (
               <CircularProgress size={20} color="inherit" />

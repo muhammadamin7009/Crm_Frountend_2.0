@@ -54,9 +54,7 @@ const DEFAULT_OPEN_GROUP = "Asosiy";
 const COLLAPSED_GROUPS_KEY = "sidebar_collapsed_groups_v2";
 
 const defaultCollapsedGroups = () =>
-  new Set(
-    GROUP_LAYOUT.map((group) => group.label).filter((label) => label !== DEFAULT_OPEN_GROUP),
-  );
+  new Set(GROUP_LAYOUT.map((group) => group.label).filter((label) => label !== DEFAULT_OPEN_GROUP));
 
 const readCollapsedGroups = () => {
   try {
@@ -159,7 +157,8 @@ const Sidebar = () => {
   const totalVisibleItems = useMemo(
     () =>
       resolvedMenuGroups.reduce(
-        (count, group) => count + group.items.filter((item) => isMenuItemVisible(user, item)).length,
+        (count, group) =>
+          count + group.items.filter((item) => isMenuItemVisible(user, item)).length,
         0,
       ),
     [resolvedMenuGroups, user],
@@ -232,7 +231,7 @@ const Sidebar = () => {
           overflow: "hidden",
           color: "#ffffff",
           background:
-            "radial-gradient(circle at 100% 0%, rgba(185,28,28,.23), transparent 28%), linear-gradient(180deg,#11151c 0%,#0d1117 45%,#090c11 100%)",
+            "radial-gradient(circle at 100% 0%, rgba(110, 22, 34,.23), transparent 28%), linear-gradient(180deg,#151211 0%,#151211 45%,#100d0c 100%)",
           borderRight: "1px solid rgba(255,255,255,.07)",
 
           "&::before": {
@@ -243,8 +242,9 @@ const Sidebar = () => {
             top: -175,
             right: -165,
             borderRadius: "50%",
-            border: "1px solid rgba(239,68,68,.16)",
-            boxShadow: "0 0 0 48px rgba(239,68,68,.025), 0 0 0 96px rgba(239,68,68,.018)",
+            border: "1px solid rgba(163, 40, 58,.16)",
+            boxShadow:
+              "0 0 62px 17px rgba(163, 40, 58,.025), 0 0 125px 34px rgba(163, 40, 58,.018)",
             pointerEvents: "none",
           },
 
@@ -352,7 +352,7 @@ const Sidebar = () => {
                 background: "rgba(255,255,255,.04)",
                 transition: "border-color .18s ease, background-color .18s ease",
                 "&:focus-within": {
-                  borderColor: "rgba(248,113,113,.35)",
+                  borderColor: "rgba(201, 168, 117,.35)",
                   background: "rgba(255,255,255,.06)",
                 },
               }}
@@ -621,10 +621,10 @@ const Sidebar = () => {
 
                         "&.active": {
                           color: "#ffffff",
-                          borderColor: "rgba(248,113,113,.22)",
-                          background: "linear-gradient(135deg,#991b1b 0%,#c81e2a 100%)",
+                          borderColor: "rgba(201, 168, 117,.22)",
+                          background: "linear-gradient(135deg,#6e1622 0%,#8c1d2b 100%)",
                           boxShadow:
-                            "0 10px 24px rgba(127,29,29,.34), inset 0 1px 0 rgba(255,255,255,.15)",
+                            "0 10px 24px rgba(77, 15, 24,.34), inset 0 1px 0 rgba(255,255,255,.15)",
                         },
 
                         "&.active .sidebar-icon": {
@@ -671,8 +671,8 @@ const Sidebar = () => {
               mb: 1.2,
               p: 1.7,
               borderRadius: "17px",
-              border: "1px solid rgba(248,113,113,.12)",
-              background: "linear-gradient(145deg,rgba(153,27,27,.18),rgba(255,255,255,.025))",
+              border: "1px solid rgba(201, 168, 117,.12)",
+              background: "linear-gradient(145deg,rgba(110, 22, 34,.18),rgba(255,255,255,.025))",
               boxShadow: "inset 0 1px 0 rgba(255,255,255,.04)",
             }}
           >
@@ -690,10 +690,10 @@ const Sidebar = () => {
                   display: "grid",
                   placeItems: "center",
                   borderRadius: "11px",
-                  color: "#fecaca",
+                  color: "#ecd9bd",
                   fontSize: 17,
-                  background: "rgba(220,38,38,.18)",
-                  border: "1px solid rgba(248,113,113,.12)",
+                  background: "rgba(140, 29, 43,.18)",
+                  border: "1px solid rgba(201, 168, 117,.12)",
                 }}
               >
                 ◆
@@ -750,7 +750,7 @@ const Sidebar = () => {
                   color: "#ffffff",
                   fontSize: 15,
                   fontWeight: 900,
-                  bgcolor: "#991b1b",
+                  bgcolor: "#6e1622",
                   border: "2px solid rgba(255,255,255,.1)",
                   boxShadow: "0 8px 18px rgba(0,0,0,.24)",
                 }}
@@ -797,16 +797,16 @@ const Sidebar = () => {
                 mt: 1.1,
                 minHeight: 35,
                 py: 0.5,
-                color: "#fca5a5 !important",
+                color: "#d9b782 !important",
                 fontSize: 12,
                 fontWeight: 800,
                 textTransform: "none",
                 borderRadius: "10px !important",
-                backgroundColor: "rgba(220,38,38,.08)",
+                backgroundColor: "rgba(140, 29, 43,.08)",
 
                 "&:hover": {
                   color: "#ffffff !important",
-                  backgroundColor: "rgba(220,38,38,.18) !important",
+                  backgroundColor: "rgba(140, 29, 43,.18) !important",
                 },
               }}
             >

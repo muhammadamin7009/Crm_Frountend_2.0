@@ -12,7 +12,6 @@ import BriefcaseIcon from "../../images/ui-icons/briefcase.svg";
 import TrendUpIcon from "../../images/ui-icons/trend-up.svg";
 import FinanceIcon from "../../images/ui-icons/finance.svg";
 
-
 const MobileNavigation = () => {
   const { user } = useAuth();
 
@@ -206,7 +205,7 @@ const MobileNavigation = () => {
                 fontSize: 10,
                 fontWeight: 950,
                 borderRadius: "11px",
-                backgroundColor: "rgba(153,27,27,.08)",
+                backgroundColor: "rgba(110, 22, 34,.08)",
               }}
             >
               {String(index + 1).padStart(2, "0")}
@@ -221,7 +220,7 @@ const MobileNavigation = () => {
               </Typography>
             </Box>
 
-            <Typography aria-hidden="true" sx={{ color: "#b91c1c", fontWeight: 900 }}>
+            <Typography aria-hidden="true" sx={{ color: "#7a1826", fontWeight: 900 }}>
               →
             </Typography>
           </MenuItem>

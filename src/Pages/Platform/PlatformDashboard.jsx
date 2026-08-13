@@ -173,14 +173,14 @@ const getInitial = (value) =>
 const HeroMetric = (props) => <SharedHeroMetric {...props} valueSx={{ fontSize: 17 }} />;
 const PlanChip = ({ code, name }) => {
   const styles = {
-    business: ["#991b1b", "rgba(153,27,27,.08)", "rgba(153,27,27,.17)"],
+    business: ["#6e1622", "rgba(110, 22, 34,.08)", "rgba(110, 22, 34,.17)"],
 
-    pro: ["#1d4ed8", "rgba(37,99,235,.08)", "rgba(37,99,235,.17)"],
+    pro: ["#1f6f8b", "rgba(31, 111, 139,.08)", "rgba(31, 111, 139,.17)"],
 
-    plus: ["#b45309", "rgba(245,158,11,.09)", "rgba(245,158,11,.19)"],
+    plus: ["#a06a12", "rgba(160, 106, 18,.09)", "rgba(160, 106, 18,.19)"],
   };
 
-  const current = styles[code] || ["#64748b", "#f1f5f9", "#e2e8f0"];
+  const current = styles[code] || ["#7d716a", "#f4f0ea", "#e8e1d8"];
 
   return (
     <Chip
@@ -213,11 +213,11 @@ const StatusChip = ({ status }) => (
 );
 const UsageBar = ({ label, value, limit, tone = "red" }) => {
   const colors = {
-    red: "linear-gradient(90deg,#991b1b,#dc2626)",
+    red: "linear-gradient(90deg,#6e1622,#8c1d2b)",
 
-    blue: "linear-gradient(90deg,#1d4ed8,#60a5fa)",
+    blue: "linear-gradient(90deg,#1f6f8b,#6bb3c9)",
 
-    green: "linear-gradient(90deg,#15803d,#4ade80)",
+    green: "linear-gradient(90deg,#2f6b45,#6cbf8b)",
   };
 
   const maximum = Math.max(Number(limit || 0), 1);
@@ -286,15 +286,15 @@ const UsageBar = ({ label, value, limit, tone = "red" }) => {
 
 const SummaryBox = ({ label, value, tone = "default" }) => {
   const tones = {
-    default: ["#334155", "#ffffff", "#e7ebf0"],
+    default: ["#4b413c", "#ffffff", "#e8e1d8"],
 
-    red: ["#991b1b", "rgba(153,27,27,.07)", "rgba(153,27,27,.16)"],
+    red: ["#6e1622", "rgba(110, 22, 34,.07)", "rgba(110, 22, 34,.16)"],
 
-    green: ["#15803d", "rgba(34,197,94,.07)", "rgba(34,197,94,.17)"],
+    green: ["#2f6b45", "rgba(78, 156, 107,.07)", "rgba(78, 156, 107,.17)"],
 
-    blue: ["#1d4ed8", "rgba(37,99,235,.07)", "rgba(37,99,235,.17)"],
+    blue: ["#1f6f8b", "rgba(31, 111, 139,.07)", "rgba(31, 111, 139,.17)"],
 
-    amber: ["#b45309", "rgba(245,158,11,.09)", "rgba(245,158,11,.19)"],
+    amber: ["#a06a12", "rgba(160, 106, 18,.09)", "rgba(160, 106, 18,.19)"],
   };
 
   const current = tones[tone] || tones.default;
@@ -795,7 +795,7 @@ const PlatformDashboard = () => {
         backgroundColor: "var(--aa-page-bg)",
 
         backgroundImage:
-          "radial-gradient(circle at 0% 0%,rgba(153,27,27,.07),transparent 28%),radial-gradient(circle at 100% 100%,rgba(15,23,42,.06),transparent 32%)",
+          "radial-gradient(circle at 0% 0%,rgba(110, 22, 34,.07),transparent 28%),radial-gradient(circle at 100% 100%,rgba(23, 17, 15,.06),transparent 32%)",
       }}
     >
       <style>{platformDashboardStyles}</style>
@@ -826,12 +826,12 @@ const PlatformDashboard = () => {
 
             border: "1px solid rgba(255,255,255,.075)",
 
-            backgroundColor: "#0d1117 !important",
+            backgroundColor: "#151211 !important",
 
             backgroundImage:
-              "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
+              "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.34),transparent 30%),linear-gradient(145deg,#151211,#1e1a18 52%,#3a1219) !important",
 
-            boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+            boxShadow: "0 24px 60px rgba(23, 17, 15,.20)",
 
             "&::before": {
               content: '""',
@@ -842,9 +842,10 @@ const PlatformDashboard = () => {
               right: -210,
               borderRadius: "50%",
 
-              border: "1px solid rgba(248,113,113,.16)",
+              border: "1px solid rgba(201, 168, 117,.16)",
 
-              boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+              boxShadow:
+                "0 0 81px 22px rgba(201, 168, 117,.022),0 0 161px 43px rgba(201, 168, 117,.014)",
 
               pointerEvents: "none",
             },
@@ -880,13 +881,13 @@ const PlatformDashboard = () => {
                     height: 2,
                     borderRadius: 99,
 
-                    background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                    background: "linear-gradient(90deg,#c9a875,#a3283a)",
                   }}
                 />
 
                 <Typography
                   sx={{
-                    color: "#fecdd3 !important",
+                    color: "#d9b782 !important",
 
                     fontSize: 10,
                     fontWeight: 950,
@@ -972,8 +973,8 @@ const PlatformDashboard = () => {
                         color: "#ffffff",
                         fontSize: 9,
                         fontWeight: 950,
-                        backgroundColor: "#dc2626",
-                        boxShadow: "0 0 0 3px rgba(220,38,38,.16)",
+                        backgroundColor: "#8c1d2b",
+                        boxShadow: "0 0 0 3px rgba(140, 29, 43,.16)",
                       }}
                     >
                       {pendingApplications.length}
@@ -1004,7 +1005,7 @@ const PlatformDashboard = () => {
                     fontSize: 10,
                     fontWeight: 950,
 
-                    background: "linear-gradient(135deg,#7f1d1d,#dc2626)",
+                    background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
                     border: "2px solid rgba(255,255,255,.10)",
                   }}
@@ -1217,7 +1218,7 @@ const PlatformDashboard = () => {
 
               gap: 2,
 
-              borderBottom: "1px solid #edf0f3",
+              borderBottom: "1px solid #e8e1d8",
             }}
           >
             <Box>
@@ -1247,11 +1248,11 @@ const PlatformDashboard = () => {
               label={`${number(filteredCompanies.length)} ta`}
               sx={{
                 height: 25,
-                color: "#991b1b",
+                color: "#6e1622",
                 fontSize: 9.5,
                 fontWeight: 900,
 
-                backgroundColor: "rgba(153,27,27,.07)",
+                backgroundColor: "rgba(110, 22, 34,.07)",
               }}
             />
           </Box>
@@ -1272,7 +1273,7 @@ const PlatformDashboard = () => {
                 <CircularProgress
                   size={32}
                   sx={{
-                    color: "#991b1b",
+                    color: "#6e1622",
                   }}
                 />
 
@@ -1311,7 +1312,7 @@ const PlatformDashboard = () => {
 
                     backgroundColor: "var(--aa-surface-muted)",
 
-                    borderColor: "#edf0f3",
+                    borderColor: "#e8e1d8",
                   },
 
                   "& td": {
@@ -1319,13 +1320,13 @@ const PlatformDashboard = () => {
                     color: "var(--aa-text-secondary)",
                     fontSize: 10.5,
 
-                    borderColor: "#edf0f3",
+                    borderColor: "#e8e1d8",
 
                     verticalAlign: "middle",
                   },
 
                   "& tbody tr:hover": {
-                    backgroundColor: "rgba(153,27,27,.025)",
+                    backgroundColor: "rgba(110, 22, 34,.025)",
                   },
                 }}
               >
@@ -1374,11 +1375,11 @@ const PlatformDashboard = () => {
 
                                 fontWeight: 950,
 
-                                background: "linear-gradient(135deg,#7f1d1d,#c81e2a)",
+                                background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
                                 border: "3px solid #ffffff",
 
-                                boxShadow: "0 8px 20px rgba(127,29,29,.16)",
+                                boxShadow: "0 8px 20px rgba(77, 15, 24,.16)",
                               }}
                             >
                               {getInitial(company.name)}
@@ -1437,7 +1438,7 @@ const PlatformDashboard = () => {
 
                               backgroundColor: "var(--aa-surface-muted)",
 
-                              border: "1px solid #e2e8f0",
+                              border: "1px solid #e8e1d8",
 
                               fontSize: 9.5,
 
@@ -1525,7 +1526,7 @@ const PlatformDashboard = () => {
                         <TableCell>
                           <Typography
                             sx={{
-                              color: "#15803d",
+                              color: "#2f6b45",
 
                               fontSize: 11.5,
 
@@ -1806,7 +1807,7 @@ const ApplicationInbox = ({ open, applications, actionId, onClose, onReview }) =
                 </Box>
 
                 {application.rejection_reason && (
-                  <Typography sx={{ mt: 1.2, color: "#ef4444", fontSize: 11 }}>
+                  <Typography sx={{ mt: 1.2, color: "#a3283a", fontSize: 11 }}>
                     Rad etish sababi: {application.rejection_reason}
                   </Typography>
                 )}
@@ -2179,10 +2180,12 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
               borderRadius: "17px",
 
               border: form.totp_enabled
-                ? "1px solid rgba(245,158,11,.20)"
-                : "1px solid rgba(34,197,94,.17)",
+                ? "1px solid rgba(160, 106, 18,.20)"
+                : "1px solid rgba(78, 156, 107,.17)",
 
-              backgroundColor: form.totp_enabled ? "rgba(245,158,11,.055)" : "rgba(34,197,94,.045)",
+              backgroundColor: form.totp_enabled
+                ? "rgba(160, 106, 18,.055)"
+                : "rgba(78, 156, 107,.045)",
             }}
           >
             <Box>
@@ -2200,7 +2203,7 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
                 sx={{
                   mt: 0.4,
 
-                  color: form.totp_enabled ? "#b45309" : "#15803d",
+                  color: form.totp_enabled ? "#a06a12" : "#2f6b45",
 
                   fontSize: 9.5,
                   fontWeight: 850,
@@ -2229,11 +2232,11 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
             sx={{
               p: 1.7,
               borderRadius: "17px",
-              color: "#b91c1c",
+              color: "#7a1826",
 
-              backgroundColor: "rgba(220,38,38,.06)",
+              backgroundColor: "rgba(140, 29, 43,.06)",
 
-              border: "1px solid rgba(220,38,38,.18)",
+              border: "1px solid rgba(140, 29, 43,.18)",
             }}
           >
             <Typography
@@ -2310,13 +2313,13 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
                 label={`${money(form.monthly_price)} / 30 kun`}
                 sx={{
                   height: 25,
-                  color: "#15803d",
+                  color: "#2f6b45",
                   fontSize: 9.5,
                   fontWeight: 900,
 
-                  backgroundColor: "rgba(34,197,94,.08)",
+                  backgroundColor: "rgba(78, 156, 107,.08)",
 
-                  border: "1px solid rgba(34,197,94,.17)",
+                  border: "1px solid rgba(78, 156, 107,.17)",
                 }}
               />
             </Box>
@@ -2430,9 +2433,9 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
               p: 1.5,
               borderRadius: "18px",
 
-              border: calculation.valid ? "1px solid #e7ebf0" : "1px solid rgba(220,38,38,.20)",
+              border: calculation.valid ? "1px solid #e8e1d8" : "1px solid rgba(140, 29, 43,.20)",
 
-              backgroundColor: calculation.valid ? "#f8fafc" : "rgba(220,38,38,.045)",
+              backgroundColor: calculation.valid ? "#faf8f5" : "rgba(140, 29, 43,.045)",
             }}
           >
             <SummaryBox
@@ -2473,12 +2476,12 @@ const heroPrimaryButtonSx = {
   fontWeight: 900,
   textTransform: "none",
 
-  background: "linear-gradient(135deg,#991b1b,#dc2626)",
+  background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
 
-  boxShadow: "0 12px 26px rgba(127,29,29,.30)",
+  boxShadow: "0 12px 26px rgba(77, 15, 24,.30)",
 
   "&:hover": {
-    background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+    background: "linear-gradient(135deg,#4d0f18,#7a1826)",
   },
 };
 
@@ -2512,12 +2515,12 @@ const primaryButtonSx = {
   fontWeight: 900,
   textTransform: "none",
 
-  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+  background: "linear-gradient(135deg,#4d0f18,#7a1826)",
 
-  boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+  boxShadow: "0 10px 24px rgba(77, 15, 24,.18)",
 
   "&:hover": {
-    background: "linear-gradient(135deg,#681818,#991b1b)",
+    background: "linear-gradient(135deg,#4d0f18,#6e1622)",
   },
 };
 
@@ -2526,18 +2529,18 @@ const secondaryButtonSx = {
   px: 1.8,
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  borderColor: "#dce3ea",
+  borderColor: "#d8cec1",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
-    color: "#991b1b",
+    color: "#6e1622",
 
-    borderColor: "rgba(153,27,27,.22)",
+    borderColor: "rgba(110, 22, 34,.22)",
 
-    backgroundColor: "rgba(153,27,27,.04)",
+    backgroundColor: "rgba(110, 22, 34,.04)",
   },
 };
 
@@ -2566,12 +2569,12 @@ const dialogPrimarySx = {
   fontWeight: 900,
   textTransform: "none",
 
-  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+  background: "linear-gradient(135deg,#4d0f18,#7a1826)",
 
-  boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+  boxShadow: "0 10px 24px rgba(77, 15, 24,.18)",
 
   "&:hover": {
-    background: "linear-gradient(135deg,#681818,#991b1b)",
+    background: "linear-gradient(135deg,#4d0f18,#6e1622)",
   },
 };
 
@@ -2579,7 +2582,7 @@ const dialogSectionSx = {
   p: 1.8,
   borderRadius: "18px",
 
-  border: "1px solid #e7ebf0",
+  border: "1px solid #e8e1d8",
 
   background: "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 };
@@ -2617,24 +2620,24 @@ const platformDashboardStyles = `
 
   .platform-dashboard-page .platform-dashboard-hero {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.34),
+        rgba(140, 29, 43,.34),
         transparent 30%
       ),
       linear-gradient(
         145deg,
-        #0d1117,
-        #171117 52%,
-        #3a121a
+        #151211,
+        #1e1a18 52%,
+        #3a1219
       ) !important;
   }
 
   .platform-dashboard-dialog-title {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
   }
 `;
 

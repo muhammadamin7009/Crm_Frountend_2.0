@@ -1,19 +1,19 @@
 import { Box, Typography } from "@mui/material";
 
 const toneStyles = {
-  red: ["#fecdd3", "rgba(220,38,38,.15)", "rgba(248,113,113,.15)"],
-  green: ["#bbf7d0", "rgba(34,197,94,.14)", "rgba(74,222,128,.15)"],
-  blue: ["#bfdbfe", "rgba(37,99,235,.15)", "rgba(96,165,250,.15)"],
-  amber: ["#fde68a", "rgba(245,158,11,.15)", "rgba(251,191,36,.15)"],
+  red: ["#d9b782", "rgba(140, 29, 43,.15)", "rgba(201, 168, 117,.15)"],
+  green: ["#a8dcbc", "rgba(78, 156, 107,.14)", "rgba(108, 191, 139,.15)"],
+  blue: ["#bcd9e2", "rgba(31, 111, 139,.15)", "rgba(107, 179, 201,.15)"],
+  amber: ["#e3c98f", "rgba(160, 106, 18,.15)", "rgba(201, 168, 117,.15)"],
   violet: ["#ddd6fe", "rgba(139,92,246,.16)", "rgba(167,139,250,.15)"],
-  gray: ["#e2e8f0", "rgba(148,163,184,.14)", "rgba(203,213,225,.13)"],
+  gray: ["#e8e1d8", "rgba(138, 128, 122,.14)", "rgba(216, 206, 193,.13)"],
 };
 
 const softToneBorders = {
-  red: "rgba(248,113,113,.14)",
-  green: "rgba(74,222,128,.14)",
-  blue: "rgba(96,165,250,.14)",
-  amber: "rgba(251,191,36,.14)",
+  red: "rgba(201, 168, 117,.14)",
+  green: "rgba(108, 191, 139,.14)",
+  blue: "rgba(107, 179, 201,.14)",
+  amber: "rgba(201, 168, 117,.14)",
 };
 
 const HeroMetric = ({

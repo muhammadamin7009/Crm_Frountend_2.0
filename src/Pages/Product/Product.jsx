@@ -149,7 +149,7 @@ const Surface = ({ children, sx = {} }) => (
       borderRadius: "22px",
       border: "1px solid var(--aa-border)",
       backgroundColor: "var(--aa-surface-solid)",
-      boxShadow: "0 14px 40px rgba(15,23,42,.045)",
+      boxShadow: "0 14px 40px rgba(23, 17, 15,.045)",
       ...sx,
     }}
   >
@@ -165,7 +165,7 @@ const InfoItem = ({ label, value, accent = false }) => (
       p: 1.65,
       borderRadius: "16px",
 
-      border: accent ? "1px solid rgba(153,27,27,.24)" : "1px solid var(--aa-border)",
+      border: accent ? "1px solid rgba(110, 22, 34,.24)" : "1px solid var(--aa-border)",
 
       background: accent
         ? "linear-gradient(145deg,var(--aa-brand-100),var(--aa-surface-solid))"
@@ -201,21 +201,21 @@ const InfoItem = ({ label, value, accent = false }) => (
 const PricePanel = ({ label, value, tone = "green", helper }) => {
   const tones = {
     green: {
-      color: "#15803d",
-      background: "rgba(34,197,94,.08)",
-      border: "rgba(34,197,94,.18)",
+      color: "#2f6b45",
+      background: "rgba(78, 156, 107,.08)",
+      border: "rgba(78, 156, 107,.18)",
     },
 
     blue: {
-      color: "#1d4ed8",
-      background: "rgba(37,99,235,.07)",
-      border: "rgba(37,99,235,.17)",
+      color: "#1f6f8b",
+      background: "rgba(31, 111, 139,.07)",
+      border: "rgba(31, 111, 139,.17)",
     },
 
     red: {
-      color: "#991b1b",
-      background: "rgba(153,27,27,.07)",
-      border: "rgba(153,27,27,.16)",
+      color: "#6e1622",
+      background: "rgba(110, 22, 34,.07)",
+      border: "rgba(110, 22, 34,.16)",
     },
   };
 
@@ -736,16 +736,16 @@ const Product = () => {
             placeItems: "center",
             borderRadius: "22px",
 
-            border: "1px solid rgba(153,27,27,.10)",
+            border: "1px solid rgba(110, 22, 34,.10)",
 
-            backgroundColor: "rgba(153,27,27,.05)",
+            backgroundColor: "rgba(110, 22, 34,.05)",
           }}
         >
           <CircularProgress
             size={34}
             thickness={4.5}
             sx={{
-              color: "#991b1b",
+              color: "#6e1622",
             }}
           />
         </Box>
@@ -822,12 +822,12 @@ const Product = () => {
 
           border: "1px solid rgba(255,255,255,.075)",
 
-          backgroundColor: "#0d1117 !important",
+          backgroundColor: "#151211 !important",
 
           backgroundImage:
-            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
+            "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.34),transparent 30%),linear-gradient(145deg,#151211,#1e1a18 52%,#3a1219) !important",
 
-          boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+          boxShadow: "0 24px 60px rgba(23, 17, 15,.20)",
 
           "&::before": {
             content: '""',
@@ -838,9 +838,10 @@ const Product = () => {
             right: -210,
             borderRadius: "50%",
 
-            border: "1px solid rgba(248,113,113,.16)",
+            border: "1px solid rgba(201, 168, 117,.16)",
 
-            boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+            boxShadow:
+              "0 0 81px 22px rgba(201, 168, 117,.022),0 0 161px 43px rgba(201, 168, 117,.014)",
 
             pointerEvents: "none",
           },
@@ -875,13 +876,13 @@ const Product = () => {
                   height: 2,
                   borderRadius: 99,
 
-                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                  background: "linear-gradient(90deg,#c9a875,#a3283a)",
                 }}
               />
 
               <Typography
                 sx={{
-                  color: "#fecdd3 !important",
+                  color: "#d9b782 !important",
 
                   fontSize: 10,
                   fontWeight: 950,
@@ -925,9 +926,9 @@ const Product = () => {
 
                   border: "4px solid rgba(255,255,255,.11)",
 
-                  background: "linear-gradient(135deg,#7f1d1d,#dc2626)",
+                  background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
-                  boxShadow: "0 17px 38px rgba(127,29,29,.30)",
+                  boxShadow: "0 17px 38px rgba(77, 15, 24,.30)",
                 }}
               >
                 {getInitial(product.name)}
@@ -1102,7 +1103,7 @@ const Product = () => {
               border: "1px solid var(--aa-border)",
 
               background:
-                "radial-gradient(circle at 100% 0%,rgba(153,27,27,.10),transparent 34%),linear-gradient(145deg,var(--aa-surface-muted),var(--aa-surface-solid))",
+                "radial-gradient(circle at 100% 0%,rgba(110, 22, 34,.10),transparent 34%),linear-gradient(145deg,var(--aa-surface-muted),var(--aa-surface-solid))",
             }}
           >
             {activeImage ? (
@@ -1127,9 +1128,9 @@ const Product = () => {
                   fontSize: 42,
                   fontWeight: 950,
 
-                  background: "linear-gradient(135deg,#7f1d1d,#dc2626)",
+                  background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
-                  boxShadow: "0 18px 40px rgba(127,29,29,.20)",
+                  boxShadow: "0 18px 40px rgba(77, 15, 24,.20)",
                 }}
               >
                 {getInitial(product.name)}
@@ -1162,9 +1163,9 @@ const Product = () => {
                       overflow: "hidden",
                       borderRadius: "14px",
 
-                      border: selected ? "2px solid #991b1b" : "1px solid var(--aa-border)",
+                      border: selected ? "2px solid #6e1622" : "1px solid var(--aa-border)",
 
-                      boxShadow: selected ? "0 9px 22px rgba(153,27,27,.14)" : "none",
+                      boxShadow: selected ? "0 9px 22px rgba(110, 22, 34,.14)" : "none",
                     }}
                   >
                     <Box
@@ -1293,7 +1294,7 @@ const Product = () => {
               border: "1px solid var(--aa-border)",
 
               background:
-                "radial-gradient(circle at 100% 0%,rgba(153,27,27,.08),transparent 32%),linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
+                "radial-gradient(circle at 100% 0%,rgba(110, 22, 34,.08),transparent 32%),linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
             }}
           >
             <Typography
@@ -1394,7 +1395,7 @@ const Product = () => {
                       right: -45,
                       borderRadius: "50%",
 
-                      backgroundColor: "rgba(153,27,27,.045)",
+                      backgroundColor: "rgba(110, 22, 34,.045)",
                     },
                   }}
                 >
@@ -1505,7 +1506,7 @@ const Product = () => {
               mb: 2,
               borderRadius: "15px",
 
-              border: "1px solid rgba(37,99,235,.14)",
+              border: "1px solid rgba(31, 111, 139,.14)",
             }}
           >
             Ishchi yakunlovchi bo‘limda ish topshirganda tayyor mahsulot omboriga qo‘shiladi va
@@ -1813,9 +1814,9 @@ const Product = () => {
             overflow: "hidden",
             borderRadius: "23px",
 
-            border: "1px solid rgba(148,163,184,.20)",
+            border: "1px solid rgba(138, 128, 122,.20)",
 
-            boxShadow: "0 30px 80px rgba(15,23,42,.22)",
+            boxShadow: "0 30px 80px rgba(23, 17, 15,.22)",
           },
         }}
       >
@@ -1827,10 +1828,10 @@ const Product = () => {
 
             color: "#ffffff !important",
 
-            backgroundColor: "#0d1117 !important",
+            backgroundColor: "#151211 !important",
 
             backgroundImage:
-              "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
+              "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.28),transparent 36%),linear-gradient(135deg,#151211,#2a1117) !important",
           }}
         >
           <Typography
@@ -1902,7 +1903,7 @@ const Product = () => {
             px: 3,
             py: 2.1,
 
-            borderTop: "1px solid #edf0f3",
+            borderTop: "1px solid #e8e1d8",
 
             backgroundColor: "var(--aa-surface-muted)",
           }}
@@ -1953,18 +1954,18 @@ const secondaryButtonSx = {
   px: 1.8,
   color: "var(--aa-text-secondary)",
   borderRadius: "12px",
-  borderColor: "#dce3ea",
+  borderColor: "#d8cec1",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
-    color: "#991b1b",
+    color: "#6e1622",
 
-    borderColor: "rgba(153,27,27,.22)",
+    borderColor: "rgba(110, 22, 34,.22)",
 
-    backgroundColor: "rgba(153,27,27,.04)",
+    backgroundColor: "rgba(110, 22, 34,.04)",
   },
 };
 
@@ -1977,46 +1978,46 @@ const primaryButtonSx = {
   fontWeight: 900,
   textTransform: "none",
 
-  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+  background: "linear-gradient(135deg,#4d0f18,#7a1826)",
 
-  boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+  boxShadow: "0 10px 24px rgba(77, 15, 24,.18)",
 
   "&:hover": {
-    background: "linear-gradient(135deg,#681818,#991b1b)",
+    background: "linear-gradient(135deg,#4d0f18,#6e1622)",
   },
 };
 
 const productPageStyles = `
   .crm-page .product-profile-hero {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.34),
+        rgba(140, 29, 43,.34),
         transparent 30%
       ),
       linear-gradient(
         145deg,
-        #0d1117,
-        #171117 52%,
-        #3a121a
+        #151211,
+        #1e1a18 52%,
+        #3a1219
       ) !important;
   }
 
   .product-dialog-title {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.28),
+        rgba(140, 29, 43,.28),
         transparent 36%
       ),
       linear-gradient(
         135deg,
-        #11151c,
-        #321319
+        #151211,
+        #2a1117
       ) !important;
   }
 `;

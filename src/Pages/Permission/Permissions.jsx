@@ -107,30 +107,30 @@ const RoleChip = ({ role, dark = false }) => {
 
         color: dark
           ? worker
-            ? "#fde68a !important"
-            : "#bfdbfe !important"
+            ? "#e3c98f !important"
+            : "#bcd9e2 !important"
           : worker
-            ? "#b45309"
-            : "#1d4ed8",
+            ? "#a06a12"
+            : "#1f6f8b",
 
         fontSize: 9.5,
         fontWeight: 900,
 
         backgroundColor: dark
           ? worker
-            ? "rgba(245,158,11,.14) !important"
-            : "rgba(37,99,235,.14) !important"
+            ? "rgba(160, 106, 18,.14) !important"
+            : "rgba(31, 111, 139,.14) !important"
           : worker
-            ? "rgba(245,158,11,.09)"
-            : "rgba(37,99,235,.08)",
+            ? "rgba(160, 106, 18,.09)"
+            : "rgba(31, 111, 139,.08)",
 
         border: dark
           ? worker
-            ? "1px solid rgba(251,191,36,.15)"
-            : "1px solid rgba(96,165,250,.15)"
+            ? "1px solid rgba(201, 168, 117,.15)"
+            : "1px solid rgba(107, 179, 201,.15)"
           : worker
-            ? "1px solid rgba(245,158,11,.18)"
-            : "1px solid rgba(37,99,235,.16)",
+            ? "1px solid rgba(160, 106, 18,.18)"
+            : "1px solid rgba(31, 111, 139,.16)",
       }}
     />
   );
@@ -160,15 +160,15 @@ const PresetCard = ({ preset, onClick }) => (
       transition: "transform .2s ease, border-color .2s ease, box-shadow .2s ease",
 
       "&:hover": {
-        color: "#991b1b",
+        color: "#6e1622",
 
         transform: "translateY(-2px)",
 
-        borderColor: "rgba(153,27,27,.20)",
+        borderColor: "rgba(110, 22, 34,.20)",
 
-        background: "linear-gradient(145deg,rgba(153,27,27,.045),var(--aa-surface-solid))",
+        background: "linear-gradient(145deg,rgba(110, 22, 34,.045),var(--aa-surface-solid))",
 
-        boxShadow: "0 14px 30px rgba(15,23,42,.07)",
+        boxShadow: "0 14px 30px rgba(23, 17, 15,.07)",
       },
     }}
   >
@@ -184,9 +184,9 @@ const PresetCard = ({ preset, onClick }) => (
           color: "#ffffff",
           borderRadius: "11px",
 
-          background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+          background: "linear-gradient(135deg,#4d0f18,#7a1826)",
 
-          boxShadow: "0 8px 18px rgba(127,29,29,.18)",
+          boxShadow: "0 8px 18px rgba(77, 15, 24,.18)",
 
           fontSize: 12,
           fontWeight: 950,
@@ -239,7 +239,7 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
         "&:hover": {
           transform: "translateY(-2px)",
 
-          boxShadow: "0 18px 40px rgba(15,23,42,.07)",
+          boxShadow: "0 18px 40px rgba(23, 17, 15,.07)",
         },
       }}
     >
@@ -283,20 +283,20 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
           sx={{
             minWidth: 88,
             borderRadius: "10px",
-            color: allSelected ? "#b91c1c" : "#64748b",
+            color: allSelected ? "#7a1826" : "#7d716a",
 
-            borderColor: allSelected ? "rgba(220,38,38,.20)" : "var(--aa-border)",
+            borderColor: allSelected ? "rgba(140, 29, 43,.20)" : "var(--aa-border)",
 
             fontSize: 9.5,
             fontWeight: 900,
             textTransform: "none",
 
             "&:hover": {
-              color: "#991b1b",
+              color: "#6e1622",
 
-              borderColor: "rgba(153,27,27,.25)",
+              borderColor: "rgba(110, 22, 34,.25)",
 
-              backgroundColor: "rgba(153,27,27,.04)",
+              backgroundColor: "rgba(110, 22, 34,.04)",
             },
           }}
         >
@@ -318,8 +318,8 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
 
             background:
               completion === 100
-                ? "linear-gradient(90deg,#15803d,#22c55e)"
-                : "linear-gradient(90deg,#7f1d1d,#dc2626)",
+                ? "linear-gradient(90deg,#2f6b45,#4e9c6b)"
+                : "linear-gradient(90deg,#4d0f18,#8c1d2b)",
           },
         }}
       />
@@ -337,16 +337,16 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
                 cursor: "pointer",
                 borderRadius: "14px",
 
-                border: checked ? "1px solid rgba(153,27,27,.17)" : "1px solid var(--aa-border)",
+                border: checked ? "1px solid rgba(110, 22, 34,.17)" : "1px solid var(--aa-border)",
 
-                backgroundColor: checked ? "rgba(153,27,27,.075)" : "var(--aa-surface-muted)",
+                backgroundColor: checked ? "rgba(110, 22, 34,.075)" : "var(--aa-surface-muted)",
 
                 transition: "background-color .2s ease, border-color .2s ease",
 
                 "&:hover": {
-                  borderColor: "rgba(153,27,27,.22)",
+                  borderColor: "rgba(110, 22, 34,.22)",
 
-                  backgroundColor: "rgba(153,27,27,.04)",
+                  backgroundColor: "rgba(110, 22, 34,.04)",
                 },
               }}
             >
@@ -358,10 +358,10 @@ const PermissionGroup = ({ group, selectedSet, togglePermission, toggleGroup }) 
                     onChange={() => togglePermission(permission.key)}
                     sx={{
                       mt: -0.4,
-                      color: "#cbd5e1",
+                      color: "#d8cec1",
 
                       "&.Mui-checked": {
-                        color: "#991b1b",
+                        color: "#6e1622",
                       },
                     }}
                   />
@@ -692,16 +692,16 @@ const Permissions = () => {
             placeItems: "center",
             borderRadius: "22px",
 
-            border: "1px solid rgba(153,27,27,.10)",
+            border: "1px solid rgba(110, 22, 34,.10)",
 
-            backgroundColor: "rgba(153,27,27,.05)",
+            backgroundColor: "rgba(110, 22, 34,.05)",
           }}
         >
           <CircularProgress
             size={34}
             thickness={4.5}
             sx={{
-              color: "#991b1b",
+              color: "#6e1622",
             }}
           />
         </Box>
@@ -750,12 +750,12 @@ const Permissions = () => {
 
           border: "1px solid rgba(255,255,255,.075)",
 
-          backgroundColor: "#0d1117 !important",
+          backgroundColor: "#151211 !important",
 
           backgroundImage:
-            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
+            "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.34),transparent 30%),linear-gradient(145deg,#151211,#1e1a18 52%,#3a1219) !important",
 
-          boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+          boxShadow: "0 24px 60px rgba(23, 17, 15,.20)",
 
           "&::before": {
             content: '""',
@@ -766,9 +766,10 @@ const Permissions = () => {
             right: -210,
             borderRadius: "50%",
 
-            border: "1px solid rgba(248,113,113,.16)",
+            border: "1px solid rgba(201, 168, 117,.16)",
 
-            boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+            boxShadow:
+              "0 0 81px 22px rgba(201, 168, 117,.022),0 0 161px 43px rgba(201, 168, 117,.014)",
 
             pointerEvents: "none",
           },
@@ -803,13 +804,13 @@ const Permissions = () => {
                   height: 2,
                   borderRadius: 99,
 
-                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                  background: "linear-gradient(90deg,#c9a875,#a3283a)",
                 }}
               />
 
               <Typography
                 sx={{
-                  color: "#fecdd3 !important",
+                  color: "#d9b782 !important",
 
                   fontSize: 10,
                   fontWeight: 950,
@@ -875,7 +876,7 @@ const Permissions = () => {
                     fontSize: 12,
                     fontWeight: 950,
 
-                    background: "linear-gradient(135deg,#7f1d1d,#dc2626)",
+                    background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
                     border: "3px solid rgba(255,255,255,.10)",
                   }}
@@ -1065,22 +1066,22 @@ const Permissions = () => {
                       textTransform: "none",
 
                       border: active
-                        ? "1px solid rgba(153,27,27,.23)"
+                        ? "1px solid rgba(110, 22, 34,.23)"
                         : "1px solid var(--aa-border)",
 
                       background: active
-                        ? "linear-gradient(145deg,rgba(153,27,27,.10),var(--aa-surface-solid))"
+                        ? "linear-gradient(145deg,rgba(110, 22, 34,.10),var(--aa-surface-solid))"
                         : "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 
-                      boxShadow: active ? "0 10px 24px rgba(153,27,27,.09)" : "none",
+                      boxShadow: active ? "0 10px 24px rgba(110, 22, 34,.09)" : "none",
 
                       "&:hover": {
-                        color: "#991b1b",
+                        color: "#6e1622",
 
-                        borderColor: "rgba(153,27,27,.23)",
+                        borderColor: "rgba(110, 22, 34,.23)",
 
                         background:
-                          "linear-gradient(145deg,rgba(153,27,27,.055),var(--aa-surface-solid))",
+                          "linear-gradient(145deg,rgba(110, 22, 34,.055),var(--aa-surface-solid))",
                       },
                     }}
                   >
@@ -1095,12 +1096,12 @@ const Permissions = () => {
                         fontWeight: 950,
 
                         background: active
-                          ? "linear-gradient(135deg,#7f1d1d,#dc2626)"
-                          : "linear-gradient(135deg,#475569,#0f172a)",
+                          ? "linear-gradient(135deg,#4d0f18,#8c1d2b)"
+                          : "linear-gradient(135deg,#5c514b,#17110f)",
 
                         boxShadow: active
-                          ? "0 8px 18px rgba(127,29,29,.20)"
-                          : "0 6px 16px rgba(15,23,42,.12)",
+                          ? "0 8px 18px rgba(77, 15, 24,.20)"
+                          : "0 6px 16px rgba(23, 17, 15,.12)",
                       }}
                     >
                       {getInitials(admin)}
@@ -1153,7 +1154,7 @@ const Permissions = () => {
                   textAlign: "center",
                   borderRadius: "16px",
 
-                  border: "1px dashed #cbd5e1",
+                  border: "1px dashed #d8cec1",
 
                   backgroundColor: "var(--aa-surface-muted)",
                 }}
@@ -1218,11 +1219,11 @@ const Permissions = () => {
                       fontSize: 16,
                       fontWeight: 950,
 
-                      background: "linear-gradient(135deg,#7f1d1d,#c81e2a)",
+                      background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
                       border: "4px solid var(--aa-surface-solid)",
 
-                      boxShadow: "0 10px 26px rgba(127,29,29,.18)",
+                      boxShadow: "0 10px 26px rgba(77, 15, 24,.18)",
                     }}
                   >
                     {getInitials(selectedAdmin)}
@@ -1315,10 +1316,12 @@ const Permissions = () => {
                   borderRadius: "17px",
 
                   border: hasChanges
-                    ? "1px solid rgba(245,158,11,.20)"
-                    : "1px solid rgba(34,197,94,.17)",
+                    ? "1px solid rgba(160, 106, 18,.20)"
+                    : "1px solid rgba(78, 156, 107,.17)",
 
-                  backgroundColor: hasChanges ? "rgba(245,158,11,.055)" : "rgba(34,197,94,.045)",
+                  backgroundColor: hasChanges
+                    ? "rgba(160, 106, 18,.055)"
+                    : "rgba(78, 156, 107,.045)",
                 }}
               >
                 <Box
@@ -1334,7 +1337,7 @@ const Permissions = () => {
                   <Box>
                     <Typography
                       sx={{
-                        color: hasChanges ? "#b45309" : "#15803d",
+                        color: hasChanges ? "#a06a12" : "#2f6b45",
 
                         fontSize: 10.5,
                         fontWeight: 950,
@@ -1359,7 +1362,7 @@ const Permissions = () => {
 
                   <Typography
                     sx={{
-                      color: hasChanges ? "#b45309" : "#15803d",
+                      color: hasChanges ? "#a06a12" : "#2f6b45",
 
                       fontSize: 18,
                       fontWeight: 950,
@@ -1376,14 +1379,14 @@ const Permissions = () => {
                     mt: 1.2,
                     height: 8,
                     borderRadius: 99,
-                    backgroundColor: "rgba(148,163,184,.14)",
+                    backgroundColor: "rgba(138, 128, 122,.14)",
 
                     "& .MuiLinearProgress-bar": {
                       borderRadius: 99,
 
                       background: hasChanges
                         ? "linear-gradient(90deg,#d97706,#f59e0b)"
-                        : "linear-gradient(90deg,#15803d,#22c55e)",
+                        : "linear-gradient(90deg,#2f6b45,#4e9c6b)",
                     },
                   }}
                 />
@@ -1498,7 +1501,7 @@ const Permissions = () => {
                     textAlign: "center",
                     borderRadius: "18px",
 
-                    border: "1px dashed #cbd5e1",
+                    border: "1px dashed #d8cec1",
 
                     backgroundColor: "var(--aa-surface-muted)",
                   }}
@@ -1532,12 +1535,12 @@ const Permissions = () => {
                     mx: "auto",
                     display: "grid",
                     placeItems: "center",
-                    color: "#991b1b",
+                    color: "#6e1622",
                     borderRadius: "20px",
 
-                    border: "1px solid rgba(153,27,27,.13)",
+                    border: "1px solid rgba(110, 22, 34,.13)",
 
-                    backgroundColor: "rgba(153,27,27,.06)",
+                    backgroundColor: "rgba(110, 22, 34,.06)",
 
                     fontSize: 20,
                     fontWeight: 950,
@@ -1590,11 +1593,11 @@ const secondaryButtonSx = {
   backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
-    color: "#991b1b",
+    color: "#6e1622",
 
-    borderColor: "rgba(153,27,27,.22)",
+    borderColor: "rgba(110, 22, 34,.22)",
 
-    backgroundColor: "rgba(153,27,27,.04)",
+    backgroundColor: "rgba(110, 22, 34,.04)",
   },
 };
 
@@ -1607,30 +1610,30 @@ const primaryButtonSx = {
   fontWeight: 900,
   textTransform: "none",
 
-  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+  background: "linear-gradient(135deg,#4d0f18,#7a1826)",
 
-  boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+  boxShadow: "0 10px 24px rgba(77, 15, 24,.18)",
 
   "&:hover": {
-    background: "linear-gradient(135deg,#681818,#991b1b)",
+    background: "linear-gradient(135deg,#4d0f18,#6e1622)",
   },
 };
 
 const permissionsPageStyles = `
   .crm-page .permissions-hero {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.34),
+        rgba(140, 29, 43,.34),
         transparent 30%
       ),
       linear-gradient(
         145deg,
-        #0d1117,
-        #171117 52%,
-        #3a121a
+        #151211,
+        #1e1a18 52%,
+        #3a1219
       ) !important;
   }
 `;

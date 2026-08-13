@@ -56,27 +56,27 @@ const entityNames = {
 
 const actionStyles = {
   POST: {
-    color: "#15803d",
-    background: "rgba(34,197,94,.09)",
-    border: "rgba(34,197,94,.18)",
+    color: "#2f6b45",
+    background: "rgba(78, 156, 107,.09)",
+    border: "rgba(78, 156, 107,.18)",
   },
 
   PUT: {
-    color: "#1d4ed8",
-    background: "rgba(37,99,235,.08)",
-    border: "rgba(37,99,235,.17)",
+    color: "#1f6f8b",
+    background: "rgba(31, 111, 139,.08)",
+    border: "rgba(31, 111, 139,.17)",
   },
 
   PATCH: {
-    color: "#b45309",
-    background: "rgba(245,158,11,.10)",
-    border: "rgba(245,158,11,.20)",
+    color: "#a06a12",
+    background: "rgba(160, 106, 18,.10)",
+    border: "rgba(160, 106, 18,.20)",
   },
 
   DELETE: {
-    color: "#b91c1c",
-    background: "rgba(220,38,38,.08)",
-    border: "rgba(220,38,38,.18)",
+    color: "#7a1826",
+    background: "rgba(140, 29, 43,.08)",
+    border: "rgba(140, 29, 43,.18)",
   },
 };
 
@@ -146,7 +146,7 @@ const ActionChip = ({ action }) => {
   const current = actionStyles[action] || {
     color: "var(--aa-text-secondary)",
     background: "var(--aa-surface-muted)",
-    border: "#e2e8f0",
+    border: "#e8e1d8",
   };
 
   return (
@@ -175,13 +175,13 @@ const EntityChip = ({ entity }) => (
     sx={{
       height: 25,
       px: 0.3,
-      color: "#1d4ed8",
+      color: "#1f6f8b",
       fontSize: 9.5,
       fontWeight: 900,
 
-      backgroundColor: "rgba(37,99,235,.08)",
+      backgroundColor: "rgba(31, 111, 139,.08)",
 
-      border: "1px solid rgba(37,99,235,.16)",
+      border: "1px solid rgba(31, 111, 139,.16)",
     }}
   />
 );
@@ -201,22 +201,22 @@ const StatusChip = ({ status }) => {
         height: 23,
         px: 0.2,
 
-        color: unknown ? "#64748b" : success ? "#15803d" : "#b91c1c",
+        color: unknown ? "#7d716a" : success ? "#2f6b45" : "#7a1826",
 
         fontSize: 9,
         fontWeight: 900,
 
         backgroundColor: unknown
-          ? "#f1f5f9"
+          ? "#f4f0ea"
           : success
-            ? "rgba(34,197,94,.08)"
-            : "rgba(220,38,38,.08)",
+            ? "rgba(78, 156, 107,.08)"
+            : "rgba(140, 29, 43,.08)",
 
         border: unknown
-          ? "1px solid #e2e8f0"
+          ? "1px solid #e8e1d8"
           : success
-            ? "1px solid rgba(34,197,94,.17)"
-            : "1px solid rgba(220,38,38,.17)",
+            ? "1px solid rgba(78, 156, 107,.17)"
+            : "1px solid rgba(140, 29, 43,.17)",
       }}
     />
   );
@@ -386,12 +386,12 @@ const AuditLogs = () => {
 
           border: "1px solid rgba(255,255,255,.075)",
 
-          backgroundColor: "#0d1117 !important",
+          backgroundColor: "#151211 !important",
 
           backgroundImage:
-            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
+            "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.34),transparent 30%),linear-gradient(145deg,#151211,#1e1a18 52%,#3a1219) !important",
 
-          boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+          boxShadow: "0 24px 60px rgba(23, 17, 15,.20)",
 
           flexShrink: 0,
 
@@ -404,9 +404,10 @@ const AuditLogs = () => {
             right: -210,
             borderRadius: "50%",
 
-            border: "1px solid rgba(248,113,113,.16)",
+            border: "1px solid rgba(201, 168, 117,.16)",
 
-            boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+            boxShadow:
+              "0 0 81px 22px rgba(201, 168, 117,.022),0 0 161px 43px rgba(201, 168, 117,.014)",
 
             pointerEvents: "none",
           },
@@ -441,13 +442,13 @@ const AuditLogs = () => {
                   height: 2,
                   borderRadius: 99,
 
-                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                  background: "linear-gradient(90deg,#c9a875,#a3283a)",
                 }}
               />
 
               <Typography
                 sx={{
-                  color: "#fecdd3 !important",
+                  color: "#d9b782 !important",
 
                   fontSize: 10,
                   fontWeight: 950,
@@ -681,7 +682,7 @@ const AuditLogs = () => {
 
             gap: 2,
 
-            borderBottom: "1px solid #edf0f3",
+            borderBottom: "1px solid #e8e1d8",
           }}
         >
           <Box>
@@ -711,11 +712,11 @@ const AuditLogs = () => {
             label={`${formatNumber(pageInfo.total)} ta`}
             sx={{
               height: 25,
-              color: "#991b1b",
+              color: "#6e1622",
               fontSize: 9.5,
               fontWeight: 900,
 
-              backgroundColor: "rgba(153,27,27,.07)",
+              backgroundColor: "rgba(110, 22, 34,.07)",
             }}
           />
         </Box>
@@ -741,14 +742,14 @@ const AuditLogs = () => {
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
                 backgroundColor: "var(--aa-surface-muted)",
-                borderColor: "#edf0f3",
+                borderColor: "#e8e1d8",
               },
 
               "& td": {
                 py: 1.4,
                 color: "var(--aa-text-secondary)",
                 fontSize: 10.5,
-                borderColor: "#edf0f3",
+                borderColor: "#e8e1d8",
               },
 
               "& tbody tr": {
@@ -756,7 +757,7 @@ const AuditLogs = () => {
               },
 
               "& tbody tr:hover": {
-                backgroundColor: "rgba(153,27,27,.025)",
+                backgroundColor: "rgba(110, 22, 34,.025)",
               },
             }}
           >
@@ -783,7 +784,7 @@ const AuditLogs = () => {
                     <CircularProgress
                       size={30}
                       sx={{
-                        color: "#991b1b",
+                        color: "#6e1622",
                       }}
                     />
                   </TableCell>
@@ -825,11 +826,11 @@ const AuditLogs = () => {
                             fontSize: 12,
                             fontWeight: 950,
 
-                            background: "linear-gradient(135deg,#7f1d1d,#c81e2a)",
+                            background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
                             border: "3px solid #ffffff",
 
-                            boxShadow: "0 8px 20px rgba(127,29,29,.16)",
+                            boxShadow: "0 8px 20px rgba(77, 15, 24,.16)",
                           }}
                         >
                           {getInitials(row)}
@@ -928,7 +929,7 @@ const AuditLogs = () => {
 
         <Box
           sx={{
-            borderTop: "1px solid #edf0f3",
+            borderTop: "1px solid #e8e1d8",
 
             backgroundColor: "var(--aa-surface-muted)",
           }}
@@ -960,9 +961,9 @@ const AuditLogs = () => {
             overflow: "hidden",
             borderRadius: "23px",
 
-            border: "1px solid rgba(148,163,184,.20)",
+            border: "1px solid rgba(138, 128, 122,.20)",
 
-            boxShadow: "0 30px 80px rgba(15,23,42,.22)",
+            boxShadow: "0 30px 80px rgba(23, 17, 15,.22)",
           },
         }}
       >
@@ -974,10 +975,10 @@ const AuditLogs = () => {
 
             color: "#ffffff !important",
 
-            backgroundColor: "#0d1117 !important",
+            backgroundColor: "#151211 !important",
 
             backgroundImage:
-              "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
+              "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.28),transparent 36%),linear-gradient(135deg,#151211,#2a1117) !important",
           }}
         >
           <Box
@@ -1050,9 +1051,9 @@ const AuditLogs = () => {
                     fontSize: 15,
                     fontWeight: 950,
 
-                    background: "linear-gradient(135deg,#7f1d1d,#c81e2a)",
+                    background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
-                    boxShadow: "0 10px 25px rgba(127,29,29,.18)",
+                    boxShadow: "0 10px 25px rgba(77, 15, 24,.18)",
                   }}
                 >
                   {getInitials(selectedLog)}
@@ -1177,11 +1178,11 @@ const AuditLogs = () => {
                         overflow: "auto",
                         borderRadius: "16px",
 
-                        color: "#cbd5e1",
+                        color: "#d8cec1",
 
-                        backgroundColor: "#0f172a",
+                        backgroundColor: "#17110f",
 
-                        border: "1px solid rgba(148,163,184,.18)",
+                        border: "1px solid rgba(138, 128, 122,.18)",
 
                         fontFamily:
                           "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
@@ -1206,7 +1207,7 @@ const AuditLogs = () => {
             px: 3,
             py: 2.1,
 
-            borderTop: "1px solid #edf0f3",
+            borderTop: "1px solid #e8e1d8",
 
             backgroundColor: "var(--aa-surface-muted)",
           }}
@@ -1222,12 +1223,12 @@ const AuditLogs = () => {
               fontWeight: 900,
               textTransform: "none",
 
-              background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+              background: "linear-gradient(135deg,#4d0f18,#7a1826)",
 
-              boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+              boxShadow: "0 10px 24px rgba(77, 15, 24,.18)",
 
               "&:hover": {
-                background: "linear-gradient(135deg,#681818,#991b1b)",
+                background: "linear-gradient(135deg,#4d0f18,#6e1622)",
               },
             }}
           >
@@ -1244,52 +1245,52 @@ const filterButtonSx = {
   px: 1.8,
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  borderColor: "#dce3ea",
+  borderColor: "#d8cec1",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
-    color: "#991b1b",
+    color: "#6e1622",
 
-    borderColor: "rgba(153,27,27,.22)",
+    borderColor: "rgba(110, 22, 34,.22)",
 
-    backgroundColor: "rgba(153,27,27,.04)",
+    backgroundColor: "rgba(110, 22, 34,.04)",
   },
 };
 
 const auditLogsPageStyles = `
   .crm-page .audit-logs-hero {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.34),
+        rgba(140, 29, 43,.34),
         transparent 30%
       ),
       linear-gradient(
         145deg,
-        #0d1117,
-        #171117 52%,
-        #3a121a
+        #151211,
+        #1e1a18 52%,
+        #3a1219
       ) !important;
   }
 
   .audit-log-dialog-title {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.28),
+        rgba(140, 29, 43,.28),
         transparent 36%
       ),
       linear-gradient(
         135deg,
-        #11151c,
-        #321319
+        #151211,
+        #2a1117
       ) !important;
   }
 `;

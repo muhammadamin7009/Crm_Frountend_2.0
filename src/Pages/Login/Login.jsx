@@ -28,30 +28,30 @@ const fieldSx = {
     transition: "box-shadow .2s ease",
 
     "& fieldset": {
-      borderColor: "#dce2e9",
+      borderColor: "#e8e1d8",
     },
 
     "&:hover fieldset": {
-      borderColor: "#9ca6b3",
+      borderColor: "#a89d95",
     },
 
     "&.Mui-focused": {
-      boxShadow: "0 0 0 4px rgba(153,27,27,.075)",
+      boxShadow: "0 0 0 4px rgba(110, 22, 34,.075)",
     },
 
     "&.Mui-focused fieldset": {
-      borderColor: "#991b1b",
+      borderColor: "#6e1622",
       borderWidth: 1,
     },
   },
 
   "& .MuiInputLabel-root": {
-    color: "#687385",
+    color: "#7d716a",
     fontWeight: 600,
   },
 
   "& .MuiInputLabel-root.Mui-focused": {
-    color: "#991b1b",
+    color: "#6e1622",
   },
 
   "& .MuiFormHelperText-root": {
@@ -67,19 +67,19 @@ const primaryButtonSx = {
   fontSize: 15,
   fontWeight: 900,
   textTransform: "none",
-  background: "linear-gradient(135deg,#7f1d1d 0%,#b91c1c 100%)",
-  boxShadow: "0 14px 30px rgba(127,29,29,.22)",
+  background: "linear-gradient(135deg,#4d0f18 0%,#7a1826 100%)",
+  boxShadow: "0 14px 30px rgba(77, 15, 24,.22)",
   transition: "transform .18s ease, box-shadow .18s ease",
 
   "&:hover": {
     transform: "translateY(-1px)",
-    background: "linear-gradient(135deg,#681818 0%,#991b1b 100%)",
-    boxShadow: "0 17px 34px rgba(127,29,29,.28)",
+    background: "linear-gradient(135deg,#4d0f18 0%,#6e1622 100%)",
+    boxShadow: "0 17px 34px rgba(77, 15, 24,.28)",
   },
 
   "&.Mui-disabled": {
     color: "rgba(255,255,255,.72)",
-    background: "#cbd5e1",
+    background: "#d8cec1",
     boxShadow: "none",
   },
 };
@@ -87,12 +87,12 @@ const primaryButtonSx = {
 const secondaryButtonSx = {
   minHeight: 48,
   borderRadius: "13px",
-  color: "#7f1d1d",
+  color: "#4d0f18",
   fontWeight: 850,
   textTransform: "none",
 
   "&:hover": {
-    backgroundColor: "rgba(153,27,27,.055)",
+    backgroundColor: "rgba(110, 22, 34,.055)",
   },
 };
 
@@ -324,7 +324,7 @@ const Login = () => {
         alignItems: "center",
         overflow: { lg: "hidden" },
         background:
-          "radial-gradient(circle at 10% 8%,rgba(127,29,29,.075),transparent 28%),#f5f6f8",
+          "radial-gradient(circle at 10% 8%,rgba(77, 15, 24,.075),transparent 28%),#f5f6f8",
       }}
     >
       <Paper
@@ -343,9 +343,9 @@ const Login = () => {
           },
           overflow: "hidden",
           borderRadius: { xs: "22px", sm: "30px" },
-          border: "1px solid rgba(15,23,42,.08)",
+          border: "1px solid rgba(23, 17, 15,.08)",
           backgroundColor: "var(--aa-surface-solid)",
-          boxShadow: "0 28px 80px rgba(15,23,42,.13)",
+          boxShadow: "0 28px 80px rgba(23, 17, 15,.13)",
         }}
       >
         <AuthBrandPanel companyName={companyTitle} companyLogo={companyLogo} />
@@ -361,7 +361,7 @@ const Login = () => {
             justifyContent: "center",
             overflowY: { lg: "auto" },
             background:
-              "radial-gradient(circle at 92% 5%,rgba(127,29,29,.04),transparent 28%),#ffffff",
+              "radial-gradient(circle at 92% 5%,rgba(77, 15, 24,.04),transparent 28%),#ffffff",
           }}
         >
           <Box
@@ -387,9 +387,9 @@ const Login = () => {
                   overflow: "hidden",
                   flexShrink: 0,
                   borderRadius: "16px",
-                  border: "1px solid #e2e8f0",
+                  border: "1px solid #e8e1d8",
                   backgroundColor: "var(--aa-surface-solid)",
-                  boxShadow: "0 8px 20px rgba(15,23,42,.07)",
+                  boxShadow: "0 8px 20px rgba(23, 17, 15,.07)",
                 }}
               >
                 {companyLogo ? (
@@ -406,7 +406,7 @@ const Login = () => {
                 ) : (
                   <Typography
                     sx={{
-                      color: "#991b1b",
+                      color: "#6e1622",
                       fontSize: 20,
                       fontWeight: 950,
                     }}
@@ -459,7 +459,7 @@ const Login = () => {
               <Typography
                 sx={{
                   mt: 1.5,
-                  color: "#687385",
+                  color: "#7d716a",
                   fontSize: { xs: 14.5, sm: 16.5 },
                   lineHeight: 1.65,
                   fontWeight: 500,
@@ -509,9 +509,9 @@ const Login = () => {
                     p: 2,
                     borderRadius: "18px",
                     // Yarim shaffof sariq ikkala mavzuda ham ishlaydi: yorug'da
-                    // #fffbeb ga yaqin, qorong'ida esa fon ko'rinib turadi.
-                    border: "1px solid rgba(245,158,11,.32)",
-                    backgroundColor: "rgba(245,158,11,.10)",
+                    // #faf5e9 ga yaqin, qorong'ida esa fon ko'rinib turadi.
+                    border: "1px solid rgba(160, 106, 18,.32)",
+                    backgroundColor: "rgba(160, 106, 18,.10)",
                   }}
                 >
                   {setupResult.recovery_codes.map((recoveryCode) => (
@@ -525,7 +525,7 @@ const Login = () => {
                         color: "var(--aa-text)",
                         fontWeight: 850,
                         borderRadius: "10px",
-                        border: "1px solid rgba(245,158,11,.22)",
+                        border: "1px solid rgba(160, 106, 18,.22)",
                         backgroundColor: "var(--aa-surface-solid)",
                       }}
                     >
@@ -543,8 +543,8 @@ const Login = () => {
                   sx={{
                     minHeight: 50,
                     borderRadius: "13px",
-                    color: "#7f1d1d",
-                    borderColor: "rgba(153,27,27,.22)",
+                    color: "#4d0f18",
+                    borderColor: "rgba(110, 22, 34,.22)",
                     fontWeight: 850,
                     textTransform: "none",
                   }}
@@ -569,7 +569,7 @@ const Login = () => {
                       p: 2.5,
                       textAlign: "center",
                       borderRadius: "18px",
-                      border: "1px solid #e2e8f0",
+                      border: "1px solid #e8e1d8",
                       backgroundColor: "var(--aa-surface-muted)",
                     }}
                   >
@@ -591,7 +591,7 @@ const Login = () => {
                     <Typography
                       sx={{
                         mt: 2,
-                        color: "#687385",
+                        color: "#7d716a",
                         fontSize: 13,
                         lineHeight: 1.6,
                       }}
@@ -607,7 +607,7 @@ const Login = () => {
                         px: 1.5,
                         py: 1.2,
                         wordBreak: "break-all",
-                        color: "#172033",
+                        color: "#241d1a",
                         fontWeight: 850,
                         letterSpacing: ".08em",
                         borderRadius: "10px",
@@ -622,7 +622,7 @@ const Login = () => {
                       onClick={() => copyText(challenge.manual_key, "Sozlash kaliti nusxalandi.")}
                       sx={{
                         mt: 1,
-                        color: "#991b1b",
+                        color: "#6e1622",
                         fontWeight: 850,
                         textTransform: "none",
                       }}
@@ -756,10 +756,10 @@ const Login = () => {
                         <Checkbox
                           size="small"
                           sx={{
-                            color: "#9ca6b3",
+                            color: "#a89d95",
 
                             "&.Mui-checked": {
-                              color: "#991b1b",
+                              color: "#6e1622",
                             },
                           }}
                         />
@@ -767,7 +767,7 @@ const Login = () => {
                       label={
                         <Typography
                           sx={{
-                            color: "#687385",
+                            color: "#7d716a",
                             fontSize: 13.5,
                             fontWeight: 600,
                           }}
@@ -789,14 +789,14 @@ const Login = () => {
                           width: 7,
                           height: 7,
                           borderRadius: "50%",
-                          backgroundColor: "#22c55e",
-                          boxShadow: "0 0 0 4px rgba(34,197,94,.08)",
+                          backgroundColor: "#4e9c6b",
+                          boxShadow: "0 0 0 4px rgba(78, 156, 107,.08)",
                         }}
                       />
 
                       <Typography
                         sx={{
-                          color: "#687385",
+                          color: "#7d716a",
                           fontSize: 12.5,
                           fontWeight: 700,
                         }}
@@ -829,7 +829,7 @@ const Login = () => {
                 <Typography
                   component="span"
                   sx={{
-                    color: "#7b8494",
+                    color: "#7d716a",
                     fontSize: 13.5,
                     fontWeight: 600,
                   }}
@@ -840,7 +840,7 @@ const Login = () => {
                 <Link
                   to="/register"
                   style={{
-                    color: "#991b1b",
+                    color: "#6e1622",
                     fontSize: "13.5px",
                     fontWeight: 900,
                     textDecoration: "none",

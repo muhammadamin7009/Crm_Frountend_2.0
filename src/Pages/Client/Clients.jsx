@@ -193,16 +193,16 @@ const getInitials = (client) => {
 const ClientMetric = ({ label, value, helper, tone = "red" }) => {
   const tones = {
     red: {
-      color: "#fecdd3",
-      background: "rgba(220,38,38,.14)",
+      color: "#d9b782",
+      background: "rgba(140, 29, 43,.14)",
     },
     green: {
-      color: "#bbf7d0",
-      background: "rgba(34,197,94,.13)",
+      color: "#a8dcbc",
+      background: "rgba(78, 156, 107,.13)",
     },
     amber: {
-      color: "#fde68a",
-      background: "rgba(245,158,11,.14)",
+      color: "#e3c98f",
+      background: "rgba(160, 106, 18,.14)",
     },
     violet: {
       color: "#ddd6fe",
@@ -288,11 +288,11 @@ const ClientRoleChip = ({ role }) => {
       label={roleNames[role] || role || "-"}
       sx={{
         height: 25,
-        color: isClient ? "#15803d" : "#6d28d9",
+        color: isClient ? "#2f6b45" : "#6d28d9",
         fontSize: 10,
         fontWeight: 900,
-        border: `1px solid ${isClient ? "rgba(34,197,94,.20)" : "rgba(139,92,246,.20)"}`,
-        backgroundColor: isClient ? "rgba(34,197,94,.10)" : "rgba(139,92,246,.10)",
+        border: `1px solid ${isClient ? "rgba(78, 156, 107,.20)" : "rgba(139,92,246,.20)"}`,
+        backgroundColor: isClient ? "rgba(78, 156, 107,.10)" : "rgba(139,92,246,.10)",
       }}
     />
   );
@@ -687,8 +687,8 @@ const Clients = () => {
           borderRadius: "25px",
           color: "#ffffff",
           background:
-            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.32),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a)",
-          boxShadow: "0 22px 58px rgba(15,23,42,.18)",
+            "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.32),transparent 30%),linear-gradient(145deg,#151211,#1e1a18 52%,#3a1219)",
+          boxShadow: "0 22px 58px rgba(23, 17, 15,.18)",
 
           "&::before": {
             content: '""',
@@ -698,8 +698,9 @@ const Clients = () => {
             top: -275,
             right: -210,
             borderRadius: "50%",
-            border: "1px solid rgba(248,113,113,.16)",
-            boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+            border: "1px solid rgba(201, 168, 117,.16)",
+            boxShadow:
+              "0 0 81px 22px rgba(201, 168, 117,.022),0 0 161px 43px rgba(201, 168, 117,.014)",
           },
         }}
       >
@@ -729,13 +730,13 @@ const Clients = () => {
                   width: 25,
                   height: 2,
                   borderRadius: 99,
-                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                  background: "linear-gradient(90deg,#c9a875,#a3283a)",
                 }}
               />
 
               <Typography
                 sx={{
-                  color: "#fecdd3 !important",
+                  color: "#d9b782 !important",
                   fontSize: 10,
                   fontWeight: 950,
                   letterSpacing: ".13em",
@@ -787,11 +788,11 @@ const Clients = () => {
                   fontSize: 12,
                   fontWeight: 900,
                   textTransform: "none",
-                  background: "linear-gradient(135deg,#991b1b,#dc2626)",
-                  boxShadow: "0 12px 26px rgba(127,29,29,.30)",
+                  background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
+                  boxShadow: "0 12px 26px rgba(77, 15, 24,.30)",
 
                   "&:hover": {
-                    background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+                    background: "linear-gradient(135deg,#4d0f18,#7a1826)",
                   },
                 }}
               >
@@ -851,9 +852,9 @@ const Clients = () => {
           mb: 2,
           p: 2,
           borderRadius: "21px",
-          border: "1px solid #e4e9ef",
+          border: "1px solid #e8e1d8",
           backgroundColor: "var(--aa-surface-solid)",
-          boxShadow: "0 12px 35px rgba(15,23,42,.045)",
+          boxShadow: "0 12px 35px rgba(23, 17, 15,.045)",
         }}
       >
         <Box
@@ -940,15 +941,15 @@ const Clients = () => {
               px: 2,
               color: "var(--aa-text-secondary)",
               borderRadius: "11px",
-              border: "1px solid #dce3ea",
+              border: "1px solid #d8cec1",
               fontSize: 11.5,
               fontWeight: 850,
               textTransform: "none",
 
               "&:hover": {
-                color: "#991b1b",
-                borderColor: "rgba(153,27,27,.22)",
-                backgroundColor: "rgba(153,27,27,.04)",
+                color: "#6e1622",
+                borderColor: "rgba(110, 22, 34,.22)",
+                backgroundColor: "rgba(110, 22, 34,.04)",
               },
             }}
           >
@@ -964,9 +965,9 @@ const Clients = () => {
         sx={{
           overflow: "hidden",
           borderRadius: "22px",
-          border: "1px solid #e4e9ef",
+          border: "1px solid #e8e1d8",
           backgroundColor: "var(--aa-surface-solid)",
-          boxShadow: "0 14px 40px rgba(15,23,42,.045)",
+          boxShadow: "0 14px 40px rgba(23, 17, 15,.045)",
         }}
       >
         <Box
@@ -977,7 +978,7 @@ const Clients = () => {
             alignItems: "center",
             justifyContent: "space-between",
             gap: 2,
-            borderBottom: "1px solid #edf0f3",
+            borderBottom: "1px solid #e8e1d8",
           }}
         >
           <Box>
@@ -1007,10 +1008,10 @@ const Clients = () => {
             label={`${number(pageInfo.total)} ta mijoz`}
             sx={{
               height: 25,
-              color: "#991b1b",
+              color: "#6e1622",
               fontSize: 9.5,
               fontWeight: 900,
-              backgroundColor: "rgba(153,27,27,.07)",
+              backgroundColor: "rgba(110, 22, 34,.07)",
             }}
           />
         </Box>
@@ -1028,18 +1029,18 @@ const Clients = () => {
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
                 backgroundColor: "var(--aa-surface-muted)",
-                borderColor: "#edf0f3",
+                borderColor: "#e8e1d8",
               },
 
               "& td": {
                 py: 1.45,
                 color: "var(--aa-text-secondary)",
                 fontSize: 10.5,
-                borderColor: "#edf0f3",
+                borderColor: "#e8e1d8",
               },
 
               "& tbody tr:hover": {
-                backgroundColor: "rgba(153,27,27,.025)",
+                backgroundColor: "rgba(110, 22, 34,.025)",
               },
             }}
           >
@@ -1063,7 +1064,7 @@ const Clients = () => {
                     <CircularProgress
                       size={30}
                       sx={{
-                        color: "#991b1b",
+                        color: "#6e1622",
                       }}
                     />
                   </TableCell>
@@ -1108,9 +1109,9 @@ const Clients = () => {
                               color: "#ffffff",
                               fontSize: 12,
                               fontWeight: 900,
-                              background: "linear-gradient(135deg,#7f1d1d,#c81e2a)",
+                              background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
                               border: "3px solid #ffffff",
-                              boxShadow: "0 8px 20px rgba(127,29,29,.16)",
+                              boxShadow: "0 8px 20px rgba(77, 15, 24,.16)",
                             }}
                           >
                             {getInitials(client)}
@@ -1132,7 +1133,7 @@ const Clients = () => {
                               noWrap
                               sx={{
                                 mt: 0.4,
-                                color: client.is_deleted ? "#dc2626" : "#94a3b8",
+                                color: client.is_deleted ? "#8c1d2b" : "#8a807a",
                                 fontSize: 9.5,
                               }}
                             >
@@ -1165,7 +1166,7 @@ const Clients = () => {
                       <TableCell>
                         <Typography
                           sx={{
-                            color: "#15803d",
+                            color: "#2f6b45",
                             fontSize: 10.5,
                             fontWeight: 850,
                           }}
@@ -1180,11 +1181,11 @@ const Clients = () => {
                           label={money(debt)}
                           sx={{
                             height: 24,
-                            color: debt > 0 ? "#b45309" : "#15803d",
+                            color: debt > 0 ? "#a06a12" : "#2f6b45",
                             fontSize: 9,
                             fontWeight: 900,
                             backgroundColor:
-                              debt > 0 ? "rgba(245,158,11,.12)" : "rgba(34,197,94,.10)",
+                              debt > 0 ? "rgba(160, 106, 18,.12)" : "rgba(78, 156, 107,.10)",
                           }}
                         />
                       </TableCell>
@@ -1233,8 +1234,8 @@ const Clients = () => {
                                   }}
                                   sx={{
                                     borderRadius: "9px",
-                                    color: "#991b1b",
-                                    borderColor: "rgba(153,27,27,.20)",
+                                    color: "#6e1622",
+                                    borderColor: "rgba(110, 22, 34,.20)",
                                     fontSize: 9.5,
                                     fontWeight: 900,
                                     textTransform: "none",
@@ -1292,7 +1293,7 @@ const Clients = () => {
 
         <Box
           sx={{
-            borderTop: "1px solid #edf0f3",
+            borderTop: "1px solid #e8e1d8",
             backgroundColor: "var(--aa-surface-muted)",
           }}
         >
@@ -1403,7 +1404,7 @@ const ClientFormDialog = ({
         py: 2.4,
         color: "#ffffff",
         background:
-          "radial-gradient(circle at 100% 0%,rgba(220,38,38,.26),transparent 35%),linear-gradient(135deg,#11151c,#321319)",
+          "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.26),transparent 35%),linear-gradient(135deg,#151211,#2a1117)",
       }}
     >
       <Typography
@@ -1437,7 +1438,7 @@ const ClientFormDialog = ({
             alignItems: "center",
             gap: 1.5,
             borderRadius: "16px",
-            border: "1px solid #e7ebf0",
+            border: "1px solid #e8e1d8",
             backgroundColor: "var(--aa-surface-muted)",
           }}
         >
@@ -1446,7 +1447,7 @@ const ClientFormDialog = ({
             sx={{
               width: 54,
               height: 54,
-              backgroundColor: "#991b1b",
+              backgroundColor: "#6e1622",
               fontWeight: 900,
             }}
           >
@@ -1565,7 +1566,7 @@ const ClientFormDialog = ({
       sx={{
         px: 3,
         py: 2.3,
-        borderTop: "1px solid #edf0f3",
+        borderTop: "1px solid #e8e1d8",
       }}
     >
       <Button
@@ -1589,7 +1590,7 @@ const ClientFormDialog = ({
           borderRadius: "12px",
           fontWeight: 900,
           textTransform: "none",
-          background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+          background: "linear-gradient(135deg,#4d0f18,#7a1826)",
         }}
       >
         {saving ? "Saqlanmoqda..." : submitText}

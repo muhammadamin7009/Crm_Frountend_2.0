@@ -156,14 +156,14 @@ const DebtChip = ({ value }) => {
       sx={{
         height: 25,
 
-        color: hasDebt ? "#b45309" : "#15803d",
+        color: hasDebt ? "#a06a12" : "#2f6b45",
 
         fontSize: 9.5,
         fontWeight: 900,
 
-        backgroundColor: hasDebt ? "rgba(245,158,11,.10)" : "rgba(34,197,94,.09)",
+        backgroundColor: hasDebt ? "rgba(160, 106, 18,.10)" : "rgba(78, 156, 107,.09)",
 
-        border: hasDebt ? "1px solid rgba(245,158,11,.20)" : "1px solid rgba(34,197,94,.18)",
+        border: hasDebt ? "1px solid rgba(160, 106, 18,.20)" : "1px solid rgba(78, 156, 107,.18)",
       }}
     />
   );
@@ -854,7 +854,7 @@ const MaterialPurchases = () => {
                   height: 2,
                   borderRadius: 99,
 
-                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                  background: "linear-gradient(90deg,#c9a875,#a3283a)",
                 }}
               />
 
@@ -1087,7 +1087,7 @@ const MaterialPurchases = () => {
 
                       borderRadius: "13px",
 
-                      background: "linear-gradient(135deg,#7f1d1d,#c81e2a)",
+                      background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
                       fontWeight: 950,
                     }}
@@ -1142,7 +1142,7 @@ const MaterialPurchases = () => {
 
                     gap: 1,
 
-                    borderTop: "1px solid #edf0f3",
+                    borderTop: "1px solid #e8e1d8",
                   }}
                 >
                   <Box>
@@ -1442,7 +1442,7 @@ const MaterialPurchases = () => {
                     <CircularProgress
                       size={30}
                       sx={{
-                        color: "#991b1b",
+                        color: "#6e1622",
                       }}
                     />
                   </TableCell>
@@ -1469,11 +1469,11 @@ const MaterialPurchases = () => {
 
                             fontWeight: 950,
 
-                            background: "linear-gradient(135deg,#7f1d1d,#c81e2a)",
+                            background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
                             border: "3px solid #ffffff",
 
-                            boxShadow: "0 8px 20px rgba(127,29,29,.16)",
+                            boxShadow: "0 8px 20px rgba(77, 15, 24,.16)",
                           }}
                         >
                           {initial(purchase.supplier_name)}
@@ -1559,7 +1559,7 @@ const MaterialPurchases = () => {
                         {(purchase.items || []).length > 4 && (
                           <Typography
                             sx={{
-                              color: "#991b1b",
+                              color: "#6e1622",
 
                               fontSize: 9.5,
 
@@ -1589,7 +1589,7 @@ const MaterialPurchases = () => {
                         sx={{
                           mt: 0.4,
 
-                          color: "#15803d",
+                          color: "#2f6b45",
 
                           fontSize: 9.5,
 
@@ -1674,7 +1674,7 @@ const MaterialPurchases = () => {
 
         <Box
           sx={{
-            borderTop: "1px solid #edf0f3",
+            borderTop: "1px solid #e8e1d8",
 
             backgroundColor: "var(--aa-surface-muted)",
           }}
@@ -1882,7 +1882,7 @@ const MaterialPurchases = () => {
                         mt: 0.5,
                         px: 0,
 
-                        color: "#991b1b",
+                        color: "#6e1622",
 
                         fontSize: 9.5,
 
@@ -2252,7 +2252,7 @@ const MaterialPurchases = () => {
 
                               fontWeight: 950,
 
-                              background: "linear-gradient(135deg,#7f1d1d,#c81e2a)",
+                              background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
                             }}
                           >
                             {initial(supplier.name)}
@@ -2555,7 +2555,7 @@ const MaterialPurchases = () => {
               p: 1.5,
               borderRadius: "18px",
 
-              border: "1px solid #e7ebf0",
+              border: "1px solid #e8e1d8",
 
               backgroundColor: "var(--aa-surface-muted)",
             }}
@@ -2649,7 +2649,7 @@ const MaterialPurchases = () => {
 };
 
 const eyebrowSx = {
-  color: "#fecdd3 !important",
+  color: "#d9b782 !important",
   fontSize: 10,
   fontWeight: 950,
   letterSpacing: ".13em",
@@ -2696,12 +2696,12 @@ const heroSx = {
 
   border: "1px solid rgba(255,255,255,.075)",
 
-  backgroundColor: "#0d1117 !important",
+  backgroundColor: "#151211 !important",
 
   backgroundImage:
-    "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
+    "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.34),transparent 30%),linear-gradient(145deg,#151211,#1e1a18 52%,#3a1219) !important",
 
-  boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+  boxShadow: "0 24px 60px rgba(23, 17, 15,.20)",
 
   flexShrink: 0,
 
@@ -2714,9 +2714,9 @@ const heroSx = {
     right: -210,
     borderRadius: "50%",
 
-    border: "1px solid rgba(248,113,113,.16)",
+    border: "1px solid rgba(201, 168, 117,.16)",
 
-    boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+    boxShadow: "0 0 81px 22px rgba(201, 168, 117,.022),0 0 161px 43px rgba(201, 168, 117,.014)",
 
     pointerEvents: "none",
   },
@@ -2731,12 +2731,12 @@ const heroPrimaryButtonSx = {
   fontWeight: 900,
   textTransform: "none",
 
-  background: "linear-gradient(135deg,#991b1b,#dc2626)",
+  background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
 
-  boxShadow: "0 12px 26px rgba(127,29,29,.30)",
+  boxShadow: "0 12px 26px rgba(77, 15, 24,.30)",
 
   "&:hover": {
-    background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+    background: "linear-gradient(135deg,#4d0f18,#7a1826)",
   },
 };
 
@@ -2766,18 +2766,18 @@ const filterButtonSx = {
   px: 1.8,
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  borderColor: "#dce3ea",
+  borderColor: "#d8cec1",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
-    color: "#991b1b",
+    color: "#6e1622",
 
-    borderColor: "rgba(153,27,27,.22)",
+    borderColor: "rgba(110, 22, 34,.22)",
 
-    backgroundColor: "rgba(153,27,27,.04)",
+    backgroundColor: "rgba(110, 22, 34,.04)",
   },
 };
 
@@ -2790,12 +2790,12 @@ const primaryButtonSx = {
   fontWeight: 900,
   textTransform: "none",
 
-  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+  background: "linear-gradient(135deg,#4d0f18,#7a1826)",
 
-  boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+  boxShadow: "0 10px 24px rgba(77, 15, 24,.18)",
 
   "&:hover": {
-    background: "linear-gradient(135deg,#681818,#991b1b)",
+    background: "linear-gradient(135deg,#4d0f18,#6e1622)",
   },
 };
 
@@ -2807,38 +2807,38 @@ const tableHeaderBoxSx = {
   justifyContent: "space-between",
   gap: 2,
 
-  borderBottom: "1px solid #edf0f3",
+  borderBottom: "1px solid #e8e1d8",
 };
 
 const countChipSx = {
   height: 25,
-  color: "#991b1b",
+  color: "#6e1622",
   fontSize: 9.5,
   fontWeight: 900,
 
-  backgroundColor: "rgba(153,27,27,.07)",
+  backgroundColor: "rgba(110, 22, 34,.07)",
 };
 
 const softBlueChipSx = {
   height: 25,
-  color: "#1d4ed8",
+  color: "#1f6f8b",
   fontSize: 9.5,
   fontWeight: 900,
 
-  backgroundColor: "rgba(37,99,235,.08)",
+  backgroundColor: "rgba(31, 111, 139,.08)",
 
-  border: "1px solid rgba(37,99,235,.16)",
+  border: "1px solid rgba(31, 111, 139,.16)",
 };
 
 const softGreenChipSx = {
   height: 25,
-  color: "#15803d",
+  color: "#2f6b45",
   fontSize: 9.5,
   fontWeight: 900,
 
-  backgroundColor: "rgba(34,197,94,.08)",
+  backgroundColor: "rgba(78, 156, 107,.08)",
 
-  border: "1px solid rgba(34,197,94,.16)",
+  border: "1px solid rgba(78, 156, 107,.16)",
 };
 
 const stockCardSx = {
@@ -2847,7 +2847,7 @@ const stockCardSx = {
   p: 1.5,
   borderRadius: "17px",
 
-  border: "1px solid #e7ebf0",
+  border: "1px solid #e8e1d8",
 
   background: "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 
@@ -2860,7 +2860,7 @@ const stockCardSx = {
     right: -46,
     borderRadius: "50%",
 
-    backgroundColor: "rgba(153,27,27,.045)",
+    backgroundColor: "rgba(110, 22, 34,.045)",
   },
 };
 
@@ -2872,7 +2872,7 @@ const tinyLabelSx = {
 
 const greenValueSx = {
   mt: 0.4,
-  color: "#15803d",
+  color: "#2f6b45",
   fontSize: 10,
   fontWeight: 950,
 };
@@ -2890,7 +2890,7 @@ const emptyStateSx = {
   placeItems: "center",
   borderRadius: "17px",
 
-  border: "1px dashed #cbd5e1",
+  border: "1px dashed #d8cec1",
 
   backgroundColor: "var(--aa-surface-muted)",
 };
@@ -2921,18 +2921,18 @@ const tableSx = {
 
     backgroundColor: "var(--aa-surface-muted)",
 
-    borderColor: "#edf0f3",
+    borderColor: "#e8e1d8",
   },
 
   "& td": {
     py: 1.4,
     color: "var(--aa-text-secondary)",
     fontSize: 10.5,
-    borderColor: "#edf0f3",
+    borderColor: "#e8e1d8",
   },
 
   "& tbody tr:hover": {
-    backgroundColor: "rgba(153,27,27,.025)",
+    backgroundColor: "rgba(110, 22, 34,.025)",
   },
 };
 
@@ -2953,7 +2953,7 @@ const supplierTableSx = {
     py: 1.35,
     color: "var(--aa-text-secondary)",
     fontSize: 10.5,
-    borderColor: "#edf0f3",
+    borderColor: "#e8e1d8",
   },
 };
 
@@ -2961,7 +2961,7 @@ const dialogSectionSx = {
   p: 2,
   borderRadius: "18px",
 
-  border: "1px solid #e7ebf0",
+  border: "1px solid #e8e1d8",
 
   background: "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 };
@@ -2980,7 +2980,7 @@ const purchaseItemRowSx = {
   borderRadius: "16px",
   backgroundColor: "var(--aa-surface-solid)",
 
-  border: "1px solid #e7ebf0",
+  border: "1px solid #e8e1d8",
 };
 
 const removeButtonSx = {
@@ -3016,7 +3016,7 @@ const quickMaterialBoxSx = {
   borderRadius: "18px",
   backgroundColor: "var(--aa-surface-muted)",
 
-  border: "1px solid #dce3ea",
+  border: "1px solid #d8cec1",
 };
 
 const balanceGridSx = {
@@ -3033,7 +3033,7 @@ const balanceGridSx = {
   borderRadius: "18px",
   backgroundColor: "var(--aa-surface-muted)",
 
-  border: "1px solid #e7ebf0",
+  border: "1px solid #e8e1d8",
 };
 
 const dialogCancelSx = {
@@ -3053,12 +3053,12 @@ const dialogPrimarySx = {
   fontWeight: 900,
   textTransform: "none",
 
-  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+  background: "linear-gradient(135deg,#4d0f18,#7a1826)",
 
-  boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+  boxShadow: "0 10px 24px rgba(77, 15, 24,.18)",
 
   "&:hover": {
-    background: "linear-gradient(135deg,#681818,#991b1b)",
+    background: "linear-gradient(135deg,#4d0f18,#6e1622)",
   },
 };
 
@@ -3079,34 +3079,34 @@ const confirmTextSx = {
 const materialPurchasesStyles = `
   .crm-page .material-purchases-hero {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.34),
+        rgba(140, 29, 43,.34),
         transparent 30%
       ),
       linear-gradient(
         145deg,
-        #0d1117,
-        #171117 52%,
-        #3a121a
+        #151211,
+        #1e1a18 52%,
+        #3a1219
       ) !important;
   }
 
   .material-purchases-dialog-title {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.28),
+        rgba(140, 29, 43,.28),
         transparent 36%
       ),
       linear-gradient(
         135deg,
-        #11151c,
-        #321319
+        #151211,
+        #2a1117
       ) !important;
   }
 `;

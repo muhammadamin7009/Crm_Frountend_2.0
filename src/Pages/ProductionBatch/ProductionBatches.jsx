@@ -59,9 +59,9 @@ const STATUS_LABELS = {
 };
 
 const STATUS_TONES = {
-  in_progress: ["#92400e", "rgba(217,119,6,.12)"],
-  completed: ["#065f46", "rgba(5,150,105,.12)"],
-  cancelled: ["#991b1b", "rgba(220,38,38,.10)"],
+  in_progress: ["#7d5210", "rgba(160, 106, 18,.12)"],
+  completed: ["#255738", "rgba(47, 107, 69,.12)"],
+  cancelled: ["#6e1622", "rgba(140, 29, 43,.10)"],
 };
 
 const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
@@ -253,10 +253,10 @@ const ProductionBatches = () => {
           color: "#ffffff",
           borderRadius: "25px",
           border: "1px solid rgba(255,255,255,.075)",
-          backgroundColor: "#0d1117 !important",
+          backgroundColor: "#151211 !important",
           backgroundImage:
-            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
-          boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+            "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.34),transparent 30%),linear-gradient(145deg,#151211,#1e1a18 52%,#3a1219) !important",
+          boxShadow: "0 24px 60px rgba(23, 17, 15,.20)",
           flexShrink: 0,
         }}
       >
@@ -277,13 +277,13 @@ const ProductionBatches = () => {
                   width: 25,
                   height: 2,
                   borderRadius: 99,
-                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                  background: "linear-gradient(90deg,#c9a875,#a3283a)",
                 }}
               />
 
               <Typography
                 sx={{
-                  color: "#fecdd3 !important",
+                  color: "#d9b782 !important",
                   fontSize: 10,
                   fontWeight: 950,
                   letterSpacing: ".13em",
@@ -334,9 +334,9 @@ const ProductionBatches = () => {
                   fontSize: 11.5,
                   fontWeight: 900,
                   textTransform: "none",
-                  background: "linear-gradient(135deg,#991b1b,#dc2626)",
-                  boxShadow: "0 12px 26px rgba(127,29,29,.30)",
-                  "&:hover": { background: "linear-gradient(135deg,#7f1d1d,#b91c1c)" },
+                  background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
+                  boxShadow: "0 12px 26px rgba(77, 15, 24,.30)",
+                  "&:hover": { background: "linear-gradient(135deg,#4d0f18,#7a1826)" },
                 }}
               >
                 + Yangi partiya
@@ -440,15 +440,15 @@ const ProductionBatches = () => {
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
                 backgroundColor: "var(--aa-surface-muted)",
-                borderColor: "#edf0f3",
+                borderColor: "#e8e1d8",
               },
               "& td": {
                 py: 1.4,
                 color: "var(--aa-text-secondary)",
                 fontSize: 10.5,
-                borderColor: "#edf0f3",
+                borderColor: "#e8e1d8",
               },
-              "& tbody tr:hover": { backgroundColor: "rgba(153,27,27,.025)" },
+              "& tbody tr:hover": { backgroundColor: "rgba(110, 22, 34,.025)" },
             }}
           >
             <TableHead>
@@ -466,7 +466,7 @@ const ProductionBatches = () => {
               {loading ? (
                 <TableRow>
                   <TableCell colSpan={6} align="center" sx={{ py: 7 }}>
-                    <CircularProgress size={30} sx={{ color: "#991b1b" }} />
+                    <CircularProgress size={30} sx={{ color: "#6e1622" }} />
                   </TableCell>
                 </TableRow>
               ) : batches.length ? (
@@ -589,7 +589,7 @@ const ProductionBatches = () => {
           </Table>
         </Box>
 
-        <Box sx={{ borderTop: "1px solid #edf0f3", backgroundColor: "var(--aa-surface-muted)" }}>
+        <Box sx={{ borderTop: "1px solid #e8e1d8", backgroundColor: "var(--aa-surface-muted)" }}>
           <CrmPagination
             total={pageInfo.total}
             page={page}
@@ -757,9 +757,9 @@ const dialogPrimarySx = {
   fontSize: 11.5,
   fontWeight: 900,
   textTransform: "none",
-  background: "linear-gradient(135deg,#991b1b,#dc2626)",
-  boxShadow: "0 12px 26px rgba(127,29,29,.28)",
-  "&:hover": { background: "linear-gradient(135deg,#7f1d1d,#b91c1c)" },
+  background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
+  boxShadow: "0 12px 26px rgba(77, 15, 24,.28)",
+  "&:hover": { background: "linear-gradient(135deg,#4d0f18,#7a1826)" },
 };
 
 export default ProductionBatches;

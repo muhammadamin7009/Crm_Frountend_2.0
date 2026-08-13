@@ -139,8 +139,8 @@ const DebtChip = ({ debt }) => {
         fontSize: 12,
         fontWeight: 850,
         color: hasDebt ? "var(--aa-warning)" : "var(--aa-success)",
-        background: hasDebt ? "rgba(245,158,11,.12)" : "rgba(34,197,94,.12)",
-        border: hasDebt ? "1px solid rgba(245,158,11,.24)" : "1px solid rgba(34,197,94,.24)",
+        background: hasDebt ? "rgba(160, 106, 18,.12)" : "rgba(78, 156, 107,.12)",
+        border: hasDebt ? "1px solid rgba(160, 106, 18,.24)" : "1px solid rgba(78, 156, 107,.24)",
       }}
     />
   );
@@ -966,12 +966,12 @@ const ClientSales = () => {
 
           border: "1px solid rgba(255,255,255,.075)",
 
-          backgroundColor: "#0d1117 !important",
+          backgroundColor: "#151211 !important",
 
           backgroundImage:
-            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
+            "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.34),transparent 30%),linear-gradient(145deg,#151211,#1e1a18 52%,#3a1219) !important",
 
-          boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+          boxShadow: "0 24px 60px rgba(23, 17, 15,.20)",
 
           "&::before": {
             content: '""',
@@ -982,9 +982,10 @@ const ClientSales = () => {
             right: -210,
             borderRadius: "50%",
 
-            border: "1px solid rgba(248,113,113,.16)",
+            border: "1px solid rgba(201, 168, 117,.16)",
 
-            boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+            boxShadow:
+              "0 0 81px 22px rgba(201, 168, 117,.022),0 0 161px 43px rgba(201, 168, 117,.014)",
 
             pointerEvents: "none",
           },
@@ -1019,13 +1020,13 @@ const ClientSales = () => {
                   height: 2,
                   borderRadius: 99,
 
-                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                  background: "linear-gradient(90deg,#c9a875,#a3283a)",
                 }}
               />
 
               <Typography
                 sx={{
-                  color: "#fecdd3 !important",
+                  color: "#d9b782 !important",
 
                   fontSize: 10,
                   fontWeight: 950,
@@ -1380,7 +1381,7 @@ const ClientSales = () => {
 
                   background: "var(--aa-brand-800)",
 
-                  boxShadow: "0 10px 24px rgba(143,29,32,.16)",
+                  boxShadow: "0 10px 24px rgba(110, 22, 34,.16)",
 
                   "&:hover": {
                     background: "var(--aa-brand-700)",
@@ -1599,7 +1600,7 @@ const ClientSales = () => {
 
                             border: "3px solid #fff",
 
-                            boxShadow: "0 8px 20px rgba(143,29,32,.14)",
+                            boxShadow: "0 8px 20px rgba(110, 22, 34,.14)",
                           }}
                         >
                           {getInitial(sale.client_name)}
@@ -1705,7 +1706,7 @@ const ClientSales = () => {
                           mt: 0.35,
                           fontSize: 12.5,
                           fontWeight: 800,
-                          color: "#15803d",
+                          color: "#2f6b45",
                         }}
                       >
                         To'landi: {formatMoney(sale.current_paid_amount ?? sale.paid_amount)}
@@ -1913,7 +1914,7 @@ const ClientSales = () => {
 
                 background: "var(--aa-brand-800)",
 
-                boxShadow: "0 10px 24px rgba(143,29,32,.16)",
+                boxShadow: "0 10px 24px rgba(110, 22, 34,.16)",
 
                 "&:hover": {
                   background: "var(--aa-brand-700)",
@@ -2052,7 +2053,7 @@ const ClientSales = () => {
                 background:
                   "linear-gradient(135deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 
-                border: "1px solid rgba(148,163,184,.22)",
+                border: "1px solid rgba(138, 128, 122,.22)",
               }}
             >
               <Box
@@ -2155,7 +2156,7 @@ const ClientSales = () => {
 
                       background: "var(--aa-surface-solid)",
 
-                      border: "1px solid rgba(148,163,184,.20)",
+                      border: "1px solid rgba(138, 128, 122,.20)",
                     }}
                   >
                     <TextField
@@ -2249,11 +2250,11 @@ const ClientSales = () => {
               sx={{
                 p: 1.6,
                 borderRadius: "14px",
-                color: "#92400e",
+                color: "#7d5210",
 
-                background: "rgba(245,158,11,.10)",
+                background: "rgba(160, 106, 18,.10)",
 
-                border: "1px solid rgba(245,158,11,.25)",
+                border: "1px solid rgba(160, 106, 18,.25)",
 
                 fontSize: 13,
                 fontWeight: 750,
@@ -2318,12 +2319,12 @@ const ClientSales = () => {
               background: (theme) =>
                 preview.overPaid
                   ? theme.palette.mode === "dark"
-                    ? "rgba(220,38,38,.14)"
+                    ? "rgba(140, 29, 43,.14)"
                     : "rgba(254,242,242,.95)"
                   : "var(--aa-surface-muted)",
 
               border: preview.overPaid
-                ? "1px solid rgba(220,38,38,.30)"
+                ? "1px solid rgba(140, 29, 43,.30)"
                 : "1px solid var(--aa-border)",
             }}
           >
@@ -2420,7 +2421,7 @@ const ClientSales = () => {
                 textTransform: "none",
                 fontWeight: 900,
 
-                background: "linear-gradient(135deg,#8b0101,#b91c1c)",
+                background: "linear-gradient(135deg,#8b0101,#7a1826)",
 
                 boxShadow: "0 12px 25px rgba(139,1,1,.20)",
               }}
@@ -2528,7 +2529,7 @@ const ClientSales = () => {
 
               background: "linear-gradient(135deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 
-              border: "1px solid rgba(148,163,184,.22)",
+              border: "1px solid rgba(138, 128, 122,.22)",
             }}
           >
             <Box
@@ -2609,34 +2610,34 @@ const ClientSales = () => {
 const clientSalesStyles = `
   .crm-page .client-sales-hero {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.34),
+        rgba(140, 29, 43,.34),
         transparent 30%
       ),
       linear-gradient(
         145deg,
-        #0d1117,
-        #171117 52%,
-        #3a121a
+        #151211,
+        #1e1a18 52%,
+        #3a1219
       ) !important;
   }
 
   .client-sales-dialog-title {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.28),
+        rgba(140, 29, 43,.28),
         transparent 36%
       ),
       linear-gradient(
         135deg,
-        #11151c,
-        #321319
+        #151211,
+        #2a1117
       ) !important;
   }
 `;

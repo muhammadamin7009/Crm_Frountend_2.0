@@ -30,27 +30,27 @@ const date = (value) => (value ? new Date(value).toLocaleDateString("uz-UZ") : "
 
 const clientTones = {
   red: {
-    gradient: "linear-gradient(145deg,#8f1d20,#c72a32)",
-    soft: "rgba(143,29,32,.07)",
-    shadow: "rgba(143,29,32,.20)",
+    gradient: "linear-gradient(145deg,#6e1622,#8c1d2b)",
+    soft: "rgba(110, 22, 34,.07)",
+    shadow: "rgba(110, 22, 34,.20)",
   },
 
   green: {
-    gradient: "linear-gradient(145deg,#16985c,#21bd73)",
-    soft: "rgba(22,152,92,.07)",
-    shadow: "rgba(22,152,92,.18)",
+    gradient: "linear-gradient(145deg,#2f6b45,#4e9c6b)",
+    soft: "rgba(47, 107, 69,.07)",
+    shadow: "rgba(47, 107, 69,.18)",
   },
 
   blue: {
-    gradient: "linear-gradient(145deg,#3262d9,#587cf0)",
-    soft: "rgba(50,98,217,.07)",
-    shadow: "rgba(50,98,217,.20)",
+    gradient: "linear-gradient(145deg,#1f6f8b,#3e8ba3)",
+    soft: "rgba(31, 111, 139,.07)",
+    shadow: "rgba(31, 111, 139,.20)",
   },
 
   amber: {
-    gradient: "linear-gradient(145deg,#e28720,#f4a238)",
-    soft: "rgba(226,135,32,.08)",
-    shadow: "rgba(226,135,32,.20)",
+    gradient: "linear-gradient(145deg,#a06a12,#b8823a)",
+    soft: "rgba(160, 106, 18,.08)",
+    shadow: "rgba(160, 106, 18,.20)",
   },
 };
 
@@ -67,14 +67,14 @@ const ClientStatCard = ({ label, value, helper, icon, tone = "red" }) => {
         p: 2.4,
         overflow: "hidden",
         borderRadius: "22px",
-        border: "1px solid rgba(226,232,240,.9)",
+        border: "1px solid rgba(232, 225, 216,.9)",
         backgroundColor: "var(--aa-surface-solid)",
-        boxShadow: "0 14px 40px rgba(15,23,42,.055)",
+        boxShadow: "0 14px 40px rgba(23, 17, 15,.055)",
         transition: "transform .2s ease, box-shadow .2s ease",
 
         "&:hover": {
           transform: "translateY(-4px)",
-          boxShadow: "0 20px 50px rgba(15,23,42,.09)",
+          boxShadow: "0 20px 50px rgba(23, 17, 15,.09)",
         },
 
         "&::after": {
@@ -180,9 +180,9 @@ const ClientSection = ({ title, subtitle, action, children }) => (
       p: 2.5,
       overflow: "hidden",
       borderRadius: "22px",
-      border: "1px solid rgba(226,232,240,.9)",
+      border: "1px solid rgba(232, 225, 216,.9)",
       backgroundColor: "var(--aa-surface-solid)",
-      boxShadow: "0 14px 40px rgba(15,23,42,.045)",
+      boxShadow: "0 14px 40px rgba(23, 17, 15,.045)",
     }}
   >
     <Box
@@ -238,7 +238,7 @@ const ClientEmptyState = ({ title, description }) => (
       justifyContent: "center",
       textAlign: "center",
       borderRadius: "17px",
-      border: "1px dashed #cbd5e1",
+      border: "1px dashed #d8cec1",
       backgroundColor: "var(--aa-surface-muted)",
     }}
   >
@@ -250,7 +250,7 @@ const ClientEmptyState = ({ title, description }) => (
         display: "grid",
         placeItems: "center",
         borderRadius: "14px",
-        backgroundColor: "rgba(143,29,32,.07)",
+        backgroundColor: "rgba(110, 22, 34,.07)",
       }}
     >
       <Box
@@ -367,15 +367,15 @@ const ClientDashboard = ({ user }) => {
             display: "grid",
             placeItems: "center",
             borderRadius: "22px",
-            border: "1px solid rgba(143,29,32,.1)",
-            backgroundColor: "rgba(143,29,32,.05)",
+            border: "1px solid rgba(110, 22, 34,.1)",
+            backgroundColor: "rgba(110, 22, 34,.05)",
           }}
         >
           <CircularProgress
             size={34}
             thickness={4.5}
             sx={{
-              color: "#8f1d20",
+              color: "#6e1622",
             }}
           />
         </Box>
@@ -421,7 +421,7 @@ const ClientDashboard = ({ user }) => {
           borderRadius: "24px",
           border: "1px solid var(--aa-border)",
           background:
-            "radial-gradient(circle at 98% 0%,rgba(143,29,32,.075),transparent 28%),linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
+            "radial-gradient(circle at 98% 0%,rgba(110, 22, 34,.075),transparent 28%),linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
           boxShadow: "var(--aa-shadow-md)",
         }}
       >
@@ -439,13 +439,13 @@ const ClientDashboard = ({ user }) => {
                 width: 25,
                 height: 2,
                 borderRadius: 99,
-                background: "linear-gradient(90deg,#7f1d1d,#dc2626)",
+                background: "linear-gradient(90deg,#4d0f18,#8c1d2b)",
               }}
             />
 
             <Typography
               sx={{
-                color: "#8f1d20",
+                color: "#6e1622",
                 fontSize: 10,
                 fontWeight: 950,
                 letterSpacing: ".13em",
@@ -486,7 +486,7 @@ const ClientDashboard = ({ user }) => {
             <Box
               component="span"
               sx={{
-                color: "#8f1d20",
+                color: "#6e1622",
                 fontWeight: 850,
               }}
             >
@@ -501,16 +501,16 @@ const ClientDashboard = ({ user }) => {
           sx={{
             minHeight: 42,
             px: 2,
-            color: "#8f1d20",
+            color: "#6e1622",
             borderRadius: "13px",
-            border: "1px solid rgba(143,29,32,.13)",
-            backgroundColor: "rgba(143,29,32,.045)",
+            border: "1px solid rgba(110, 22, 34,.13)",
+            backgroundColor: "rgba(110, 22, 34,.045)",
             fontSize: 11.5,
             fontWeight: 900,
             textTransform: "none",
 
             "&:hover": {
-              backgroundColor: "rgba(143,29,32,.08)",
+              backgroundColor: "rgba(110, 22, 34,.08)",
             },
           }}
         >
@@ -588,22 +588,22 @@ const ClientDashboard = ({ user }) => {
           borderRadius: "24px",
           border: "1px solid rgba(255,255,255,.08)",
 
-          backgroundColor: "#0d1117 !important",
+          backgroundColor: "#151211 !important",
           backgroundImage: `
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.34),
+        rgba(140, 29, 43,.34),
         transparent 32%
       ),
       linear-gradient(
         145deg,
-        #0d1117 0%,
-        #171117 52%,
-        #3a121a 100%
+        #151211 0%,
+        #1e1a18 52%,
+        #3a1219 100%
       )
     `,
 
-          boxShadow: "0 24px 60px rgba(15,23,42,.22)",
+          boxShadow: "0 24px 60px rgba(23, 17, 15,.22)",
 
           "&::before": {
             content: '""',
@@ -614,10 +614,10 @@ const ClientDashboard = ({ user }) => {
             top: -270,
             right: -215,
             borderRadius: "50%",
-            border: "1px solid rgba(248,113,113,.17)",
+            border: "1px solid rgba(201, 168, 117,.17)",
             boxShadow: `
-        0 0 0 62px rgba(248,113,113,.025),
-        0 0 0 124px rgba(248,113,113,.015)
+        0 0 81px 22px rgba(201, 168, 117,.025),
+        0 0 161px 43px rgba(201, 168, 117,.015)
       `,
             pointerEvents: "none",
           },
@@ -631,7 +631,7 @@ const ClientDashboard = ({ user }) => {
             left: -180,
             bottom: -200,
             borderRadius: "50%",
-            background: "radial-gradient(circle,rgba(127,29,29,.30),transparent 70%)",
+            background: "radial-gradient(circle,rgba(77, 15, 24,.30),transparent 70%)",
             pointerEvents: "none",
           },
         }}
@@ -668,11 +668,11 @@ const ClientDashboard = ({ user }) => {
                   height: 8,
                   flexShrink: 0,
                   borderRadius: "50%",
-                  backgroundColor: debtAmount > 0 ? "#fb7185" : "#22c55e",
+                  backgroundColor: debtAmount > 0 ? "#c9a875" : "#4e9c6b",
                   boxShadow:
                     debtAmount > 0
                       ? "0 0 0 5px rgba(251,113,133,.10)"
-                      : "0 0 0 5px rgba(34,197,94,.10)",
+                      : "0 0 0 5px rgba(78, 156, 107,.10)",
                 }}
               />
 
@@ -750,7 +750,7 @@ const ClientDashboard = ({ user }) => {
                 <Typography
                   sx={{
                     ...clientDarkValueSx,
-                    color: "#86efac !important",
+                    color: "#8fd4a8 !important",
                   }}
                 >
                   {money(paidAmount)}
@@ -824,10 +824,10 @@ const ClientDashboard = ({ user }) => {
                     width: 7,
                     height: 7,
                     borderRadius: "50%",
-                    backgroundColor: paymentPercent >= 100 ? "#22c55e" : "#fb7185",
+                    backgroundColor: paymentPercent >= 100 ? "#4e9c6b" : "#c9a875",
                     boxShadow:
                       paymentPercent >= 100
-                        ? "0 0 0 5px rgba(34,197,94,.09)"
+                        ? "0 0 0 5px rgba(78, 156, 107,.09)"
                         : "0 0 0 5px rgba(251,113,133,.09)",
                   }}
                 />
@@ -857,8 +857,8 @@ const ClientDashboard = ({ user }) => {
                   borderRadius: 99,
                   background:
                     paymentPercent >= 100
-                      ? "linear-gradient(90deg,#16a34a,#4ade80)"
-                      : "linear-gradient(90deg,#be123c,#fb7185)",
+                      ? "linear-gradient(90deg,#2f6b45,#6cbf8b)"
+                      : "linear-gradient(90deg,#7a1826,#c9a875)",
                 },
               }}
             />
@@ -879,7 +879,7 @@ const ClientDashboard = ({ user }) => {
                 <Typography
                   sx={{
                     mt: 0.8,
-                    color: "#86efac !important",
+                    color: "#8fd4a8 !important",
                     fontSize: 15,
                     fontWeight: 950,
                   }}
@@ -894,7 +894,7 @@ const ClientDashboard = ({ user }) => {
                 <Typography
                   sx={{
                     mt: 0.8,
-                    color: debtAmount > 0 ? "#fda4af !important" : "#86efac !important",
+                    color: debtAmount > 0 ? "#d9b782 !important" : "#8fd4a8 !important",
                     fontSize: 15,
                     fontWeight: 950,
                   }}
@@ -1068,7 +1068,7 @@ const ClientDashboard = ({ user }) => {
 
                     "&:hover": {
                       transform: "translateX(2px)",
-                      borderColor: "rgba(143,29,32,.16)",
+                      borderColor: "rgba(110, 22, 34,.16)",
                     },
                   }}
                 >
@@ -1080,7 +1080,7 @@ const ClientDashboard = ({ user }) => {
                       placeItems: "center",
                       flexShrink: 0,
                       borderRadius: "13px",
-                      backgroundColor: "rgba(34,197,94,.10)",
+                      backgroundColor: "rgba(78, 156, 107,.10)",
                     }}
                   >
                     <Box
@@ -1206,18 +1206,18 @@ const neutralChipSx = {
 
 const debtChipSx = {
   height: 24,
-  color: "#b45309",
+  color: "#a06a12",
   fontSize: 9.5,
   fontWeight: 900,
-  backgroundColor: "rgba(245,158,11,.12)",
+  backgroundColor: "rgba(160, 106, 18,.12)",
 };
 
 const paidChipSx = {
   height: 24,
-  color: "#15803d",
+  color: "#2f6b45",
   fontSize: 9.5,
   fontWeight: 900,
-  backgroundColor: "rgba(34,197,94,.10)",
+  backgroundColor: "rgba(78, 156, 107,.10)",
 };
 
 const tableSx = {
@@ -1226,7 +1226,7 @@ const tableSx = {
     py: 1.4,
     color: "var(--aa-text-secondary)",
     fontSize: 10.5,
-    borderColor: "#edf0f3",
+    borderColor: "#e8e1d8",
   },
 
   "& .MuiTableHead-root .MuiTableCell-root": {
@@ -1243,7 +1243,7 @@ const tableSx = {
   },
 
   "& .MuiTableBody-root .MuiTableRow-root:hover": {
-    backgroundColor: "rgba(143,29,32,.025)",
+    backgroundColor: "rgba(110, 22, 34,.025)",
   },
 };
 

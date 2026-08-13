@@ -23,8 +23,8 @@ const PremiumDialog = ({
       sx: {
         overflow: "hidden",
         borderRadius: "23px",
-        border: "1px solid rgba(148,163,184,.20)",
-        boxShadow: "0 30px 80px rgba(15,23,42,.22)",
+        border: "1px solid rgba(138, 128, 122,.20)",
+        boxShadow: "0 30px 80px rgba(23, 17, 15,.22)",
       },
     }}
   >
@@ -34,9 +34,9 @@ const PremiumDialog = ({
         px: 3,
         py: 2.35,
         color: "#ffffff !important",
-        backgroundColor: "#0d1117 !important",
+        backgroundColor: "#151211 !important",
         backgroundImage:
-          "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
+          "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.28),transparent 36%),linear-gradient(135deg,#151211,#2a1117) !important",
         ...titleSx,
       }}
     >

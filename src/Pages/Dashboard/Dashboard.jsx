@@ -102,21 +102,21 @@ const StatCard = ({ label, value, helper }) => (
 
 const workerCardTones = {
   red: {
-    gradient: "linear-gradient(145deg,#8f1d20,#c72a32)",
-    soft: "rgba(143,29,32,.07)",
-    shadow: "rgba(143,29,32,.20)",
+    gradient: "linear-gradient(145deg,#6e1622,#8c1d2b)",
+    soft: "rgba(110, 22, 34,.07)",
+    shadow: "rgba(110, 22, 34,.20)",
   },
 
   green: {
-    gradient: "linear-gradient(145deg,#16985c,#21bd73)",
-    soft: "rgba(22,152,92,.07)",
-    shadow: "rgba(22,152,92,.18)",
+    gradient: "linear-gradient(145deg,#2f6b45,#4e9c6b)",
+    soft: "rgba(47, 107, 69,.07)",
+    shadow: "rgba(47, 107, 69,.18)",
   },
 
   amber: {
-    gradient: "linear-gradient(145deg,#e28720,#f4a238)",
-    soft: "rgba(226,135,32,.08)",
-    shadow: "rgba(226,135,32,.20)",
+    gradient: "linear-gradient(145deg,#a06a12,#b8823a)",
+    soft: "rgba(160, 106, 18,.08)",
+    shadow: "rgba(160, 106, 18,.20)",
   },
 
   violet: {
@@ -126,9 +126,9 @@ const workerCardTones = {
   },
 
   blue: {
-    gradient: "linear-gradient(145deg,#3262d9,#587cf0)",
-    soft: "rgba(50,98,217,.07)",
-    shadow: "rgba(50,98,217,.20)",
+    gradient: "linear-gradient(145deg,#1f6f8b,#3e8ba3)",
+    soft: "rgba(31, 111, 139,.07)",
+    shadow: "rgba(31, 111, 139,.20)",
   },
 };
 
@@ -145,14 +145,14 @@ const WorkerKpiCard = ({ label, value, helper, icon, tone = "red" }) => {
         p: 2.4,
         overflow: "hidden",
         borderRadius: "22px",
-        border: "1px solid rgba(226,232,240,.9)",
+        border: "1px solid rgba(232, 225, 216,.9)",
         backgroundColor: "var(--aa-surface-solid)",
-        boxShadow: "0 14px 40px rgba(15,23,42,.055)",
+        boxShadow: "0 14px 40px rgba(23, 17, 15,.055)",
         transition: "transform .2s ease, box-shadow .2s ease",
 
         "&:hover": {
           transform: "translateY(-4px)",
-          boxShadow: "0 20px 50px rgba(15,23,42,.09)",
+          boxShadow: "0 20px 50px rgba(23, 17, 15,.09)",
         },
 
         "&::after": {
@@ -257,9 +257,9 @@ const WorkerSection = ({ title, subtitle, action, children, className = "" }) =>
     sx={{
       p: 2.5,
       borderRadius: "22px",
-      border: "1px solid rgba(226,232,240,.9)",
+      border: "1px solid rgba(232, 225, 216,.9)",
       backgroundColor: "var(--aa-surface-solid)",
-      boxShadow: "0 14px 40px rgba(15,23,42,.045)",
+      boxShadow: "0 14px 40px rgba(23, 17, 15,.045)",
     }}
   >
     <Box
@@ -316,7 +316,7 @@ const WorkerEmptyState = ({ children }) => (
       gap: 1.5,
       textAlign: "center",
       borderRadius: "17px",
-      border: "1px dashed #cbd5e1",
+      border: "1px dashed #d8cec1",
       backgroundColor: "var(--aa-surface-muted)",
     }}
   >
@@ -325,8 +325,8 @@ const WorkerEmptyState = ({ children }) => (
         width: 10,
         height: 10,
         borderRadius: "50%",
-        backgroundColor: "#cbd5e1",
-        boxShadow: "0 0 0 7px rgba(203,213,225,.25)",
+        backgroundColor: "#d8cec1",
+        boxShadow: "0 0 0 7px rgba(216, 206, 193,.25)",
       }}
     />
 
@@ -571,15 +571,15 @@ const WorkerDashboard = ({ user }) => {
             display: "grid",
             placeItems: "center",
             borderRadius: "22px",
-            border: "1px solid rgba(143,29,32,.1)",
-            backgroundColor: "rgba(143,29,32,.05)",
+            border: "1px solid rgba(110, 22, 34,.1)",
+            backgroundColor: "rgba(110, 22, 34,.05)",
           }}
         >
           <CircularProgress
             size={34}
             thickness={4.5}
             sx={{
-              color: "#8f1d20",
+              color: "#6e1622",
             }}
           />
         </Box>
@@ -684,7 +684,7 @@ const WorkerDashboard = ({ user }) => {
           borderRadius: "24px",
           border: "1px solid var(--aa-border)",
           background:
-            "radial-gradient(circle at 98% 0%,rgba(143,29,32,.075),transparent 28%),linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
+            "radial-gradient(circle at 98% 0%,rgba(110, 22, 34,.075),transparent 28%),linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
           boxShadow: "var(--aa-shadow-md)",
         }}
       >
@@ -702,13 +702,13 @@ const WorkerDashboard = ({ user }) => {
                 width: 25,
                 height: 2,
                 borderRadius: 99,
-                background: "linear-gradient(90deg,#7f1d1d,#dc2626)",
+                background: "linear-gradient(90deg,#4d0f18,#8c1d2b)",
               }}
             />
 
             <Typography
               sx={{
-                color: "#8f1d20",
+                color: "#6e1622",
                 fontSize: 10,
                 fontWeight: 950,
                 letterSpacing: ".13em",
@@ -748,7 +748,7 @@ const WorkerDashboard = ({ user }) => {
             <Box
               component="span"
               sx={{
-                color: "#8f1d20",
+                color: "#6e1622",
                 fontWeight: 850,
               }}
             >
@@ -766,8 +766,8 @@ const WorkerDashboard = ({ user }) => {
             alignItems: "center",
             gap: 1.2,
             borderRadius: "15px",
-            border: "1px solid rgba(143,29,32,.1)",
-            backgroundColor: "rgba(143,29,32,.045)",
+            border: "1px solid rgba(110, 22, 34,.1)",
+            backgroundColor: "rgba(110, 22, 34,.045)",
           }}
         >
           <Box
@@ -775,8 +775,8 @@ const WorkerDashboard = ({ user }) => {
               width: 9,
               height: 9,
               borderRadius: "50%",
-              backgroundColor: "#22c55e",
-              boxShadow: "0 0 0 5px rgba(34,197,94,.09)",
+              backgroundColor: "#4e9c6b",
+              boxShadow: "0 0 0 5px rgba(78, 156, 107,.09)",
             }}
           />
 
@@ -885,8 +885,8 @@ const WorkerDashboard = ({ user }) => {
               borderRadius: "23px",
               border: "1px solid rgba(255,255,255,.06)",
               background:
-                "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 32%),linear-gradient(145deg,#11151c,#171117 52%,#321218)",
-              boxShadow: "0 20px 55px rgba(15,23,42,.18)",
+                "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.28),transparent 32%),linear-gradient(145deg,#151211,#1e1a18 52%,#321218)",
+              boxShadow: "0 20px 55px rgba(23, 17, 15,.18)",
             }}
           >
             <Box
@@ -981,7 +981,7 @@ const WorkerDashboard = ({ user }) => {
 
                     "& .MuiLinearProgress-bar": {
                       borderRadius: 99,
-                      background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                      background: "linear-gradient(90deg,#c9a875,#a3283a)",
                     },
                   }}
                 />
@@ -1019,7 +1019,7 @@ const WorkerDashboard = ({ user }) => {
                   <Typography
                     sx={{
                       mt: 0.8,
-                      color: "#86efac !important",
+                      color: "#8fd4a8 !important",
                       fontSize: 14,
                       fontWeight: 900,
                       overflowWrap: "anywhere",
@@ -1050,7 +1050,7 @@ const WorkerDashboard = ({ user }) => {
                   <Typography
                     sx={{
                       mt: 0.8,
-                      color: "#fda4af !important",
+                      color: "#d9b782 !important",
                       fontSize: 14,
                       fontWeight: 900,
                       overflowWrap: "anywhere",
@@ -1105,7 +1105,7 @@ const WorkerDashboard = ({ user }) => {
                     py: 1.5,
                     color: "var(--aa-text-secondary)",
                     fontSize: 11,
-                    borderColor: "#edf0f3",
+                    borderColor: "#e8e1d8",
                   },
 
                   "& .MuiTableHead-root .MuiTableCell-root": {
@@ -1122,7 +1122,7 @@ const WorkerDashboard = ({ user }) => {
                   },
 
                   "& .MuiTableBody-root .MuiTableRow-root:hover": {
-                    backgroundColor: "rgba(143,29,32,.025)",
+                    backgroundColor: "rgba(110, 22, 34,.025)",
                   },
                 }}
               >
@@ -1159,7 +1159,7 @@ const WorkerDashboard = ({ user }) => {
                               placeItems: "center",
                               flexShrink: 0,
                               borderRadius: "11px",
-                              backgroundColor: "rgba(143,29,32,.07)",
+                              backgroundColor: "rgba(110, 22, 34,.07)",
                             }}
                           >
                             <Box
@@ -1206,10 +1206,10 @@ const WorkerDashboard = ({ user }) => {
                           label={formatMoney(item.total_amount)}
                           sx={{
                             height: 24,
-                            color: "#16804d",
+                            color: "#2f6b45",
                             fontSize: 9.5,
                             fontWeight: 900,
-                            backgroundColor: "rgba(34,197,94,.10)",
+                            backgroundColor: "rgba(78, 156, 107,.10)",
                           }}
                         />
                       </TableCell>
@@ -1354,8 +1354,8 @@ const NoDashboardPermission = ({ user }) => {
             sx={{
               p: 2.5,
               borderRadius: "16px",
-              border: "1px dashed var(--aa-warning-border, rgba(217,119,6,.45))",
-              backgroundColor: "var(--aa-warning-soft, rgba(217,119,6,.08))",
+              border: "1px dashed var(--aa-warning-border, rgba(160, 106, 18,.45))",
+              backgroundColor: "var(--aa-warning-soft, rgba(160, 106, 18,.08))",
             }}
           >
             <Typography fontWeight={900} sx={{ color: "var(--aa-text)" }}>

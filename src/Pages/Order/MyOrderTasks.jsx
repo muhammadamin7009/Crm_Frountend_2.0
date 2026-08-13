@@ -17,7 +17,7 @@ import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import { claimOrderTask, getMyOrderTasks, updateOrderTaskProgress } from "../../api/orders";
 
 const labels = { pending: "Navbatda", in_progress: "Jarayonda", completed: "Tugallandi" };
-const colors = { pending: "#64748b", in_progress: "#d97706", completed: "#15803d" };
+const colors = { pending: "#7d716a", in_progress: "#d97706", completed: "#2f6b45" };
 
 const MyOrderTasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -195,8 +195,8 @@ const MyOrderTasks = () => {
                         sx={{
                           mt: 0.5,
                           height: 22,
-                          color: "#b91c1c",
-                          bgcolor: "#fef2f2",
+                          color: "#7a1826",
+                          bgcolor: "#faf5ef",
                           fontWeight: 850,
                         }}
                       />

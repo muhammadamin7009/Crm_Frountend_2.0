@@ -17,30 +17,30 @@ const fieldSx = {
     transition: "box-shadow .2s ease, border-color .2s ease, background-color .2s ease",
 
     "& fieldset": {
-      borderColor: "#dce2e9",
+      borderColor: "#e8e1d8",
     },
 
     "&:hover fieldset": {
-      borderColor: "#9ca6b3",
+      borderColor: "#a89d95",
     },
 
     "&.Mui-focused": {
-      boxShadow: "0 0 0 4px rgba(153,27,27,.07)",
+      boxShadow: "0 0 0 4px rgba(110, 22, 34,.07)",
     },
 
     "&.Mui-focused fieldset": {
-      borderColor: "#991b1b",
+      borderColor: "#6e1622",
       borderWidth: 1,
     },
   },
 
   "& .MuiInputLabel-root": {
-    color: "#687385",
+    color: "#7d716a",
     fontWeight: 600,
   },
 
   "& .MuiInputLabel-root.Mui-focused": {
-    color: "#991b1b",
+    color: "#6e1622",
   },
 
   "& .MuiFormHelperText-root": {
@@ -57,19 +57,19 @@ const primaryButtonSx = {
   fontSize: 15,
   fontWeight: 900,
   textTransform: "none",
-  background: "linear-gradient(135deg,#7f1d1d 0%,#b91c1c 100%)",
-  boxShadow: "0 14px 30px rgba(127,29,29,.22)",
+  background: "linear-gradient(135deg,#4d0f18 0%,#7a1826 100%)",
+  boxShadow: "0 14px 30px rgba(77, 15, 24,.22)",
   transition: "transform .18s ease, box-shadow .18s ease, background .18s ease",
 
   "&:hover": {
     transform: "translateY(-1px)",
-    background: "linear-gradient(135deg,#681818 0%,#991b1b 100%)",
-    boxShadow: "0 17px 34px rgba(127,29,29,.28)",
+    background: "linear-gradient(135deg,#4d0f18 0%,#6e1622 100%)",
+    boxShadow: "0 17px 34px rgba(77, 15, 24,.28)",
   },
 
   "&.Mui-disabled": {
     color: "rgba(255,255,255,.72)",
-    background: "#cbd5e1",
+    background: "#d8cec1",
     boxShadow: "none",
   },
 };
@@ -312,12 +312,12 @@ const Register = () => {
         background: `
           radial-gradient(
             circle at 7% 7%,
-            rgba(127,29,29,.085),
+            rgba(77, 15, 24,.085),
             transparent 27%
           ),
           radial-gradient(
             circle at 93% 91%,
-            rgba(15,23,42,.055),
+            rgba(23, 17, 15,.055),
             transparent 29%
           ),
           linear-gradient(
@@ -350,10 +350,10 @@ const Register = () => {
             xs: "22px",
             sm: "30px",
           },
-          border: "1px solid rgba(15,23,42,.08)",
+          border: "1px solid rgba(23, 17, 15,.08)",
           backgroundColor: "var(--aa-surface-solid)",
           boxShadow: `
-            0 30px 90px rgba(15,23,42,.14),
+            0 30px 90px rgba(23, 17, 15,.14),
             inset 0 1px 0 rgba(255,255,255,.8)
           `,
         }}
@@ -389,7 +389,7 @@ const Register = () => {
             background: `
               radial-gradient(
                 circle at 93% 5%,
-                rgba(127,29,29,.04),
+                rgba(77, 15, 24,.04),
                 transparent 27%
               ),
               #ffffff
@@ -422,9 +422,9 @@ const Register = () => {
                   overflow: "hidden",
                   flexShrink: 0,
                   borderRadius: "16px",
-                  border: "1px solid #e2e8f0",
+                  border: "1px solid #e8e1d8",
                   backgroundColor: "var(--aa-surface-solid)",
-                  boxShadow: "0 8px 20px rgba(15,23,42,.07)",
+                  boxShadow: "0 8px 20px rgba(23, 17, 15,.07)",
                 }}
               >
                 {companyLogo ? (
@@ -441,7 +441,7 @@ const Register = () => {
                 ) : (
                   <Typography
                     sx={{
-                      color: "#991b1b",
+                      color: "#6e1622",
                       fontSize: 20,
                       fontWeight: 950,
                     }}
@@ -466,7 +466,7 @@ const Register = () => {
                 <Typography
                   sx={{
                     mt: 0.4,
-                    color: "#7b8494",
+                    color: "#7d716a",
                     fontSize: 12,
                     fontWeight: 600,
                   }}
@@ -488,9 +488,9 @@ const Register = () => {
                   alignItems: "center",
                   gap: 0.8,
                   borderRadius: "999px",
-                  color: "#991b1b",
-                  border: "1px solid rgba(153,27,27,.12)",
-                  backgroundColor: "rgba(153,27,27,.055)",
+                  color: "#6e1622",
+                  border: "1px solid rgba(110, 22, 34,.12)",
+                  backgroundColor: "rgba(110, 22, 34,.055)",
                 }}
               >
                 <Box
@@ -498,8 +498,8 @@ const Register = () => {
                     width: 6,
                     height: 6,
                     borderRadius: "50%",
-                    backgroundColor: "#dc2626",
-                    boxShadow: "0 0 0 4px rgba(220,38,38,.08)",
+                    backgroundColor: "#8c1d2b",
+                    boxShadow: "0 0 0 4px rgba(140, 29, 43,.08)",
                   }}
                 />
 
@@ -534,7 +534,7 @@ const Register = () => {
               <Typography
                 sx={{
                   mt: 1.4,
-                  color: "#687385",
+                  color: "#7d716a",
                   fontSize: {
                     xs: 14,
                     sm: 15.5,
@@ -745,9 +745,9 @@ const Register = () => {
                     alignItems: "center",
                     gap: 1.4,
                     borderRadius: "15px",
-                    border: "1px solid rgba(34,197,94,.12)",
+                    border: "1px solid rgba(78, 156, 107,.12)",
                     background:
-                      "linear-gradient(135deg,rgba(34,197,94,.055),var(--aa-surface-elevated))",
+                      "linear-gradient(135deg,rgba(78, 156, 107,.055),var(--aa-surface-elevated))",
                   }}
                 >
                   <Box
@@ -758,10 +758,10 @@ const Register = () => {
                       placeItems: "center",
                       flexShrink: 0,
                       borderRadius: "11px",
-                      color: "#15803d",
+                      color: "#2f6b45",
                       fontSize: 15,
                       fontWeight: 950,
-                      backgroundColor: "rgba(34,197,94,.10)",
+                      backgroundColor: "rgba(78, 156, 107,.10)",
                     }}
                   >
                     ✓
@@ -770,7 +770,7 @@ const Register = () => {
                   <Box>
                     <Typography
                       sx={{
-                        color: "#172033",
+                        color: "#241d1a",
                         fontSize: 12.5,
                         fontWeight: 850,
                       }}
@@ -781,7 +781,7 @@ const Register = () => {
                     <Typography
                       sx={{
                         mt: 0.35,
-                        color: "#7b8494",
+                        color: "#7d716a",
                         fontSize: 11,
                         lineHeight: 1.45,
                       }}
@@ -821,7 +821,7 @@ const Register = () => {
               <Typography
                 component="span"
                 sx={{
-                  color: "#7b8494",
+                  color: "#7d716a",
                   fontSize: 13.5,
                   fontWeight: 600,
                 }}
@@ -832,7 +832,7 @@ const Register = () => {
               <Link
                 to="/login"
                 style={{
-                  color: "#991b1b",
+                  color: "#6e1622",
                   fontSize: "13.5px",
                   fontWeight: 900,
                   textDecoration: "none",

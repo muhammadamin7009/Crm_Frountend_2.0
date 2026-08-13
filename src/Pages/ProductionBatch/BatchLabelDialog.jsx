@@ -242,9 +242,9 @@ const primarySx = {
   fontSize: 11.5,
   fontWeight: 900,
   textTransform: "none",
-  background: "linear-gradient(135deg,#991b1b,#dc2626)",
-  boxShadow: "0 12px 26px rgba(127,29,29,.28)",
-  "&:hover": { background: "linear-gradient(135deg,#7f1d1d,#b91c1c)" },
+  background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
+  boxShadow: "0 12px 26px rgba(77, 15, 24,.28)",
+  "&:hover": { background: "linear-gradient(135deg,#4d0f18,#7a1826)" },
 };
 
 export default BatchLabelDialog;

@@ -332,12 +332,12 @@ const Expenses = () => {
 
           border: "1px solid rgba(255,255,255,.075)",
 
-          backgroundColor: "#0d1117 !important",
+          backgroundColor: "#151211 !important",
 
           backgroundImage:
-            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
+            "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.34),transparent 30%),linear-gradient(145deg,#151211,#1e1a18 52%,#3a1219) !important",
 
-          boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+          boxShadow: "0 24px 60px rgba(23, 17, 15,.20)",
 
           flexShrink: 0,
 
@@ -350,9 +350,10 @@ const Expenses = () => {
             right: -210,
             borderRadius: "50%",
 
-            border: "1px solid rgba(248,113,113,.16)",
+            border: "1px solid rgba(201, 168, 117,.16)",
 
-            boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+            boxShadow:
+              "0 0 81px 22px rgba(201, 168, 117,.022),0 0 161px 43px rgba(201, 168, 117,.014)",
 
             pointerEvents: "none",
           },
@@ -387,13 +388,13 @@ const Expenses = () => {
                   height: 2,
                   borderRadius: 99,
 
-                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                  background: "linear-gradient(90deg,#c9a875,#a3283a)",
                 }}
               />
 
               <Typography
                 sx={{
-                  color: "#fecdd3 !important",
+                  color: "#d9b782 !important",
 
                   fontSize: 10,
                   fontWeight: 950,
@@ -454,12 +455,12 @@ const Expenses = () => {
                   fontWeight: 900,
                   textTransform: "none",
 
-                  background: "linear-gradient(135deg,#991b1b,#dc2626)",
+                  background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
 
-                  boxShadow: "0 12px 26px rgba(127,29,29,.30)",
+                  boxShadow: "0 12px 26px rgba(77, 15, 24,.30)",
 
                   "&:hover": {
-                    background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+                    background: "linear-gradient(135deg,#4d0f18,#7a1826)",
                   },
                 }}
               >
@@ -619,7 +620,7 @@ const Expenses = () => {
 
               gap: 2,
 
-              borderBottom: "1px solid #edf0f3",
+              borderBottom: "1px solid #e8e1d8",
             }}
           >
             <Box>
@@ -649,11 +650,11 @@ const Expenses = () => {
               label={`${number(rows.length)} ta`}
               sx={{
                 height: 25,
-                color: "#991b1b",
+                color: "#6e1622",
                 fontSize: 9.5,
                 fontWeight: 900,
 
-                backgroundColor: "rgba(153,27,27,.07)",
+                backgroundColor: "rgba(110, 22, 34,.07)",
               }}
             />
           </Box>
@@ -669,7 +670,7 @@ const Expenses = () => {
               <CircularProgress
                 size={30}
                 sx={{
-                  color: "#991b1b",
+                  color: "#6e1622",
                 }}
               />
             </Box>
@@ -692,11 +693,11 @@ const Expenses = () => {
                     display: "grid",
                     placeItems: "center",
                     borderRadius: "18px",
-                    color: "#991b1b",
+                    color: "#6e1622",
 
-                    backgroundColor: "rgba(153,27,27,.07)",
+                    backgroundColor: "rgba(110, 22, 34,.07)",
 
-                    border: "1px solid rgba(153,27,27,.12)",
+                    border: "1px solid rgba(110, 22, 34,.12)",
 
                     fontSize: 20,
                     fontWeight: 950,
@@ -748,18 +749,18 @@ const Expenses = () => {
                     letterSpacing: ".045em",
                     textTransform: "uppercase",
                     backgroundColor: "var(--aa-surface-muted)",
-                    borderColor: "#edf0f3",
+                    borderColor: "#e8e1d8",
                   },
 
                   "& td": {
                     py: 1.4,
                     color: "var(--aa-text-secondary)",
                     fontSize: 10.5,
-                    borderColor: "#edf0f3",
+                    borderColor: "#e8e1d8",
                   },
 
                   "& tbody tr:hover": {
-                    backgroundColor: "rgba(153,27,27,.025)",
+                    backgroundColor: "rgba(110, 22, 34,.025)",
                   },
                 }}
               >
@@ -804,9 +805,9 @@ const Expenses = () => {
 
                               borderRadius: "14px",
 
-                              background: "linear-gradient(135deg,#7f1d1d,#c81e2a)",
+                              background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
 
-                              boxShadow: "0 8px 20px rgba(127,29,29,.16)",
+                              boxShadow: "0 8px 20px rgba(77, 15, 24,.16)",
 
                               fontSize: 12,
                               fontWeight: 950,
@@ -848,16 +849,18 @@ const Expenses = () => {
                           sx={{
                             height: 25,
 
-                            color: item.account_name ? "#1d4ed8" : "#64748b",
+                            color: item.account_name ? "#1f6f8b" : "#7d716a",
 
                             fontSize: 9.5,
                             fontWeight: 900,
 
-                            backgroundColor: item.account_name ? "rgba(37,99,235,.08)" : "#f1f5f9",
+                            backgroundColor: item.account_name
+                              ? "rgba(31, 111, 139,.08)"
+                              : "#f4f0ea",
 
                             border: item.account_name
-                              ? "1px solid rgba(37,99,235,.15)"
-                              : "1px solid #e2e8f0",
+                              ? "1px solid rgba(31, 111, 139,.15)"
+                              : "1px solid #e8e1d8",
                           }}
                         />
                       </TableCell>
@@ -880,7 +883,7 @@ const Expenses = () => {
                               fontSize: 10,
                               fontWeight: 950,
 
-                              background: "linear-gradient(135deg,#475569,#0f172a)",
+                              background: "linear-gradient(135deg,#5c514b,#17110f)",
                             }}
                           >
                             {initial(item.created_by_name)}
@@ -914,7 +917,7 @@ const Expenses = () => {
                         <Typography
                           noWrap
                           sx={{
-                            color: "#b91c1c",
+                            color: "#7a1826",
                             fontSize: 12,
                             fontWeight: 950,
                           }}
@@ -967,7 +970,7 @@ const Expenses = () => {
             <Typography
               sx={{
                 mt: 0.8,
-                color: "#b91c1c",
+                color: "#7a1826",
                 fontSize: 25,
                 fontWeight: 950,
                 letterSpacing: "-.045em",
@@ -994,7 +997,7 @@ const Expenses = () => {
                 display: "grid",
                 gap: 1.2,
 
-                borderTop: "1px solid #edf0f3",
+                borderTop: "1px solid #e8e1d8",
               }}
             >
               <BalanceBox label="Yozuvlar soni" value={`${number(rows.length)} ta`} tone="blue" />
@@ -1042,7 +1045,7 @@ const Expenses = () => {
                       p: 1.2,
                       borderRadius: "14px",
 
-                      border: "1px solid #e7ebf0",
+                      border: "1px solid #e8e1d8",
 
                       backgroundColor: "var(--aa-surface-muted)",
                     }}
@@ -1062,7 +1065,7 @@ const Expenses = () => {
                     <Typography
                       noWrap
                       sx={{
-                        color: Number(account.balance || 0) > 0 ? "#15803d" : "#b91c1c",
+                        color: Number(account.balance || 0) > 0 ? "#2f6b45" : "#7a1826",
 
                         fontSize: 10,
                         fontWeight: 950,
@@ -1079,7 +1082,7 @@ const Expenses = () => {
                     textAlign: "center",
                     borderRadius: "14px",
 
-                    border: "1px dashed #cbd5e1",
+                    border: "1px dashed #d8cec1",
 
                     backgroundColor: "var(--aa-surface-muted)",
                   }}
@@ -1110,9 +1113,9 @@ const Expenses = () => {
             overflow: "hidden",
             borderRadius: "23px",
 
-            border: "1px solid rgba(148,163,184,.20)",
+            border: "1px solid rgba(138, 128, 122,.20)",
 
-            boxShadow: "0 30px 80px rgba(15,23,42,.22)",
+            boxShadow: "0 30px 80px rgba(23, 17, 15,.22)",
           },
         }}
       >
@@ -1124,10 +1127,10 @@ const Expenses = () => {
 
             color: "#ffffff !important",
 
-            backgroundColor: "#0d1117 !important",
+            backgroundColor: "#151211 !important",
 
             backgroundImage:
-              "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
+              "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.28),transparent 36%),linear-gradient(135deg,#151211,#2a1117) !important",
           }}
         >
           <Typography
@@ -1235,10 +1238,10 @@ const Expenses = () => {
                   borderRadius: "18px",
 
                   border: insufficientBalance
-                    ? "1px solid rgba(220,38,38,.25)"
-                    : "1px solid #e7ebf0",
+                    ? "1px solid rgba(140, 29, 43,.25)"
+                    : "1px solid #e8e1d8",
 
-                  backgroundColor: insufficientBalance ? "rgba(220,38,38,.045)" : "#f8fafc",
+                  backgroundColor: insufficientBalance ? "rgba(140, 29, 43,.045)" : "#faf8f5",
                 }}
               >
                 <BalanceBox
@@ -1263,11 +1266,11 @@ const Expenses = () => {
                   px: 1.7,
                   py: 1.4,
                   borderRadius: "14px",
-                  color: "#b45309",
+                  color: "#a06a12",
 
-                  backgroundColor: "rgba(245,158,11,.09)",
+                  backgroundColor: "rgba(160, 106, 18,.09)",
 
-                  border: "1px solid rgba(245,158,11,.20)",
+                  border: "1px solid rgba(160, 106, 18,.20)",
                 }}
               >
                 <Typography
@@ -1298,7 +1301,7 @@ const Expenses = () => {
             px: 3,
             py: 2.1,
 
-            borderTop: "1px solid #edf0f3",
+            borderTop: "1px solid #e8e1d8",
 
             backgroundColor: "var(--aa-surface-muted)",
           }}
@@ -1330,12 +1333,12 @@ const Expenses = () => {
               fontWeight: 900,
               textTransform: "none",
 
-              background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+              background: "linear-gradient(135deg,#4d0f18,#7a1826)",
 
-              boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+              boxShadow: "0 10px 24px rgba(77, 15, 24,.18)",
 
               "&:hover": {
-                background: "linear-gradient(135deg,#681818,#991b1b)",
+                background: "linear-gradient(135deg,#4d0f18,#6e1622)",
               },
             }}
           >
@@ -1375,52 +1378,52 @@ const filterButtonSx = {
   px: 1.8,
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  borderColor: "#dce3ea",
+  borderColor: "#d8cec1",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
-    color: "#991b1b",
+    color: "#6e1622",
 
-    borderColor: "rgba(153,27,27,.22)",
+    borderColor: "rgba(110, 22, 34,.22)",
 
-    backgroundColor: "rgba(153,27,27,.04)",
+    backgroundColor: "rgba(110, 22, 34,.04)",
   },
 };
 
 const expensesPageStyles = `
   .crm-page .expenses-hero {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.34),
+        rgba(140, 29, 43,.34),
         transparent 30%
       ),
       linear-gradient(
         145deg,
-        #0d1117,
-        #171117 52%,
-        #3a121a
+        #151211,
+        #1e1a18 52%,
+        #3a1219
       ) !important;
   }
 
   .expenses-dialog-title {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.28),
+        rgba(140, 29, 43,.28),
         transparent 36%
       ),
       linear-gradient(
         135deg,
-        #11151c,
-        #321319
+        #151211,
+        #2a1117
       ) !important;
   }
 `;

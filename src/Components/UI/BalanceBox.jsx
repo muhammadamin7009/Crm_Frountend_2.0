@@ -2,10 +2,10 @@ import { Box, Typography } from "@mui/material";
 
 const compactTones = {
   default: ["var(--aa-text)", "var(--aa-surface-solid)", "var(--aa-border)"],
-  green: ["#15803d", "rgba(34,197,94,.07)", "rgba(34,197,94,.17)"],
-  red: ["#991b1b", "rgba(153,27,27,.07)", "rgba(153,27,27,.16)"],
-  blue: ["#1d4ed8", "rgba(37,99,235,.07)", "rgba(37,99,235,.17)"],
-  amber: ["#b45309", "rgba(245,158,11,.09)", "rgba(245,158,11,.19)"],
+  green: ["#2f6b45", "rgba(78, 156, 107,.07)", "rgba(78, 156, 107,.17)"],
+  red: ["#6e1622", "rgba(110, 22, 34,.07)", "rgba(110, 22, 34,.16)"],
+  blue: ["#1f6f8b", "rgba(31, 111, 139,.07)", "rgba(31, 111, 139,.17)"],
+  amber: ["#a06a12", "rgba(160, 106, 18,.09)", "rgba(160, 106, 18,.19)"],
 };
 
 const surfaceColors = {

@@ -200,7 +200,7 @@ const KpiBreakdownDialog = ({ type, range, onClose }) => {
     >
       {loading ? (
         <Box sx={{ display: "grid", placeItems: "center", minHeight: 200 }}>
-          <CircularProgress size={28} sx={{ color: "#991b1b" }} />
+          <CircularProgress size={28} sx={{ color: "#6e1622" }} />
         </Box>
       ) : error ? (
         <Typography sx={{ py: 5, textAlign: "center", color: "var(--aa-text-tertiary)" }}>

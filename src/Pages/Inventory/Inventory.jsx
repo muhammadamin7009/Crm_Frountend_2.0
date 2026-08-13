@@ -126,9 +126,9 @@ const errorMessage = (error, fallback) => error?.response?.data?.message || fall
 const surfaceCardSx = {
   overflow: "hidden",
   borderRadius: "22px",
-  border: "1px solid #e4e9ef",
+  border: "1px solid #e8e1d8",
   background: "var(--aa-surface-solid)",
-  boxShadow: "0 14px 40px rgba(15,23,42,.045)",
+  boxShadow: "0 14px 40px rgba(23, 17, 15,.045)",
 };
 
 const tableSx = {
@@ -140,18 +140,18 @@ const tableSx = {
     textTransform: "uppercase",
     letterSpacing: ".045em",
     background: "var(--aa-surface-muted)",
-    borderBottom: "1px solid #edf0f3",
+    borderBottom: "1px solid #e8e1d8",
   },
 
   "& td": {
     py: 1.4,
     color: "var(--aa-text-secondary)",
     fontSize: 10.5,
-    borderBottom: "1px solid #edf0f3",
+    borderBottom: "1px solid #e8e1d8",
   },
 
   "& tbody tr:hover": {
-    background: "rgba(153,27,27,.025)",
+    background: "rgba(110, 22, 34,.025)",
   },
 };
 
@@ -159,9 +159,9 @@ const dialogPaperSx = {
   overflow: "hidden",
   borderRadius: "23px",
 
-  border: "1px solid rgba(148,163,184,.20)",
+  border: "1px solid rgba(138, 128, 122,.20)",
 
-  boxShadow: "0 30px 80px rgba(15,23,42,.22)",
+  boxShadow: "0 30px 80px rgba(23, 17, 15,.22)",
 };
 
 const dialogTitleSx = {
@@ -173,10 +173,10 @@ const dialogTitleSx = {
   fontSize: 18,
   fontWeight: 950,
 
-  backgroundColor: "#0d1117 !important",
+  backgroundColor: "#151211 !important",
 
   backgroundImage:
-    "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
+    "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.28),transparent 36%),linear-gradient(135deg,#151211,#2a1117) !important",
 };
 
 const dialogContentSx = {
@@ -188,7 +188,7 @@ const dialogActionsSx = {
   px: 3,
   py: 2.1,
 
-  borderTop: "1px solid #edf0f3",
+  borderTop: "1px solid #e8e1d8",
 
   background: "var(--aa-surface-muted)",
 };
@@ -202,12 +202,12 @@ const primaryButtonSx = {
   fontWeight: 900,
   textTransform: "none",
 
-  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+  background: "linear-gradient(135deg,#4d0f18,#7a1826)",
 
-  boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+  boxShadow: "0 10px 24px rgba(77, 15, 24,.18)",
 
   "&:hover": {
-    background: "linear-gradient(135deg,#681818,#991b1b)",
+    background: "linear-gradient(135deg,#4d0f18,#6e1622)",
   },
 };
 
@@ -216,18 +216,18 @@ const secondaryButtonSx = {
   px: 1.8,
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  borderColor: "#dce3ea",
+  borderColor: "#d8cec1",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
-    color: "#991b1b",
+    color: "#6e1622",
 
-    borderColor: "rgba(153,27,27,.22)",
+    borderColor: "rgba(110, 22, 34,.22)",
 
-    backgroundColor: "rgba(153,27,27,.04)",
+    backgroundColor: "rgba(110, 22, 34,.04)",
   },
 };
 
@@ -250,12 +250,12 @@ const heroPrimaryButtonSx = {
   fontWeight: 900,
   textTransform: "none",
 
-  background: "linear-gradient(135deg,#991b1b,#dc2626)",
+  background: "linear-gradient(135deg,#6e1622,#8c1d2b)",
 
-  boxShadow: "0 12px 26px rgba(127,29,29,.30)",
+  boxShadow: "0 12px 26px rgba(77, 15, 24,.30)",
 
   "&:hover": {
-    background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+    background: "linear-gradient(135deg,#4d0f18,#7a1826)",
   },
 };
 
@@ -282,13 +282,13 @@ const heroSecondaryButtonSx = {
 
 const MetricCard = ({ label, value, hint, tone = "red", onClick, active = false }) => {
   const tones = {
-    red: ["#991b1b", "rgba(153,27,27,.07)", "rgba(153,27,27,.16)"],
+    red: ["#6e1622", "rgba(110, 22, 34,.07)", "rgba(110, 22, 34,.16)"],
 
-    green: ["#15803d", "rgba(34,197,94,.07)", "rgba(34,197,94,.17)"],
+    green: ["#2f6b45", "rgba(78, 156, 107,.07)", "rgba(78, 156, 107,.17)"],
 
-    blue: ["#1d4ed8", "rgba(37,99,235,.07)", "rgba(37,99,235,.17)"],
+    blue: ["#1f6f8b", "rgba(31, 111, 139,.07)", "rgba(31, 111, 139,.17)"],
 
-    amber: ["#b45309", "rgba(245,158,11,.09)", "rgba(245,158,11,.19)"],
+    amber: ["#a06a12", "rgba(160, 106, 18,.09)", "rgba(160, 106, 18,.19)"],
   };
 
   const current = tones[tone] || tones.red;
@@ -1266,15 +1266,15 @@ const Inventory = () => {
 
             borderRadius: "22px",
 
-            border: "1px solid rgba(153,27,27,.11)",
+            border: "1px solid rgba(110, 22, 34,.11)",
 
-            backgroundColor: "rgba(153,27,27,.055)",
+            backgroundColor: "rgba(110, 22, 34,.055)",
           }}
         >
           <CircularProgress
             size={32}
             sx={{
-              color: "#991b1b",
+              color: "#6e1622",
             }}
           />
         </Box>
@@ -1336,12 +1336,12 @@ const Inventory = () => {
 
           border: "1px solid rgba(255,255,255,.075)",
 
-          backgroundColor: "#0d1117 !important",
+          backgroundColor: "#151211 !important",
 
           backgroundImage:
-            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
+            "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.34),transparent 30%),linear-gradient(145deg,#151211,#1e1a18 52%,#3a1219) !important",
 
-          boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+          boxShadow: "0 24px 60px rgba(23, 17, 15,.20)",
 
           "&::before": {
             content: '""',
@@ -1356,9 +1356,10 @@ const Inventory = () => {
 
             borderRadius: "50%",
 
-            border: "1px solid rgba(248,113,113,.16)",
+            border: "1px solid rgba(201, 168, 117,.16)",
 
-            boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+            boxShadow:
+              "0 0 81px 22px rgba(201, 168, 117,.022),0 0 161px 43px rgba(201, 168, 117,.014)",
 
             pointerEvents: "none",
           },
@@ -1394,13 +1395,13 @@ const Inventory = () => {
                   height: 2,
                   borderRadius: 99,
 
-                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                  background: "linear-gradient(90deg,#c9a875,#a3283a)",
                 }}
               />
 
               <Typography
                 sx={{
-                  color: "#fecdd3 !important",
+                  color: "#d9b782 !important",
 
                   fontSize: 10,
                   fontWeight: 950,
@@ -1631,11 +1632,11 @@ const Inventory = () => {
               label={`${quantity(warehouses.length)} ta`}
               sx={{
                 height: 25,
-                color: "#991b1b",
+                color: "#6e1622",
                 fontSize: 9.5,
                 fontWeight: 900,
 
-                backgroundColor: "rgba(153,27,27,.07)",
+                backgroundColor: "rgba(110, 22, 34,.07)",
               }}
             />
           </Box>
@@ -1682,12 +1683,12 @@ const Inventory = () => {
                   p: 2,
                   borderRadius: "18px",
 
-                  borderColor: "#e4e9ef",
+                  borderColor: "#e8e1d8",
 
                   background:
                     "linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
 
-                  boxShadow: "0 10px 28px rgba(15,23,42,.045)",
+                  boxShadow: "0 10px 28px rgba(23, 17, 15,.045)",
 
                   opacity: warehouse.is_active ? 1 : 0.62,
 
@@ -1698,7 +1699,7 @@ const Inventory = () => {
                   "&:hover": {
                     transform: "translateY(-2px)",
 
-                    boxShadow: "0 18px 42px rgba(15,23,42,.08)",
+                    boxShadow: "0 18px 42px rgba(23, 17, 15,.08)",
                   },
 
                   "&:active": warehouse.is_active
@@ -1708,7 +1709,7 @@ const Inventory = () => {
                     : undefined,
 
                   "&:focus-visible": {
-                    outline: "3px solid rgba(185,28,28,.25)",
+                    outline: "3px solid rgba(110, 22, 34,.25)",
                     outlineOffset: 2,
                   },
 
@@ -1725,7 +1726,7 @@ const Inventory = () => {
 
                     borderRadius: "50%",
 
-                    backgroundColor: "rgba(153,27,27,.045)",
+                    backgroundColor: "rgba(110, 22, 34,.045)",
 
                     pointerEvents: "none",
                   },
@@ -1771,16 +1772,16 @@ const Inventory = () => {
                     sx={{
                       height: 25,
 
-                      color: warehouse.is_active ? "#15803d" : "#64748b",
+                      color: warehouse.is_active ? "#2f6b45" : "#7d716a",
 
                       fontSize: 9.5,
                       fontWeight: 900,
 
-                      backgroundColor: warehouse.is_active ? "rgba(34,197,94,.09)" : "#f1f5f9",
+                      backgroundColor: warehouse.is_active ? "rgba(78, 156, 107,.09)" : "#f4f0ea",
 
                       border: warehouse.is_active
-                        ? "1px solid rgba(34,197,94,.18)"
-                        : "1px solid #e2e8f0",
+                        ? "1px solid rgba(78, 156, 107,.18)"
+                        : "1px solid #e8e1d8",
                     }}
                   />
                 </Stack>
@@ -1789,7 +1790,7 @@ const Inventory = () => {
                   sx={{
                     mt: 1.5,
 
-                    color: "#991b1b",
+                    color: "#6e1622",
 
                     fontSize: 25,
                     fontWeight: 950,
@@ -1901,7 +1902,7 @@ const Inventory = () => {
 
                   borderRadius: "18px",
 
-                  border: "1px dashed #cbd5e1",
+                  border: "1px dashed #d8cec1",
 
                   backgroundColor: "var(--aa-surface-muted)",
                 }}
@@ -2003,7 +2004,7 @@ const Inventory = () => {
                 px: 2,
                 pt: 1.2,
 
-                borderBottom: "1px solid #edf0f3",
+                borderBottom: "1px solid #e8e1d8",
               }}
             >
               <Tabs value={tab} onChange={(_event, value) => setTab(value)} variant="scrollable">
@@ -2041,11 +2042,11 @@ const Inventory = () => {
                   sx={{
                     justifySelf: "flex-start",
                     height: 28,
-                    color: "#991b1b",
+                    color: "#6e1622",
                     fontSize: 10.5,
                     fontWeight: 900,
-                    backgroundColor: "rgba(153,27,27,.08)",
-                    border: "1px solid rgba(153,27,27,.2)",
+                    backgroundColor: "rgba(110, 22, 34,.08)",
+                    border: "1px solid rgba(110, 22, 34,.2)",
                   }}
                 />
               )}
@@ -2109,7 +2110,7 @@ const Inventory = () => {
                               sx={{
                                 height: 25,
 
-                                color: row.item_type === "product" ? "#1d4ed8" : "#b45309",
+                                color: row.item_type === "product" ? "#1f6f8b" : "#a06a12",
 
                                 fontSize: 9.5,
 
@@ -2117,8 +2118,8 @@ const Inventory = () => {
 
                                 backgroundColor:
                                   row.item_type === "product"
-                                    ? "rgba(37,99,235,.08)"
-                                    : "rgba(245,158,11,.09)",
+                                    ? "rgba(31, 111, 139,.08)"
+                                    : "rgba(160, 106, 18,.09)",
                               }}
                             />
                           </TableCell>
@@ -2132,7 +2133,7 @@ const Inventory = () => {
                           <TableCell>
                             <Typography
                               sx={{
-                                color: row.is_low ? "#b91c1c" : "#15803d",
+                                color: row.is_low ? "#7a1826" : "#2f6b45",
 
                                 fontSize: 10.5,
 
@@ -2154,19 +2155,19 @@ const Inventory = () => {
                               sx={{
                                 height: 25,
 
-                                color: row.is_low ? "#b91c1c" : "#15803d",
+                                color: row.is_low ? "#7a1826" : "#2f6b45",
 
                                 fontSize: 9.5,
 
                                 fontWeight: 900,
 
                                 backgroundColor: row.is_low
-                                  ? "rgba(220,38,38,.08)"
-                                  : "rgba(34,197,94,.09)",
+                                  ? "rgba(140, 29, 43,.08)"
+                                  : "rgba(78, 156, 107,.09)",
 
                                 border: row.is_low
-                                  ? "1px solid rgba(220,38,38,.18)"
-                                  : "1px solid rgba(34,197,94,.18)",
+                                  ? "1px solid rgba(140, 29, 43,.18)"
+                                  : "1px solid rgba(78, 156, 107,.18)",
                               }}
                             />
                           </TableCell>
@@ -2273,7 +2274,7 @@ const Inventory = () => {
                               sx={{
                                 height: 25,
 
-                                color: Number(row.quantity_delta) < 0 ? "#b91c1c" : "#15803d",
+                                color: Number(row.quantity_delta) < 0 ? "#7a1826" : "#2f6b45",
 
                                 fontSize: 9.5,
 
@@ -2281,8 +2282,8 @@ const Inventory = () => {
 
                                 backgroundColor:
                                   Number(row.quantity_delta) < 0
-                                    ? "rgba(220,38,38,.08)"
-                                    : "rgba(34,197,94,.09)",
+                                    ? "rgba(140, 29, 43,.08)"
+                                    : "rgba(78, 156, 107,.09)",
                               }}
                             />
                           </TableCell>
@@ -2290,7 +2291,7 @@ const Inventory = () => {
                           <TableCell>
                             <Typography
                               sx={{
-                                color: Number(row.quantity_delta) < 0 ? "#b91c1c" : "#15803d",
+                                color: Number(row.quantity_delta) < 0 ? "#7a1826" : "#2f6b45",
 
                                 fontSize: 10.5,
 
@@ -2371,7 +2372,7 @@ const Inventory = () => {
 
               gap: 1.2,
 
-              borderBottom: "1px solid #edf0f3",
+              borderBottom: "1px solid #e8e1d8",
             }}
           >
             <Box>
@@ -2513,19 +2514,19 @@ const Inventory = () => {
                           sx={{
                             height: 25,
 
-                            color: Number(count.variance_lines) ? "#b45309" : "#15803d",
+                            color: Number(count.variance_lines) ? "#a06a12" : "#2f6b45",
 
                             fontSize: 9.5,
 
                             fontWeight: 900,
 
                             backgroundColor: Number(count.variance_lines)
-                              ? "rgba(245,158,11,.09)"
-                              : "rgba(34,197,94,.09)",
+                              ? "rgba(160, 106, 18,.09)"
+                              : "rgba(78, 156, 107,.09)",
 
                             border: Number(count.variance_lines)
-                              ? "1px solid rgba(245,158,11,.19)"
-                              : "1px solid rgba(34,197,94,.18)",
+                              ? "1px solid rgba(160, 106, 18,.19)"
+                              : "1px solid rgba(78, 156, 107,.18)",
                           }}
                         />
                       </TableCell>
@@ -2629,7 +2630,7 @@ const Inventory = () => {
               sx={{
                 overflowX: "auto",
 
-                border: "1px solid #e4e9ef",
+                border: "1px solid #e8e1d8",
 
                 borderRadius: "14px",
               }}
@@ -2724,7 +2725,7 @@ const Inventory = () => {
                         <TableCell>
                           <Typography
                             sx={{
-                              color: difference ? "#b45309" : "#15803d",
+                              color: difference ? "#a06a12" : "#2f6b45",
 
                               fontSize: 10.5,
 
@@ -2861,7 +2862,7 @@ const Inventory = () => {
               sx={{
                 overflowX: "auto",
 
-                border: "1px solid #e4e9ef",
+                border: "1px solid #e8e1d8",
 
                 borderRadius: "14px",
               }}
@@ -2921,7 +2922,7 @@ const Inventory = () => {
                       <TableCell>
                         <Typography
                           sx={{
-                            color: Number(row.difference_quantity) ? "#b45309" : "#15803d",
+                            color: Number(row.difference_quantity) ? "#a06a12" : "#2f6b45",
 
                             fontSize: 10.5,
 
@@ -3773,11 +3774,11 @@ const Inventory = () => {
                             label={shortage > 0 ? "Kam qolgan" : "Minimumda"}
                             sx={{
                               height: 25,
-                              color: shortage > 0 ? "#b91c1c" : "#b45309",
+                              color: shortage > 0 ? "#7a1826" : "#a06a12",
                               fontSize: 9.5,
                               fontWeight: 900,
                               backgroundColor:
-                                shortage > 0 ? "rgba(220,38,38,.08)" : "rgba(245,158,11,.09)",
+                                shortage > 0 ? "rgba(140, 29, 43,.08)" : "rgba(160, 106, 18,.09)",
                             }}
                           />
                         </TableCell>
@@ -3878,63 +3879,63 @@ const inventoryPageStyles = `
     --aa-radius-md: 11px;
     --aa-radius-lg: 18px;
     --aa-radius-xl: 22px;
-    --aa-border: #e4e9ef;
+    --aa-border: #e8e1d8;
     --aa-surface: #ffffff;
     --aa-surface-solid: #ffffff;
     --aa-surface-muted: #fafbfc;
-    --aa-surface-hover: rgba(153,27,27,.025);
-    --aa-text: #334155;
-    --aa-text-secondary: #64748b;
-    --aa-text-tertiary: #94a3b8;
-    --aa-brand-50: rgba(153,27,27,.055);
-    --aa-brand-200: rgba(153,27,27,.14);
-    --aa-brand-600: #b91c1c;
-    --aa-brand-700: #991b1b;
-    --aa-brand-800: #7f1d1d;
-    --aa-brand-900: #681818;
-    --aa-danger: #b91c1c;
-    --aa-warning: #b45309;
-    --aa-success: #15803d;
-    --aa-info: #1d4ed8;
+    --aa-surface-hover: rgba(110, 22, 34,.025);
+    --aa-text: #4b413c;
+    --aa-text-secondary: #7d716a;
+    --aa-text-tertiary: #8a807a;
+    --aa-brand-50: rgba(110, 22, 34,.055);
+    --aa-brand-200: rgba(110, 22, 34,.14);
+    --aa-brand-600: #7a1826;
+    --aa-brand-700: #6e1622;
+    --aa-brand-800: #4d0f18;
+    --aa-brand-900: #4d0f18;
+    --aa-danger: #7a1826;
+    --aa-warning: #a06a12;
+    --aa-success: #2f6b45;
+    --aa-info: #1f6f8b;
   }
 
   [data-theme="dark"] .inventory-page {
     --aa-border: rgba(255,255,255,.09);
     --aa-surface: rgba(18,20,25,.96);
-    --aa-surface-solid: #121419;
+    --aa-surface-solid: #1a1615;
     --aa-surface-muted: #17191f;
     --aa-surface-hover: #1d2027;
-    --aa-text: #f8fafc;
+    --aa-text: #faf8f5;
     --aa-text-secondary: #a3aab7;
     --aa-text-tertiary: #737b89;
   }
 
   .inventory-page .inventory-hero {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.34),
+        rgba(140, 29, 43,.34),
         transparent 30%
       ),
       linear-gradient(
         145deg,
-        #0d1117,
-        #171117 52%,
-        #3a121a
+        #151211,
+        #1e1a18 52%,
+        #3a1219
       ) !important;
   }
 
   .inventory-page .MuiTabs-indicator {
     height: 3px;
     border-radius: 99px;
-    background-color: #991b1b;
+    background-color: #6e1622;
   }
 
   .inventory-page .MuiTab-root {
     min-height: 48px;
-    color: #94a3b8;
+    color: #8a807a;
     font-size: 10.5px;
     font-weight: 900;
     text-transform: none;
@@ -3942,7 +3943,7 @@ const inventoryPageStyles = `
 
   .inventory-page
     .MuiTab-root.Mui-selected {
-    color: #991b1b;
+    color: #6e1622;
   }
 `;
 

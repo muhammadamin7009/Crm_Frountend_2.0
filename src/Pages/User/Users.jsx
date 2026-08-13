@@ -190,16 +190,16 @@ const getInitials = (user) => {
 const RoleChip = ({ role }) => {
   const styles = {
     super_admin: {
-      color: "#991b1b",
-      background: "rgba(153,27,27,.09)",
+      color: "#6e1622",
+      background: "rgba(110, 22, 34,.09)",
     },
     admin: {
-      color: "#1d4ed8",
-      background: "rgba(37,99,235,.09)",
+      color: "#1f6f8b",
+      background: "rgba(31, 111, 139,.09)",
     },
     worker: {
-      color: "#b45309",
-      background: "rgba(245,158,11,.12)",
+      color: "#a06a12",
+      background: "rgba(160, 106, 18,.12)",
     },
   };
 
@@ -667,10 +667,10 @@ const Users = () => {
           color: "#ffffff",
           borderRadius: "25px",
           border: "1px solid rgba(255,255,255,.075)",
-          backgroundColor: "#0d1117 !important",
+          backgroundColor: "#151211 !important",
           backgroundImage:
-            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
-          boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+            "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.34),transparent 30%),linear-gradient(145deg,#151211,#1e1a18 52%,#3a1219) !important",
+          boxShadow: "0 24px 60px rgba(23, 17, 15,.20)",
 
           "&::before": {
             content: '""',
@@ -680,8 +680,9 @@ const Users = () => {
             top: -275,
             right: -210,
             borderRadius: "50%",
-            border: "1px solid rgba(248,113,113,.16)",
-            boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+            border: "1px solid rgba(201, 168, 117,.16)",
+            boxShadow:
+              "0 0 81px 22px rgba(201, 168, 117,.022),0 0 161px 43px rgba(201, 168, 117,.014)",
             pointerEvents: "none",
           },
         }}
@@ -712,13 +713,13 @@ const Users = () => {
                   width: 25,
                   height: 2,
                   borderRadius: 99,
-                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                  background: "linear-gradient(90deg,#c9a875,#a3283a)",
                 }}
               />
 
               <Typography
                 sx={{
-                  color: "#fecdd3 !important",
+                  color: "#d9b782 !important",
                   fontSize: 10,
                   fontWeight: 950,
                   letterSpacing: ".13em",
@@ -770,11 +771,11 @@ const Users = () => {
                   fontSize: 12,
                   fontWeight: 900,
                   textTransform: "none",
-                  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
-                  boxShadow: "0 12px 26px rgba(127,29,29,.20)",
+                  background: "linear-gradient(135deg,#4d0f18,#7a1826)",
+                  boxShadow: "0 12px 26px rgba(77, 15, 24,.20)",
 
                   "&:hover": {
-                    background: "linear-gradient(135deg,#681818,#991b1b)",
+                    background: "linear-gradient(135deg,#4d0f18,#6e1622)",
                   },
                 }}
               >
@@ -832,9 +833,9 @@ const Users = () => {
           mb: 2,
           p: 2,
           borderRadius: "21px",
-          border: "1px solid #e4e9ef",
+          border: "1px solid #e8e1d8",
           backgroundColor: "var(--aa-surface-solid)",
-          boxShadow: "0 12px 35px rgba(15,23,42,.045)",
+          boxShadow: "0 12px 35px rgba(23, 17, 15,.045)",
         }}
       >
         <Box
@@ -919,14 +920,14 @@ const Users = () => {
               px: 2,
               color: "var(--aa-text-secondary)",
               borderRadius: "11px",
-              border: "1px solid #dce3ea",
+              border: "1px solid #d8cec1",
               fontWeight: 850,
               textTransform: "none",
 
               "&:hover": {
-                color: "#991b1b",
-                borderColor: "rgba(153,27,27,.22)",
-                backgroundColor: "rgba(153,27,27,.04)",
+                color: "#6e1622",
+                borderColor: "rgba(110, 22, 34,.22)",
+                backgroundColor: "rgba(110, 22, 34,.04)",
               },
             }}
           >
@@ -940,16 +941,16 @@ const Users = () => {
         sx={{
           overflow: "hidden",
           borderRadius: "22px",
-          border: "1px solid #e4e9ef",
+          border: "1px solid #e8e1d8",
           backgroundColor: "var(--aa-surface-solid)",
-          boxShadow: "0 14px 40px rgba(15,23,42,.045)",
+          boxShadow: "0 14px 40px rgba(23, 17, 15,.045)",
         }}
       >
         <Box
           sx={{
             px: 2.5,
             py: 2,
-            borderBottom: "1px solid #edf0f3",
+            borderBottom: "1px solid #e8e1d8",
           }}
         >
           <Typography
@@ -989,18 +990,18 @@ const Users = () => {
                 letterSpacing: ".045em",
                 textTransform: "uppercase",
                 backgroundColor: "var(--aa-surface-muted)",
-                borderColor: "#edf0f3",
+                borderColor: "#e8e1d8",
               },
 
               "& td": {
                 py: 1.45,
                 color: "var(--aa-text-secondary)",
                 fontSize: 10.5,
-                borderColor: "#edf0f3",
+                borderColor: "#e8e1d8",
               },
 
               "& tbody tr:hover": {
-                backgroundColor: "rgba(153,27,27,.025)",
+                backgroundColor: "rgba(110, 22, 34,.025)",
               },
             }}
           >
@@ -1037,7 +1038,7 @@ const Users = () => {
                     <CircularProgress
                       size={30}
                       sx={{
-                        color: "#991b1b",
+                        color: "#6e1622",
                       }}
                     />
                   </TableCell>
@@ -1075,11 +1076,11 @@ const Users = () => {
                             fontSize: 12,
                             fontWeight: 900,
 
-                            background: "linear-gradient(135deg,#334155,#0f172a)",
+                            background: "linear-gradient(135deg,#4b413c,#17110f)",
 
                             border: "3px solid #ffffff",
 
-                            boxShadow: "0 8px 20px rgba(15,23,42,.15)",
+                            boxShadow: "0 8px 20px rgba(23, 17, 15,.15)",
                           }}
                         >
                           {getInitials(user)}
@@ -1102,7 +1103,7 @@ const Users = () => {
                             sx={{
                               mt: 0.4,
 
-                              color: user.is_deleted ? "#dc2626" : "#94a3b8",
+                              color: user.is_deleted ? "#8c1d2b" : "#8a807a",
 
                               fontSize: 9.5,
                             }}
@@ -1235,7 +1236,7 @@ const Users = () => {
 
         <Box
           sx={{
-            borderTop: "1px solid #edf0f3",
+            borderTop: "1px solid #e8e1d8",
             backgroundColor: "var(--aa-surface-muted)",
           }}
         >
@@ -1355,8 +1356,8 @@ const UserFormDialog = ({
       sx: {
         overflow: "hidden",
         borderRadius: "23px",
-        border: "1px solid rgba(148,163,184,.20)",
-        boxShadow: "0 30px 80px rgba(15,23,42,.22)",
+        border: "1px solid rgba(138, 128, 122,.20)",
+        boxShadow: "0 30px 80px rgba(23, 17, 15,.22)",
       },
     }}
   >
@@ -1366,7 +1367,7 @@ const UserFormDialog = ({
         py: 2.4,
         color: "#ffffff",
         background:
-          "radial-gradient(circle at 100% 0%,rgba(220,38,38,.23),transparent 35%),linear-gradient(135deg,#11151c,#23151a)",
+          "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.23),transparent 35%),linear-gradient(135deg,#151211,#23151a)",
       }}
     >
       <Typography
@@ -1412,7 +1413,7 @@ const UserFormDialog = ({
               alignItems: "center",
               gap: 1.5,
               borderRadius: "16px",
-              border: "1px solid #e7ebf0",
+              border: "1px solid #e8e1d8",
               backgroundColor: "var(--aa-surface-muted)",
             }}
           >
@@ -1422,7 +1423,7 @@ const UserFormDialog = ({
                 width: 58,
                 height: 58,
                 color: "#ffffff",
-                background: "linear-gradient(135deg,#334155,#0f172a)",
+                background: "linear-gradient(135deg,#4b413c,#17110f)",
                 fontWeight: 900,
               }}
             >
@@ -1536,7 +1537,7 @@ const UserFormDialog = ({
         sx={{
           px: 3,
           py: 2.3,
-          borderTop: "1px solid #edf0f3",
+          borderTop: "1px solid #e8e1d8",
           backgroundColor: "var(--aa-surface-muted)",
         }}
       >
@@ -1576,8 +1577,8 @@ const UserConfirmDialog = ({
       sx: {
         overflow: "hidden",
         borderRadius: "21px",
-        border: "1px solid rgba(148,163,184,.20)",
-        boxShadow: "0 30px 80px rgba(15,23,42,.22)",
+        border: "1px solid rgba(138, 128, 122,.20)",
+        boxShadow: "0 30px 80px rgba(23, 17, 15,.22)",
       },
     }}
   >
@@ -1589,9 +1590,9 @@ const UserConfirmDialog = ({
         color: "#ffffff !important",
         fontSize: 18,
         fontWeight: 950,
-        backgroundColor: "#0d1117 !important",
+        backgroundColor: "#151211 !important",
         backgroundImage:
-          "radial-gradient(circle at 100% 0%,rgba(220,38,38,.28),transparent 36%),linear-gradient(135deg,#11151c,#321319) !important",
+          "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.28),transparent 36%),linear-gradient(135deg,#151211,#2a1117) !important",
       }}
     >
       {title}
@@ -1618,7 +1619,7 @@ const UserConfirmDialog = ({
       sx={{
         px: 3,
         py: 2.1,
-        borderTop: "1px solid #edf0f3",
+        borderTop: "1px solid #e8e1d8",
         backgroundColor: "var(--aa-surface-muted)",
       }}
     >
@@ -1669,36 +1670,36 @@ const dialogPrimarySx = {
   fontWeight: 900,
   textTransform: "none",
 
-  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+  background: "linear-gradient(135deg,#4d0f18,#7a1826)",
 
-  boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+  boxShadow: "0 10px 24px rgba(77, 15, 24,.18)",
 
   "&:hover": {
-    background: "linear-gradient(135deg,#681818,#991b1b)",
+    background: "linear-gradient(135deg,#4d0f18,#6e1622)",
   },
 };
 
 const usersPageStyles = `
   .crm-page .users-hero {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.34),
+        rgba(140, 29, 43,.34),
         transparent 30%
       ),
       linear-gradient(
         145deg,
-        #0d1117,
-        #171117 52%,
-        #3a121a
+        #151211,
+        #1e1a18 52%,
+        #3a1219
       ) !important;
   }
 
   .users-confirm-dialog-title {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
   }
 `;
 

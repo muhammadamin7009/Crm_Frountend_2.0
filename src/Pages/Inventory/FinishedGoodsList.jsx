@@ -144,11 +144,11 @@ const FinishedGoodsList = ({ warehouseId, lowOnly = false, onClearLowOnly }) => 
               sx={{
                 mt: 0.8,
                 height: 24,
-                color: "#991b1b",
+                color: "#6e1622",
                 fontSize: 9.5,
                 fontWeight: 900,
-                backgroundColor: "rgba(153,27,27,.08)",
-                border: "1px solid rgba(153,27,27,.2)",
+                backgroundColor: "rgba(110, 22, 34,.08)",
+                border: "1px solid rgba(110, 22, 34,.2)",
               }}
             />
           )}
@@ -245,7 +245,7 @@ const FinishedGoodsList = ({ warehouseId, lowOnly = false, onClearLowOnly }) => 
                           color: "var(--aa-danger)",
                           fontSize: 9.5,
                           fontWeight: 900,
-                          backgroundColor: "rgba(220,38,38,.12)",
+                          backgroundColor: "rgba(140, 29, 43,.12)",
                         }}
                       />
                     )}

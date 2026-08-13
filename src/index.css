@@ -7,43 +7,61 @@
 }
 
 :root {
-  /* Al-Amin design tokens */
-  --aa-brand-50: #fff7f7;
-  --aa-brand-100: #feecec;
-  --aa-brand-200: #fbd5d6;
-  --aa-brand-300: #f5adaf;
-  --aa-brand-400: #eb777b;
-  --aa-brand-500: #d94b50;
-  --aa-brand-600: #bd3035;
-  --aa-brand-700: #9e2529;
-  --aa-brand-800: #8f1d20;
-  --aa-brand-900: #68191b;
+  /* --------------------------------------------------------------------
+     AL-AMIN DIZAYN TOKENLARI
 
-  --aa-bg: #f5f5f7;
-  --aa-bg-elevated: #fbfbfd;
-  --aa-surface: rgba(255, 255, 255, 0.92);
+     Palitra landing sahifasidan olingan: yorqin qizil o'rniga chuqur
+     SHAROB, neytrallar esa issiq (ko'kimtir kulrang emas). Bitta metall
+     urg'u bor — GURUCH: u faqat nozik chiziq, raqam va belgilar uchun.
+
+     Ranglar SHU YERDA turadi. Komponent ichida qattiq yozilgan rang
+     keyinchalik shu tokenlar bilan ziddiyatga tushadi — kirish panelida
+     aynan shunday bo'lgan va tuzatish uzoq vaqt ko'rinmagan.
+     -------------------------------------------------------------------- */
+  --aa-brand-50: #fdf8f8;
+  --aa-brand-100: #f8edee;
+  --aa-brand-200: #f0d8db;
+  --aa-brand-300: #ddaab2;
+  --aa-brand-400: #c67985;
+  --aa-brand-500: #a94e5d;
+  --aa-brand-600: #8c1d2b;
+  --aa-brand-700: #7a1826;
+  --aa-brand-800: #6e1622;
+  --aa-brand-900: #4d0f18;
+
+  /* Guruch — yagona metall urg'u. Ko'p ishlatilmaydi: shu vazminlik
+     tufayli u qimmat ko'rinadi. */
+  --aa-accent: #a9814b;
+  --aa-accent-strong: #8a6838;
+  --aa-accent-soft: #f3ebde;
+
+  --aa-bg: #f5f2ee;
+  --aa-bg-elevated: #fbf9f6;
+  --aa-surface: rgba(255, 255, 255, 0.93);
   --aa-surface-solid: #ffffff;
-  --aa-surface-muted: #f7f7f9;
-  --aa-surface-hover: #f2f2f5;
+  --aa-surface-muted: #f8f5f1;
+  --aa-surface-hover: #f2ede7;
 
-  --aa-text: #1d1d1f;
-  --aa-text-secondary: #6e6e73;
-  --aa-text-tertiary: #86868b;
-  --aa-text-disabled: #a1a1a6;
+  --aa-text: #17110f;
+  --aa-text-secondary: #4b413c;
+  --aa-text-tertiary: #7d716a;
+  --aa-text-disabled: #a89d95;
 
-  --aa-border: rgba(29, 29, 31, 0.1);
-  --aa-border-strong: rgba(29, 29, 31, 0.16);
-  --aa-focus: rgba(143, 29, 32, 0.26);
+  --aa-border: rgba(23, 17, 15, 0.1);
+  --aa-border-strong: rgba(23, 17, 15, 0.17);
+  --aa-focus: rgba(110, 22, 34, 0.26);
 
-  --aa-success: #16894a;
-  --aa-warning: #c56a00;
-  --aa-danger: #d93025;
-  --aa-info: #1877d2;
+  --aa-success: #2f6b45;
+  --aa-warning: #a06a12;
+  /* Xato rangi brenddan farq qilishi kerak: sharob to'q va jimroq,
+     xato esa issiq qizil va e'tibor tortadi. */
+  --aa-danger: #c2352b;
+  --aa-info: #1f6f8b;
 
   /* Yuza ustidagi brend rangli MATN uchun. `--aa-brand-700` ni ishlatib bo'lmaydi:
      u tugma foni sifatida ham qo'llanadi, shuning uchun uni qorong'i mavzuda
      ochroq qilib bo'lmaydi. */
-  --aa-brand-text: #9e2529;
+  --aa-brand-text: #7a1826;
 
   --aa-radius-xs: 8px;
   --aa-radius-sm: 10px;
@@ -53,16 +71,17 @@
   --aa-radius-2xl: 24px;
   --aa-radius-pill: 999px;
 
-  --aa-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03);
-  --aa-shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.045);
-  --aa-shadow-md: 0 12px 34px rgba(0, 0, 0, 0.065);
-  --aa-shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.1);
+  /* Soyalar ham issiq: sof qora soya issiq yuzada kulrang dog' bo'lib turadi. */
+  --aa-shadow-xs: 0 1px 2px rgba(23, 17, 15, 0.04);
+  --aa-shadow-sm: 0 4px 14px rgba(23, 17, 15, 0.05);
+  --aa-shadow-md: 0 12px 34px rgba(23, 17, 15, 0.07);
+  --aa-shadow-lg: 0 24px 64px rgba(23, 17, 15, 0.11);
 
   --aa-mobile-nav: rgba(255, 255, 255, 0.96);
-  --aa-mobile-header: rgba(255, 255, 255, 0.94);
+  --aa-mobile-header: rgba(255, 255, 255, 0.95);
   --aa-mobile-card: #ffffff;
-  --aa-mobile-card-soft: #fafafb;
-  --aa-overlay: rgba(15, 23, 42, 0.42);
+  --aa-mobile-card-soft: #faf8f5;
+  --aa-overlay: rgba(23, 17, 15, 0.45);
 
   /* Semantic aliases used by responsive page components. */
   --aa-page-bg: var(--aa-bg);
@@ -87,45 +106,55 @@
 }
 
 :root[data-theme="dark"] {
-  --aa-bg: #090a0c;
-  --aa-bg-elevated: #0e1014;
-  --aa-surface: rgba(18, 20, 25, 0.94);
-  --aa-surface-solid: #121419;
-  --aa-surface-muted: #17191f;
-  --aa-surface-hover: #1d2027;
+  /* Qorong'i mavzu ham ISSIQ: ko'kimtir qora (#090a0c) sharob va guruch
+     bilan yonma-yon turganda begona ko'rinardi. */
+  --aa-bg: #0f0d0c;
+  --aa-bg-elevated: #151211;
+  --aa-surface: rgba(26, 22, 21, 0.94);
+  --aa-surface-solid: #1a1615;
+  --aa-surface-muted: #201c1a;
+  --aa-surface-hover: #272220;
 
-  --aa-text: #f8fafc;
-  --aa-text-secondary: #9ca3af;
-  --aa-text-tertiary: #737b89;
-  --aa-text-disabled: #59606c;
+  --aa-text: #f4efe9;
+  --aa-text-secondary: #b6aca4;
+  --aa-text-tertiary: #8a807a;
+  --aa-text-disabled: #6b625d;
 
-  --aa-border: rgba(255, 255, 255, 0.08);
-  --aa-border-strong: rgba(255, 255, 255, 0.14);
-  --aa-focus: rgba(217, 75, 80, 0.3);
+  --aa-border: rgba(244, 239, 233, 0.09);
+  --aa-border-strong: rgba(244, 239, 233, 0.16);
+  --aa-focus: rgba(168, 48, 63, 0.32);
 
-  --aa-brand-50: rgba(217, 75, 80, 0.08);
-  --aa-brand-100: rgba(217, 75, 80, 0.13);
-  --aa-brand-200: rgba(217, 75, 80, 0.22);
+  --aa-brand-50: rgba(168, 48, 63, 0.09);
+  --aa-brand-100: rgba(168, 48, 63, 0.14);
+  --aa-brand-200: rgba(168, 48, 63, 0.24);
+  /* Tugma foni sifatida ishlatiladigan darajalar qorong'ida biroz ochiladi,
+     aks holda tugma fonga singib ketadi. */
+  --aa-brand-700: #a3283a;
+  --aa-brand-800: #8c1d2b;
+
+  --aa-accent: #c9a875;
+  --aa-accent-strong: #dcc094;
+  --aa-accent-soft: rgba(201, 168, 117, 0.12);
 
   /* Yorug' mavzu uchun tanlangan to'q semantik ranglar qorong'i fonda o'qilmaydi
-     (#16894a → #121419 ustida kontrast 2:1 ga yaqin). Shu sababli ochiqroq
+     (#2f6b45 → #1a1615 ustida kontrast 2:1 ga yaqin). Shu sababli ochiqroq
      variantlari beriladi. */
-  --aa-success: #4ade80;
-  --aa-warning: #fbbf24;
-  --aa-danger: #f87171;
-  --aa-info: #60a5fa;
-  --aa-brand-text: #f2999c;
+  --aa-success: #6cbf8b;
+  --aa-warning: #d9a441;
+  --aa-danger: #e08379;
+  --aa-info: #6bb3c9;
+  --aa-brand-text: #d98a95;
 
-  --aa-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.24);
-  --aa-shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.24);
-  --aa-shadow-md: 0 16px 42px rgba(0, 0, 0, 0.32);
-  --aa-shadow-lg: 0 28px 72px rgba(0, 0, 0, 0.46);
+  --aa-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.26);
+  --aa-shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.28);
+  --aa-shadow-md: 0 16px 42px rgba(0, 0, 0, 0.36);
+  --aa-shadow-lg: 0 28px 72px rgba(0, 0, 0, 0.5);
 
-  --aa-mobile-nav: rgba(18, 20, 25, 0.96);
-  --aa-mobile-header: rgba(14, 16, 20, 0.95);
-  --aa-mobile-card: #121419;
-  --aa-mobile-card-soft: #17191f;
-  --aa-overlay: rgba(0, 0, 0, 0.68);
+  --aa-mobile-nav: rgba(26, 22, 21, 0.96);
+  --aa-mobile-header: rgba(21, 18, 17, 0.95);
+  --aa-mobile-card: #1a1615;
+  --aa-mobile-card-soft: #201c1a;
+  --aa-overlay: rgba(0, 0, 0, 0.7);
 
   color-scheme: dark;
 }
@@ -152,7 +181,7 @@ body {
   overflow-y: auto;
   color: var(--aa-text);
   background:
-    radial-gradient(circle at 78% -10%, rgba(143, 29, 32, 0.045), transparent 28%), var(--aa-bg);
+    radial-gradient(circle at 78% -10%, rgba(110, 22, 34, 0.045), transparent 28%), var(--aa-bg);
 }
 
 button,
@@ -260,7 +289,7 @@ textarea,
   top: 0;
   z-index: 30;
   isolation: isolate;
-  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.1) !important;
+  box-shadow: 0 10px 28px rgba(23, 17, 15, 0.1) !important;
 }
 
 .aa-mobile-bottom-nav,
@@ -339,7 +368,7 @@ textarea,
   }
 
   .aa-mobile-bottom-item:hover {
-    background-color: rgba(143, 29, 32, 0.04) !important;
+    background-color: rgba(110, 22, 34, 0.04) !important;
   }
 
   .aa-mobile-bottom-item:active {
@@ -386,7 +415,7 @@ textarea,
     border: 2px solid var(--aa-mobile-nav);
     border-radius: 50%;
 
-    background-color: #b91c1c;
+    background-color: #7a1826;
   }
 
   .aa-mobile-bottom-item > span {
@@ -403,19 +432,19 @@ textarea,
   }
 
   .aa-mobile-bottom-item.active {
-    color: #991b1b !important;
+    color: #6e1622 !important;
 
     background: linear-gradient(
       145deg,
-      rgba(153, 27, 27, 0.075),
-      rgba(220, 38, 38, 0.035)
+      rgba(110, 22, 34, 0.075),
+      rgba(140, 29, 43, 0.035)
     ) !important;
   }
 
   .aa-mobile-bottom-item.active .aa-mobile-item-icon {
-    background-color: rgba(153, 27, 27, 0.09);
+    background-color: rgba(110, 22, 34, 0.09);
 
-    box-shadow: 0 8px 18px rgba(153, 27, 27, 0.08);
+    box-shadow: 0 8px 18px rgba(110, 22, 34, 0.08);
   }
 
   .aa-mobile-bottom-item.active .aa-mobile-item-icon img {
@@ -458,9 +487,9 @@ textarea,
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 19px !important;
 
-    background: linear-gradient(145deg, #7f1d1d, #b91c1c 58%, #dc2626) !important;
+    background: linear-gradient(145deg, #7f1d1d, #7a1826 58%, #8c1d2b) !important;
 
-    box-shadow: 0 18px 36px rgba(143, 29, 32, 0.34) !important;
+    box-shadow: 0 18px 36px rgba(110, 22, 34, 0.34) !important;
 
     transition:
       transform 0.2s ease,
@@ -478,13 +507,13 @@ textarea,
   }
 
   .aa-mobile-fab:hover {
-    background: linear-gradient(145deg, #681818, #991b1b 58%, #b91c1c) !important;
+    background: linear-gradient(145deg, #681818, #6e1622 58%, #7a1826) !important;
   }
 
   .aa-mobile-fab:active {
     transform: scale(0.94);
 
-    box-shadow: 0 12px 24px rgba(143, 29, 32, 0.28) !important;
+    box-shadow: 0 12px 24px rgba(110, 22, 34, 0.28) !important;
   }
 }
 
@@ -566,7 +595,7 @@ textarea,
 }
 
 .top-search-input:focus-within {
-  border-color: rgba(143, 29, 32, 0.42);
+  border-color: rgba(110, 22, 34, 0.42);
   background: var(--aa-surface-solid);
   box-shadow: 0 0 0 4px var(--aa-focus);
 }
@@ -630,12 +659,12 @@ textarea,
 
 .MuiButton-contained {
   background: var(--aa-brand-800) !important;
-  box-shadow: 0 7px 18px rgba(143, 29, 32, 0.18) !important;
+  box-shadow: 0 7px 18px rgba(110, 22, 34, 0.18) !important;
 }
 
 .MuiButton-contained:hover {
   background: var(--aa-brand-900) !important;
-  box-shadow: 0 10px 24px rgba(143, 29, 32, 0.22) !important;
+  box-shadow: 0 10px 24px rgba(110, 22, 34, 0.22) !important;
 }
 
 .MuiButton-outlined {
@@ -645,7 +674,7 @@ textarea,
 }
 
 .MuiButton-outlined:hover {
-  border-color: rgba(29, 29, 31, 0.24) !important;
+  border-color: rgba(23, 17, 15, 0.24) !important;
   background: var(--aa-surface-solid) !important;
 }
 
@@ -684,7 +713,7 @@ textarea,
 }
 
 .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-  border-color: rgba(29, 29, 31, 0.28) !important;
+  border-color: rgba(23, 17, 15, 0.28) !important;
 }
 
 .MuiOutlinedInput-root.Mui-focused {
@@ -694,7 +723,7 @@ textarea,
 
 .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
   border-width: 1px !important;
-  border-color: rgba(143, 29, 32, 0.58) !important;
+  border-color: rgba(110, 22, 34, 0.58) !important;
 }
 
 .MuiInputLabel-root {
@@ -747,7 +776,7 @@ textarea,
 
 [data-theme="dark"] .aa-mobile-quick-menu {
   background:
-    radial-gradient(circle at 100% 0%, rgba(185, 28, 28, 0.1), transparent 34%),
+    radial-gradient(circle at 100% 0%, rgba(110, 22, 34, 0.1), transparent 34%),
     var(--aa-surface-solid) !important;
 }
 
@@ -766,7 +795,7 @@ textarea,
 .MuiTableHead-root .MuiTableCell-root {
   border-bottom: 1px solid var(--aa-border) !important;
   color: var(--aa-text-secondary) !important;
-  background: rgba(247, 247, 249, 0.92) !important;
+  background: rgba(248, 245, 241, 0.92) !important;
   font-size: 11px !important;
   font-weight: 750 !important;
   line-height: 1.25;
@@ -831,7 +860,7 @@ textarea,
   border-radius: var(--aa-radius-sm) !important;
   padding: 7px 10px !important;
   color: #ffffff !important;
-  background: rgba(29, 29, 31, 0.92) !important;
+  background: rgba(23, 17, 15, 0.92) !important;
   font-size: 12px !important;
   backdrop-filter: blur(12px);
 }
@@ -855,12 +884,12 @@ textarea,
 }
 
 .crm-page .MuiChip-root {
-  border: 1px solid rgba(29, 29, 31, 0.07);
+  border: 1px solid rgba(23, 17, 15, 0.07);
 }
 
 /* Dialogs */
 .MuiBackdrop-root {
-  background: rgba(29, 29, 31, 0.34) !important;
+  background: rgba(23, 17, 15, 0.34) !important;
   backdrop-filter: blur(5px);
 }
 
@@ -973,15 +1002,15 @@ textarea,
 .auth-page {
   overflow: auto;
   background:
-    radial-gradient(circle at 10% 8%, rgba(143, 29, 32, 0.08), transparent 28%),
-    radial-gradient(circle at 90% 92%, rgba(29, 29, 31, 0.055), transparent 25%), #f7f7f9;
+    radial-gradient(circle at 10% 8%, rgba(110, 22, 34, 0.08), transparent 28%),
+    radial-gradient(circle at 90% 92%, rgba(23, 17, 15, 0.055), transparent 25%), #f8f5f1;
 }
 
 .auth-shell {
   border: 1px solid var(--aa-border) !important;
   border-radius: 24px !important;
   background: rgba(255, 255, 255, 0.96) !important;
-  box-shadow: 0 26px 80px rgba(17, 24, 39, 0.12) !important;
+  box-shadow: 0 26px 80px rgba(23, 17, 15, 0.12) !important;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
 }
@@ -1010,7 +1039,7 @@ textarea,
 
 .auth-brand-name span,
 .auth-brand-accent {
-  color: #ef233c;
+  color: #a3283a;
 }
 
 .auth-highlight-item + .auth-highlight-item {
@@ -1020,7 +1049,7 @@ textarea,
 .auth-form-panel {
   position: relative;
   background:
-    radial-gradient(circle at 100% 0, rgba(143, 29, 32, 0.035), transparent 28%),
+    radial-gradient(circle at 100% 0, rgba(110, 22, 34, 0.035), transparent 28%),
     var(--aa-surface-solid);
 }
 
@@ -1034,11 +1063,11 @@ textarea,
 }
 
 .auth-form-panel .MuiOutlinedInput-root:hover {
-  background: #fdfdfd;
+  background: #fbf9f6;
 }
 
 .auth-form-panel .MuiOutlinedInput-root.Mui-focused {
-  box-shadow: 0 0 0 3px rgba(143, 29, 32, 0.08);
+  box-shadow: 0 0 0 3px rgba(110, 22, 34, 0.08);
 }
 
 .auth-form-panel .MuiInputLabel-root {
@@ -1048,21 +1077,21 @@ textarea,
 .auth-primary-button {
   min-height: 54px !important;
   border-radius: 12px !important;
-  background: linear-gradient(135deg, #a5000b 0%, #7c1017 100%) !important;
-  box-shadow: 0 12px 28px rgba(143, 29, 32, 0.22) !important;
+  background: linear-gradient(135deg, #4d0f18 0%, #7c1017 100%) !important;
+  box-shadow: 0 12px 28px rgba(110, 22, 34, 0.22) !important;
   font-size: 15px !important;
   font-weight: 900 !important;
   text-transform: none !important;
 }
 
 .auth-primary-button:hover {
-  background: linear-gradient(135deg, #b30914 0%, #8f1d20 100%) !important;
-  box-shadow: 0 14px 32px rgba(143, 29, 32, 0.28) !important;
+  background: linear-gradient(135deg, #6e1622 0%, #6e1622 100%) !important;
+  box-shadow: 0 14px 32px rgba(110, 22, 34, 0.28) !important;
 }
 
 .auth-info-card {
   border-color: var(--aa-border) !important;
-  background: rgba(247, 247, 249, 0.86) !important;
+  background: rgba(248, 245, 241, 0.86) !important;
 }
 
 .aa-public-theme-toggle {
@@ -1135,7 +1164,7 @@ textarea,
 }
 
 .auth-info-card.accent {
-  border-color: rgba(143, 29, 32, 0.16) !important;
+  border-color: rgba(110, 22, 34, 0.16) !important;
   background: var(--aa-brand-50) !important;
 }
 
@@ -1157,7 +1186,7 @@ textarea,
     margin-bottom: 10px !important;
     padding: 14px !important;
     border-radius: 18px !important;
-    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.12) !important;
+    box-shadow: 0 10px 26px rgba(23, 17, 15, 0.12) !important;
   }
 
   .crm-page-hero > .MuiBox-root {
@@ -1288,7 +1317,7 @@ textarea,
     margin-bottom: 10px !important;
     padding: 10px !important;
     border-radius: 16px !important;
-    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.09) !important;
+    box-shadow: 0 8px 22px rgba(23, 17, 15, 0.09) !important;
   }
 
   .crm-sticky-filters:has(> .MuiFormControl-root),
@@ -2324,7 +2353,7 @@ textarea,
     min-height: 126px !important;
     padding: 15px 13px !important;
     border-radius: 18px !important;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.055) !important;
+    box-shadow: 0 8px 24px rgba(23, 17, 15, 0.055) !important;
   }
 
   .aa-dashboard-page .aa-dashboard-kpi:hover {
@@ -2441,7 +2470,7 @@ textarea,
 
   .aa-dashboard-page .aa-mobile-cards td:not(:first-child)::before {
     flex-shrink: 0;
-    color: #94a3b8;
+    color: #8a807a;
     font-size: 9px;
     font-weight: 850;
     letter-spacing: 0.04em;
@@ -2706,5 +2735,41 @@ textarea,
 
   .aa-mobile-records .MuiTableRow-root.aa-row-empty .MuiTableCell-root::before {
     content: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   TELEFONDA MODAL TO'LIQ EKRAN
+
+   Ilgari 360px ekranda ham modal markazdagi kichik quti bo'lib ochilar va
+   uzun shakl o'sha qutining ichida aylanardi. Shakl ko'p bo'lgan ilovada
+   eng bezovta qiladigan joy shu edi.
+
+   `!important` ataylab: modal qog'ozi komponentda `PaperProps.sx` orqali
+   ham bezatiladi (radius, chegara), u esa oddiy CSS'dan ustun turadi.
+   Bu — mavzu darajasidagi moslashuvchan qoida, uni bosib o'tishga haqli.
+   -------------------------------------------------------------------------- */
+@media (max-width: 599.95px) {
+  .MuiDialog-container {
+    align-items: stretch !important;
+  }
+
+  .MuiDialog-paper {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  /* Uzun shakl endi sahifa kabi aylanadi, sarlavha va tugmalar esa joyida. */
+  .MuiDialog-paper .MuiDialogTitle-root,
+  .MuiDialog-paper .MuiDialogActions-root {
+    flex: 0 0 auto;
+  }
+
+  .MuiDialog-paper .MuiDialogContent-root {
+    flex: 1 1 auto;
+    overscroll-behavior: contain;
   }
 }

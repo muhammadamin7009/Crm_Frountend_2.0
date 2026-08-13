@@ -18,25 +18,25 @@ const ActiveStatusChip = ({
       fontWeight: 900,
       color: dark
         ? active
-          ? "#bbf7d0 !important"
-          : "#fecaca !important"
+          ? "#a8dcbc !important"
+          : "#ecd9bd !important"
         : active
-          ? "#15803d"
-          : "#b91c1c",
+          ? "#2f6b45"
+          : "#7a1826",
       backgroundColor: dark
         ? active
-          ? "rgba(34,197,94,.13) !important"
-          : "rgba(220,38,38,.13) !important"
+          ? "rgba(78, 156, 107,.13) !important"
+          : "rgba(140, 29, 43,.13) !important"
         : active
-          ? "rgba(34,197,94,.09)"
-          : "rgba(220,38,38,.08)",
+          ? "rgba(78, 156, 107,.09)"
+          : "rgba(140, 29, 43,.08)",
       border: dark
         ? active
-          ? "1px solid rgba(74,222,128,.16)"
-          : "1px solid rgba(248,113,113,.16)"
+          ? "1px solid rgba(108, 191, 139,.16)"
+          : "1px solid rgba(201, 168, 117,.16)"
         : active
-          ? "1px solid rgba(34,197,94,.18)"
-          : "1px solid rgba(220,38,38,.18)",
+          ? "1px solid rgba(78, 156, 107,.18)"
+          : "1px solid rgba(140, 29, 43,.18)",
     }}
   />
 );

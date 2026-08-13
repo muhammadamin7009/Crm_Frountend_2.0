@@ -116,10 +116,10 @@ const Card = ({ children, sx = {} }) => (
     sx={{
       overflow: "hidden",
       borderRadius: "22px",
-      border: "1px solid #e4e9ef",
+      border: "1px solid #e8e1d8",
       backgroundColor: "var(--aa-surface-solid)",
 
-      boxShadow: "0 14px 40px rgba(15,23,42,.045)",
+      boxShadow: "0 14px 40px rgba(23, 17, 15,.045)",
 
       ...sx,
     }}
@@ -140,14 +140,14 @@ const StatusChip = ({ status }) => {
         height: 25,
         px: 0.3,
 
-        color: closed ? "#64748b" : "#15803d",
+        color: closed ? "#7d716a" : "#2f6b45",
 
         fontSize: 9.5,
         fontWeight: 900,
 
-        backgroundColor: closed ? "#f1f5f9" : "rgba(34,197,94,.09)",
+        backgroundColor: closed ? "#f4f0ea" : "rgba(78, 156, 107,.09)",
 
-        border: closed ? "1px solid #e2e8f0" : "1px solid rgba(34,197,94,.18)",
+        border: closed ? "1px solid #e8e1d8" : "1px solid rgba(78, 156, 107,.18)",
       }}
     />
   );
@@ -164,14 +164,14 @@ const TypeChip = ({ type }) => {
         height: 25,
         px: 0.3,
 
-        color: income ? "#15803d" : "#b91c1c",
+        color: income ? "#2f6b45" : "#7a1826",
 
         fontSize: 9.5,
         fontWeight: 900,
 
-        backgroundColor: income ? "rgba(34,197,94,.09)" : "rgba(220,38,38,.08)",
+        backgroundColor: income ? "rgba(78, 156, 107,.09)" : "rgba(140, 29, 43,.08)",
 
-        border: income ? "1px solid rgba(34,197,94,.18)" : "1px solid rgba(220,38,38,.18)",
+        border: income ? "1px solid rgba(78, 156, 107,.18)" : "1px solid rgba(140, 29, 43,.18)",
       }}
     />
   );
@@ -179,15 +179,15 @@ const TypeChip = ({ type }) => {
 
 const StatCard = ({ label, value, tone = "default", helper }) => {
   const tones = {
-    default: ["#334155", "#ffffff", "#e7ebf0"],
+    default: ["#4b413c", "#ffffff", "#e8e1d8"],
 
-    green: ["#15803d", "rgba(34,197,94,.07)", "rgba(34,197,94,.17)"],
+    green: ["#2f6b45", "rgba(78, 156, 107,.07)", "rgba(78, 156, 107,.17)"],
 
-    red: ["#991b1b", "rgba(153,27,27,.07)", "rgba(153,27,27,.16)"],
+    red: ["#6e1622", "rgba(110, 22, 34,.07)", "rgba(110, 22, 34,.16)"],
 
-    blue: ["#1d4ed8", "rgba(37,99,235,.07)", "rgba(37,99,235,.17)"],
+    blue: ["#1f6f8b", "rgba(31, 111, 139,.07)", "rgba(31, 111, 139,.17)"],
 
-    amber: ["#b45309", "rgba(245,158,11,.09)", "rgba(245,158,11,.19)"],
+    amber: ["#a06a12", "rgba(160, 106, 18,.09)", "rgba(160, 106, 18,.19)"],
 
     violet: ["#6d28d9", "rgba(139,92,246,.08)", "rgba(139,92,246,.18)"],
   };
@@ -322,18 +322,18 @@ const Grid = ({ heads, rows, onRow, minWidth = 820 }) => (
 
             backgroundColor: "var(--aa-surface-muted)",
 
-            borderColor: "#edf0f3",
+            borderColor: "#e8e1d8",
           },
 
           "& td": {
             py: 1.4,
             color: "var(--aa-text-secondary)",
             fontSize: 10.5,
-            borderColor: "#edf0f3",
+            borderColor: "#e8e1d8",
           },
 
           "& tbody tr:hover": {
-            backgroundColor: onRow ? "rgba(153,27,27,.025)" : "inherit",
+            backgroundColor: onRow ? "rgba(110, 22, 34,.025)" : "inherit",
           },
         }}
       >
@@ -848,12 +848,12 @@ const Finance = () => {
 
           border: "1px solid rgba(255,255,255,.075)",
 
-          backgroundColor: "#0d1117 !important",
+          backgroundColor: "#151211 !important",
 
           backgroundImage:
-            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 30%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
+            "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.34),transparent 30%),linear-gradient(145deg,#151211,#1e1a18 52%,#3a1219) !important",
 
-          boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+          boxShadow: "0 24px 60px rgba(23, 17, 15,.20)",
 
           flexShrink: 0,
 
@@ -866,9 +866,10 @@ const Finance = () => {
             right: -210,
             borderRadius: "50%",
 
-            border: "1px solid rgba(248,113,113,.16)",
+            border: "1px solid rgba(201, 168, 117,.16)",
 
-            boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+            boxShadow:
+              "0 0 81px 22px rgba(201, 168, 117,.022),0 0 161px 43px rgba(201, 168, 117,.014)",
 
             pointerEvents: "none",
           },
@@ -903,13 +904,13 @@ const Finance = () => {
                   height: 2,
                   borderRadius: 99,
 
-                  background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                  background: "linear-gradient(90deg,#c9a875,#a3283a)",
                 }}
               />
 
               <Typography
                 sx={{
-                  color: "#fecdd3 !important",
+                  color: "#d9b782 !important",
 
                   fontSize: 10,
                   fontWeight: 950,
@@ -1071,26 +1072,28 @@ const Finance = () => {
 
                     borderRadius: "11px",
 
-                    border: active ? "1px solid rgba(153,27,27,.10)" : "1px solid var(--aa-border)",
+                    border: active
+                      ? "1px solid rgba(110, 22, 34,.10)"
+                      : "1px solid var(--aa-border)",
 
                     fontSize: 10.5,
                     fontWeight: 900,
                     textTransform: "none",
 
                     background: active
-                      ? "linear-gradient(135deg,#7f1d1d,#b91c1c)"
+                      ? "linear-gradient(135deg,#4d0f18,#7a1826)"
                       : "var(--aa-surface-solid)",
 
-                    boxShadow: active ? "0 8px 20px rgba(127,29,29,.18)" : "none",
+                    boxShadow: active ? "0 8px 20px rgba(77, 15, 24,.18)" : "none",
 
                     "&:hover": {
-                      color: active ? "#ffffff" : "#991b1b",
+                      color: active ? "#ffffff" : "#6e1622",
 
-                      borderColor: active ? "rgba(153,27,27,.10)" : "rgba(153,27,27,.22)",
+                      borderColor: active ? "rgba(110, 22, 34,.10)" : "rgba(110, 22, 34,.22)",
 
                       background: active
-                        ? "linear-gradient(135deg,#681818,#991b1b)"
-                        : "rgba(153,27,27,.04)",
+                        ? "linear-gradient(135deg,#4d0f18,#6e1622)"
+                        : "rgba(110, 22, 34,.04)",
                     },
                   }}
                 >
@@ -1180,7 +1183,7 @@ const Finance = () => {
               <CircularProgress
                 size={32}
                 sx={{
-                  color: "#991b1b",
+                  color: "#6e1622",
                 }}
               />
 
@@ -1334,10 +1337,10 @@ const Payroll = ({ data, detail, show, open, closePeriod, canManage }) => {
                   sx={{
                     ...primaryButtonSx,
 
-                    background: "linear-gradient(135deg,#15803d,#22c55e)",
+                    background: "linear-gradient(135deg,#2f6b45,#4e9c6b)",
 
                     "&:hover": {
-                      background: "linear-gradient(135deg,#166534,#16a34a)",
+                      background: "linear-gradient(135deg,#255738,#2f6b45)",
                     },
                   }}
                 >
@@ -1777,7 +1780,7 @@ const Profit = ({ report = {} }) => {
         sx={{
           borderRadius: "16px",
 
-          border: "1px solid rgba(37,99,235,.14)",
+          border: "1px solid rgba(31, 111, 139,.14)",
 
           fontSize: 10.5,
           fontWeight: 750,
@@ -1846,12 +1849,12 @@ const Profit = ({ report = {} }) => {
             color: "#ffffff",
 
             background: positive
-              ? "linear-gradient(135deg,#14532d,#15803d)"
-              : "linear-gradient(135deg,#450a0a,#991b1b)",
+              ? "linear-gradient(135deg,#1f4a2f,#2f6b45)"
+              : "linear-gradient(135deg,#450a0a,#6e1622)",
 
             boxShadow: positive
               ? "0 18px 42px rgba(21,128,61,.18)"
-              : "0 18px 42px rgba(153,27,27,.18)",
+              : "0 18px 42px rgba(110, 22, 34,.18)",
           }}
         >
           <Typography
@@ -2246,12 +2249,12 @@ const primaryButtonSx = {
   fontWeight: 900,
   textTransform: "none",
 
-  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+  background: "linear-gradient(135deg,#4d0f18,#7a1826)",
 
-  boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+  boxShadow: "0 10px 24px rgba(77, 15, 24,.18)",
 
   "&:hover": {
-    background: "linear-gradient(135deg,#681818,#991b1b)",
+    background: "linear-gradient(135deg,#4d0f18,#6e1622)",
   },
 };
 
@@ -2260,18 +2263,18 @@ const secondaryButtonSx = {
   px: 1.8,
   color: "var(--aa-text-secondary)",
   borderRadius: "11px",
-  borderColor: "#dce3ea",
+  borderColor: "#d8cec1",
   fontSize: 10.5,
   fontWeight: 900,
   textTransform: "none",
   backgroundColor: "var(--aa-surface-solid)",
 
   "&:hover": {
-    color: "#991b1b",
+    color: "#6e1622",
 
-    borderColor: "rgba(153,27,27,.22)",
+    borderColor: "rgba(110, 22, 34,.22)",
 
-    backgroundColor: "rgba(153,27,27,.04)",
+    backgroundColor: "rgba(110, 22, 34,.04)",
   },
 };
 
@@ -2299,12 +2302,12 @@ const dialogPrimarySx = {
   fontWeight: 900,
   textTransform: "none",
 
-  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+  background: "linear-gradient(135deg,#4d0f18,#7a1826)",
 
-  boxShadow: "0 10px 24px rgba(127,29,29,.18)",
+  boxShadow: "0 10px 24px rgba(77, 15, 24,.18)",
 
   "&:hover": {
-    background: "linear-gradient(135deg,#681818,#991b1b)",
+    background: "linear-gradient(135deg,#4d0f18,#6e1622)",
   },
 };
 
@@ -2315,13 +2318,13 @@ const strongCellSx = {
 };
 
 const greenCellSx = {
-  color: "#15803d",
+  color: "#2f6b45",
   fontSize: 10.5,
   fontWeight: 950,
 };
 
 const redCellSx = {
-  color: "#b91c1c",
+  color: "#7a1826",
   fontSize: 10.5,
   fontWeight: 950,
 };
@@ -2329,34 +2332,34 @@ const redCellSx = {
 const financePageStyles = `
   .crm-page .finance-hero {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.34),
+        rgba(140, 29, 43,.34),
         transparent 30%
       ),
       linear-gradient(
         145deg,
-        #0d1117,
-        #171117 52%,
-        #3a121a
+        #151211,
+        #1e1a18 52%,
+        #3a1219
       ) !important;
   }
 
   .finance-dialog-title {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.28),
+        rgba(140, 29, 43,.28),
         transparent 36%
       ),
       linear-gradient(
         135deg,
-        #11151c,
-        #321319
+        #151211,
+        #2a1117
       ) !important;
   }
 `;

@@ -114,7 +114,7 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
   if (loading) {
     return (
       <Box sx={{ display: "grid", placeItems: "center", minHeight: 220 }}>
-        <CircularProgress size={28} sx={{ color: "#991b1b" }} />
+        <CircularProgress size={28} sx={{ color: "#6e1622" }} />
       </Box>
     );
   }
@@ -176,8 +176,8 @@ const BatchDetail = ({ batchId, canSeeOutputs, onLoaded }) => {
               height: 26,
               fontSize: 10.5,
               fontWeight: 900,
-              color: isCompleted ? "#065f46" : "#92400e",
-              backgroundColor: isCompleted ? "rgba(5,150,105,.12)" : "rgba(217,119,6,.12)",
+              color: isCompleted ? "#255738" : "#7d5210",
+              backgroundColor: isCompleted ? "rgba(47, 107, 69,.12)" : "rgba(160, 106, 18,.12)",
             }}
           />
         </Stack>

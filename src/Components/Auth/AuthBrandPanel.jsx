@@ -122,7 +122,7 @@ export default function AuthBrandPanel({
         },
 
         // Landing bilan bir xil til: yorqin qizil o'rniga chuqur sharob va
-        // issiq qora. Ko'kimtir qora (#0a0c11) issiqqa almashtirildi —
+        // issiq qora. Ko'kimtir qora (#100d0c) issiqqa almashtirildi —
         // aks holda guruch urg'usi begona ko'rinardi.
         //
         // Gradient OXIRGI to'xtashi qorong'i qoladi (#3a1219 atrofida).
@@ -241,8 +241,8 @@ export default function AuthBrandPanel({
               borderRadius: "50%",
               border: "1px solid rgba(255, 255, 255, 0.05)",
               boxShadow: `
-                0 0 0 45px rgba(255, 255, 255, 0.012),
-                0 0 0 90px rgba(255, 255, 255, 0.008)
+                0 0 59px 16px rgba(255, 255, 255, 0.012),
+                0 0 117px 31px rgba(255, 255, 255, 0.008)
               `,
               pointerEvents: "none",
             }}
@@ -356,8 +356,8 @@ export default function AuthBrandPanel({
                 alignItems: "center",
                 gap: 1,
                 borderRadius: "999px",
-                border: "1px solid rgba(248,113,113,.15)",
-                backgroundColor: "rgba(220,38,38,.10)",
+                border: "1px solid rgba(201, 168, 117,.15)",
+                backgroundColor: "rgba(140, 29, 43,.10)",
                 backdropFilter: "blur(12px)",
               }}
             >
@@ -603,8 +603,8 @@ export default function AuthBrandPanel({
               width: 7,
               height: 7,
               borderRadius: "50%",
-              backgroundColor: "#22c55e",
-              boxShadow: "0 0 0 5px rgba(34,197,94,.08)",
+              backgroundColor: "#4e9c6b",
+              boxShadow: "0 0 0 5px rgba(78, 156, 107,.08)",
             }}
           />
 

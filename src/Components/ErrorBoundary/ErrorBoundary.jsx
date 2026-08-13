@@ -30,7 +30,7 @@ class ErrorBoundary extends Component {
         >
           <div
             className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl text-2xl font-black"
-            style={{ backgroundColor: "rgba(153,27,27,.12)", color: "#e06a6a" }}
+            style={{ backgroundColor: "rgba(110, 22, 34,.12)", color: "#e06a6a" }}
           >
             !
           </div>
@@ -48,7 +48,7 @@ class ErrorBoundary extends Component {
             <button
               type="button"
               onClick={() => window.location.reload()}
-              className="rounded-xl bg-[#991b1b] px-5 py-3 text-sm font-black text-white transition hover:bg-[#7f1d1d]"
+              className="rounded-xl bg-[#6e1622] px-5 py-3 text-sm font-black text-white transition hover:bg-[#4d0f18]"
               style={{ minHeight: 48 }}
             >
               Sahifani yangilash

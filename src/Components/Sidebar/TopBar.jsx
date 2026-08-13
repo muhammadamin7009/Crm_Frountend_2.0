@@ -659,24 +659,21 @@ export default function TopBar() {
           <Typography className="aa-drawer-section-title">Navigatsiya</Typography>
 
           <List className="aa-mobile-links">
-            {resolvedMobileLinks
-              .map((item, index) => (
-                <ListItemButton
-                  key={item.path}
-                  component={NavLink}
-                  to={item.path}
-                  onClick={() => setMenuOpen(false)}
-                  className="aa-mobile-link"
-                >
-                  <span className="aa-mobile-link-number">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
+            {resolvedMobileLinks.map((item, index) => (
+              <ListItemButton
+                key={item.path}
+                component={NavLink}
+                to={item.path}
+                onClick={() => setMenuOpen(false)}
+                className="aa-mobile-link"
+              >
+                <span className="aa-mobile-link-number">{String(index + 1).padStart(2, "0")}</span>
 
-                  <ListItemText primary={item.label} />
+                <ListItemText primary={item.label} />
 
-                  <span className="aa-mobile-link-arrow">→</span>
-                </ListItemButton>
-              ))}
+                <span className="aa-mobile-link-arrow">→</span>
+              </ListItemButton>
+            ))}
           </List>
 
           <Box className="aa-mobile-drawer-footer">
@@ -922,7 +919,7 @@ export default function TopBar() {
                   <CircularProgress
                     size={26}
                     sx={{
-                      color: "#991b1b",
+                      color: "#6e1622",
                     }}
                   />
                 </Box>
@@ -993,18 +990,18 @@ const topBarStyles = `
     display: flex;
     align-items: center;
     gap: 20px;
-    border: 1px solid rgba(15, 23, 42, 0.075);
+    border: 1px solid rgba(23, 17, 15, 0.075);
     border-radius: 22px;
     background:
       radial-gradient(
         circle at 92% 0%,
-        rgba(153, 27, 27, 0.055),
+        rgba(110, 22, 34, 0.055),
         transparent 24%
       ),
       rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(22px);
     box-shadow:
-      0 12px 34px rgba(15, 23, 42, 0.055),
+      0 12px 34px rgba(23, 17, 15, 0.055),
       inset 0 1px 0 rgba(255, 255, 255, 0.85);
     z-index: 20;
   }
@@ -1020,8 +1017,8 @@ const topBarStyles = `
     background:
       linear-gradient(
         90deg,
-        #7f1d1d,
-        #dc2626
+        #4d0f18,
+        #8c1d2b
       );
   }
 
@@ -1042,16 +1039,16 @@ const topBarStyles = `
     gap: 4px;
     border-radius: 13px !important;
     border:
-      1px solid rgba(153, 27, 27, 0.13) !important;
+      1px solid rgba(110, 22, 34, 0.13) !important;
     background:
-      rgba(153, 27, 27, 0.055) !important;
+      rgba(110, 22, 34, 0.055) !important;
   }
 
   .aa-mobile-menu-button span {
     width: 17px;
     height: 2px;
     border-radius: 8px;
-    background: #991b1b;
+    background: #6e1622;
   }
 
   .aa-mobile-company-logo {
@@ -1061,7 +1058,7 @@ const topBarStyles = `
     padding: 5px;
     overflow: hidden;
     border:
-      1px solid #e2e8f0;
+      1px solid #e8e1d8;
     border-radius: 13px;
     background: #ffffff;
   }
@@ -1079,7 +1076,7 @@ const topBarStyles = `
 
   .aa-mobile-brand-copy p:first-child {
     overflow: hidden;
-    color: #8f1d20;
+    color: #6e1622;
     font-size: 18px;
     line-height: 1.05;
     font-weight: 950;
@@ -1103,7 +1100,7 @@ const topBarStyles = `
 
   .aa-welcome-title {
     margin: 0 !important;
-    color: #111827;
+    color: #17110f;
     font-size: 21px !important;
     line-height: 1.15 !important;
     font-weight: 900 !important;
@@ -1112,7 +1109,7 @@ const topBarStyles = `
   }
 
   .aa-welcome-title span {
-    color: #7f1d1d;
+    color: #4d0f18;
   }
 
   .aa-welcome-meta {
@@ -1123,7 +1120,7 @@ const topBarStyles = `
   }
 
   .aa-welcome-meta p {
-    color: #7b8494;
+    color: #7d716a;
     font-size: 12px;
     line-height: 1;
     font-weight: 650;
@@ -1135,9 +1132,9 @@ const topBarStyles = `
     height: 7px;
     flex: 0 0 auto;
     border-radius: 50%;
-    background: #22c55e;
+    background: #4e9c6b;
     box-shadow:
-      0 0 0 4px rgba(34, 197, 94, 0.1);
+      0 0 0 4px rgba(78, 156, 107, 0.1);
   }
 
   .aa-subscription-notice {
@@ -1153,14 +1150,14 @@ const topBarStyles = `
 
   .aa-subscription-notice.warning {
     border:
-      1px solid rgba(217, 119, 6, 0.21);
+      1px solid rgba(160, 106, 18, 0.21);
     background:
       rgba(255, 251, 235, 0.93);
   }
 
   .aa-subscription-notice.expired {
     border:
-      1px solid rgba(220, 38, 38, 0.2);
+      1px solid rgba(140, 29, 43, 0.2);
     background:
       rgba(254, 242, 242, 0.94);
   }
@@ -1178,16 +1175,16 @@ const topBarStyles = `
 
   .aa-subscription-notice.warning
   .aa-subscription-icon {
-    color: #92400e;
+    color: #7d5210;
     background:
-      rgba(245, 158, 11, 0.13);
+      rgba(160, 106, 18, 0.13);
   }
 
   .aa-subscription-notice.expired
   .aa-subscription-icon {
-    color: #b91c1c;
+    color: #7a1826;
     background:
-      rgba(220, 38, 38, 0.1);
+      rgba(140, 29, 43, 0.1);
   }
 
   .aa-subscription-notice p {
@@ -1197,11 +1194,11 @@ const topBarStyles = `
   }
 
   .aa-subscription-notice.warning p {
-    color: #92400e;
+    color: #7d5210;
   }
 
   .aa-subscription-notice.expired p {
-    color: #b91c1c;
+    color: #7a1826;
   }
 
   .aa-topbar-actions {
@@ -1247,11 +1244,11 @@ const topBarStyles = `
     background:
       linear-gradient(
         135deg,
-        #7f1d1d 0%,
-        #b91c1c 100%
+        #4d0f18 0%,
+        #7a1826 100%
       ) !important;
     box-shadow:
-      0 11px 24px rgba(127, 29, 29, 0.22) !important;
+      0 11px 24px rgba(77, 15, 24, 0.22) !important;
     transition:
       transform 0.18s ease,
       box-shadow 0.18s ease !important;
@@ -1260,13 +1257,13 @@ const topBarStyles = `
   .aa-quick-action-button:hover {
     transform: translateY(-1px);
     box-shadow:
-      0 15px 29px rgba(127, 29, 29, 0.27) !important;
+      0 15px 29px rgba(77, 15, 24, 0.27) !important;
   }
 
   .aa-quick-action-button.Mui-disabled {
     color:
       rgba(255, 255, 255, 0.65) !important;
-    background: #cbd5e1 !important;
+    background: #d8cec1 !important;
     box-shadow: none !important;
   }
 
@@ -1299,7 +1296,7 @@ const topBarStyles = `
     background: var(--aa-surface-solid) !important;
     backdrop-filter: blur(20px);
     box-shadow:
-      0 22px 60px rgba(15, 23, 42, 0.15) !important;
+      0 22px 60px rgba(23, 17, 15, 0.15) !important;
   }
 
   .aa-quick-menu-header {
@@ -1341,11 +1338,11 @@ const topBarStyles = `
     place-items: center;
     flex: 0 0 auto;
     border-radius: 10px;
-    color: #991b1b;
+    color: #6e1622;
     font-size: 10px;
     font-weight: 900;
     background:
-      rgba(153, 27, 27, 0.075);
+      rgba(110, 22, 34, 0.075);
   }
 
   .aa-quick-copy {
@@ -1376,7 +1373,7 @@ const topBarStyles = `
     padding: 5px 7px 5px 12px !important;
     gap: 11px;
     border:
-      1px solid rgba(15, 23, 42, 0.075) !important;
+      1px solid rgba(23, 17, 15, 0.075) !important;
     border-radius: 17px !important;
     color: inherit !important;
     text-transform: none !important;
@@ -1391,9 +1388,9 @@ const topBarStyles = `
   .aa-profile-button:hover {
     transform: translateY(-1px);
     border-color:
-      rgba(153, 27, 27, 0.12) !important;
+      rgba(110, 22, 34, 0.12) !important;
     background:
-      rgba(153, 27, 27, 0.045) !important;
+      rgba(110, 22, 34, 0.045) !important;
   }
 
   .aa-profile-copy {
@@ -1404,7 +1401,7 @@ const topBarStyles = `
 
   .aa-profile-name {
     overflow: hidden;
-    color: #111827;
+    color: #17110f;
     font-size: 12.5px !important;
     line-height: 1.2 !important;
     font-weight: 900 !important;
@@ -1422,7 +1419,7 @@ const topBarStyles = `
 
   .aa-profile-role-row p {
     overflow: hidden;
-    color: #7b8494;
+    color: #7d716a;
     font-size: 10.5px;
     line-height: 1;
     font-weight: 650;
@@ -1435,7 +1432,7 @@ const topBarStyles = `
     height: 6px;
     flex: 0 0 auto;
     border-radius: 50%;
-    background: #22c55e;
+    background: #4e9c6b;
   }
 
   .aa-topbar-avatar {
@@ -1448,13 +1445,13 @@ const topBarStyles = `
     background:
       linear-gradient(
         135deg,
-        #7f1d1d,
-        #c81e2a
+        #4d0f18,
+        #8c1d2b
       ) !important;
     border:
       2px solid rgba(255, 255, 255, 0.9);
     box-shadow:
-      0 8px 17px rgba(127, 29, 29, 0.17);
+      0 8px 17px rgba(77, 15, 24, 0.17);
   }
 
   .aa-profile-chevron {
@@ -1469,7 +1466,7 @@ const topBarStyles = `
     background:
       radial-gradient(
         circle at 100% 0%,
-        rgba(185, 28, 28, 0.07),
+        rgba(110, 22, 34, 0.07),
         transparent 27%
       ),
       var(--aa-surface-solid) !important;
@@ -1495,7 +1492,7 @@ const topBarStyles = `
     place-items: center;
     flex: 0 0 auto;
     overflow: hidden;
-    color: #991b1b;
+    color: #6e1622;
     border-radius: 14px;
     background: #ffffff;
     font-size: 18px;
@@ -1694,7 +1691,7 @@ const topBarStyles = `
     height: 39px;
     font-size: 13px;
     font-weight: 900;
-    background: #991b1b;
+    background: #6e1622;
   }
 
   .aa-mobile-user p:first-child {
@@ -1713,13 +1710,13 @@ const topBarStyles = `
     width: 100%;
     min-height: 37px !important;
     margin-top: 11px !important;
-    color: #fca5a5 !important;
+    color: #d9b782 !important;
     border-radius: 10px !important;
     text-transform: none !important;
     font-size: 12px !important;
     font-weight: 800 !important;
     background:
-      rgba(220, 38, 38, 0.09) !important;
+      rgba(140, 29, 43, 0.09) !important;
   }
 
   .aa-profile-dialog {
@@ -1728,11 +1725,11 @@ const topBarStyles = `
     flex-direction: column;
     overflow: hidden;
     border:
-      1px solid rgba(15, 23, 42, 0.08);
+      1px solid rgba(23, 17, 15, 0.08);
     border-radius: 23px !important;
     background: var(--aa-bg) !important;
     box-shadow:
-      0 28px 80px rgba(15, 23, 42, 0.2) !important;
+      0 28px 80px rgba(23, 17, 15, 0.2) !important;
   }
 
   .aa-dialog-title {
@@ -1745,13 +1742,13 @@ const topBarStyles = `
     background:
       radial-gradient(
         circle at 100% 0%,
-        rgba(239, 68, 68, 0.25),
+        rgba(163, 40, 58, 0.25),
         transparent 32%
       ),
       linear-gradient(
         135deg,
-        #11151c,
-        #321319
+        #151211,
+        #2a1117
       );
   }
 
@@ -1791,7 +1788,7 @@ const topBarStyles = `
     border-radius: 17px;
     background: var(--aa-surface-solid);
     box-shadow:
-      0 8px 24px rgba(15, 23, 42, 0.035);
+      0 8px 24px rgba(23, 17, 15, 0.035);
   }
 
   .aa-settings-heading {
@@ -1819,11 +1816,11 @@ const topBarStyles = `
 
   .aa-branding-chip {
     height: 24px !important;
-    color: #991b1b !important;
+    color: #6e1622 !important;
     font-size: 10px !important;
     font-weight: 850 !important;
     background:
-      rgba(153, 27, 27, 0.07) !important;
+      rgba(110, 22, 34, 0.07) !important;
   }
 
   .aa-logo-settings {
@@ -1837,7 +1834,7 @@ const topBarStyles = `
     width: 75px !important;
     height: 75px !important;
     flex: 0 0 auto;
-    color: #991b1b !important;
+    color: #6e1622 !important;
     font-size: 20px !important;
     font-weight: 900 !important;
     border:
@@ -1872,9 +1869,9 @@ const topBarStyles = `
   }
 
   .aa-outline-button {
-    color: #991b1b !important;
+    color: #6e1622 !important;
     border-color:
-      rgba(153, 27, 27, 0.2) !important;
+      rgba(110, 22, 34, 0.2) !important;
   }
 
   .aa-primary-button,
@@ -1883,17 +1880,17 @@ const topBarStyles = `
     background:
       linear-gradient(
         135deg,
-        #7f1d1d,
-        #b91c1c
+        #4d0f18,
+        #7a1826
       ) !important;
     box-shadow:
-      0 9px 20px rgba(127, 29, 29, 0.18) !important;
+      0 9px 20px rgba(77, 15, 24, 0.18) !important;
   }
 
   .aa-delete-button {
-    color: #dc2626 !important;
+    color: #8c1d2b !important;
     background:
-      rgba(220, 38, 38, 0.055) !important;
+      rgba(140, 29, 43, 0.055) !important;
   }
 
   .aa-file-hint {
@@ -1928,11 +1925,11 @@ const topBarStyles = `
     background:
       linear-gradient(
         135deg,
-        #7f1d1d,
-        #c81e2a
+        #4d0f18,
+        #8c1d2b
       ) !important;
     box-shadow:
-      0 11px 25px rgba(127, 29, 29, 0.18);
+      0 11px 25px rgba(77, 15, 24, 0.18);
   }
 
   .aa-profile-main-copy {
@@ -1990,24 +1987,24 @@ const topBarStyles = `
   .aa-profile-field
   .MuiOutlinedInput-root.Mui-focused {
     box-shadow:
-      0 0 0 4px rgba(153, 27, 27, 0.07);
+      0 0 0 4px rgba(110, 22, 34, 0.07);
   }
 
   .aa-profile-field
   .MuiOutlinedInput-root.Mui-focused
   .MuiOutlinedInput-notchedOutline {
-    border-color: #991b1b;
+    border-color: #6e1622;
     border-width: 1px;
   }
 
   .aa-profile-field
   .MuiInputLabel-root.Mui-focused {
-    color: #991b1b;
+    color: #6e1622;
   }
 
   .aa-profile-divider {
     border-color:
-      rgba(15, 23, 42, 0.075) !important;
+      rgba(23, 17, 15, 0.075) !important;
   }
 
   .aa-session-heading {
@@ -2034,11 +2031,11 @@ const topBarStyles = `
   }
 
   .aa-delete-outline-button {
-    color: #dc2626 !important;
+    color: #8c1d2b !important;
     border:
-      1px solid rgba(220, 38, 38, 0.17) !important;
+      1px solid rgba(140, 29, 43, 0.17) !important;
     background:
-      rgba(220, 38, 38, 0.035) !important;
+      rgba(140, 29, 43, 0.035) !important;
   }
 
   .aa-sessions-loading {
@@ -2069,12 +2066,12 @@ const topBarStyles = `
     display: grid;
     place-items: center;
     flex: 0 0 auto;
-    color: #991b1b;
+    color: #6e1622;
     border-radius: 11px;
     font-size: 12px;
     font-weight: 900;
     background:
-      rgba(153, 27, 27, 0.07);
+      rgba(110, 22, 34, 0.07);
   }
 
   .aa-session-copy {
@@ -2100,11 +2097,11 @@ const topBarStyles = `
 
   .aa-current-chip {
     height: 21px !important;
-    color: #15803d !important;
+    color: #2f6b45 !important;
     font-size: 9px !important;
     font-weight: 850 !important;
     background:
-      rgba(34, 197, 94, 0.1) !important;
+      rgba(78, 156, 107, 0.1) !important;
   }
 
   .aa-session-copy
@@ -2117,13 +2114,13 @@ const topBarStyles = `
   .aa-session-logout {
     min-width: 67px !important;
     min-height: 34px !important;
-    color: #dc2626 !important;
+    color: #8c1d2b !important;
     border-radius: 9px !important;
     text-transform: none !important;
     font-size: 11px !important;
     font-weight: 800 !important;
     background:
-      rgba(220, 38, 38, 0.045) !important;
+      rgba(140, 29, 43, 0.045) !important;
   }
 
   .aa-empty-sessions {
@@ -2151,7 +2148,7 @@ const topBarStyles = `
   }
 
   .aa-cancel-button {
-    color: #64748b !important;
+    color: #7d716a !important;
   }
 
   .aa-save-button {
@@ -2354,13 +2351,13 @@ const topBarStyles = `
 
   [data-theme="dark"] .aa-mobile-drawer {
     background:
-      radial-gradient(circle at 100% 0%, rgba(185,28,28,.2), transparent 29%),
-      linear-gradient(180deg, #121419, #090a0c) !important;
+      radial-gradient(circle at 100% 0%, rgba(110, 22, 34,.2), transparent 29%),
+      linear-gradient(180deg, #1a1615, #090a0c) !important;
   }
 
   [data-theme="dark"] .aa-mobile-link.active {
     color: #fff !important;
-    background: linear-gradient(135deg, #8f1d20, #b7242a) !important;
+    background: linear-gradient(135deg, #6e1622, #b7242a) !important;
   }
 
   [data-theme="dark"] .aa-quick-menu,

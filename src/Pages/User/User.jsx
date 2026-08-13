@@ -38,21 +38,21 @@ const roleNames = {
 
 const roleStyles = {
   super_admin: {
-    color: "#fecaca",
-    backgroundColor: "rgba(220,38,38,.17)",
-    borderColor: "rgba(248,113,113,.18)",
+    color: "#ecd9bd",
+    backgroundColor: "rgba(140, 29, 43,.17)",
+    borderColor: "rgba(201, 168, 117,.18)",
   },
 
   admin: {
-    color: "#bfdbfe",
-    backgroundColor: "rgba(37,99,235,.17)",
-    borderColor: "rgba(96,165,250,.18)",
+    color: "#bcd9e2",
+    backgroundColor: "rgba(31, 111, 139,.17)",
+    borderColor: "rgba(107, 179, 201,.18)",
   },
 
   client: {
-    color: "#bbf7d0",
-    backgroundColor: "rgba(34,197,94,.15)",
-    borderColor: "rgba(74,222,128,.18)",
+    color: "#a8dcbc",
+    backgroundColor: "rgba(78, 156, 107,.15)",
+    borderColor: "rgba(108, 191, 139,.18)",
   },
 
   customer: {
@@ -62,15 +62,15 @@ const roleStyles = {
   },
 
   worker: {
-    color: "#fde68a",
-    backgroundColor: "rgba(245,158,11,.16)",
-    borderColor: "rgba(251,191,36,.18)",
+    color: "#e3c98f",
+    backgroundColor: "rgba(160, 106, 18,.16)",
+    borderColor: "rgba(201, 168, 117,.18)",
   },
 
   default: {
-    color: "#e2e8f0",
-    backgroundColor: "rgba(148,163,184,.15)",
-    borderColor: "rgba(203,213,225,.16)",
+    color: "#e8e1d8",
+    backgroundColor: "rgba(138, 128, 122,.15)",
+    borderColor: "rgba(216, 206, 193,.16)",
   },
 };
 
@@ -203,34 +203,34 @@ const HeroInfoItem = ({ label, value }) => (
 const StatCard = ({ label, value, helper, tone = "red" }) => {
   const tones = {
     red: {
-      color: "#991b1b",
-      gradient: "linear-gradient(145deg,#7f1d1d,#dc2626)",
-      soft: "rgba(153,27,27,.07)",
-      shadow: "rgba(153,27,27,.18)",
+      color: "#6e1622",
+      gradient: "linear-gradient(145deg,#4d0f18,#8c1d2b)",
+      soft: "rgba(110, 22, 34,.07)",
+      shadow: "rgba(110, 22, 34,.18)",
       symbol: "!",
     },
 
     green: {
-      color: "#15803d",
-      gradient: "linear-gradient(145deg,#15803d,#22c55e)",
-      soft: "rgba(34,197,94,.07)",
-      shadow: "rgba(34,197,94,.17)",
+      color: "#2f6b45",
+      gradient: "linear-gradient(145deg,#2f6b45,#4e9c6b)",
+      soft: "rgba(78, 156, 107,.07)",
+      shadow: "rgba(78, 156, 107,.17)",
       symbol: "✓",
     },
 
     blue: {
-      color: "#1d4ed8",
-      gradient: "linear-gradient(145deg,#1d4ed8,#60a5fa)",
-      soft: "rgba(37,99,235,.07)",
-      shadow: "rgba(37,99,235,.17)",
+      color: "#1f6f8b",
+      gradient: "linear-gradient(145deg,#1f6f8b,#6bb3c9)",
+      soft: "rgba(31, 111, 139,.07)",
+      shadow: "rgba(31, 111, 139,.17)",
       symbol: "↗",
     },
 
     amber: {
-      color: "#b45309",
+      color: "#a06a12",
       gradient: "linear-gradient(145deg,#d97706,#f59e0b)",
-      soft: "rgba(245,158,11,.08)",
-      shadow: "rgba(245,158,11,.18)",
+      soft: "rgba(160, 106, 18,.08)",
+      shadow: "rgba(160, 106, 18,.18)",
       symbol: "△",
     },
 
@@ -255,7 +255,7 @@ const StatCard = ({ label, value, helper, tone = "red" }) => {
 
         "&:hover": {
           transform: "translateY(-3px)",
-          boxShadow: "0 20px 48px rgba(15,23,42,.08)",
+          boxShadow: "0 20px 48px rgba(23, 17, 15,.08)",
         },
 
         "&::after": {
@@ -529,7 +529,7 @@ const AccountProgress = ({
   leftValue,
   rightLabel,
   rightValue,
-  color = "#22c55e",
+  color = "#4e9c6b",
 }) => (
   <Box
     sx={{
@@ -734,7 +734,7 @@ const HistoryTable = ({ title, subtitle, rows = [], columns = [], empty }) => (
           },
 
           "& tbody tr:hover": {
-            backgroundColor: "rgba(153,27,27,.025)",
+            backgroundColor: "rgba(110, 22, 34,.025)",
           },
         }}
       >
@@ -1081,8 +1081,8 @@ const User = ({ backTo = "/users" }) => {
             display: "grid",
             placeItems: "center",
             borderRadius: "22px",
-            border: "1px solid rgba(153,27,27,.10)",
-            backgroundColor: "rgba(153,27,27,.05)",
+            border: "1px solid rgba(110, 22, 34,.10)",
+            backgroundColor: "rgba(110, 22, 34,.05)",
           }}
         >
           <CircularProgress
@@ -1174,10 +1174,10 @@ const User = ({ backTo = "/users" }) => {
           color: "#ffffff",
           borderRadius: "25px",
           border: "1px solid rgba(255,255,255,.075)",
-          backgroundColor: "#0d1117 !important",
+          backgroundColor: "#151211 !important",
           backgroundImage:
-            "radial-gradient(circle at 100% 0%,rgba(220,38,38,.34),transparent 31%),linear-gradient(145deg,#0d1117,#171117 52%,#3a121a) !important",
-          boxShadow: "0 24px 60px rgba(15,23,42,.20)",
+            "radial-gradient(circle at 100% 0%,rgba(140, 29, 43,.34),transparent 31%),linear-gradient(145deg,#151211,#1e1a18 52%,#3a1219) !important",
+          boxShadow: "0 24px 60px rgba(23, 17, 15,.20)",
 
           "&::before": {
             content: '""',
@@ -1187,8 +1187,9 @@ const User = ({ backTo = "/users" }) => {
             top: -275,
             right: -210,
             borderRadius: "50%",
-            border: "1px solid rgba(248,113,113,.16)",
-            boxShadow: "0 0 0 62px rgba(248,113,113,.022),0 0 0 124px rgba(248,113,113,.014)",
+            border: "1px solid rgba(201, 168, 117,.16)",
+            boxShadow:
+              "0 0 81px 22px rgba(201, 168, 117,.022),0 0 161px 43px rgba(201, 168, 117,.014)",
             pointerEvents: "none",
           },
         }}
@@ -1236,9 +1237,9 @@ const User = ({ backTo = "/users" }) => {
                 color: "#ffffff",
                 fontSize: 30,
                 fontWeight: 950,
-                background: "linear-gradient(135deg,#7f1d1d,#dc2626)",
+                background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
                 border: "5px solid rgba(255,255,255,.12)",
-                boxShadow: "0 18px 42px rgba(127,29,29,.32)",
+                boxShadow: "0 18px 42px rgba(77, 15, 24,.32)",
               }}
             >
               {getInitials(employee)}
@@ -1260,15 +1261,15 @@ const User = ({ backTo = "/users" }) => {
                   label={employee.is_deleted ? "O‘chirilgan" : "Faol profil"}
                   sx={{
                     height: 27,
-                    color: employee.is_deleted ? "#fecaca !important" : "#bbf7d0 !important",
+                    color: employee.is_deleted ? "#ecd9bd !important" : "#a8dcbc !important",
                     fontSize: 9.5,
                     fontWeight: 900,
                     border: employee.is_deleted
-                      ? "1px solid rgba(248,113,113,.18)"
-                      : "1px solid rgba(74,222,128,.16)",
+                      ? "1px solid rgba(201, 168, 117,.18)"
+                      : "1px solid rgba(108, 191, 139,.16)",
                     backgroundColor: employee.is_deleted
-                      ? "rgba(220,38,38,.14) !important"
-                      : "rgba(34,197,94,.13) !important",
+                      ? "rgba(140, 29, 43,.14) !important"
+                      : "rgba(78, 156, 107,.13) !important",
                   }}
                 />
               </Box>
@@ -1372,7 +1373,7 @@ const User = ({ backTo = "/users" }) => {
           <CircularProgress
             size={30}
             sx={{
-              color: "#991b1b",
+              color: "#6e1622",
             }}
           />
         </Box>
@@ -1469,7 +1470,7 @@ const User = ({ backTo = "/users" }) => {
                 leftValue={money(clientBalance.total_amount)}
                 rightLabel="To‘langan"
                 rightValue={money(clientBalance.paid_amount)}
-                color="#22c55e"
+                color="#4e9c6b"
               />
             </Section>
 
@@ -1485,7 +1486,7 @@ const User = ({ backTo = "/users" }) => {
               <InfoItem
                 label="Qolgan qarz"
                 value={money(clientBalance.debt_amount)}
-                valueColor={Number(clientBalance.debt_amount) > 0 ? "#b45309" : "#15803d"}
+                valueColor={Number(clientBalance.debt_amount) > 0 ? "#a06a12" : "#2f6b45"}
               />
 
               <InfoItem label="Savdolar soni" value={`${number(details.salesTotal)} ta`} />
@@ -1618,7 +1619,7 @@ const User = ({ backTo = "/users" }) => {
                 leftValue={money(workerBalance.total_earned)}
                 rightLabel="Berilgan"
                 rightValue={money(workerBalance.total_paid)}
-                color="#22c55e"
+                color="#4e9c6b"
               />
             </Section>
 
@@ -1634,7 +1635,7 @@ const User = ({ backTo = "/users" }) => {
               <InfoItem
                 label="Berilishi kerak"
                 value={money(workerBalance.remaining)}
-                valueColor={Number(workerBalance.remaining) > 0 ? "#b45309" : "#15803d"}
+                valueColor={Number(workerBalance.remaining) > 0 ? "#a06a12" : "#2f6b45"}
               />
 
               <InfoItem label="Qolgan avans" value={money(remainingAdvance)} />
@@ -1755,7 +1756,7 @@ const User = ({ backTo = "/users" }) => {
                 borderRadius: "18px",
                 border: "1px solid var(--aa-border)",
                 background:
-                  "radial-gradient(circle at 100% 0%,rgba(153,27,27,.07),transparent 31%),linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
+                  "radial-gradient(circle at 100% 0%,rgba(110, 22, 34,.07),transparent 31%),linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
               }}
             >
               <Box
@@ -1766,8 +1767,8 @@ const User = ({ backTo = "/users" }) => {
                   placeItems: "center",
                   color: "#ffffff",
                   borderRadius: "15px",
-                  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
-                  boxShadow: "0 12px 26px rgba(127,29,29,.20)",
+                  background: "linear-gradient(135deg,#4d0f18,#7a1826)",
+                  boxShadow: "0 12px 26px rgba(77, 15, 24,.20)",
                   fontSize: 17,
                   fontWeight: 950,
                 }}
@@ -1818,8 +1819,8 @@ const User = ({ backTo = "/users" }) => {
                     ...genericChipSx,
                     color: employee.is_deleted ? "var(--aa-danger)" : "var(--aa-success)",
                     backgroundColor: employee.is_deleted
-                      ? "rgba(220,38,38,.12)"
-                      : "rgba(34,197,94,.12)",
+                      ? "rgba(140, 29, 43,.12)"
+                      : "rgba(78, 156, 107,.12)",
                   }}
                 />
               </Box>
@@ -1842,18 +1843,18 @@ const genericChipSx = {
 const userPageStyles = `
   .crm-page .user-profile-hero {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 100% 0%,
-        rgba(220,38,38,.34),
+        rgba(140, 29, 43,.34),
         transparent 31%
       ),
       linear-gradient(
         145deg,
-        #0d1117,
-        #171117 52%,
-        #3a121a
+        #151211,
+        #1e1a18 52%,
+        #3a1219
       ) !important;
   }
 `;

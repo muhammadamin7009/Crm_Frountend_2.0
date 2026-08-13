@@ -62,8 +62,8 @@ const CrmPagination = ({
           },
           "& .Mui-selected": {
             color: "#fff",
-            bgcolor: "#8f1d20 !important",
-            borderColor: "#8f1d20 !important",
+            bgcolor: "#6e1622 !important",
+            borderColor: "#6e1622 !important",
           },
         }}
       />

@@ -32,7 +32,7 @@ const PlatformFeature = ({ value, label, description }) => (
     <Typography
       sx={{
         mt: 0.6,
-        color: "#fecdd3 !important",
+        color: "#d9b782 !important",
         fontSize: 9.5,
         fontWeight: 850,
       }}
@@ -140,12 +140,12 @@ const PlatformLogin = () => {
         backgroundImage: `
           radial-gradient(
             circle at 0% 0%,
-            rgba(153,27,27,.09),
+            rgba(110, 22, 34,.09),
             transparent 28%
           ),
           radial-gradient(
             circle at 100% 100%,
-            rgba(15,23,42,.07),
+            rgba(23, 17, 15,.07),
             transparent 32%
           )
         `,
@@ -168,9 +168,9 @@ const PlatformLogin = () => {
             xs: "22px",
             md: "30px",
           },
-          border: "1px solid rgba(148,163,184,.20)",
+          border: "1px solid rgba(138, 128, 122,.20)",
           backgroundColor: "var(--aa-surface-solid)",
-          boxShadow: "0 35px 100px rgba(15,23,42,.16)",
+          boxShadow: "0 35px 100px rgba(23, 17, 15,.16)",
           gridTemplateColumns: {
             xs: "1fr",
             lg: "minmax(0,1.12fr) minmax(420px,.88fr)",
@@ -227,8 +227,9 @@ const PlatformLogin = () => {
               top: -315,
               right: -215,
               borderRadius: "50%",
-              border: "1px solid rgba(248,113,113,.17)",
-              boxShadow: "0 0 0 72px rgba(248,113,113,.025),0 0 0 144px rgba(248,113,113,.015)",
+              border: "1px solid rgba(201, 168, 117,.17)",
+              boxShadow:
+                "0 0 94px 25px rgba(201, 168, 117,.025),0 0 187px 50px rgba(201, 168, 117,.015)",
               pointerEvents: "none",
             },
             "&::after": {
@@ -272,7 +273,7 @@ const PlatformLogin = () => {
                   overflow: "hidden",
                   borderRadius: "11px",
                   backgroundColor: "#ffffff",
-                  boxShadow: "0 10px 24px rgba(127,29,29,.30)",
+                  boxShadow: "0 10px 24px rgba(77, 15, 24,.30)",
                 }}
               >
                 <Box
@@ -450,8 +451,8 @@ const PlatformLogin = () => {
                   height: 10,
                   flexShrink: 0,
                   borderRadius: "50%",
-                  backgroundColor: "#4ade80",
-                  boxShadow: "0 0 0 5px rgba(74,222,128,.10)",
+                  backgroundColor: "#6cbf8b",
+                  boxShadow: "0 0 0 5px rgba(108, 191, 139,.10)",
                 }}
               />
 
@@ -512,8 +513,8 @@ const PlatformLogin = () => {
                 placeItems: "center",
                 overflow: "hidden",
                 borderRadius: "15px",
-                border: "1px solid rgba(153,27,27,.12)",
-                backgroundColor: "rgba(153,27,27,.055)",
+                border: "1px solid rgba(110, 22, 34,.12)",
+                backgroundColor: "rgba(110, 22, 34,.055)",
               }}
             >
               <Box
@@ -527,7 +528,7 @@ const PlatformLogin = () => {
             <Typography
               sx={{
                 mt: 2.5,
-                color: "#991b1b",
+                color: "#6e1622",
                 fontSize: 9.5,
                 fontWeight: 950,
                 letterSpacing: ".13em",
@@ -626,7 +627,7 @@ const PlatformLogin = () => {
                             fontWeight: 900,
                             textTransform: "none",
                             "&:hover": {
-                              color: "#991b1b",
+                              color: "#6e1622",
                               backgroundColor: "transparent",
                             },
                           }}
@@ -695,7 +696,7 @@ const PlatformLogin = () => {
                 alignItems: "flex-start",
                 gap: 1.2,
                 borderRadius: "15px",
-                border: "1px solid #e7ebf0",
+                border: "1px solid #e8e1d8",
                 backgroundColor: "var(--aa-surface-muted)",
               }}
             >
@@ -706,9 +707,9 @@ const PlatformLogin = () => {
                   display: "grid",
                   placeItems: "center",
                   flexShrink: 0,
-                  color: "#991b1b",
+                  color: "#6e1622",
                   borderRadius: "10px",
-                  backgroundColor: "rgba(153,27,27,.07)",
+                  backgroundColor: "rgba(110, 22, 34,.07)",
                   fontSize: 11,
                   fontWeight: 950,
                 }}
@@ -778,17 +779,17 @@ const inputSx = {
     },
 
     "&:hover fieldset": {
-      borderColor: "rgba(153,27,27,.30)",
+      borderColor: "rgba(110, 22, 34,.30)",
     },
 
     "&.Mui-focused": {
       backgroundColor: "var(--aa-surface-solid)",
-      boxShadow: "0 0 0 4px rgba(153,27,27,.055)",
+      boxShadow: "0 0 0 4px rgba(110, 22, 34,.055)",
     },
 
     "&.Mui-focused fieldset": {
       borderWidth: "1px",
-      borderColor: "#991b1b",
+      borderColor: "#6e1622",
     },
   },
 
@@ -811,7 +812,7 @@ const platformLoginStyles = `
 
   .platform-login-page .platform-brand-panel {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
   }
 
   @media (max-width: 1199px) {

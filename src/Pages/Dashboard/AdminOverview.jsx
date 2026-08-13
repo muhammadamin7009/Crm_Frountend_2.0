@@ -180,21 +180,21 @@ const percentage = (value, total) => {
 
 const tones = {
   red: {
-    icon: "linear-gradient(145deg,#8f1d20,#c72a32)",
-    soft: "rgba(143,29,32,.07)",
-    shadow: "rgba(143,29,32,.20)",
+    icon: "linear-gradient(145deg,#6e1622,#8c1d2b)",
+    soft: "rgba(110, 22, 34,.07)",
+    shadow: "rgba(110, 22, 34,.20)",
   },
 
   green: {
-    icon: "linear-gradient(145deg,#16985c,#21bd73)",
-    soft: "rgba(22,152,92,.07)",
-    shadow: "rgba(22,152,92,.18)",
+    icon: "linear-gradient(145deg,#2f6b45,#4e9c6b)",
+    soft: "rgba(47, 107, 69,.07)",
+    shadow: "rgba(47, 107, 69,.18)",
   },
 
   amber: {
-    icon: "linear-gradient(145deg,#e28720,#f4a238)",
-    soft: "rgba(226,135,32,.08)",
-    shadow: "rgba(226,135,32,.20)",
+    icon: "linear-gradient(145deg,#a06a12,#b8823a)",
+    soft: "rgba(160, 106, 18,.08)",
+    shadow: "rgba(160, 106, 18,.20)",
   },
 
   violet: {
@@ -204,9 +204,9 @@ const tones = {
   },
 
   blue: {
-    icon: "linear-gradient(145deg,#3262d9,#587cf0)",
-    soft: "rgba(50,98,217,.07)",
-    shadow: "rgba(50,98,217,.20)",
+    icon: "linear-gradient(145deg,#1f6f8b,#3e8ba3)",
+    soft: "rgba(31, 111, 139,.07)",
+    shadow: "rgba(31, 111, 139,.20)",
   },
 };
 
@@ -232,15 +232,15 @@ const KpiCard = ({ label, value, helper, icon, tone = "red", onClick }) => {
         p: { xs: 2, sm: 2.5 },
         overflow: "hidden",
         borderRadius: "22px",
-        border: "1px solid rgba(226,232,240,.9)",
+        border: "1px solid rgba(232, 225, 216,.9)",
         backgroundColor: "var(--aa-surface-solid)",
-        boxShadow: "0 14px 40px rgba(15,23,42,.055)",
+        boxShadow: "0 14px 40px rgba(23, 17, 15,.055)",
         transition: "transform .2s ease, box-shadow .2s ease",
         cursor: onClick ? "pointer" : "default",
 
         "&:hover": {
           transform: "translateY(-4px)",
-          boxShadow: "0 20px 50px rgba(15,23,42,.09)",
+          boxShadow: "0 20px 50px rgba(23, 17, 15,.09)",
         },
 
         "&:focus-visible": {
@@ -351,9 +351,9 @@ const Section = ({ title, subtitle, action, children, className = "" }) => (
       p: 2.5,
       overflow: "hidden",
       borderRadius: "22px",
-      border: "1px solid rgba(226,232,240,.9)",
+      border: "1px solid rgba(232, 225, 216,.9)",
       backgroundColor: "var(--aa-surface-solid)",
-      boxShadow: "0 14px 40px rgba(15,23,42,.045)",
+      boxShadow: "0 14px 40px rgba(23, 17, 15,.045)",
     }}
   >
     <Box
@@ -526,7 +526,7 @@ const buildSmoothPath = (points = []) => {
   }, "");
 };
 
-const SalesTrendChart = ({ items, title = "Savdo", color = "#b4232b" }) => {
+const SalesTrendChart = ({ items, title = "Savdo", color = "#8c1d2b" }) => {
   const [activeIndex, setActiveIndex] = useState(Math.max(items.length - 1, 0));
 
   useEffect(() => {
@@ -632,7 +632,7 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#b4232b" }) => {
           >
             <Typography
               sx={{
-                color: growth >= 0 ? "#15803d" : "#be123c",
+                color: growth >= 0 ? "#2f6b45" : "#7a1826",
                 fontSize: 11,
                 fontWeight: 900,
               }}
@@ -695,7 +695,7 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#b4232b" }) => {
           overflowX: "hidden",
           overflowY: "hidden",
           borderRadius: "18px",
-          border: "1px solid #e7ebf0",
+          border: "1px solid #e8e1d8",
           background: "linear-gradient(180deg,var(--aa-surface-muted),var(--aa-surface-solid))",
         }}
       >
@@ -743,11 +743,11 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#b4232b" }) => {
             );
           })}
 
-          <text x={chartLeft} y={20} fill="#94a3b8" fontSize="10" fontWeight="700">
+          <text x={chartLeft} y={20} fill="#8a807a" fontSize="10" fontWeight="700">
             {compactMoney(maxValue)}
           </text>
 
-          <text x={chartLeft} y={chartBottom + 17} fill="#94a3b8" fontSize="10" fontWeight="700">
+          <text x={chartLeft} y={chartBottom + 17} fill="#8a807a" fontSize="10" fontWeight="700">
             0
           </text>
 
@@ -803,7 +803,7 @@ const SalesTrendChart = ({ items, title = "Savdo", color = "#b4232b" }) => {
                 x={point.x}
                 y={270}
                 textAnchor="middle"
-                fill={activeIndex === index ? "#334155" : "#94a3b8"}
+                fill={activeIndex === index ? "#4b413c" : "#8a807a"}
                 fontSize="11"
                 fontWeight={activeIndex === index ? "900" : "700"}
               >
@@ -1062,13 +1062,13 @@ const TrendSummaryCards = ({ items = [] }) => {
       label: "6 oylik jami",
       value: money(total),
       helper: "Barcha oylar yig‘indisi",
-      color: "#b4232b",
+      color: "#8c1d2b",
     },
     {
       label: "Oylik o‘rtacha",
       value: money(average),
       helper: "Bir oyga o‘rtacha natija",
-      color: "#3262d9",
+      color: "#1f6f8b",
     },
     {
       label: "Eng yuqori oy",
@@ -1080,7 +1080,7 @@ const TrendSummaryCards = ({ items = [] }) => {
       label: "Oxirgi o‘sish",
       value: `${growth >= 0 ? "+" : ""}${growth.toFixed(1)}%`,
       helper: "Oldingi oyga nisbatan",
-      color: growth >= 0 ? "#16985c" : "#be123c",
+      color: growth >= 0 ? "#2f6b45" : "#7a1826",
     },
   ];
 
@@ -1110,7 +1110,7 @@ const TrendSummaryCards = ({ items = [] }) => {
 
             "&:hover": {
               transform: "translateY(-2px)",
-              boxShadow: "0 12px 28px rgba(15,23,42,.06)",
+              boxShadow: "0 12px 28px rgba(23, 17, 15,.06)",
             },
           }}
         >
@@ -1179,14 +1179,14 @@ const LinkButton = ({ children, onClick }) => (
     sx={{
       minWidth: 0,
       px: 1,
-      color: "#8f1d20",
+      color: "#6e1622",
       borderRadius: 2,
       fontSize: 11,
       fontWeight: 900,
       textTransform: "none",
 
       "&:hover": {
-        backgroundColor: "rgba(143,29,32,.055)",
+        backgroundColor: "rgba(110, 22, 34,.055)",
       },
     }}
   >
@@ -1646,7 +1646,7 @@ const AdminOverview = ({ user }) => {
 
             path: "/client-sales",
 
-            color: "#179b60",
+            color: "#2f6b45",
           },
 
         hasSupplierAccounting &&
@@ -1659,7 +1659,7 @@ const AdminOverview = ({ user }) => {
 
             path: "/material-purchases",
 
-            color: "#8f1d20",
+            color: "#6e1622",
           },
 
         canViewPayroll &&
@@ -1698,7 +1698,7 @@ const AdminOverview = ({ user }) => {
 
             path: "/inventory",
 
-            color: "#8f1d20",
+            color: "#6e1622",
           },
       ].filter(Boolean),
     [
@@ -1732,15 +1732,15 @@ const AdminOverview = ({ user }) => {
             display: "grid",
             placeItems: "center",
             borderRadius: "22px",
-            border: "1px solid rgba(143,29,32,.1)",
-            backgroundColor: "rgba(143,29,32,.05)",
+            border: "1px solid rgba(110, 22, 34,.1)",
+            backgroundColor: "rgba(110, 22, 34,.05)",
           }}
         >
           <CircularProgress
             size={34}
             thickness={4.6}
             sx={{
-              color: "#8f1d20",
+              color: "#6e1622",
             }}
           />
         </Box>
@@ -1780,7 +1780,7 @@ const AdminOverview = ({ user }) => {
       hasClientAccounting && {
         label: "Savdo",
         value: data.sales,
-        color: "#b4232b",
+        color: "#8c1d2b",
       },
 
     hasSupplierAccounting && {
@@ -1801,7 +1801,7 @@ const AdminOverview = ({ user }) => {
       title: "Savdo dinamikasi",
       subtitle: "Oxirgi 6 oydagi haqiqiy savdo summasi",
       label: "Savdo",
-      color: "#b4232b",
+      color: "#8c1d2b",
     },
 
     production: {
@@ -1846,7 +1846,7 @@ const AdminOverview = ({ user }) => {
           borderRadius: "24px",
           border: "1px solid var(--aa-border)",
           background:
-            "radial-gradient(circle at 98% 0%,rgba(143,29,32,.075),transparent 28%),linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
+            "radial-gradient(circle at 98% 0%,rgba(110, 22, 34,.075),transparent 28%),linear-gradient(145deg,var(--aa-surface-solid),var(--aa-surface-muted))",
           boxShadow: "var(--aa-shadow-md)",
         }}
       >
@@ -1865,13 +1865,13 @@ const AdminOverview = ({ user }) => {
                 width: 25,
                 height: 2,
                 borderRadius: 99,
-                background: "linear-gradient(90deg,#7f1d1d,#dc2626)",
+                background: "linear-gradient(90deg,#4d0f18,#8c1d2b)",
               }}
             />
 
             <Typography
               sx={{
-                color: "#8f1d20",
+                color: "#6e1622",
                 fontSize: 10,
                 fontWeight: 950,
                 letterSpacing: ".13em",
@@ -1920,7 +1920,7 @@ const AdminOverview = ({ user }) => {
             <Box
               component="span"
               sx={{
-                color: "#8f1d20",
+                color: "#6e1622",
                 fontWeight: 850,
               }}
             >
@@ -1943,7 +1943,7 @@ const AdminOverview = ({ user }) => {
             borderRadius: "18px",
             border: "1px solid var(--aa-border)",
             backgroundColor: "var(--aa-surface-elevated)",
-            boxShadow: "0 10px 25px rgba(15,23,42,.045)",
+            boxShadow: "0 10px 25px rgba(23, 17, 15,.045)",
           }}
         >
           {/* Mobilda: joriy davr bitta qatorda, sozlash faqat bosilganda ochiladi. */}
@@ -2274,7 +2274,7 @@ const AdminOverview = ({ user }) => {
 
                       "&:hover": {
                         transform: "translateX(2px)",
-                        borderColor: "rgba(143,29,32,.16)",
+                        borderColor: "rgba(110, 22, 34,.16)",
                         backgroundColor: "var(--aa-surface-solid)",
                       },
                     }}
@@ -2396,7 +2396,7 @@ const AdminOverview = ({ user }) => {
           borderRadius: "15px",
           border: "1px solid var(--aa-border)",
           backgroundColor: "var(--aa-surface-solid)",
-          boxShadow: "0 8px 22px rgba(15,23,42,.035)",
+          boxShadow: "0 8px 22px rgba(23, 17, 15,.035)",
         }}
       >
         {filters.map(([value, label]) => (
@@ -2507,7 +2507,7 @@ const AdminOverview = ({ user }) => {
             action={<LinkButton onClick={() => navigate("/worker-outputs")}>Barchasi</LinkButton>}
           >
             {workers.length ? (
-              <ProgressList items={workers} valueKey="total_amount" color="#179b60" />
+              <ProgressList items={workers} valueKey="total_amount" color="#2f6b45" />
             ) : (
               <Empty>Ishchilar bo‘yicha yozuv yo‘q.</Empty>
             )}
@@ -2628,8 +2628,8 @@ const AdminOverview = ({ user }) => {
 
                           "&:hover": {
                             transform: "translateY(-3px)",
-                            borderColor: "rgba(143,29,32,.16)",
-                            boxShadow: "0 16px 35px rgba(15,23,42,.07)",
+                            borderColor: "rgba(110, 22, 34,.16)",
+                            boxShadow: "0 16px 35px rgba(23, 17, 15,.07)",
                           },
                         }}
                       >
@@ -2764,10 +2764,10 @@ const AdminOverview = ({ user }) => {
               borderRadius: "24px",
               border: "1px solid rgba(255,255,255,.08)",
               color: "#ffffff",
-              backgroundColor: "#0d1117 !important",
+              backgroundColor: "#151211 !important",
               backgroundImage:
-                "radial-gradient(circle at 96% 0%,rgba(220,38,38,.34),transparent 32%),linear-gradient(145deg,#0d1117 0%,#171117 52%,#3a121a 100%) !important",
-              boxShadow: "0 24px 60px rgba(15,23,42,.22)",
+                "radial-gradient(circle at 96% 0%,rgba(140, 29, 43,.34),transparent 32%),linear-gradient(145deg,#151211 0%,#1e1a18 52%,#3a1219 100%) !important",
+              boxShadow: "0 24px 60px rgba(23, 17, 15,.22)",
 
               "&::before": {
                 content: '""',
@@ -2777,8 +2777,9 @@ const AdminOverview = ({ user }) => {
                 top: -265,
                 right: -210,
                 borderRadius: "50%",
-                border: "1px solid rgba(248,113,113,.17)",
-                boxShadow: "0 0 0 62px rgba(248,113,113,.025),0 0 0 124px rgba(248,113,113,.015)",
+                border: "1px solid rgba(201, 168, 117,.17)",
+                boxShadow:
+                  "0 0 81px 22px rgba(201, 168, 117,.025),0 0 161px 43px rgba(201, 168, 117,.015)",
               },
             }}
           >
@@ -2873,7 +2874,7 @@ const AdminOverview = ({ user }) => {
                   iconTone="green"
                   label="Mijozlardan olinadigan"
                   value={money(data.clientDebt)}
-                  valueColor="#86efac"
+                  valueColor="#8fd4a8"
                   helper="Mijozlarning umumiy qarzdorligi"
                 />
 
@@ -2882,7 +2883,7 @@ const AdminOverview = ({ user }) => {
                   iconTone={Number(data.cashBalance) >= 0 ? "green" : "rose"}
                   label="Pul mablag‘lari"
                   value={money(data.cashBalance)}
-                  valueColor={Number(data.cashBalance) >= 0 ? "#86efac" : "#fda4af"}
+                  valueColor={Number(data.cashBalance) >= 0 ? "#8fd4a8" : "#d9b782"}
                   helper="Kassa, karta va bank hisoblari jami"
                 />
               </Box>
@@ -2897,9 +2898,9 @@ const AdminOverview = ({ user }) => {
 const DarkBalanceItem = ({ icon, iconTone, label, value, valueColor = "#ffffff", helper }) => {
   const tone = {
     red: {
-      color: "#fecdd3",
-      bg: "rgba(220,38,38,.14)",
-      border: "rgba(248,113,113,.11)",
+      color: "#d9b782",
+      bg: "rgba(140, 29, 43,.14)",
+      border: "rgba(201, 168, 117,.11)",
     },
 
     violet: {
@@ -2909,13 +2910,13 @@ const DarkBalanceItem = ({ icon, iconTone, label, value, valueColor = "#ffffff",
     },
 
     green: {
-      color: "#bbf7d0",
-      bg: "rgba(34,197,94,.13)",
-      border: "rgba(74,222,128,.11)",
+      color: "#a8dcbc",
+      bg: "rgba(78, 156, 107,.13)",
+      border: "rgba(108, 191, 139,.11)",
     },
 
     rose: {
-      color: "#fecdd3",
+      color: "#d9b782",
       bg: "rgba(244,63,94,.13)",
       border: "rgba(251,113,133,.11)",
     },
@@ -2962,27 +2963,27 @@ const dashboardStyles = `
     color: #ffffff !important;
     background: linear-gradient(
       135deg,
-      #7f1d1d,
-      #b91c1c
+      #4d0f18,
+      #7a1826
     ) !important;
     box-shadow:
-      0 8px 18px rgba(127,29,29,.20) !important;
+      0 8px 18px rgba(77, 15, 24,.20) !important;
   }
 
   .crm-page .aa-dark-balance {
     color: #ffffff !important;
-    background-color: #0d1117 !important;
+    background-color: #151211 !important;
     background-image:
       radial-gradient(
         circle at 96% 0%,
-        rgba(220,38,38,.34),
+        rgba(140, 29, 43,.34),
         transparent 32%
       ),
       linear-gradient(
         145deg,
-        #0d1117 0%,
-        #171117 52%,
-        #3a121a 100%
+        #151211 0%,
+        #1e1a18 52%,
+        #3a1219 100%
       ) !important;
   }
 
@@ -3014,7 +3015,7 @@ const dashboardStyles = `
 
     .crm-page .aa-dashboard-kpi {
       border-radius: 18px !important;
-      box-shadow: 0 8px 25px rgba(15,23,42,.055) !important;
+      box-shadow: 0 8px 25px rgba(23, 17, 15,.055) !important;
     }
 
     .crm-page .aa-dashboard-kpi:hover {
@@ -3035,15 +3036,15 @@ const dashboardStyles = `
 const presetButtonSx = {
   minHeight: 38,
   px: 1.4,
-  color: "#687385",
+  color: "#7d716a",
   borderRadius: 2.5,
   fontSize: 11,
   fontWeight: 900,
   textTransform: "none",
 
   "&:hover": {
-    color: "#8f1d20",
-    backgroundColor: "rgba(143,29,32,.055)",
+    color: "#6e1622",
+    backgroundColor: "rgba(110, 22, 34,.055)",
   },
 };
 
@@ -3086,11 +3087,11 @@ const applyButtonSx = {
   fontSize: 11.5,
   fontWeight: 900,
   textTransform: "none",
-  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
-  boxShadow: "0 9px 20px rgba(127,29,29,.17)",
+  background: "linear-gradient(135deg,#4d0f18,#7a1826)",
+  boxShadow: "0 9px 20px rgba(77, 15, 24,.17)",
 
   "&:hover": {
-    background: "linear-gradient(135deg,#681818,#991b1b)",
+    background: "linear-gradient(135deg,#4d0f18,#6e1622)",
   },
 };
 
@@ -3110,9 +3111,9 @@ const activeTabSx = {
 
   color: "#ffffff !important",
 
-  background: "linear-gradient(135deg,#7f1d1d,#b91c1c)",
+  background: "linear-gradient(135deg,#4d0f18,#7a1826)",
 
-  boxShadow: "0 8px 18px rgba(127,29,29,.20)",
+  boxShadow: "0 8px 18px rgba(77, 15, 24,.20)",
 
   "&.MuiButton-root": {
     color: "#ffffff !important",
@@ -3121,32 +3122,32 @@ const activeTabSx = {
   "&:hover": {
     color: "#ffffff !important",
 
-    background: "linear-gradient(135deg,#681818,#991b1b)",
+    background: "linear-gradient(135deg,#4d0f18,#6e1622)",
   },
 };
 
 const warningChipSx = {
   height: 23,
   color: "#a55b0b",
-  backgroundColor: "rgba(245,158,11,.12)",
+  backgroundColor: "rgba(160, 106, 18,.12)",
   fontSize: 9,
   fontWeight: 900,
 };
 
 const successChipSx = {
   height: 23,
-  color: "#16804d",
-  backgroundColor: "rgba(34,197,94,.10)",
+  color: "#2f6b45",
+  backgroundColor: "rgba(78, 156, 107,.10)",
   fontSize: 9,
   fontWeight: 900,
 };
 
 const redSoftChipSx = {
   height: 25,
-  color: "#8f1d20",
+  color: "#6e1622",
   fontSize: 9,
   fontWeight: 900,
-  backgroundColor: "rgba(143,29,32,.07)",
+  backgroundColor: "rgba(110, 22, 34,.07)",
 };
 
 const neutralChipSx = {
@@ -3161,10 +3162,10 @@ const neutralChipSx = {
 const clientAvatarSx = {
   width: 31,
   height: 31,
-  color: "#8f1d20",
+  color: "#6e1622",
   fontSize: 11,
   fontWeight: 900,
-  backgroundColor: "rgba(143,29,32,.075)",
+  backgroundColor: "rgba(110, 22, 34,.075)",
 };
 
 const warehouseIconSx = {
@@ -3174,7 +3175,7 @@ const warehouseIconSx = {
   placeItems: "center",
   flexShrink: 0,
   borderRadius: "13px",
-  backgroundColor: "rgba(143,29,32,.07)",
+  backgroundColor: "rgba(110, 22, 34,.07)",
 };
 
 const liveBadgeSx = {
@@ -3192,8 +3193,8 @@ const liveDotSx = {
   width: 7,
   height: 7,
   borderRadius: "50%",
-  backgroundColor: "#22c55e",
-  boxShadow: "0 0 0 5px rgba(34,197,94,.10)",
+  backgroundColor: "#4e9c6b",
+  boxShadow: "0 0 0 5px rgba(78, 156, 107,.10)",
 };
 
 const darkBalanceItemSx = {
@@ -3249,7 +3250,7 @@ const tableSx = {
     py: 1.25,
     color: "var(--aa-text-secondary)",
     fontSize: 10.5,
-    borderColor: "#edf0f3",
+    borderColor: "#e8e1d8",
   },
 
   "& .MuiTableHead-root .MuiTableCell-root": {

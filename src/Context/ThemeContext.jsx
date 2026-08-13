@@ -58,7 +58,7 @@ export const ThemeModeProvider = ({ children }) => {
             'Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif',
           button: {
             textTransform: "none",
-            fontWeight: 800,
+            fontWeight: 700,
           },
         },
         components: {
