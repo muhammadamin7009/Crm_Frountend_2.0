@@ -1,25 +1,14 @@
 import { InputAdornment, TextField } from "@mui/material";
 
-export const parseMoneyInput = (value) => {
-  const normalized = String(value ?? "")
-    .replace(/so['‘’`]?m/gi, "")
-    .replace(/\s+/g, "")
-    .replace(",", ".")
-    .replace(/[^\d.]/g, "");
-  const [integer = "", ...decimalParts] = normalized.split(".");
-  const decimal = decimalParts.join("").slice(0, 2);
-  if (!integer && !decimal) return "";
-  return decimalParts.length ? `${integer || "0"}.${decimal}` : integer;
-};
+import { formatMoneyInput, parseMoneyInput } from "../../utils/money";
 
-export const formatMoneyInput = (value) => {
-  const raw = parseMoneyInput(value);
-  if (!raw) return "";
-  const [integer, decimal] = raw.split(".");
-  const grouped = integer.replace(/^0+(?=\d)/, "").replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-  return decimal === undefined ? grouped : `${grouped}.${decimal}`;
-};
-
+/**
+ * Summa maydoni. Ekranda minglik ajratgich bilan ("5 555 555"), tashqariga esa
+ * toza raqam chiqadi ("5555555") — hisob-kitob va backend shu qiymat bilan ishlaydi.
+ *
+ * DIQQAT: `value` ga XOM qiymat berilishi kerak, formatlashni komponent o'zi
+ * qiladi. Formatlangan matn uzatilsa qo'sh formatlash bo'ladi.
+ */
 const MoneyTextField = ({ value, onChange, slotProps, InputProps, ...props }) => (
   <TextField
     {...props}
@@ -44,5 +33,7 @@ const MoneyTextField = ({ value, onChange, slotProps, InputProps, ...props }) =>
     InputProps={InputProps}
   />
 );
+
+export { formatMoneyInput, parseMoneyInput } from "../../utils/money";
 
 export default MoneyTextField;

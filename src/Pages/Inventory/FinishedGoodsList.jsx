@@ -22,9 +22,9 @@ const cardSx = {
   backgroundColor: "var(--aa-surface-solid)",
 };
 
-const FinishedGoodsList = ({ warehouseId }) => {
+const FinishedGoodsList = ({ warehouseId, lowOnly = false, onClearLowOnly }) => {
   const [loading, setLoading] = useState(true);
-  const [groups, setGroups] = useState([]);
+  const [allGroups, setAllGroups] = useState([]);
   const [query, setQuery] = useState("");
 
   // Qaysi model va o'lcham ochiq. Model bosilmaguncha ichi yuklanmaydi ham,
@@ -39,9 +39,9 @@ const FinishedGoodsList = ({ warehouseId }) => {
         q: query.trim() || undefined,
         warehouse_id: warehouseId || undefined,
       });
-      setGroups(data?.groups || []);
+      setAllGroups(data?.groups || []);
     } catch {
-      setGroups([]);
+      setAllGroups([]);
     } finally {
       setLoading(false);
     }
@@ -53,14 +53,55 @@ const FinishedGoodsList = ({ warehouseId }) => {
     return () => clearTimeout(timer);
   }, [load, query]);
 
+  // Ko'rsatkichlar to'liq ro'yxatdan hisoblanadi, "kam qolgan" filtri esa faqat
+  // ko'rinadigan qatorlarni qisqartiradi.
   const totals = useMemo(
     () => ({
-      models: groups.length,
-      pairs: groups.reduce((sum, group) => sum + Number(group.total_quantity || 0), 0),
-      low: groups.reduce((sum, group) => sum + Number(group.low_count || 0), 0),
+      models: allGroups.length,
+      pairs: allGroups.reduce((sum, group) => sum + Number(group.total_quantity || 0), 0),
+      low: allGroups.reduce((sum, group) => sum + Number(group.low_count || 0), 0),
     }),
-    [groups],
+    [allGroups],
   );
+
+  /** Filtr yoqilganda faqat minimal qoldiqqa yetgan variantlar qoladi. */
+  const groups = useMemo(() => {
+    if (!lowOnly) return allGroups;
+
+    return allGroups
+      .map((group) => {
+        const sizes = group.sizes
+          .map((size) => {
+            const variants = size.variants.filter((variant) => variant.is_low);
+
+            return {
+              ...size,
+              variants,
+              variant_count: variants.length,
+              total_quantity: variants.reduce((sum, v) => sum + Number(v.quantity || 0), 0),
+            };
+          })
+          .filter((size) => size.variants.length);
+
+        return {
+          ...group,
+          sizes,
+          total_quantity: sizes.reduce((sum, size) => sum + size.total_quantity, 0),
+        };
+      })
+      .filter((group) => group.sizes.length);
+  }, [allGroups, lowOnly]);
+
+  // Filtr yoqilganda ro'yxat qisqa bo'ladi — hammasini ochib qo'yamiz, aks holda
+  // foydalanuvchi yopiq akkordeonlarni birma-bir ochib chiqishi kerak bo'lardi.
+  useEffect(() => {
+    if (!lowOnly) return;
+
+    setOpenModels(new Set(groups.map((group) => group.model)));
+    setOpenSizes(
+      new Set(groups.flatMap((group) => group.sizes.map((size) => `${group.model}:${size.label}`))),
+    );
+  }, [groups, lowOnly]);
 
   const toggle = (setter) => (key) =>
     setter((previous) => {
@@ -94,6 +135,23 @@ const FinishedGoodsList = ({ warehouseId }) => {
             {formatNumber(totals.models)} model · {formatNumber(totals.pairs)} par
             {totals.low > 0 ? ` · ${formatNumber(totals.low)} pozitsiya kam qoldi` : ""}
           </Typography>
+
+          {lowOnly && (
+            <Chip
+              size="small"
+              label="Faqat kam qolganlar"
+              onDelete={onClearLowOnly}
+              sx={{
+                mt: 0.8,
+                height: 24,
+                color: "#991b1b",
+                fontSize: 9.5,
+                fontWeight: 900,
+                backgroundColor: "rgba(153,27,27,.08)",
+                border: "1px solid rgba(153,27,27,.2)",
+              }}
+            />
+          )}
         </Box>
 
         <Box
@@ -138,7 +196,11 @@ const FinishedGoodsList = ({ warehouseId }) => {
           }}
         >
           <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 11.5, fontWeight: 700 }}>
-            {query ? `«${query}» bo‘yicha tayyor mahsulot topilmadi` : "Tayyor mahsulot yo‘q"}
+            {lowOnly
+              ? "Kam qolgan tayyor mahsulot yo‘q"
+              : query
+                ? `«${query}» bo‘yicha tayyor mahsulot topilmadi`
+                : "Tayyor mahsulot yo‘q"}
           </Typography>
         </Box>
       ) : (

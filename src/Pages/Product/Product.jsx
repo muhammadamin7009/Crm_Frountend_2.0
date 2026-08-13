@@ -22,6 +22,7 @@ import {
 } from "../../Components/UI/MuiCompat";
 
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
+import MoneyTextField from "../../Components/UI/MoneyTextField";
 import ActiveStatusChip from "../../Components/UI/ActiveStatusChip";
 
 import {
@@ -1444,18 +1445,13 @@ const Product = () => {
                     <StatusChip active={row.is_active} />
                   </Box>
 
-                  <TextField
+                  <MoneyTextField
                     fullWidth
                     label="Bir birlik uchun ish haqi"
-                    type="number"
                     size="small"
                     value={row.price_per_unit}
                     onChange={(event) => handlePriceChange(row.department_id, event.target.value)}
-                    inputProps={{
-                      min: 0,
-                      step: 100,
-                    }}
-                    helperText="Masalan: 5000"
+                    helperText="Masalan: 5 000"
                   />
                 </Box>
               ))}

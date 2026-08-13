@@ -1534,17 +1534,15 @@ const Products = () => {
                 <MenuItem value="false">Nofaol</MenuItem>
               </TextField>
 
-              <TextField
+              <MoneyTextField
                 size="small"
-                type="number"
                 label="Eng past narx"
                 value={filters.min_price}
                 onChange={handleFilterChange("min_price")}
               />
 
-              <TextField
+              <MoneyTextField
                 size="small"
-                type="number"
                 label="Eng yuqori narx"
                 value={filters.max_price}
                 onChange={handleFilterChange("max_price")}

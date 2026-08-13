@@ -21,6 +21,7 @@ import {
   CompatStack as Stack,
   CompatTextField as TextField,
 } from "../../Components/UI/MuiCompat";
+import MoneyTextField from "../../Components/UI/MoneyTextField";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -1545,17 +1546,12 @@ const ClientFormDialog = ({
         </TextField>
 
         {canManageDebt && form.role === "client" && (
-          <TextField
+          <MoneyTextField
             fullWidth
-            type="number"
             label={selectedClient ? "Joriy qarzdorlik" : "Boshlang‘ich qarz"}
             value={form.client_debt_amount}
             onChange={onFormChange("client_debt_amount")}
             disabled={debtLoading}
-            inputProps={{
-              min: 0,
-              step: 1000,
-            }}
             sx={{
               gridColumn: {
                 sm: "1 / -1",

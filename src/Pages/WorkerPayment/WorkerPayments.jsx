@@ -98,10 +98,6 @@ const getImageUrl = (path) => {
 };
 
 const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
-const formatAmountInput = (value) =>
-  value === "" || value === null || value === undefined
-    ? ""
-    : new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
@@ -1528,45 +1524,31 @@ const WorkerPayments = () => {
               gap: 1.6,
             }}
           >
+            {/* `value` ga xom qiymat beriladi: formatlashni MoneyTextField o'zi
+                qiladi. Ilgari bu yerga formatlangan matn uzatilar va onChange
+                kasr nuqtasini ham o'chirib yuborardi. */}
             <MoneyTextField
-              type="text"
               label="Naqd beriladi"
-              value={formatAmountInput(form.amount)}
-              onChange={(event) => {
-                const amount = event.target.value.replace(/\D/g, "");
-
-                setForm((previous) => ({ ...previous, amount }));
-              }}
+              value={form.amount}
+              onChange={(event) =>
+                setForm((previous) => ({ ...previous, amount: event.target.value }))
+              }
               error={paymentExceedsBalance}
               helperText={paymentExceedsBalance ? `Maksimum ${money(availableWorkerBalance)}` : " "}
-              inputProps={{
-                inputMode: "numeric",
-                pattern: "[0-9 ]*",
-              }}
             />
 
             <MoneyTextField
-              type="text"
               label="Avansdan ushlash"
-              value={formatAmountInput(form.advance_deduction)}
-              onChange={(event) => {
-                const advanceDeduction = event.target.value.replace(/\D/g, "");
-
-                setForm((previous) => ({
-                  ...previous,
-                  advance_deduction: advanceDeduction,
-                }));
-              }}
+              value={form.advance_deduction}
+              onChange={(event) =>
+                setForm((previous) => ({ ...previous, advance_deduction: event.target.value }))
+              }
               error={paymentExceedsBalance}
               helperText={
                 paymentExceedsBalance
                   ? "Jami summa qolgan ish haqidan oshdi"
                   : `Maksimum: ${money(selectedWorkerBalance.remaining_advance)}`
               }
-              inputProps={{
-                inputMode: "numeric",
-                pattern: "[0-9 ]*",
-              }}
             />
 
             <TextField
@@ -1874,23 +1856,13 @@ const WorkerPayments = () => {
               gap: 1.6,
             }}
           >
-            <TextField
+            <MoneyTextField
               required
-              type="text"
               label="Avans summasi"
-              value={formatAmountInput(advanceForm.amount)}
-              onChange={(event) => {
-                const amount = event.target.value.replace(/\D/g, "");
-
-                setAdvanceForm((previous) => ({
-                  ...previous,
-                  amount,
-                }));
-              }}
-              inputProps={{
-                inputMode: "numeric",
-                pattern: "[0-9 ]*",
-              }}
+              value={advanceForm.amount}
+              onChange={(event) =>
+                setAdvanceForm((previous) => ({ ...previous, amount: event.target.value }))
+              }
             />
 
             <TextField

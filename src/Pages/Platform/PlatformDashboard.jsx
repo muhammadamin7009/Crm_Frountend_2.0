@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
+import MoneyTextField from "../../Components/UI/MoneyTextField";
 import ActiveStatusChip from "../../Components/UI/ActiveStatusChip";
 import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
 import { useNavigate } from "react-router-dom";
@@ -2360,29 +2361,39 @@ const Entry = ({ dialog, form, setForm, close, save, saving, plans, resetAuthent
 
             {form.discount_type !== "none" && (
               <>
-                <TextField
-                  fullWidth
-                  type="number"
-                  label={form.discount_type === "percent" ? "Chegirma foizi" : "Chegirma summasi"}
-                  value={form.discount_value ?? 0}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
+                {/* Bu maydon ikki xil ishlaydi: foizda minglik ajratgich noto'g'ri
+                    bo'lardi (100 dan oshmaydi), summada esa aynan kerak. */}
+                {form.discount_type === "percent" ? (
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="Chegirma foizi"
+                    value={form.discount_value ?? 0}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
 
-                      discount_value: event.target.value,
-                    }))
-                  }
-                  error={!calculation.valid && Boolean(form.period_from && form.period_to)}
-                  slotProps={{
-                    htmlInput: {
-                      min: 0,
+                        discount_value: event.target.value,
+                      }))
+                    }
+                    error={!calculation.valid && Boolean(form.period_from && form.period_to)}
+                    slotProps={{ htmlInput: { min: 0, max: 100, step: 1 } }}
+                  />
+                ) : (
+                  <MoneyTextField
+                    fullWidth
+                    label="Chegirma summasi"
+                    value={form.discount_value ?? 0}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
 
-                      max: form.discount_type === "percent" ? 100 : undefined,
-
-                      step: form.discount_type === "percent" ? 1 : 1000,
-                    },
-                  }}
-                />
+                        discount_value: event.target.value,
+                      }))
+                    }
+                    error={!calculation.valid && Boolean(form.period_from && form.period_to)}
+                  />
+                )}
 
                 <TextField
                   fullWidth

@@ -21,6 +21,7 @@ import {
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
 import SharedBalanceBox from "../../Components/UI/BalanceBox";
+import MoneyTextField from "../../Components/UI/MoneyTextField";
 
 import { useAuth } from "../../Context/AuthContext";
 import CrmPagination from "../../Components/Common/CrmPagination";
@@ -84,8 +85,6 @@ const formatMoney = (value) => {
 };
 
 const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
-const formatAmountInput = (value) =>
-  value === "" || value === null || value === undefined ? "" : formatNumber(value);
 
 const formatDate = (value) => {
   if (!value) return "-";
@@ -2017,28 +2016,19 @@ const ClientSales = () => {
                   }}
                 />
 
-                <TextField
+                <MoneyTextField
                   required
-                  type="text"
                   label="Sotish narxi"
                   disabled={!form.product_id || Number(form.quantity) <= 0}
-                  value={formatAmountInput(form.unit_price)}
-                  onChange={(event) => {
-                    const unitPrice = event.target.value.replace(/\D/g, "");
-
-                    setForm((previous) => ({ ...previous, unit_price: unitPrice }));
-                  }}
+                  value={form.unit_price}
+                  onChange={(event) =>
+                    setForm((previous) => ({ ...previous, unit_price: event.target.value }))
+                  }
                   helperText={
                     selectedProduct
                       ? `Standart narx: ${formatMoney(selectedProduct.sale_price)}`
                       : "Mahsulot tanlanganda avtomatik tushadi"
                   }
-                  slotProps={{
-                    htmlInput: {
-                      inputMode: "numeric",
-                      pattern: "[0-9 ]*",
-                    },
-                  }}
                 />
               </>
             )}
@@ -2224,22 +2214,13 @@ const ClientSales = () => {
                       }}
                     />
 
-                    <TextField
-                      type="text"
+                    <MoneyTextField
                       label="Sotish narxi"
                       disabled={!item.product_id || Number(item.quantity) <= 0}
-                      value={formatAmountInput(item.unit_price)}
-                      onChange={(event) => {
-                        const unitPrice = event.target.value.replace(/\D/g, "");
-
-                        handleSaleItemChange(index, "unit_price", unitPrice);
-                      }}
-                      slotProps={{
-                        htmlInput: {
-                          inputMode: "numeric",
-                          pattern: "[0-9 ]*",
-                        },
-                      }}
+                      value={item.unit_price}
+                      onChange={(event) =>
+                        handleSaleItemChange(index, "unit_price", event.target.value)
+                      }
                     />
 
                     <Button
@@ -2284,9 +2265,8 @@ const ClientSales = () => {
               o'zgartirmaydi.
             </Box>
           )}
-          <TextField
+          <MoneyTextField
             fullWidth
-            type="text"
             label="To'langan summa"
             disabled={
               selectedSale
@@ -2296,24 +2276,16 @@ const ClientSales = () => {
                       !item.product_id || Number(item.quantity) <= 0 || item.unit_price === "",
                   )
             }
-            value={formatAmountInput(form.paid_amount)}
-            onChange={(event) => {
-              const paidAmount = event.target.value.replace(/\D/g, "");
-
-              setForm((previous) => ({ ...previous, paid_amount: paidAmount }));
-            }}
+            value={form.paid_amount}
+            onChange={(event) =>
+              setForm((previous) => ({ ...previous, paid_amount: event.target.value }))
+            }
             error={preview.overPaid}
             helperText={
               preview.overPaid
                 ? "To'lov jami summadan oshmasin"
                 : "Qisman to'lov yoki 0 bo'lishi mumkin"
             }
-            slotProps={{
-              htmlInput: {
-                inputMode: "numeric",
-                pattern: "[0-9 ]*",
-              },
-            }}
           />
           {ENABLE_MULTI_ACCOUNT_SELECTION && (
             <TextField
@@ -2503,16 +2475,13 @@ const ClientSales = () => {
               gap: 1.6,
             }}
           >
-            <TextField
+            <MoneyTextField
               required
-              type="text"
               label="Kirim summa"
-              value={paymentForm.amount ? formatNumber(paymentForm.amount) : ""}
-              onChange={(event) => {
-                const amount = event.target.value.replace(/\D/g, "");
-
-                setPaymentForm((previous) => ({ ...previous, amount }));
-              }}
+              value={paymentForm.amount}
+              onChange={(event) =>
+                setPaymentForm((previous) => ({ ...previous, amount: event.target.value }))
+              }
               error={Number(paymentForm.amount || 0) > Number(paymentBalance.debt_amount || 0)}
               helperText={
                 Number(paymentForm.amount || 0) > Number(paymentBalance.debt_amount || 0)
@@ -2521,12 +2490,6 @@ const ClientSales = () => {
                     ? "Qarz aniqlanmoqda..."
                     : `Jami qarz: ${formatMoney(paymentBalance.debt_amount)}`
               }
-              slotProps={{
-                htmlInput: {
-                  inputMode: "numeric",
-                  pattern: "[0-9 ]*",
-                },
-              }}
             />
 
             <TextField

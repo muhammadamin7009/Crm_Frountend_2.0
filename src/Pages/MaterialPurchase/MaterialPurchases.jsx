@@ -21,12 +21,14 @@ import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
 import BalanceBox from "../../Components/UI/BalanceBox";
 import MoneyTextField from "../../Components/UI/MoneyTextField";
+import PhoneTextField from "../../Components/UI/PhoneTextField";
 import { getFinancialAccounts } from "../../api/finance";
 
 import Card from "../../Components/UI/AppCard";
 import {
   createMaterialPurchase,
   createRawMaterial,
+  createRawMaterials,
   createSupplier,
   createSupplierPayment,
   deleteMaterialPurchase,
@@ -68,11 +70,37 @@ const emptySupplier = {
   note: "",
 };
 
+// Manzil ko'pincha takrorlanadi — ta'minotchilar bir bozordan keladi. Oxirgi
+// kiritilgani eslab qolinadi va yangi ta'minotchi shaklida tayyor turadi.
+const LAST_SUPPLIER_ADDRESS_KEY = "supplier_last_address";
+
+const readLastSupplierAddress = () => {
+  try {
+    return localStorage.getItem(LAST_SUPPLIER_ADDRESS_KEY) || "";
+  } catch {
+    return "";
+  }
+};
+
+const rememberSupplierAddress = (address) => {
+  try {
+    if (address) localStorage.setItem(LAST_SUPPLIER_ADDRESS_KEY, address);
+  } catch {
+    // Xotira yopiq bo'lsa (private rejim) — eslab qolmaymiz, xolos.
+  }
+};
+
+const newSupplierForm = () => ({ ...emptySupplier, address: readLastSupplierAddress() });
+
 const emptyMaterial = {
   name: "",
   unit: "dona",
   note: "",
 };
+
+// "Xomashyo qo'shish" oynasi bir vaqtda bir nechta xomashyo yaratadi: sexga
+// yangi partiya kelganda ular birga keladi, bittalab kiritish uzoq davom etardi.
+const emptyMaterialRows = () => [{ ...emptyMaterial }];
 
 const emptyPayment = {
   supplier_id: "",
@@ -98,11 +126,6 @@ const getLocalUser = () => {
 };
 
 const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
-const formatAmountInput = (value) =>
-  value === "" || value === null || value === undefined
-    ? ""
-    : new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
-
 const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const date = (value) => {
@@ -194,13 +217,13 @@ const MaterialPurchases = () => {
 
   const [purchaseForm, setPurchaseForm] = useState(emptyPurchase);
 
-  const [supplierForm, setSupplierForm] = useState(emptySupplier);
+  const [supplierForm, setSupplierForm] = useState(newSupplierForm);
 
   const [selectedSupplierForEdit, setSelectedSupplierForEdit] = useState(null);
 
   const [selectedSupplierForDelete, setSelectedSupplierForDelete] = useState(null);
 
-  const [materialForm, setMaterialForm] = useState(emptyMaterial);
+  const [materialRows, setMaterialRows] = useState(emptyMaterialRows);
 
   const [paymentForm, setPaymentForm] = useState(emptyPayment);
 
@@ -456,11 +479,11 @@ const MaterialPurchases = () => {
       ],
     });
 
-    setSupplierForm(emptySupplier);
+    setSupplierForm(newSupplierForm());
 
     setSelectedSupplierForEdit(null);
 
-    setMaterialForm(emptyMaterial);
+    setMaterialRows(emptyMaterialRows());
 
     setPaymentForm({
       ...emptyPayment,
@@ -546,7 +569,9 @@ const MaterialPurchases = () => {
         toast.success("Ta'minotchi qo'shildi.");
       }
 
-      setSupplierForm(emptySupplier);
+      rememberSupplierAddress(payload.address);
+
+      setSupplierForm(newSupplierForm());
 
       setSelectedSupplierForEdit(null);
 
@@ -595,7 +620,7 @@ const MaterialPurchases = () => {
       if (selectedSupplierForEdit?.id === selectedSupplierForDelete.id) {
         setSelectedSupplierForEdit(null);
 
-        setSupplierForm(emptySupplier);
+        setSupplierForm(newSupplierForm());
       }
 
       close();
@@ -607,9 +632,35 @@ const MaterialPurchases = () => {
     }
   };
 
+  const changeMaterialRow = (index, field) => (event) => {
+    const { value } = event.target;
+
+    setMaterialRows((previous) =>
+      previous.map((row, rowIndex) => (rowIndex === index ? { ...row, [field]: value } : row)),
+    );
+  };
+
+  const addMaterialRow = () => setMaterialRows((previous) => [...previous, { ...emptyMaterial }]);
+
+  const removeMaterialRow = (index) =>
+    setMaterialRows((previous) => previous.filter((_, rowIndex) => rowIndex !== index));
+
+  const filledMaterialRows = materialRows.filter((row) => row.name.trim());
+
   const saveMaterial = async () => {
-    if (!materialForm.name.trim()) {
-      toast.error("Xomashyo nomini kiriting.");
+    if (!filledMaterialRows.length) {
+      toast.error("Kamida bitta xomashyo nomini kiriting.");
+
+      return;
+    }
+
+    // Takrorni serverga bormasdan ushlaymiz: xato matni aniqroq chiqadi.
+    const keys = filledMaterialRows.map(
+      (row) => `${row.name.trim().toLowerCase()}|${row.unit.trim() || "dona"}`,
+    );
+
+    if (new Set(keys).size !== keys.length) {
+      toast.error("Bir xil nom va o'lchov birligi ikki marta kiritilgan.");
 
       return;
     }
@@ -617,15 +668,19 @@ const MaterialPurchases = () => {
     setSaving(true);
 
     try {
-      await createRawMaterial({
-        name: materialForm.name.trim(),
+      const { data } = await createRawMaterials(
+        filledMaterialRows.map((row) => ({
+          name: row.name.trim(),
+          unit: row.unit.trim() || "dona",
+          note: row.note.trim() || null,
+        })),
+      );
 
-        unit: materialForm.unit.trim() || "dona",
-
-        note: materialForm.note.trim() || null,
-      });
-
-      toast.success("Xomashyo qo'shildi.");
+      toast.success(
+        data.created_count > 1
+          ? `${data.created_count} ta xomashyo qo'shildi.`
+          : "Xomashyo qo'shildi.",
+      );
 
       close();
       refresh();
@@ -2060,7 +2115,7 @@ const MaterialPurchases = () => {
               }
             />
 
-            <TextField
+            <PhoneTextField
               label="Telefon"
               value={supplierForm.phone}
               onChange={(event) =>
@@ -2082,10 +2137,10 @@ const MaterialPurchases = () => {
                   address: event.target.value,
                 }))
               }
+              helperText={selectedSupplierForEdit ? " " : "Oxirgi kiritilgan manzil taklif qilinadi"}
             />
 
-            <TextField
-              type="number"
+            <MoneyTextField
               label="Boshlang‘ich qarz"
               value={supplierForm.opening_balance}
               onChange={(event) =>
@@ -2095,10 +2150,6 @@ const MaterialPurchases = () => {
                   opening_balance: event.target.value,
                 }))
               }
-              inputProps={{
-                min: 0,
-                step: 1000,
-              }}
             />
           </Box>
 
@@ -2128,7 +2179,7 @@ const MaterialPurchases = () => {
                 onClick={() => {
                   setSelectedSupplierForEdit(null);
 
-                  setSupplierForm(emptySupplier);
+                  setSupplierForm(newSupplierForm());
                 }}
                 sx={dialogCancelSx}
               >
@@ -2288,8 +2339,8 @@ const MaterialPurchases = () => {
         open={materialOpen}
         onClose={close}
         title="Xomashyo qo‘shish"
-        subtitle="Yangi xomashyo va uning o‘lchov birligini yarating"
-        maxWidth="sm"
+        subtitle="Bir vaqtda bir nechta xomashyo yaratishingiz mumkin"
+        maxWidth="md"
         actions={
           <>
             <Button onClick={close} sx={dialogCancelSx}>
@@ -2298,55 +2349,76 @@ const MaterialPurchases = () => {
 
             <Button
               variant="contained"
-              disabled={saving || !materialForm.name.trim()}
+              disabled={saving || !filledMaterialRows.length}
               onClick={saveMaterial}
               sx={dialogPrimarySx}
             >
-              {saving ? "Saqlanmoqda..." : "Saqlash"}
+              {saving
+                ? "Saqlanmoqda..."
+                : filledMaterialRows.length > 1
+                  ? `${filledMaterialRows.length} tasini saqlash`
+                  : "Saqlash"}
             </Button>
           </>
         }
       >
-        <Stack spacing={2}>
-          <TextField
-            required
-            label="Nomi"
-            value={materialForm.name}
-            onChange={(event) =>
-              setMaterialForm((previous) => ({
-                ...previous,
+        <Stack spacing={1.6}>
+          {materialRows.map((row, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", sm: "1.2fr 140px 1fr auto" },
+                alignItems: "flex-start",
+                gap: 1.3,
+                p: 1.4,
+                borderRadius: "16px",
+                border: "1px solid var(--aa-border)",
+                backgroundColor: "var(--aa-surface-muted)",
+              }}
+            >
+              <TextField
+                required
+                label="Nomi"
+                value={row.name}
+                onChange={changeMaterialRow(index, "name")}
+              />
 
-                name: event.target.value,
-              }))
-            }
-          />
+              <TextField
+                label="O‘lchov birligi"
+                value={row.unit}
+                onChange={changeMaterialRow(index, "unit")}
+                helperText={index === 0 ? "dona, kg, metr yoki litr" : " "}
+              />
 
-          <TextField
-            label="O‘lchov birligi"
-            value={materialForm.unit}
-            onChange={(event) =>
-              setMaterialForm((previous) => ({
-                ...previous,
+              <TextField label="Izoh" value={row.note} onChange={changeMaterialRow(index, "note")} />
 
-                unit: event.target.value,
-              }))
-            }
-            helperText="dona, kg, metr yoki litr"
-          />
+              <Button
+                color="error"
+                onClick={() => removeMaterialRow(index)}
+                disabled={materialRows.length === 1}
+                sx={{
+                  mt: { xs: 0, sm: 1 },
+                  borderRadius: "11px",
+                  fontSize: 10,
+                  fontWeight: 850,
+                  textTransform: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Olib tashlash
+              </Button>
+            </Box>
+          ))}
 
-          <TextField
-            multiline
-            minRows={3}
-            label="Izoh"
-            value={materialForm.note}
-            onChange={(event) =>
-              setMaterialForm((previous) => ({
-                ...previous,
+          <Button variant="outlined" onClick={addMaterialRow} sx={addRowSx}>
+            + Yana xomashyo qo‘shish
+          </Button>
 
-                note: event.target.value,
-              }))
-            }
-          />
+          <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 10.5 }}>
+            Nomi bo‘sh qatorlar e’tiborga olinmaydi. Hammasi birdaniga yaratiladi — bittasi xato
+            bo‘lsa hech biri saqlanmaydi.
+          </Typography>
         </Stack>
       </PremiumDialog>
 
@@ -2429,29 +2501,22 @@ const MaterialPurchases = () => {
               gap: 1.6,
             }}
           >
-            <TextField
+            <MoneyTextField
               required
-              type="text"
               label="Summa"
-              value={formatAmountInput(paymentForm.amount)}
+              value={paymentForm.amount}
               disabled={!paymentForm.supplier_id}
               helperText={
                 paymentForm.supplier_id
                   ? "To‘lov summasini kiriting"
                   : "Avval ta’minotchini tanlang"
               }
-              onChange={(event) => {
-                const amount = event.target.value.replace(/\D/g, "");
-
+              onChange={(event) =>
                 setPaymentForm((previous) => ({
                   ...previous,
-                  amount,
-                }));
-              }}
-              inputProps={{
-                inputMode: "numeric",
-                pattern: "[0-9 ]*",
-              }}
+                  amount: event.target.value,
+                }))
+              }
             />
 
             <TextField
@@ -2919,6 +2984,18 @@ const removeButtonSx = {
   fontSize: 9.5,
   fontWeight: 850,
   textTransform: "none",
+};
+
+const addRowSx = {
+  alignSelf: "flex-start",
+  minHeight: 40,
+  px: 2,
+  borderRadius: "12px",
+  fontSize: 11,
+  fontWeight: 900,
+  textTransform: "none",
+  borderColor: "var(--aa-border-strong)",
+  color: "var(--aa-text-secondary)",
 };
 
 const quickMaterialBoxSx = {

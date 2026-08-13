@@ -17,6 +17,7 @@ import {
 import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
+import MoneyTextField from "../../Components/UI/MoneyTextField";
 import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
 import { toast } from "react-toastify";
 
@@ -1473,8 +1474,7 @@ const Employees = () => {
               ))}
             </TextField>
 
-            <TextField
-              type="number"
+            <MoneyTextField
               label="Doimiy summa"
               value={agreementForm.fixed_amount}
               onChange={(event) =>
@@ -1485,14 +1485,9 @@ const Employees = () => {
                 }))
               }
               disabled={!["fixed_salary", "mixed"].includes(agreementForm.payment_type)}
-              inputProps={{
-                min: 0,
-                step: 1000,
-              }}
             />
 
-            <TextField
-              type="number"
+            <MoneyTextField
               label="Kunlik stavka"
               value={agreementForm.daily_rate}
               onChange={(event) =>
@@ -1503,10 +1498,6 @@ const Employees = () => {
                 }))
               }
               disabled={!["daily_rate", "mixed"].includes(agreementForm.payment_type)}
-              inputProps={{
-                min: 0,
-                step: 1000,
-              }}
             />
 
             <TextField

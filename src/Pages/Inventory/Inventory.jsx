@@ -23,6 +23,7 @@ import {
 import { CompatDialog as Dialog, CompatStack as Stack } from "../../Components/UI/MuiCompat";
 
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
+import MoneyTextField from "../../Components/UI/MoneyTextField";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -279,7 +280,7 @@ const heroSecondaryButtonSx = {
   },
 };
 
-const MetricCard = ({ label, value, hint, tone = "red" }) => {
+const MetricCard = ({ label, value, hint, tone = "red", onClick, active = false }) => {
   const tones = {
     red: ["#991b1b", "rgba(153,27,27,.07)", "rgba(153,27,27,.16)"],
 
@@ -296,12 +297,31 @@ const MetricCard = ({ label, value, hint, tone = "red" }) => {
     <Card
       className="aa-mobile-compact-metric"
       elevation={0}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      aria-pressed={onClick ? active : undefined}
+      onClick={onClick}
+      onKeyDown={(event) => {
+        if (onClick && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault();
+          onClick(event);
+        }
+      }}
       sx={{
         ...surfaceCardSx,
         minHeight: 126,
         p: 1.8,
         backgroundColor: current[1],
-        borderColor: current[2],
+        borderColor: active ? current[0] : current[2],
+        cursor: onClick ? "pointer" : "default",
+        transition: "transform .18s ease, border-color .18s ease, box-shadow .18s ease",
+        ...(active ? { boxShadow: `inset 0 0 0 1px ${current[0]}` } : null),
+        ...(onClick
+          ? {
+              "&:hover": { transform: "translateY(-2px)", borderColor: current[0] },
+              "&:focus-visible": { outline: `3px solid ${current[2]}`, outlineOffset: 2 },
+            }
+          : null),
       }}
     >
       <Box
@@ -425,6 +445,11 @@ const Inventory = () => {
   const [thresholdOpen, setThresholdOpen] = useState(false);
 
   const [lowStockOpen, setLowStockOpen] = useState(false);
+
+  // "Kam qolgan" kartasi bosilganda pastdagi ro'yxat shu pozitsiyalarga
+  // qisqaradi. Ko'rsatkichlar esa to'liq holatdan hisoblanadi — aks holda
+  // filtr yoqilgach "Qoldiq pozitsiyalari" ham kamayib, raqamlar yolg'on chiqardi.
+  const [lowOnly, setLowOnly] = useState(false);
 
   const [movementForm, setMovementForm] = useState(emptyMovement);
 
@@ -634,6 +659,17 @@ const Inventory = () => {
   );
 
   const lowStockRows = useMemo(() => stock.filter((row) => row.is_low), [stock]);
+
+  const lowStockCount = useMemo(
+    () => filteredStock.filter((row) => row.is_low).length,
+    [filteredStock],
+  );
+
+  /** Jadvalda ko'rinadigan qatorlar. Ko'rsatkichlar `filteredStock` dan oladi. */
+  const visibleStock = useMemo(
+    () => (lowOnly ? filteredStock.filter((row) => row.is_low) : filteredStock),
+    [filteredStock, lowOnly],
+  );
 
   const pageMetrics = useMemo(() => {
     if (isManagementPage) {
@@ -1886,7 +1922,11 @@ const Inventory = () => {
           guruhlangan ro'yxat: bir model o'nlab qatorga bo'linib ketmasin. */}
       {!isCountsPage && !isManagementPage && isFinishedGoodsWarehouse && (
         <Box sx={{ mb: 2.5 }}>
-          <FinishedGoodsList warehouseId={selectedWarehouse.id} />
+          <FinishedGoodsList
+            warehouseId={selectedWarehouse.id}
+            lowOnly={lowOnly}
+            onClearLowOnly={() => setLowOnly(false)}
+          />
         </Box>
       )}
 
@@ -1926,9 +1966,18 @@ const Inventory = () => {
 
             <MetricCard
               label="Kam qolgan"
-              value={quantity(filteredStock.filter((row) => row.is_low).length)}
-              hint="Minimal miqdorga yetgan pozitsiyalar"
-              tone={filteredStock.some((row) => row.is_low) ? "red" : "green"}
+              value={quantity(lowStockCount)}
+              hint={
+                lowOnly
+                  ? "Filtr yoqilgan — bekor qilish uchun bosing"
+                  : lowStockCount
+                    ? "Faqat shularni ko‘rish uchun bosing"
+                    : "Minimal miqdorga yetgan pozitsiyalar"
+              }
+              tone={lowStockCount ? "red" : "green"}
+              active={lowOnly}
+              // Kam qolgani yo'q bo'lsa bosishdan ma'no yo'q: bo'sh ro'yxat chiqardi.
+              onClick={lowStockCount ? () => setLowOnly((previous) => !previous) : undefined}
             />
 
             <MetricCard
@@ -1979,6 +2028,24 @@ const Inventory = () => {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
               />
+
+              {/* Filtr karta bosilganda yoqiladi — bu yerda uni ko'rinadigan
+                  qilib turamiz, aks holda ro'yxat sababsiz qisqa ko'rinardi. */}
+              {lowOnly && (
+                <Chip
+                  label="Faqat kam qolganlar"
+                  onDelete={() => setLowOnly(false)}
+                  sx={{
+                    justifySelf: "flex-start",
+                    height: 28,
+                    color: "#991b1b",
+                    fontSize: 10.5,
+                    fontWeight: 900,
+                    backgroundColor: "rgba(153,27,27,.08)",
+                    border: "1px solid rgba(153,27,27,.2)",
+                  }}
+                />
+              )}
             </Box>
 
             {tab === 0 && (
@@ -2015,8 +2082,8 @@ const Inventory = () => {
                   </TableHead>
 
                   <TableBody>
-                    {filteredStock.length ? (
-                      filteredStock.map((row) => (
+                    {visibleStock.length ? (
+                      visibleStock.map((row) => (
                         <TableRow key={row.id} hover>
                           <TableCell>
                             <Typography
@@ -2132,7 +2199,9 @@ const Inventory = () => {
                             fontWeight: 800,
                           }}
                         >
-                          Qoldiq topilmadi. Birinchi kirimni qo‘shing.
+                          {lowOnly
+                            ? "Kam qolgan pozitsiya topilmadi."
+                            : "Qoldiq topilmadi. Birinchi kirimni qo‘shing."}
                         </TableCell>
                       </TableRow>
                     )}
@@ -3005,8 +3074,7 @@ const Inventory = () => {
                 }}
               />
 
-              <TextField
-                type="number"
+              <MoneyTextField
                 label="Birlik tannarxi"
                 value={movementForm.unit_cost}
                 onChange={(event) =>
@@ -3016,12 +3084,6 @@ const Inventory = () => {
                     unit_cost: event.target.value,
                   }))
                 }
-                slotProps={{
-                  htmlInput: {
-                    min: 0,
-                    step: 1000,
-                  },
-                }}
               />
             </Box>
 
@@ -3164,8 +3226,7 @@ const Inventory = () => {
                 }}
               />
 
-              <TextField
-                type="number"
+              <MoneyTextField
                 label="Birlik tannarxi"
                 value={receiptForm.unit_cost}
                 onChange={(event) =>
@@ -3176,12 +3237,6 @@ const Inventory = () => {
                   }))
                 }
                 helperText="Ixtiyoriy"
-                slotProps={{
-                  htmlInput: {
-                    min: 0,
-                    step: 1000,
-                  },
-                }}
               />
             </Box>
 

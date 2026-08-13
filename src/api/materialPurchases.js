@@ -8,6 +8,10 @@ export const deleteSupplier = (id) => api.delete(`/suppliers/${id}`);
 export const getRawMaterials = (params) => api.get("/raw-materials", { params });
 export const getRawMaterialStock = (params) => api.get("/raw-materials/stock", { params });
 export const createRawMaterial = (data) => api.post("/raw-materials", data);
+
+// Bir necha xomashyoni birdaniga. Hammasi bitta tranzaksiyada yaratiladi:
+// nom yagona bo'lgani uchun o'rtadagi takror qolganini ham bekor qiladi.
+export const createRawMaterials = (materials) => api.post("/raw-materials/bulk", { materials });
 export const updateRawMaterial = (id, data) => api.patch(`/raw-materials/${id}`, data);
 export const deleteRawMaterial = (id) => api.delete(`/raw-materials/${id}`);
 

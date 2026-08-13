@@ -24,6 +24,7 @@ import {
 } from "../../Components/UI/MuiCompat";
 
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
+import MoneyTextField from "../../Components/UI/MoneyTextField";
 import BalanceBox from "../../Components/UI/BalanceBox";
 import { toast } from "react-toastify";
 
@@ -1181,16 +1182,11 @@ const Expenses = () => {
                 gap: 1.6,
               }}
             >
-              <TextField
+              <MoneyTextField
                 label="Xarajat summasi"
-                type="number"
                 value={form.amount}
                 onChange={field("amount")}
                 required
-                inputProps={{
-                  min: 1,
-                  step: 1000,
-                }}
               />
 
               <TextField
