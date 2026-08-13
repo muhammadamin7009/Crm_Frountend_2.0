@@ -449,21 +449,9 @@ const Permissions = () => {
     [selectedPermissions],
   );
 
-  const visibleGroups = useMemo(() => {
-    if (selectedAdmin?.role !== "worker") {
-      return groups;
-    }
-
-    return groups
-      .filter((group) => group.group === "Ombor")
-      .map((group) => ({
-        ...group,
-
-        permissions: group.permissions.filter(
-          (permission) => permission.key !== "inventory.manage",
-        ),
-      }));
-  }, [groups, selectedAdmin]);
+  // Ishchiga ham barcha ruxsatlar ochiq: sexda unga qo'shimcha vazifa
+  // topshirilishi mumkin. Ilgari faqat "Ombor" guruhi ko'rinardi.
+  const visibleGroups = groups;
 
   const visiblePresets = useMemo(
     () =>
