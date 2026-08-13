@@ -851,9 +851,11 @@ const Login = () => {
               </Box>
             )}
 
+            {/* Imzo qo'shilgach pastki ustun balandlashdi — bo'shliq
+                qisqartirildi, aks holda panel ichida siqilib qolardi. */}
             <Typography
               sx={{
-                mt: 4,
+                mt: 3,
                 color: "#a0a7b2",
                 fontSize: 11.5,
                 textAlign: "center",
@@ -862,7 +864,7 @@ const Login = () => {
               © {new Date().getFullYear()} Al-Amin CRM. Barcha huquqlar himoyalangan.
             </Typography>
 
-            <FounderCredit sx={{ mt: 1.6 }} />
+            <FounderCredit sx={{ mt: 1.2 }} />
           </Box>
         </Box>
       </Paper>

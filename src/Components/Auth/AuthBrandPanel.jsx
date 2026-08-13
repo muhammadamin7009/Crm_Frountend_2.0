@@ -203,17 +203,14 @@ export default function AuthBrandPanel({
           top: isRegister ? -320 : -250,
           right: isRegister ? -300 : -230,
           borderRadius: "50%",
-          border: "1px solid rgba(201, 168, 117, 0.24)",
+          border: "1px solid rgba(201, 168, 117, 0.18)",
+          // `0 0 0 70px` ko'rinishidagi soyalar tarqalmaydi — ular QATTIQ
+          // halqa hosil qiladi. Fon yorug'roq bo'lganda bilinmasdi, panel
+          // qorayganda esa yoy shaklidagi tasma bo'lib chiqib qoldi.
+          // Endi bitta yumshoq nur qoladi.
           boxShadow: isRegister
-            ? `
-              0 0 0 78px rgba(201, 168, 117, 0.03),
-              0 0 0 156px rgba(201, 168, 117, 0.02),
-              0 0 110px rgba(110, 22, 34, 0.2)
-            `
-            : `
-              0 0 0 70px rgba(201, 168, 117, 0.032),
-              0 0 0 140px rgba(201, 168, 117, 0.022)
-            `,
+            ? "0 0 120px 40px rgba(110, 22, 34, 0.16)"
+            : "0 0 100px 30px rgba(110, 22, 34, 0.14)",
           pointerEvents: "none",
         },
       }}
