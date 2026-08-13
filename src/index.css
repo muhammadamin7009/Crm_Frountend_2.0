@@ -2616,11 +2616,6 @@ textarea,
     stroke: rgba(255, 255, 255, 0.1) !important;
   }
 
-  [data-theme="dark"] .aa-dashboard-page .aa-warehouse-status-icon {
-    opacity: 0.9 !important;
-    filter: brightness(0) invert(1);
-  }
-
   [data-theme="dark"] .aa-dashboard-page .MuiTableCell-root {
     color: var(--aa-text-secondary) !important;
     border-color: var(--aa-border) !important;
@@ -2772,4 +2767,23 @@ textarea,
     flex: 1 1 auto;
     overscroll-behavior: contain;
   }
+}
+
+/* --------------------------------------------------------------------------
+   QORONG'I MAVZUDA IKONKALAR
+
+   ui-icons SVG lari currentColor ishlatadi, lekin ular `<img>`
+   sifatida chiziladi — bunda `currentColor` QORAGA aylanadi va tashqi CSS
+   u yerga yeta olmaydi. Ya'ni ikonka har doim qora.
+
+   Yorug' mavzuda bu to'g'ri, qorong'ida esa ikonka fonga singib ketadi.
+   Ilgari bu faqat `@media (max-width: 768px)` ichida tuzatilgan edi — ya'ni
+   telefonda ishlar, kompyuterda esa ikonka ko'rinmasdi.
+
+   Rangli fon ustidagi ikonkalar (KPI kartalari, yon menyu) o'z joyida
+   `filter` bilan oqartirilgan — ularga tegilmaydi.
+   -------------------------------------------------------------------------- */
+[data-theme="dark"] .aa-warehouse-status-icon {
+  opacity: 0.85;
+  filter: brightness(0) invert(1);
 }
