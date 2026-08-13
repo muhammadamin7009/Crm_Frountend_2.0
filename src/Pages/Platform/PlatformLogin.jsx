@@ -196,23 +196,26 @@ const PlatformLogin = () => {
             justifyContent: "space-between",
             overflow: "hidden",
             color: "#ffffff",
-            backgroundColor: "#0d1117 !important",
+            // Landing va kirish sahifalari bilan bir xil til: chuqur sharob
+            // va issiq qora, urg'u esa guruch. Ilgari ko'kimtir qora ustida
+            // yorqin qizil turardi.
+            backgroundColor: "#110e0d !important",
             backgroundImage: `
               radial-gradient(
                 circle at 100% 0%,
-                rgba(220,38,38,.36),
-                transparent 32%
+                rgba(110,22,34,.5),
+                transparent 34%
               ),
               radial-gradient(
                 circle at 0% 100%,
-                rgba(127,29,29,.20),
-                transparent 35%
+                rgba(169,129,75,.16),
+                transparent 36%
               ),
               linear-gradient(
                 145deg,
-                #0b0f15,
-                #171117 54%,
-                #3a121a
+                #100d0c,
+                #1b1513 54%,
+                #3a1219
               )
             !important`,
             "&::before": {
@@ -235,7 +238,7 @@ const PlatformLogin = () => {
               left: -140,
               bottom: -135,
               borderRadius: "50%",
-              background: "radial-gradient(circle,rgba(220,38,38,.22),transparent 68%)",
+              background: "radial-gradient(circle,rgba(110,22,34,.3),transparent 68%)",
               pointerEvents: "none",
             },
           }}
@@ -326,16 +329,16 @@ const PlatformLogin = () => {
                     width: 26,
                     height: 2,
                     borderRadius: 99,
-                    background: "linear-gradient(90deg,#fb7185,#ef4444)",
+                    background: "#c9a875",
                   }}
                 />
 
                 <Typography
                   sx={{
-                    color: "#fecdd3 !important",
+                    color: "#d9b782 !important",
                     fontSize: 9.5,
-                    fontWeight: 950,
-                    letterSpacing: ".14em",
+                    fontWeight: 700,
+                    letterSpacing: ".16em",
                     textTransform: "uppercase",
                   }}
                 >
@@ -348,22 +351,24 @@ const PlatformLogin = () => {
                 sx={{
                   maxWidth: 620,
                   mt: 2,
-                  color: "#ffffff !important",
+                  color: "#fdf8f2 !important",
+                  fontFamily: 'Georgia, "Iowan Old Style", "Times New Roman", serif',
                   fontSize: {
                     xs: 34,
                     sm: 43,
-                    lg: 52,
+                    lg: 53,
                   },
-                  lineHeight: 1.04,
-                  fontWeight: 950,
-                  letterSpacing: "-.055em",
+                  lineHeight: 1.1,
+                  fontWeight: 400,
+                  letterSpacing: "-.028em",
                 }}
               >
                 Barcha korxonalarni yagona markazdan{" "}
                 <Box
                   component="span"
                   sx={{
-                    color: "#fca5a5",
+                    color: "#d9b782",
+                    fontStyle: "italic",
                   }}
                 >
                   boshqaring.
@@ -644,17 +649,17 @@ const PlatformLogin = () => {
                   color: "#ffffff",
                   borderRadius: "14px",
                   fontSize: 11.5,
-                  fontWeight: 950,
+                  fontWeight: 700,
                   textTransform: "none",
-                  background: "linear-gradient(135deg,#7f1d1d,#b91c1c 55%,#dc2626)",
-                  boxShadow: "0 14px 30px rgba(127,29,29,.22)",
+                  background: "#6e1622",
+                  boxShadow: "0 14px 32px rgba(110,22,34,.28)",
                   "&:hover": {
-                    background: "linear-gradient(135deg,#681818,#991b1b 55%,#b91c1c)",
-                    boxShadow: "0 16px 34px rgba(127,29,29,.28)",
+                    background: "#8c1d2b",
+                    boxShadow: "0 17px 38px rgba(110,22,34,.34)",
                   },
                   "&.Mui-disabled": {
-                    color: "rgba(255,255,255,.58)",
-                    background: "linear-gradient(135deg,#94a3b8,#64748b)",
+                    color: "rgba(253,248,242,.5)",
+                    background: "#4a4340",
                   },
                 }}
               >

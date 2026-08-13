@@ -121,37 +121,45 @@ export default function AuthBrandPanel({
           },
         },
 
+        // Landing bilan bir xil til: yorqin qizil o'rniga chuqur sharob va
+        // issiq qora. Ko'kimtir qora (#0a0c11) issiqqa almashtirildi —
+        // aks holda guruch urg'usi begona ko'rinardi.
         background: isRegister
           ? `
             radial-gradient(
               circle at 84% 10%,
-              rgba(239, 68, 68, 0.28),
-              transparent 30%
+              rgba(169, 129, 75, 0.18),
+              transparent 32%
             ),
             radial-gradient(
               circle at 3% 91%,
-              rgba(127, 29, 29, 0.38),
-              transparent 31%
+              rgba(110, 22, 34, 0.42),
+              transparent 33%
             ),
             linear-gradient(
               145deg,
-              #0a0c11 0%,
-              #141017 38%,
-              #351219 71%,
-              #65151e 100%
+              #100d0c 0%,
+              #1a1412 38%,
+              #35131a 71%,
+              #5c1220 100%
             )
           `
           : `
             radial-gradient(
               circle at 100% 0%,
-              rgba(220, 38, 38, 0.37),
-              transparent 34%
+              rgba(110, 22, 34, 0.52),
+              transparent 38%
+            ),
+            radial-gradient(
+              circle at 6% 96%,
+              rgba(169, 129, 75, 0.14),
+              transparent 30%
             ),
             linear-gradient(
               145deg,
-              #11151c 0%,
-              #211117 48%,
-              #63151d 100%
+              #131010 0%,
+              #211416 48%,
+              #57121e 100%
             )
           `,
 
@@ -190,16 +198,16 @@ export default function AuthBrandPanel({
           top: isRegister ? -320 : -250,
           right: isRegister ? -300 : -230,
           borderRadius: "50%",
-          border: "1px solid rgba(248, 113, 113, 0.17)",
+          border: "1px solid rgba(201, 168, 117, 0.24)",
           boxShadow: isRegister
             ? `
-              0 0 0 78px rgba(248, 113, 113, 0.022),
-              0 0 0 156px rgba(248, 113, 113, 0.015),
-              0 0 110px rgba(220, 38, 38, 0.13)
+              0 0 0 78px rgba(201, 168, 117, 0.03),
+              0 0 0 156px rgba(201, 168, 117, 0.02),
+              0 0 110px rgba(110, 22, 34, 0.2)
             `
             : `
-              0 0 0 70px rgba(248, 113, 113, 0.025),
-              0 0 0 140px rgba(248, 113, 113, 0.018)
+              0 0 0 70px rgba(201, 168, 117, 0.032),
+              0 0 0 140px rgba(201, 168, 117, 0.022)
             `,
           pointerEvents: "none",
         },
@@ -215,7 +223,7 @@ export default function AuthBrandPanel({
               width: 320,
               height: 320,
               borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(220, 38, 38, 0.21), transparent 68%)",
+              background: "radial-gradient(circle, rgba(110, 22, 34, 0.3), transparent 68%)",
               filter: "blur(20px)",
               pointerEvents: "none",
             }}
@@ -305,11 +313,12 @@ export default function AuthBrandPanel({
             <Typography
               noWrap
               sx={{
-                color: "#ffffff",
-                fontSize: 28,
-                lineHeight: 1.1,
-                fontWeight: 950,
-                letterSpacing: "-0.04em",
+                color: "#fdf8f2",
+                fontFamily: 'Georgia, "Iowan Old Style", "Times New Roman", serif',
+                fontSize: 27,
+                lineHeight: 1.15,
+                fontWeight: 400,
+                letterSpacing: "-0.018em",
               }}
             >
               {companyName}
@@ -355,17 +364,17 @@ export default function AuthBrandPanel({
                   width: 7,
                   height: 7,
                   borderRadius: "50%",
-                  backgroundColor: "#fb7185",
-                  boxShadow: "0 0 0 5px rgba(251,113,133,.09)",
+                  backgroundColor: "#c9a875",
+                  boxShadow: "0 0 0 5px rgba(201,168,117,.12)",
                 }}
               />
 
               <Typography
                 sx={{
-                  color: "#fecdd3",
+                  color: "#d9b782",
                   fontSize: 11,
-                  fontWeight: 800,
-                  letterSpacing: ".04em",
+                  fontWeight: 650,
+                  letterSpacing: ".05em",
                 }}
               >
                 Yangi hisob yaratish
@@ -373,25 +382,29 @@ export default function AuthBrandPanel({
             </Box>
           )}
 
+          {/* Sarlavha antiqa shriftda. Ilgari fontWeight 950 turardi —
+              Inter'da bunday og'irlik yo'q va brauzer uni sun'iy
+              qalinlashtirib xira ko'rsatardi. */}
           <Typography
             component="h1"
             sx={{
               m: 0,
-              color: "#ffffff",
+              color: "#fdf8f2",
+              fontFamily: 'Georgia, "Iowan Old Style", "Times New Roman", serif',
               fontSize: {
-                lg: "clamp(38px, 3.5vw, 53px)",
+                lg: "clamp(38px, 3.5vw, 54px)",
               },
-              lineHeight: 1.07,
-              fontWeight: 950,
-              letterSpacing: "-0.05em",
+              lineHeight: 1.1,
+              fontWeight: 400,
+              letterSpacing: "-0.028em",
             }}
           >
             {title}{" "}
             <Box
               component="span"
               sx={{
-                color: isRegister ? "#fb7185" : "#fb445b",
-                textShadow: "0 12px 34px rgba(220,38,38,.24)",
+                color: "#d9b782",
+                fontStyle: "italic",
               }}
             >
               {accent}
@@ -469,11 +482,11 @@ export default function AuthBrandPanel({
                   height: 43,
                   display: "grid",
                   placeItems: "center",
-                  borderRadius: "14px",
-                  color: "#fecdd3",
-                  fontSize: 19,
-                  border: "1px solid rgba(248,113,113,.13)",
-                  backgroundColor: "rgba(220,38,38,.17)",
+                  borderRadius: "13px",
+                  color: "#d9b782",
+                  fontSize: 18,
+                  border: "1px solid rgba(201,168,117,.2)",
+                  backgroundColor: "rgba(201,168,117,.11)",
                 }}
               >
                 ✓
@@ -535,13 +548,14 @@ export default function AuthBrandPanel({
                   mb: 1.6,
                   display: "grid",
                   placeItems: "center",
-                  borderRadius: "12px",
-                  color: "#fecdd3",
-                  fontSize: item.number ? 10 : 15,
-                  fontWeight: 950,
-                  letterSpacing: item.number ? ".08em" : "normal",
-                  border: "1px solid rgba(248,113,113,.12)",
-                  backgroundColor: "rgba(220,38,38,.16)",
+                  borderRadius: "11px",
+                  color: "#d9b782",
+                  fontFamily: 'Georgia, "Iowan Old Style", "Times New Roman", serif',
+                  fontSize: item.number ? 13 : 16,
+                  fontWeight: 400,
+                  letterSpacing: item.number ? ".05em" : "normal",
+                  border: "1px solid rgba(201,168,117,.2)",
+                  backgroundColor: "rgba(201,168,117,.1)",
                 }}
               >
                 {item.number || item.value.slice(0, 1)}
@@ -550,9 +564,9 @@ export default function AuthBrandPanel({
               <Typography
                 className="auth-highlight-label"
                 sx={{
-                  color: "#ffffff",
+                  color: "#fdf8f2",
                   fontSize: 15.5,
-                  fontWeight: 900,
+                  fontWeight: 650,
                 }}
               >
                 {item.value}
