@@ -124,42 +124,47 @@ export default function AuthBrandPanel({
         // Landing bilan bir xil til: yorqin qizil o'rniga chuqur sharob va
         // issiq qora. Ko'kimtir qora (#0a0c11) issiqqa almashtirildi —
         // aks holda guruch urg'usi begona ko'rinardi.
+        //
+        // Gradient OXIRGI to'xtashi qorong'i qoladi (#3a1219 atrofida).
+        // Ilgari u #57121e edi va panelning pastki qismi to'yingan maroon
+        // bo'lib "loyqa" ko'rinardi. Platforma kirish sahifasida shu chuqurlik
+        // saqlangani uchun u ancha chiroyli chiqqan — endi uchtasi bir xil.
         background: isRegister
           ? `
             radial-gradient(
               circle at 84% 10%,
-              rgba(169, 129, 75, 0.18),
+              rgba(169, 129, 75, 0.16),
               transparent 32%
             ),
             radial-gradient(
               circle at 3% 91%,
-              rgba(110, 22, 34, 0.42),
+              rgba(110, 22, 34, 0.4),
               transparent 33%
             ),
             linear-gradient(
               145deg,
               #100d0c 0%,
-              #1a1412 38%,
-              #35131a 71%,
-              #5c1220 100%
+              #191412 38%,
+              #2a1117 71%,
+              #3d1219 100%
             )
           `
           : `
             radial-gradient(
               circle at 100% 0%,
-              rgba(110, 22, 34, 0.52),
-              transparent 38%
+              rgba(110, 22, 34, 0.5),
+              transparent 36%
             ),
             radial-gradient(
               circle at 6% 96%,
-              rgba(169, 129, 75, 0.14),
+              rgba(169, 129, 75, 0.13),
               transparent 30%
             ),
             linear-gradient(
               145deg,
-              #131010 0%,
-              #211416 48%,
-              #57121e 100%
+              #110e0d 0%,
+              #1c1513 52%,
+              #3a1219 100%
             )
           `,
 
@@ -223,7 +228,7 @@ export default function AuthBrandPanel({
               width: 320,
               height: 320,
               borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(110, 22, 34, 0.3), transparent 68%)",
+              background: "radial-gradient(circle, rgba(110, 22, 34, 0.22), transparent 68%)",
               filter: "blur(20px)",
               pointerEvents: "none",
             }}
