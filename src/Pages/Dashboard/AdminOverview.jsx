@@ -33,10 +33,27 @@ import CoinsIcon from "../../images/ui-icons/coins.svg";
 import TrendUpIcon from "../../images/ui-icons/trend-up.svg";
 
 import { hasPermission } from "../../utils/permissions";
+import { getDashboardSummary } from "../../api/dashboard";
+import KpiBreakdownDialog from "./KpiBreakdownDialog";
 
 const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
 
 const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
+
+/**
+ * Ombor qoldig'i birliklar kesimida: "1 200 par · 480 juft".
+ * Kartada joy tor, shuning uchun ikkitasi ko'rinadi, qolgani modalda.
+ */
+const unitsLabel = (units) => {
+  if (!units?.length) return "0";
+
+  const head = units
+    .slice(0, 2)
+    .map((item) => `${number(item.quantity)} ${item.unit}`)
+    .join(" · ");
+
+  return units.length > 2 ? `${head} +${units.length - 2}` : head;
+};
 
 const compactMoney = (value) => {
   const amount = Number(value || 0);
@@ -193,13 +210,22 @@ const tones = {
   },
 };
 
-const KpiCard = ({ label, value, helper, icon, tone = "red" }) => {
+const KpiCard = ({ label, value, helper, icon, tone = "red", onClick }) => {
   const colors = tones[tone] || tones.red;
 
   return (
     <Paper
       className="aa-dashboard-kpi"
       elevation={0}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onClick={onClick}
+      onKeyDown={(event) => {
+        if (onClick && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault();
+          onClick(event);
+        }
+      }}
       sx={{
         position: "relative",
         minHeight: { xs: 118, sm: 145 },
@@ -210,10 +236,16 @@ const KpiCard = ({ label, value, helper, icon, tone = "red" }) => {
         backgroundColor: "var(--aa-surface-solid)",
         boxShadow: "0 14px 40px rgba(15,23,42,.055)",
         transition: "transform .2s ease, box-shadow .2s ease",
+        cursor: onClick ? "pointer" : "default",
 
         "&:hover": {
           transform: "translateY(-4px)",
           boxShadow: "0 20px 50px rgba(15,23,42,.09)",
+        },
+
+        "&:focus-visible": {
+          outline: `3px solid ${colors.soft}`,
+          outlineOffset: 2,
         },
 
         "&::after": {
@@ -1233,6 +1265,14 @@ const AdminOverview = ({ user }) => {
     warehouses: [],
   });
 
+  // Qaysi karta ochilgan. Tafsilot faqat bosilganda yuklanadi — bosh sahifa
+  // ochilishida oltita qo'shimcha so'rov ketmasin.
+  const [breakdownType, setBreakdownType] = useState(null);
+
+  // Kartalardagi jami raqamlar. Modal ochilishi bilan bir xil manbadan keladi,
+  // shuning uchun karta va modal tepasidagi son doim mos tushadi.
+  const [kpi, setKpi] = useState({});
+
   const [data, setData] = useState({
     users: 0,
     products: 0,
@@ -1558,6 +1598,23 @@ const AdminOverview = ({ user }) => {
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    getDashboardSummary(appliedRange)
+      .then(({ data }) => {
+        if (!cancelled) setKpi(data.totals || {});
+      })
+      // Ruxsati yo'q bo'limlar shunchaki qaytmaydi — karta ham ko'rinmaydi.
+      .catch(() => {
+        if (!cancelled) setKpi({});
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [appliedRange]);
 
   useEffect(() => {
     const allowed = [
@@ -2067,63 +2124,79 @@ const AdminOverview = ({ user }) => {
         {isSuperAdmin && hasClientAccounting && (
           <KpiCard
             label="Jami savdo"
-            value={money(data.sales)}
-            helper={`${number(data.salesCount)} ta savdo · tanlangan davr`}
+            value={money(kpi.sales?.amount ?? data.sales)}
+            helper={`${number(kpi.sales?.count ?? data.salesCount)} ta savdo · batafsil uchun bosing`}
             icon={TrendUpIcon}
             tone="red"
+            onClick={() => setBreakdownType("sales")}
           />
         )}
 
         {isSuperAdmin && hasClientAccounting && (
           <KpiCard
             label="Mijozlardan tushum"
-            value={money(data.clientIncome)}
+            value={money(kpi.client_income?.amount ?? data.clientIncome)}
             helper={`Mijozlar qarzi: ${money(data.clientDebt)}`}
             icon={CoinsIcon}
             tone="green"
+            onClick={() => setBreakdownType("client_income")}
           />
         )}
 
         {canViewProduction && (
           <KpiCard
             label="Tayyor mahsulot"
-            value={`${number(data.productionQuantity)} par`}
-            helper={`Hisoblangan summa: ${money(data.productionAmount)}`}
+            value={`${number(kpi.production?.quantity ?? data.productionQuantity)} par`}
+            helper={`Hisoblangan ish haqi: ${money(kpi.production?.amount ?? data.productionAmount)}`}
             icon={BoxIcon}
             tone="violet"
+            onClick={() => setBreakdownType("production")}
           />
         )}
 
         {hasSupplierAccounting && (
           <KpiCard
             label="Xomashyo xaridi"
-            value={money(data.purchases)}
-            helper={`${number(data.purchasesCount)} ta xarid · tanlangan davr`}
+            value={money(kpi.purchases?.amount ?? data.purchases)}
+            helper={`${number(kpi.purchases?.suppliers ?? 0)} ta ta’minotchi · batafsil uchun bosing`}
             icon={AlertIcon}
             tone="amber"
+            onClick={() => setBreakdownType("purchases")}
           />
         )}
 
         {canViewInventory && (
           <KpiCard
-            label="Ombordagi jami qoldiq"
-            value={`${number(inventory.summary.total_quantity)} birlik`}
-            helper={`${number(inventory.summary.warehouses_count)} ta faol ombor`}
+            label="Ombordagi qoldiq"
+            // Dona, juft va kilogrammni qo'shib bo'lmaydi — ilgari karta
+            // ularni jamlab "N birlik" deb ma'nosiz son ko'rsatardi.
+            value={unitsLabel(kpi.inventory?.units)}
+            helper={`${number(
+              kpi.inventory?.warehouses ?? inventory.summary.warehouses_count,
+            )} ta faol ombor · batafsil uchun bosing`}
             icon={BoxIcon}
             tone="blue"
+            onClick={() => setBreakdownType("inventory")}
           />
         )}
 
         {canViewFinance && (
           <KpiCard
             label="Kassa balansi"
-            value={money(data.cashBalance)}
-            helper="Faol moliyaviy hisoblar qoldig‘i"
+            value={money(kpi.cash?.balance ?? data.cashBalance)}
+            helper="Kirim-chiqim uchun bosing"
             icon={CoinsIcon}
             tone="green"
+            onClick={() => setBreakdownType("cash")}
           />
         )}
       </Box>
+
+      <KpiBreakdownDialog
+        type={breakdownType}
+        range={appliedRange}
+        onClose={() => setBreakdownType(null)}
+      />
 
       <Box
         sx={{
