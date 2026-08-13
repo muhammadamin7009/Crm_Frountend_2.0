@@ -770,6 +770,13 @@ export default function PremiumLandingPage() {
             </Typography>
             <Typography>al-amin.uz · +998 91 571 70 09</Typography>
           </Box>
+
+          {/* Asoschi imzosi — kitob oxiridagi nashriyot qatoridek. */}
+          <Box className="pl-founder">
+            <span />
+            <Typography>Asoschi Muhammadamin Rustamov</Typography>
+            <span />
+          </Box>
         </Container>
       </Box>
     </Box>
@@ -1108,6 +1115,10 @@ const premiumStyles = `
   .pl-footer-top>div:last-child .MuiButton-root:hover{color:var(--wine);background:var(--wine-soft)}
   .pl-footer-bottom{margin-top:36px;padding-top:21px;display:flex;justify-content:space-between;gap:16px;border-top:1px solid var(--line)}
   .pl-footer-bottom .MuiTypography-root{color:var(--ink-3);font-size:9px;letter-spacing:.02em}
+  .pl-founder{margin-top:26px;display:flex;align-items:center;justify-content:center;gap:14px}
+  .pl-founder>span{width:34px;height:1px;flex:0 0 auto;background:var(--brass);opacity:.55}
+  .pl-founder .MuiTypography-root{color:var(--brass);font-size:9.5px;font-weight:650;letter-spacing:.19em;text-transform:uppercase;white-space:nowrap}
+  @media(max-width:479px){.pl-founder{gap:9px}.pl-founder>span{width:16px}.pl-founder .MuiTypography-root{font-size:8.5px;letter-spacing:.13em}}
   /* ---------------------------- Hover ------------------------------
      Ilgari har bir karta sichqoncha tegsa TO'LIQ QIZILGA aylanardi.
      O'nta karta bir vaqtda yonib turishi baqiriq bo'lib ko'rinardi.

@@ -9,6 +9,7 @@ import api from "../../api/axios";
 import { getCompanyBranding } from "../../api/companyBranding";
 import { getCompanyApplicationStatus } from "../../api/platform";
 import AuthBrandPanel from "../../Components/Auth/AuthBrandPanel";
+import FounderCredit from "../../Components/UI/FounderCredit";
 import AppLogo from "../../images/al-amin-crm-logo.png";
 import { useAuth } from "../../Context/AuthContext";
 import { setSession } from "../../utils/auth";
@@ -860,6 +861,8 @@ const Login = () => {
             >
               © {new Date().getFullYear()} Al-Amin CRM. Barcha huquqlar himoyalangan.
             </Typography>
+
+            <FounderCredit sx={{ mt: 1.6 }} />
           </Box>
         </Box>
       </Paper>

@@ -1,5 +1,6 @@
 import { Box, Button, CircularProgress, InputAdornment, Paper, Typography } from "@mui/material";
 import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
+import FounderCredit from "../../Components/UI/FounderCredit";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -749,6 +750,8 @@ const PlatformLogin = () => {
             >
               © {new Date().getFullYear()} AL AMIN CRM Platform
             </Typography>
+
+            <FounderCredit sx={{ mt: 1.4 }} />
           </Box>
         </Box>
       </Paper>

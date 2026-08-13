@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 
 import { submitCompanyApplication } from "../../api/platform";
 import AuthBrandPanel from "../../Components/Auth/AuthBrandPanel";
+import FounderCredit from "../../Components/UI/FounderCredit";
 import AppLogo from "../../images/al-amin-crm-logo.png";
 
 const fieldSx = {
@@ -852,6 +853,8 @@ const Register = () => {
             >
               © {new Date().getFullYear()} Al-Amin CRM. Barcha huquqlar himoyalangan.
             </Typography>
+
+            <FounderCredit sx={{ mt: 1.4 }} />
           </Box>
         </Box>
       </Paper>
