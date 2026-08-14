@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Box, Button, Container, Paper, Typography } from "@mui/material";
 import { motion, useReducedMotion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 import AuditRequestDialog from "./AuditRequestDialog";
-import alAminErpLogo from "../../images/al-amin-crm-logo.png";
+import alAminErpLogo from "../../images/al-amin-erp-mark.png";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -413,25 +413,10 @@ export default function PremiumLandingPage() {
     setAuditOpen(true);
   };
 
-  useEffect(() => {
-    const previousTitle = document.title;
-    document.title = "Al-Amin CRM — korxonani to‘liq nazorat qilish tizimi";
-    let meta = document.querySelector('meta[name="description"]');
-    const previousDescription = meta?.getAttribute("content") || "";
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.setAttribute("name", "description");
-      document.head.appendChild(meta);
-    }
-    meta.setAttribute(
-      "content",
-      "Savdo, ombor, ishlab chiqarish, xodimlar, qarz va moliyani bitta tizimda boshqaring.",
-    );
-    return () => {
-      document.title = previousTitle;
-      if (meta && previousDescription) meta.setAttribute("content", previousDescription);
-    };
-  }, []);
+  // Sarlavha va tavsif endi bu yerda emas, index.html ichida. Sababi:
+  // izlash tizimi va Telegram/Instagram havolani ochganda JavaScript
+  // ishlamaydi — ular serverdan kelgan HTML ni o'qiydi. Bu yerda qo'yilgan
+  // teg faqat brauzerda paydo bo'lardi, ya'ni kerakli joyga yetmasdi.
 
   const goTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -868,7 +853,9 @@ const premiumStyles = `
   .pl-header{background:color-mix(in srgb,var(--paper) 88%,transparent)}
   .pl-header-container{position:relative;min-height:78px;display:grid!important;grid-template-columns:260px 1fr 300px;align-items:center;gap:22px}
   .pl-brand{display:flex;align-items:center;gap:13px;min-width:0}
-  .pl-brand>img{width:52px;height:52px;object-fit:cover;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-sm)}
+  /* Belgi shaffof PNG — "cover" uni kesib yuborardi. "contain" + ichki
+     bo'shliq bilan u ramka ichida markazda turadi. */
+  .pl-brand>img{width:52px;height:52px;padding:5px;object-fit:contain;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-sm)}
   .pl-brand>div{min-width:0}
   .pl-brand .MuiTypography-root:first-child{font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:-.015em}
   .pl-brand .MuiTypography-root:last-child{margin-top:3px;color:var(--ink-3);font-size:9px;font-weight:600;letter-spacing:.055em;text-transform:uppercase}

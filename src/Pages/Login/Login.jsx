@@ -10,7 +10,7 @@ import { getCompanyBranding } from "../../api/companyBranding";
 import { getCompanyApplicationStatus } from "../../api/platform";
 import AuthBrandPanel from "../../Components/Auth/AuthBrandPanel";
 import FounderCredit from "../../Components/UI/FounderCredit";
-import AppLogo from "../../images/al-amin-crm-logo.png";
+import AppLogo from "../../images/al-amin-erp-mark.png";
 import { useAuth } from "../../Context/AuthContext";
 import { setSession } from "../../utils/auth";
 import {

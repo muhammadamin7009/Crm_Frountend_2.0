@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import AlAminCrmLogo from "../../images/al-amin-crm-logo.png";
+import AlAminErpMark from "../../images/al-amin-erp-mark.png";
 
 const loginHighlights = [
   {
@@ -51,7 +51,7 @@ export default function AuthBrandPanel({
 
   const resolvedHighlights = highlights || (isRegister ? registerHighlights : loginHighlights);
 
-  const displayLogo = companyLogo || AlAminCrmLogo;
+  const displayLogo = companyLogo || AlAminErpMark;
 
   return (
     <Box

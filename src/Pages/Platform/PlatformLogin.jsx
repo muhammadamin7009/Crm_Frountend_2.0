@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { platformLogin } from "../../api/platform";
-import AppLogo from "../../images/al-amin-crm-logo.png";
+import AppLogo from "../../images/al-amin-erp-mark.png";
 
 const PlatformFeature = ({ value, label, description }) => (
   <Box
@@ -354,7 +354,6 @@ const PlatformLogin = () => {
                   maxWidth: 620,
                   mt: 2,
                   color: "#fdf8f2 !important",
-                  fontFamily: 'Georgia, "Iowan Old Style", "Times New Roman", serif',
                   fontSize: {
                     xs: 34,
                     sm: 43,

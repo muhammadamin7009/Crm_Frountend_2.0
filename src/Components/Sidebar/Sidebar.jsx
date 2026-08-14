@@ -12,7 +12,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useAuth } from "../../Context/AuthContext";
-import AppLogo from "../../images/al-amin-crm-logo.png";
+import AppLogo from "../../images/al-amin-erp-mark.png";
 
 import { clearSession } from "../../utils/auth";
 import { hasPermission } from "../../utils/permissions";

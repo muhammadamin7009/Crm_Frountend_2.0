@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { submitCompanyApplication } from "../../api/platform";
 import AuthBrandPanel from "../../Components/Auth/AuthBrandPanel";
 import FounderCredit from "../../Components/UI/FounderCredit";
-import AppLogo from "../../images/al-amin-crm-logo.png";
+import AppLogo from "../../images/al-amin-erp-mark.png";
 
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
