@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Box, Button, MenuItem, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, MenuItem, TextField, Typography } from "@mui/material";
 
 import PremiumDialog from "../../Components/UI/PremiumDialog";
-import PhoneTextField from "../../Components/UI/PhoneTextField";
+import PhoneTextField, { formatPhoneInput } from "../../Components/UI/PhoneTextField";
 import { submitAuditLead } from "../../api/platform";
 
 /**
@@ -37,6 +37,29 @@ const EMPTY = {
   company_name: "",
   industry: "",
   employee_range: "",
+
+  // Asalidish. Odam buni ko'rmaydi va hech qachon to'ldirmaydi.
+  website: "",
+};
+
+/**
+ * Asalidish maydonining uslubi.
+ *
+ * `type="hidden"` ataylab ishlatilmaydi: botlar yashirin maydonlarni
+ * o'tkazib yuborishni bilishadi. CSS bilan ekrandan chiqarib qo'yilgan
+ * oddiy matn maydonini esa ular haqiqiy deb to'ldiradi.
+ *
+ * `display:none` ham emas — ekran o'quvchi uni umuman ko'rmasligi uchun
+ * `aria-hidden` bilan birga chetga surib qo'yiladi.
+ */
+const honeypotSx = {
+  position: "absolute",
+  left: "-9999px",
+  width: 1,
+  height: 1,
+  overflow: "hidden",
+  opacity: 0,
+  pointerEvents: "none",
 };
 
 const fieldSx = {
@@ -53,6 +76,7 @@ const AuditRequestDialog = ({ open, onClose }) => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
+  const [sentMessage, setSentMessage] = useState("");
 
   // Oyna yopilib qayta ochilganda eski javob ko'rinib qolmasin.
   useEffect(() => {
@@ -60,6 +84,7 @@ const AuditRequestDialog = ({ open, onClose }) => {
     setForm(EMPTY);
     setError("");
     setSent(false);
+    setSentMessage("");
     setSaving(false);
   }, [open]);
 
@@ -78,13 +103,18 @@ const AuditRequestDialog = ({ open, onClose }) => {
     setError("");
 
     try {
-      await submitAuditLead({
-        full_name: form.full_name.trim(),
+      const { data } = await submitAuditLead({
+        name: form.full_name.trim(),
         phone: form.phone,
-        company_name: form.company_name.trim() || undefined,
+        company: form.company_name.trim() || undefined,
         industry: form.industry || undefined,
-        employee_range: form.employee_range || undefined,
+        employees: form.employee_range || undefined,
+        website: form.website,
       });
+
+      // Xato bo'lsa forma o'z holicha qoladi — kiritilgan ma'lumot
+      // yo'qolmaydi, chunki `form` tozalanmaydi.
+      setSentMessage(data?.message || "Arizangiz qabul qilindi. 1 ish kuni ichida bog‘lanamiz.");
       setSent(true);
     } catch (requestError) {
       setError(
@@ -102,7 +132,7 @@ const AuditRequestDialog = ({ open, onClose }) => {
         open={open}
         onClose={onClose}
         title="Ariza qabul qilindi"
-        subtitle="Ish kunining ichida qo‘ng‘iroq qilamiz"
+        subtitle="Shu raqamga qo‘ng‘iroq qilamiz"
         maxWidth="xs"
         actions={
           <Button onClick={onClose} sx={primarySx}>
@@ -111,8 +141,7 @@ const AuditRequestDialog = ({ open, onClose }) => {
         }
       >
         <Typography sx={{ color: "var(--aa-text-secondary)", fontSize: 13.5, lineHeight: 1.75 }}>
-          Rahmat. <b>{form.full_name.trim()}</b>, siz qoldirgan raqamga qo‘ng‘iroq qilib, audit
-          uchun qulay vaqtni kelishamiz.
+          Rahmat, <b>{form.full_name.trim()}</b>. {sentMessage}
         </Typography>
 
         <Typography
@@ -123,7 +152,7 @@ const AuditRequestDialog = ({ open, onClose }) => {
             color: "var(--aa-brand-800)",
           }}
         >
-          {form.phone}
+          {formatPhoneInput(form.phone)}
         </Typography>
       </PremiumDialog>
     );
@@ -145,6 +174,9 @@ const AuditRequestDialog = ({ open, onClose }) => {
             type="submit"
             form="audit-request-form"
             disabled={saving || !phoneReady || !nameReady}
+            startIcon={
+              saving ? <CircularProgress size={14} thickness={5} sx={{ color: "inherit" }} /> : null
+            }
             sx={primarySx}
           >
             {saving ? "Yuborilmoqda..." : "Arizani yuborish"}
@@ -167,6 +199,20 @@ const AuditRequestDialog = ({ open, onClose }) => {
           fullWidth
           size="small"
           sx={fieldSx}
+        />
+
+        {/* Asalidish: ekranda ko'rinmaydi, klaviatura bilan ham tushib
+            bo'lmaydi. To'ldirilgan bo'lsa — bu odam emas. */}
+        <TextField
+          label="Website"
+          value={form.website}
+          onChange={set("website")}
+          aria-hidden="true"
+          sx={honeypotSx}
+          slotProps={{
+            htmlInput: { tabIndex: -1, autoComplete: "off" },
+            inputLabel: { shrink: true },
+          }}
         />
 
         <PhoneTextField
