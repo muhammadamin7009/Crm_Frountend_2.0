@@ -852,7 +852,7 @@ const Register = () => {
                 textAlign: "center",
               }}
             >
-              © {new Date().getFullYear()} Al-Amin CRM. Barcha huquqlar himoyalangan.
+              © {new Date().getFullYear()} Al-amin ERP. Barcha huquqlar himoyalangan.
             </Typography>
 
             <FounderCredit sx={{ mt: 1.4 }} />
