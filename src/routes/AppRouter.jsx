@@ -28,6 +28,7 @@ const Expenses = lazy(() => import("../Pages/Expense/Expenses"));
 const Clients = lazy(() => import("../Pages/Client/Clients"));
 const Orders = lazy(() => import("../Pages/Order/Orders"));
 const MyOrderTasks = lazy(() => import("../Pages/Order/MyOrderTasks"));
+const Setup = lazy(() => import("../Pages/Setup/Setup"));
 
 const page = (Component, props = {}) => (
   <Suspense fallback={null}>
@@ -50,6 +51,13 @@ const AppRouter = () => {
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route path="/" element={page(Dashboard)} />
+
+          {/* Boshlang'ich sozlash. Ruxsat talab qilinmaydi — bo'sh korxonada
+              hali hech kimga hech narsa berilmagan bo'ladi. Yaratish tugmasi
+              esa backendda faqat super adminga ochiq. */}
+          <Route element={<ProtectedRoute allowedRoles={["super_admin", "admin"]} />}>
+            <Route path="/setup" element={page(Setup)} />
+          </Route>
           <Route element={<ProtectedRoute allowedPermissions={["products.view"]} />}>
             <Route path="/products" element={page(Products)} />
             <Route path="/products/:id" element={page(Product)} />

@@ -65,6 +65,14 @@ export const menuGroups = [
         allowedRoles: ["super_admin", "admin", "worker"],
         requiredPermission: "permissions.manage",
       },
+      {
+        icon: CheckIcon,
+        label: "Sozlash",
+        path: "/setup",
+        // Ruxsat talab qilinmaydi: bo'sh korxonada hali hech kimga hech narsa
+        // berilmagan bo'ladi va bu sahifa aynan o'shanda kerak.
+        allowedRoles: ["super_admin", "admin"],
+      },
     ],
   },
   {

@@ -41,7 +41,7 @@ const GROUP_LAYOUT = [
   { label: "Omborlar", dynamic: true },
   { label: "Xodimlar", paths: ["/users", "/employees", "/worker-payments"] },
   { label: "Hisob-kitob", paths: ["/material-purchases", "/expenses", "/finance"] },
-  { label: "Tizim", paths: ["/permissions", "/audit-logs"] },
+  { label: "Tizim", paths: ["/setup", "/permissions", "/audit-logs"] },
 ];
 
 // Birinchi kirishda faqat "Asosiy" ochiq turadi: super adminda menyu 19 tagacha

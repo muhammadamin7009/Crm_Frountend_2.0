@@ -34,6 +34,7 @@ import TrendUpIcon from "../../images/ui-icons/trend-up.svg";
 
 import { hasPermission } from "../../utils/permissions";
 import { getDashboardSummary } from "../../api/dashboard";
+import { getSetupStatus } from "../../api/setup";
 import KpiBreakdownDialog from "./KpiBreakdownDialog";
 
 const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
@@ -1274,6 +1275,9 @@ const AdminOverview = ({ user }) => {
   // shuning uchun karta va modal tepasidagi son doim mos tushadi.
   const [kpi, setKpi] = useState({});
 
+  // Poydevor (bo'lim, ombor, kassa) yetishmasa bosh sahifada yo'l ko'rsatiladi.
+  const [setupPending, setSetupPending] = useState(false);
+
   const [data, setData] = useState({
     users: 0,
     products: 0,
@@ -1603,6 +1607,23 @@ const AdminOverview = ({ user }) => {
   useEffect(() => {
     let cancelled = false;
 
+    getSetupStatus()
+      .then(({ data }) => {
+        if (!cancelled) setSetupPending(!data.ready);
+      })
+      // Ruxsati yo'q yoki so'rov yiqilsa — banner ko'rsatilmaydi, xolos.
+      .catch(() => {
+        if (!cancelled) setSetupPending(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
     getDashboardSummary(appliedRange)
       .then(({ data }) => {
         if (!cancelled) setKpi(data.totals || {});
@@ -1823,6 +1844,43 @@ const AdminOverview = ({ user }) => {
   return (
     <Box className="crm-page aa-dashboard-page h-full overflow-auto pr-1">
       <style>{dashboardStyles}</style>
+
+      {/* Bo'sh korxonada bosh sahifa nollar bilan to'la bo'ladi va qayerdan
+          boshlashni bilib bo'lmaydi. Poydevor yetishmasa — shu yerdan yo'l. */}
+      {setupPending && (
+        <Box
+          onClick={() => navigate("/setup")}
+          sx={{
+            mb: 2.5,
+            p: 2,
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 1.5,
+            cursor: "pointer",
+            borderRadius: "16px",
+            border: "1px solid var(--aa-accent)",
+            backgroundColor: "var(--aa-accent-soft)",
+          }}
+        >
+          <Box>
+            <Typography
+              sx={{ fontFamily: "var(--aa-display)", fontSize: 16, color: "var(--aa-text)" }}
+            >
+              Korxona hali sozlanmagan
+            </Typography>
+
+            <Typography sx={{ mt: 0.3, color: "var(--aa-text-secondary)", fontSize: 12 }}>
+              Bo‘lim, ombor va kassa yaratilmaguncha mahsulot ham, savdo ham kiritib bo‘lmaydi.
+            </Typography>
+          </Box>
+
+          <Button variant="contained" sx={setupButtonSx}>
+            Sozlashni boshlash
+          </Button>
+        </Box>
+      )}
 
       <Box
         className="aa-dashboard-hero"
@@ -3178,6 +3236,18 @@ const warehouseIconSx = {
   flexShrink: 0,
   borderRadius: "13px",
   backgroundColor: "rgba(110, 22, 34,.07)",
+};
+
+const setupButtonSx = {
+  minHeight: 42,
+  px: 2.2,
+  color: "#ffffff !important",
+  borderRadius: "11px",
+  fontSize: 11.5,
+  fontWeight: 600,
+  textTransform: "none",
+  backgroundColor: "var(--aa-brand-800)",
+  "&:hover": { backgroundColor: "var(--aa-brand-600)" },
 };
 
 const liveBadgeSx = {
