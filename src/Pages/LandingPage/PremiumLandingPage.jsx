@@ -45,6 +45,69 @@ const modules = [
   ["AT", "Amallar tarixi", "Muhim o‘zgarishlarni kim va qachon qilganini kuzating."],
 ];
 
+/**
+ * Isbot bo'limi kontenti.
+ *
+ * TODO: mijoz logotipi va bitta hikoya kerak. To'ldirilmaguncha ular
+ * ko'rsatilmaydi — bo'sh kulrang kvadratlar yoki o'ylab topilgan raqam
+ * ishonch uyg'otmaydi, aksincha yo'qotadi. Va'dalar esa tizimda haqiqatan
+ * bor imkoniyatlar, shuning uchun ular doim ko'rinadi.
+ *
+ * To'ldirish:
+ *   clients      — [{ name, src }], src: `../../images/clients/...` importi
+ *   companyCount — aniq raqam bo'lsa: "8" kabi satr
+ *   caseStudy    — { company, problem, solution, metric, metricLabel }
+ *                  metric mijozdan olinadi, taxmin qilinmaydi
+ */
+const PROOF = {
+  clients: [],
+  companyCount: null,
+  caseStudy: null,
+};
+
+/** Uch va'da. Har biri tizimda mavjud bo'lgan aniq imkoniyat. */
+const promises = [
+  [
+    "tannarx",
+    "Har bir mahsulotning aniq tannarxi",
+    "Retseptdagi xomashyo va bo‘lim ish haqi qo‘shiladi. Bir dona mahsulot qanchaga tushgani taxmin emas, hisob bilan chiqadi.",
+  ],
+  [
+    "qarz",
+    "Mijoz va ta’minotchi qarzlari — bir ekranda",
+    "Kimdan qancha olish, kimga qancha berish kerakligi bitta ro‘yxatda turadi. Daftar varaqlash shart emas.",
+  ],
+  [
+    "oylik",
+    "Xodimlar oyligi va avanslari avtomatik hisobda",
+    "Bajarilgan ish miqdoriga bo‘lim narxi ko‘paytiriladi, berilgan avans ayiriladi. Oy oxirida qayta sanash yo‘q.",
+  ],
+];
+
+/** Va'da ikonkalari. Sahifadagi boshqa grafikalar kabi — qo'lda chizilgan SVG. */
+const PromiseIcon = ({ name }) => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" className="pl-promise-icon">
+    {name === "tannarx" && (
+      <>
+        <path d="M12.6 3H20v7.4L11 19.4a1.6 1.6 0 0 1-2.3 0l-4.1-4.1a1.6 1.6 0 0 1 0-2.3Z" />
+        <circle cx="16.3" cy="7.7" r="1.5" />
+      </>
+    )}
+    {name === "qarz" && (
+      <>
+        <path d="M3 8h13m0 0-3.2-3.2M16 8l-3.2 3.2" />
+        <path d="M21 16H8m0 0 3.2-3.2M8 16l3.2 3.2" />
+      </>
+    )}
+    {name === "oylik" && (
+      <>
+        <circle cx="12" cy="8" r="3.4" />
+        <path d="M5 20.2c0-3.4 3.1-5.4 7-5.4s7 2 7 5.4" />
+      </>
+    )}
+  </svg>
+);
+
 const businessFlow = [
   ["01", "Xomashyo xaridi"],
   ["02", "Xomashyo ombori"],
@@ -488,7 +551,9 @@ export default function PremiumLandingPage() {
                   ISHLAB CHIQARISH KORXONALARI UCHUN ERP
                 </Typography>
                 <Typography component="h1">
-                  Xomashyodan tayyor mahsulotgacha — <span>har bir so‘m nazoratda.</span>
+                  {/* Tire oldidagi bo'shliq uzilmas: aks holda u yangi
+                      qatorni "— har bir so'm" deb boshlab qo'yadi. */}
+                  Xomashyodan tayyor mahsulotgacha{" "}— <span>har bir so‘m nazoratda.</span>
                 </Typography>
                 <Typography component="p">
                   Savdo, ombor, ishlab chiqarish, xodimlar va moliyani tarqoq daftarlar bilan emas,
@@ -529,6 +594,72 @@ export default function PremiumLandingPage() {
                 </Box>
               ))}
             </Box>
+          </Container>
+        </Box>
+
+        <Box component="section" className="pl-section pl-white pl-proof">
+          <Container maxWidth="xl">
+            <SectionTitle
+              eyebrow="AMALDA NIMA O‘ZGARADI"
+              title="Uch narsa birinchi oydayoq aniq bo‘ladi."
+              text="Bular tizimning barcha imkoniyati emas — kundalik ishda birinchi bo‘lib seziladigan uchtasi."
+            />
+
+            {(PROOF.companyCount || PROOF.clients.length > 0) && (
+              <Reveal className="pl-proof-clients">
+                <Typography>
+                  {PROOF.companyCount
+                    ? `${PROOF.companyCount} ta korxonada ishlamoqda`
+                    : "Ishonib topshirgan korxonalar"}
+                </Typography>
+
+                {PROOF.clients.length > 0 && (
+                  <Box>
+                    {PROOF.clients.map((client) => (
+                      <Box component="img" key={client.name} src={client.src} alt={client.name} />
+                    ))}
+                  </Box>
+                )}
+              </Reveal>
+            )}
+
+            <Box className="pl-promise-grid">
+              {promises.map(([icon, title, text], index) => (
+                <Reveal className="pl-promise-card" key={title} delay={index * 0.06}>
+                  <span>
+                    <PromiseIcon name={icon} />
+                  </span>
+                  <Typography component="h3">{title}</Typography>
+                  <Typography component="p">{text}</Typography>
+                </Reveal>
+              ))}
+            </Box>
+
+            {PROOF.caseStudy && (
+              <Reveal className="pl-case">
+                <Box className="pl-case-metric">
+                  <Typography>{PROOF.caseStudy.metric}</Typography>
+                  <Typography>{PROOF.caseStudy.metricLabel}</Typography>
+                </Box>
+
+                <Box className="pl-case-body">
+                  <Typography className="pl-case-company">{PROOF.caseStudy.company}</Typography>
+
+                  <Box className="pl-case-steps">
+                    {[
+                      ["Muammo", PROOF.caseStudy.problem],
+                      ["Yechim", PROOF.caseStudy.solution],
+                      ["Natija", PROOF.caseStudy.result],
+                    ].map(([label, text]) => (
+                      <Box key={label}>
+                        <Typography>{label}</Typography>
+                        <Typography>{text}</Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+              </Reveal>
+            )}
           </Container>
         </Box>
 
@@ -896,7 +1027,7 @@ const premiumStyles = `
   }
   .pl-hero-copy .pl-eyebrow:before{width:38px;height:1.5px}
 
-  .pl-hero-copy h1{max-width:720px;margin:22px 0 0;font-family:var(--display);font-size:clamp(44px,5vw,78px);line-height:1.02;letter-spacing:-.032em;font-weight:400}
+  .pl-hero-copy h1{max-width:720px;margin:22px 0 0;font-family:var(--display);font-size:clamp(44px,5vw,78px);line-height:1.02;letter-spacing:-.032em;font-weight:400;text-wrap:balance}
   .pl-hero-copy h1 span{color:var(--wine);font-style:italic}
   .pl-hero-copy>p{max-width:620px;margin:26px 0 0;color:var(--ink-2);font-size:clamp(15px,1.2vw,17.5px);line-height:1.78;font-weight:400}
   .pl-hero-actions{display:flex;gap:11px;margin-top:34px}
@@ -955,6 +1086,35 @@ const premiumStyles = `
   .pl-signal-strip .MuiContainer-root>div>div:first-child{border-left:1px solid var(--line)}
   .pl-signal-strip .MuiTypography-root:first-child{font-family:var(--display);font-size:24px;font-weight:400;letter-spacing:-.02em}
   .pl-signal-strip .MuiTypography-root:last-child{margin-top:6px;color:var(--ink-3);font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+  /* ---------------------------- Isbot -------------------------------
+     Hero'dan keyingi birinchi bo'lim. Mijoz logotipi va hikoya hali yo'q,
+     shuning uchun ular JSX'da shartli — bo'sh kulrang kvadrat qo'yishdan
+     ko'ra ko'rsatmaslik yaxshiroq. Va'da kartalari doim ko'rinadi.
+     ------------------------------------------------------------------ */
+  .pl-proof-clients{margin-top:42px;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center}
+  .pl-proof-clients>.MuiTypography-root{color:var(--ink-3);font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+  .pl-proof-clients>div{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:30px}
+  .pl-proof-clients img{height:34px;object-fit:contain;filter:grayscale(1);opacity:.5;transition:filter .3s ease,opacity .3s ease}
+  .pl-proof-clients img:hover{filter:none;opacity:1}
+
+  .pl-promise-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:48px}
+  .pl-promise-card{min-height:210px;padding:27px;border:1px solid var(--line);border-radius:16px;background:var(--paper);box-shadow:var(--shadow-sm)}
+  .pl-promise-card>span{width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--brass-soft);border-radius:13px;color:var(--brass);background:var(--brass-soft)}
+  .pl-promise-icon{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .pl-promise-card h3{margin-top:26px;font-family:var(--display);font-size:19px;line-height:1.3;font-weight:400;letter-spacing:-.015em}
+  .pl-promise-card p{margin-top:11px;color:var(--ink-3);font-size:12px;line-height:1.68}
+
+  /* Hikoya paneli. Chap tomonda bitta yirik raqam — o'qiydigan odam
+     avval shuni ko'radi, matnni keyin. */
+  .pl-case{display:grid;grid-template-columns:220px 1fr;gap:34px;align-items:center;margin-top:13px;padding:30px;border:1px solid color-mix(in srgb,var(--brass) 36%,transparent);border-radius:18px;background:var(--brass-soft)}
+  .pl-case-metric{text-align:center}
+  .pl-case-metric .MuiTypography-root:first-child{color:var(--wine);font-family:var(--display);font-size:clamp(42px,4.6vw,62px);line-height:1;letter-spacing:-.03em}
+  .pl-case-metric .MuiTypography-root:last-child{margin-top:9px;color:var(--ink-3);font-size:10.5px;font-weight:600;line-height:1.5}
+  .pl-case-company{color:var(--ink-2);font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
+  .pl-case-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:17px}
+  .pl-case-steps .MuiTypography-root:first-child{color:var(--brass);font-family:var(--display);font-size:13px}
+  .pl-case-steps .MuiTypography-root:last-child{margin-top:7px;color:var(--ink-2);font-size:11.5px;line-height:1.65}
+
   /* ------------------------- Bo'lim sarlavhasi ---------------------- */
   .pl-section-title{max-width:780px}
   .pl-section-title.center{margin:0 auto;text-align:center}
@@ -1138,23 +1298,25 @@ const premiumStyles = `
      rangga o'tadi va raqam jonlanadi. Vazminlik qimmat ko'rsatadi.
      ------------------------------------------------------------------ */
   .pl-pain-card,.pl-module-card,.pl-flow-step,.pl-kpi,.pl-production-card,.pl-alert-card,
-  .pl-full-metrics>div,.pl-benefit-card,.pl-permission-card,.pl-security-card{
+  .pl-full-metrics>div,.pl-benefit-card,.pl-permission-card,.pl-security-card,.pl-promise-card{
     transition:translate .3s cubic-bezier(.22,1,.36,1),border-color .3s ease,background-color .3s ease,box-shadow .3s ease
   }
   .pl-pain-card>.MuiTypography-root:first-child,.pl-module-card>div:first-child,
   .pl-benefit-card>span,.pl-security-card>span,.pl-permission-role>span,
-  .pl-flow-step>.MuiTypography-root:first-child{
+  .pl-promise-card>span,.pl-flow-step>.MuiTypography-root:first-child{
     transition:color .3s ease,background-color .3s ease,border-color .3s ease
   }
 
   @media(hover:hover) and (pointer:fine){
     .pl-pain-card:hover,.pl-module-card:hover,.pl-full-metrics>div:hover,
-    .pl-benefit-card:hover,.pl-security-card:hover,.pl-permission-card:hover{
+    .pl-benefit-card:hover,.pl-security-card:hover,.pl-permission-card:hover,
+    .pl-promise-card:hover{
       translate:0 -5px;border-color:var(--brass);box-shadow:var(--shadow-md)
     }
     .pl-pain-card:hover>.MuiTypography-root:first-child,
     .pl-security-card:hover>span{color:var(--wine)}
     .pl-module-card:hover>div:first-child,.pl-benefit-card:hover>span,
+    .pl-promise-card:hover>span,
     .pl-permission-card:hover .pl-permission-role>span{
       color:var(--wine);border-color:var(--brass);background:var(--brass-soft)
     }
@@ -1166,7 +1328,7 @@ const premiumStyles = `
     }
   }
   @media(max-width:1199px){.pl-header-container{grid-template-columns:230px 1fr 260px}.pl-hero-grid{grid-template-columns:1fr;gap:54px}.pl-hero-copy{max-width:840px}.pl-hero-dashboard{max-width:850px;transform:none}.pl-pain-grid,.pl-module-grid,.pl-security-grid{grid-template-columns:repeat(2,1fr)}.pl-module-card:last-child{grid-column:span 1}.pl-flow{grid-template-columns:repeat(4,1fr)}.pl-flow-step>span{display:none}.pl-benefit-layout,.pl-permission-layout{grid-template-columns:1fr;gap:42px}.pl-device-layout-section{gap:46px}.pl-full-metrics{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:899px){.pl-header-container{min-height:68px;grid-template-columns:1fr auto}.pl-nav,.pl-header-actions{display:none}.pl-menu-button{width:43px!important;min-width:43px!important;height:43px!important;padding:0!important;display:grid!important;place-content:center;gap:4px;border:1px solid var(--line-2)!important;border-radius:12px!important}.pl-menu-button span{width:17px;height:2px;border-radius:3px;background:var(--wine)}.pl-mobile-menu{position:absolute!important;left:16px;right:16px;top:60px;padding:10px!important;display:grid!important;gap:3px;border:1px solid var(--line)!important;border-radius:16px!important;background:var(--paper)!important;box-shadow:var(--shadow-md)!important}.pl-mobile-menu .MuiButton-root{justify-content:flex-start;color:var(--ink-2);font-size:12px;font-weight:650}.pl-mobile-menu .pl-button.primary{justify-content:center}.pl-section{padding:74px 0}.pl-signal-strip .MuiContainer-root>div{grid-template-columns:repeat(2,1fr)}.pl-signal-strip .MuiContainer-root>div>div:nth-child(3){border-left:1px solid var(--line)}.pl-flow{grid-template-columns:repeat(2,1fr)}.pl-full-content{grid-template-columns:1fr}.pl-device-layout-section{grid-template-columns:1fr}.pl-devices{max-width:700px}.pl-device-layout-section>.MuiBox-root:last-child{order:-1}.pl-final-card{grid-template-columns:1fr;gap:34px}.pl-footer-top{grid-template-columns:1fr;gap:24px}.pl-footer-top>div:last-child{flex-wrap:wrap}}
+  @media(max-width:899px){.pl-header-container{min-height:68px;grid-template-columns:1fr auto}.pl-nav,.pl-header-actions{display:none}.pl-menu-button{width:43px!important;min-width:43px!important;height:43px!important;padding:0!important;display:grid!important;place-content:center;gap:4px;border:1px solid var(--line-2)!important;border-radius:12px!important}.pl-menu-button span{width:17px;height:2px;border-radius:3px;background:var(--wine)}.pl-mobile-menu{position:absolute!important;left:16px;right:16px;top:60px;padding:10px!important;display:grid!important;gap:3px;border:1px solid var(--line)!important;border-radius:16px!important;background:var(--paper)!important;box-shadow:var(--shadow-md)!important}.pl-mobile-menu .MuiButton-root{justify-content:flex-start;color:var(--ink-2);font-size:12px;font-weight:650}.pl-mobile-menu .pl-button.primary{justify-content:center}.pl-section{padding:74px 0}.pl-signal-strip .MuiContainer-root>div{grid-template-columns:repeat(2,1fr)}.pl-signal-strip .MuiContainer-root>div>div:nth-child(3){border-left:1px solid var(--line)}.pl-flow{grid-template-columns:repeat(2,1fr)}.pl-promise-grid{grid-template-columns:1fr;margin-top:34px}.pl-promise-card{min-height:0}.pl-case{grid-template-columns:1fr;gap:24px;text-align:center}.pl-case-steps{grid-template-columns:1fr;gap:15px;text-align:left}.pl-full-content{grid-template-columns:1fr}.pl-device-layout-section{grid-template-columns:1fr}.pl-devices{max-width:700px}.pl-device-layout-section>.MuiBox-root:last-child{order:-1}.pl-final-card{grid-template-columns:1fr;gap:34px}.pl-footer-top{grid-template-columns:1fr;gap:24px}.pl-footer-top>div:last-child{flex-wrap:wrap}}
   @media(max-width:599px){.pl-header-container{padding-left:14px!important;padding-right:14px!important}.pl-brand.compact>img{width:38px;height:38px}.pl-brand .MuiTypography-root:first-child{font-size:14px}.pl-brand .MuiTypography-root:last-child{font-size:8px}.pl-hero{padding:48px 0 72px}.pl-hero-copy h1{font-size:clamp(38px,12vw,53px);line-height:1.01}.pl-hero-copy>p{font-size:14px;line-height:1.66}.pl-hero-actions{display:grid}.pl-button.large{width:100%}.pl-trust-line{align-items:flex-start;flex-wrap:wrap}.pl-trust-line>i{display:none}.pl-trust-line .MuiTypography-root{width:calc(100% - 20px)}.pl-hero-dashboard{border-radius:18px;box-shadow:var(--shadow-md),0 0 0 5px color-mix(in srgb,var(--paper) 70%,transparent)}.pl-dashboard-windowbar{height:49px;padding:0 12px}.pl-dashboard-kpis{grid-template-columns:repeat(2,1fr)}.pl-kpi:last-child{grid-column:span 2}.pl-dashboard-grid{grid-template-columns:1fr}.pl-chart-card svg{height:125px}.pl-dashboard-side{grid-template-columns:1fr 1fr}.pl-dashboard-body{padding:10px}.pl-signal-strip .MuiContainer-root{padding:0!important}.pl-signal-strip .MuiContainer-root>div>div{padding:18px 15px}.pl-signal-strip .MuiTypography-root:first-child{font-size:16px}.pl-section-title h2{font-size:clamp(31px,10vw,43px)}.pl-section-title p{font-size:13.5px}.pl-pain-grid,.pl-module-grid,.pl-security-grid{grid-template-columns:1fr;margin-top:32px}.pl-pain-card{min-height:205px}.pl-module-card{min-height:190px}.pl-flow{grid-template-columns:1fr;margin-top:34px}.pl-flow-step{min-height:95px;display:grid;grid-template-columns:42px 1fr;align-items:center}.pl-flow-step>.MuiTypography-root:nth-child(2){margin-top:0}.pl-flow-note{align-items:flex-start}.pl-full-dashboard{padding:7px;border-radius:18px}.pl-full-top{padding:0 11px}.pl-full-metrics{grid-template-columns:1fr}.pl-full-metrics>div{padding:16px}.pl-full-metrics .MuiTypography-root:nth-child(2){font-size:16px}.pl-full-chart,.pl-activity{padding:15px}.pl-svg-chart{height:140px}.pl-benefit-grid,.pl-permission-grid{grid-template-columns:1fr}.pl-benefit-card{min-height:125px}.pl-permission-panel{padding:8px}.pl-devices{min-height:375px}.pl-desktop-device{right:35px;height:285px}.pl-device-layout{grid-template-columns:48px 1fr}.pl-device-kpis i{height:48px}.pl-device-chart{height:145px}.pl-phone-device{width:142px;height:304px;border-radius:27px}.pl-phone-kpis i{height:45px}.pl-phone-chart{height:102px}.pl-final-section{padding:10px 0 52px}.pl-final-card{padding:30px 22px;border-radius:20px}.pl-final-card h2{font-size:34px}.pl-footer-bottom{display:grid;gap:8px}.pl-footer-top>div:last-child{display:grid;grid-template-columns:repeat(3,1fr)}}
   @media(max-width:359px){.pl-hero-copy h1{font-size:36px}.pl-dashboard-side{grid-template-columns:1fr}.pl-signal-strip .MuiTypography-root:last-child{font-size:8px}.pl-full-user>div{display:none}.pl-phone-device{right:-5px}.pl-footer-top>div:last-child{grid-template-columns:1fr}}
   @media(prefers-reduced-motion:reduce){.premium-landing *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
