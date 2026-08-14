@@ -80,7 +80,9 @@ export const menuGroups = [
     items: [
       {
         icon: CheckIcon,
-        label: "Zakaz ishlarim",
+        // Endi bu yerda zakaz ham, partiya ham bor — "Zakaz ishlarim" nomi
+        // yarmini yashirib qo'yardi.
+        label: "Mening ishlarim",
         path: "/my-order-tasks",
         allowedRoles: ["worker"],
       },

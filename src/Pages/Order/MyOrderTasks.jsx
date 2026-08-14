@@ -108,7 +108,7 @@ const MyOrderTasks = () => {
       <PageHeader
         eyebrow={department?.name || "Ishlab chiqarish"}
         title="Bo'lim navbati"
-        description="Shoshilinch va muddati yaqin zakazlar navbat boshida turadi. Ishni oling va keyingi bo'limga uzating."
+        description="Zakaz ham, omborga ishlab chiqariladigan partiya ham shu yerda. Shoshilinchlari navbat boshida. Ishni oling, bajarganingizni yozing — ish hisoboti o'zi tushadi."
       />
       <Paper
         className="crm-sticky-filters"
@@ -124,7 +124,7 @@ const MyOrderTasks = () => {
       >
         <TextField
           size="small"
-          label="Zakaz, mahsulot yoki bo'lim"
+          label="Zakaz, partiya yoki mahsulot"
           value={filters.q}
           onChange={(event) => {
             setFilters((current) => ({ ...current, q: event.target.value }));
@@ -183,11 +183,38 @@ const MyOrderTasks = () => {
                   }}
                 >
                   <Box>
-                    <Typography
-                      sx={{ fontSize: 12, color: "var(--aa-brand-text)", fontWeight: 700 }}
-                    >
-                      {task.order_number}
-                    </Typography>
+                    {/* Ish ikki manbadan keladi. Ishchi qaysi biri ekanini
+                        darrov ko'rishi kerak: partiya omborga ishlanadi,
+                        zakaz esa aniq mijozga ketadi. */}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.8 }}>
+                      <Typography
+                        sx={{ fontSize: 12, color: "var(--aa-brand-text)", fontWeight: 700 }}
+                      >
+                        {task.source_label || task.order_number}
+                      </Typography>
+
+                      <Chip
+                        size="small"
+                        label={task.source_type === "batch" ? "Partiya" : "Zakaz"}
+                        sx={{
+                          height: 20,
+                          fontSize: 9.5,
+                          fontWeight: 700,
+                          letterSpacing: ".04em",
+                          // Qorong'i mavzuda ham o'qiladigan juftliklar:
+                          // --aa-brand-100 va --aa-accent-soft ikkalasida
+                          // ham fon, matn ranglari esa ikkalasida ham to'q.
+                          color:
+                            task.source_type === "batch"
+                              ? "var(--aa-accent-strong)"
+                              : "var(--aa-brand-text)",
+                          bgcolor:
+                            task.source_type === "batch"
+                              ? "var(--aa-accent-soft)"
+                              : "var(--aa-brand-100)",
+                        }}
+                      />
+                    </Box>
                     {task.priority === "urgent" && (
                       <Chip
                         size="small"
