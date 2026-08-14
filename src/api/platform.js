@@ -15,6 +15,7 @@ export const submitCompanyApplication = (data) => platformApi.post("/application
 /** Landing sahifadagi "Bepul jarayon auditi" arizasi. Token talab qilmaydi. */
 export const submitAuditLead = (data) => platformApi.post("/leads", data);
 export const getAuditLeads = (params) => platformApi.get("/leads", { params });
+export const updateAuditLead = (id, data) => platformApi.patch(`/leads/${id}`, data);
 export const getCompanyApplicationStatus = (slug) =>
   platformApi.get(`/applications/status/${encodeURIComponent(slug)}`);
 export const getCompanyApplications = (params) => platformApi.get("/applications", { params });

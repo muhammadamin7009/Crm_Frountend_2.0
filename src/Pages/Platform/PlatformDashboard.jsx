@@ -29,12 +29,14 @@ import {
   createCompany,
   createSubscriptionPayment,
   deleteCompany,
+  getAuditLeads,
   getCompanyApplications,
   getCompanies,
   getCompanyManagement,
   getSubscriptionPlans,
   resetCompanyAuthenticator,
   rejectCompanyApplication,
+  updateAuditLead,
   updateCompany,
   updateCompanyManagement,
 } from "../../api/platform";
@@ -360,6 +362,13 @@ const PlatformDashboard = () => {
 
   const [applicationActionId, setApplicationActionId] = useState(null);
 
+  // Landing sahifasidan kelgan audit arizalari.
+  const [leads, setLeads] = useState([]);
+
+  const [leadsOpen, setLeadsOpen] = useState(false);
+
+  const [leadActionId, setLeadActionId] = useState(null);
+
   const [loading, setLoading] = useState(true);
 
   const [dialog, setDialog] = useState("");
@@ -432,10 +441,11 @@ const PlatformDashboard = () => {
     setLoading(true);
 
     try {
-      const [companiesRes, plansRes, applicationsRes] = await Promise.all([
+      const [companiesRes, plansRes, applicationsRes, leadsRes] = await Promise.all([
         getCompanies(),
         getSubscriptionPlans(),
         getCompanyApplications(),
+        getAuditLeads(),
       ]);
 
       const companiesData = companiesRes?.data || companiesRes || {};
@@ -449,6 +459,8 @@ const PlatformDashboard = () => {
       setPlans(plansData.subscription_plans || []);
 
       setApplications(applicationsData.applications || []);
+
+      setLeads((leadsRes?.data || leadsRes || {}).audit_leads || []);
     } catch (error) {
       if (error?.response?.status === 401) {
         localStorage.removeItem("platform_token");
@@ -473,6 +485,28 @@ const PlatformDashboard = () => {
   const pendingApplications = applications.filter(
     (application) => application.status === "pending",
   );
+
+  const newLeads = leads.filter((lead) => lead.status === "new");
+
+  const changeLeadStatus = async (lead, status) => {
+    if (leadActionId) return;
+
+    setLeadActionId(lead.id);
+
+    try {
+      await updateAuditLead(lead.id, { status });
+
+      // Ro'yxatni joyida yangilaymiz — butun sahifani qayta yuklash
+      // ochiq oynani yopib yuborardi.
+      setLeads((previous) =>
+        previous.map((item) => (item.id === lead.id ? { ...item, status } : item)),
+      );
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Holatni o‘zgartirib bo‘lmadi.");
+    } finally {
+      setLeadActionId(null);
+    }
+  };
 
   const reviewApplication = async (application, decision, adminPassword = "") => {
     if (applicationActionId) return;
@@ -979,6 +1013,34 @@ const PlatformDashboard = () => {
                       }}
                     >
                       {pendingApplications.length}
+                    </Box>
+                  )}
+                </Button>
+
+                <Button
+                  onClick={() => setLeadsOpen(true)}
+                  sx={{ ...heroSecondaryButtonSx, position: "relative" }}
+                >
+                  📞 Lidlar
+                  {newLeads.length > 0 && (
+                    <Box
+                      component="span"
+                      sx={{
+                        minWidth: 20,
+                        height: 20,
+                        ml: 0.8,
+                        px: 0.6,
+                        display: "inline-grid",
+                        placeItems: "center",
+                        borderRadius: 99,
+                        color: "#ffffff",
+                        fontSize: 9,
+                        fontWeight: 700,
+                        backgroundColor: "#8c1d2b",
+                        boxShadow: "0 0 0 3px rgba(140, 29, 43,.16)",
+                      }}
+                    >
+                      {newLeads.length}
                     </Box>
                   )}
                 </Button>
@@ -1717,9 +1779,192 @@ const PlatformDashboard = () => {
         }}
         onReview={reviewApplication}
       />
+
+      <LeadInbox
+        open={leadsOpen}
+        leads={leads}
+        actionId={leadActionId}
+        onClose={() => {
+          if (!leadActionId) setLeadsOpen(false);
+        }}
+        onChangeStatus={changeLeadStatus}
+      />
     </Box>
   );
 };
+
+/**
+ * Landing sahifasidan kelgan audit arizalari.
+ *
+ * Bu yerda bitta ish qilinadi: qo'ng'iroq qilish va natijani belgilash.
+ * Shuning uchun telefon eng ko'zga tashlanadigan element va u bosiladigan
+ * havola — Telegramdagi xabar bilan bir xil mantiq.
+ */
+const LEAD_STATUS_LABELS = {
+  new: "Yangi",
+  contacted: "Bog‘lanildi",
+  qualified: "Mos keladi",
+  lost: "Yo‘q",
+};
+
+const LEAD_STATUS_COLORS = {
+  new: "warning",
+  contacted: "info",
+  qualified: "success",
+  lost: "default",
+};
+
+const LEAD_INDUSTRY_LABELS = {
+  food: "Oziq-ovqat",
+  furniture: "Mebel",
+  sewing: "Tikuvchilik",
+  construction: "Qurilish materiallari",
+  other: "Boshqa",
+};
+
+const LEAD_EMPLOYEE_LABELS = {
+  lt10: "10 gacha",
+  "10_50": "10–50",
+  "50_200": "50–200",
+  gt200: "200+",
+};
+
+const leadPhoneHref = (phone) => `tel:${String(phone || "").replace(/[^\d+]/g, "")}`;
+
+const leadPhoneText = (phone) => {
+  const digits = String(phone || "").replace(/\D/g, "");
+  if (digits.length !== 12) return phone || "-";
+
+  const n = digits.slice(3);
+  return `+998 ${n.slice(0, 2)} ${n.slice(2, 5)} ${n.slice(5, 7)} ${n.slice(7)}`;
+};
+
+const LeadInbox = ({ open, leads, actionId, onClose, onChangeStatus }) => (
+  <PremiumDialog
+    open={open}
+    onClose={onClose}
+    title="Audit arizalari"
+    subtitle="Landing sahifasidan kelgan murojaatlar"
+    maxWidth="md"
+    actions={
+      <Button onClick={onClose} disabled={Boolean(actionId)} sx={dialogCancelSx}>
+        Yopish
+      </Button>
+    }
+  >
+    <Stack spacing={1.5}>
+      {leads.length ? (
+        leads.map((lead) => (
+          <Box
+            key={lead.id}
+            sx={{
+              p: { xs: 1.5, sm: 2 },
+              borderRadius: "18px",
+              border: "1px solid var(--aa-border)",
+              backgroundColor: "var(--aa-surface-muted)",
+              opacity: actionId === lead.id ? 0.6 : 1,
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 1,
+              }}
+            >
+              <Box sx={{ minWidth: 0 }}>
+                <Typography
+                  sx={{
+                    color: "var(--aa-text)",
+                    fontFamily: "var(--aa-display)",
+                    fontSize: 17,
+                  }}
+                >
+                  {lead.full_name}
+                </Typography>
+
+                <Typography sx={{ mt: 0.2, color: "var(--aa-text-tertiary)", fontSize: 10.5 }}>
+                  {date(lead.created_at)}
+                  {lead.company_name ? ` · ${lead.company_name}` : ""}
+                </Typography>
+              </Box>
+
+              <Chip
+                size="small"
+                label={LEAD_STATUS_LABELS[lead.status] || lead.status}
+                color={LEAD_STATUS_COLORS[lead.status] || "default"}
+                sx={{ fontSize: 10, fontWeight: 700 }}
+              />
+            </Box>
+
+            {/* Telefon — kartadagi eng muhim narsa. Bir bosishda qo'ng'iroq. */}
+            <Button
+              component="a"
+              href={leadPhoneHref(lead.phone)}
+              sx={{
+                mt: 1.2,
+                px: 1.4,
+                minHeight: 40,
+                borderRadius: "12px",
+                border: "1px solid var(--aa-accent)",
+                color: "var(--aa-accent-strong) !important",
+                backgroundColor: "var(--aa-accent-soft)",
+                fontSize: 14,
+                fontWeight: 700,
+                letterSpacing: ".02em",
+                textTransform: "none",
+              }}
+            >
+              📞 {leadPhoneText(lead.phone)}
+            </Button>
+
+            {(lead.industry || lead.employee_range) && (
+              <Typography sx={{ mt: 1, color: "var(--aa-text-secondary)", fontSize: 11.5 }}>
+                {[
+                  LEAD_INDUSTRY_LABELS[lead.industry] || lead.industry,
+                  LEAD_EMPLOYEE_LABELS[lead.employee_range] || lead.employee_range,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </Typography>
+            )}
+
+            <Stack direction="row" spacing={0.8} sx={{ mt: 1.4, flexWrap: "wrap", gap: 0.8 }}>
+              {Object.entries(LEAD_STATUS_LABELS)
+                .filter(([value]) => value !== lead.status)
+                .map(([value, label]) => (
+                  <Button
+                    key={value}
+                    size="small"
+                    disabled={Boolean(actionId)}
+                    onClick={() => onChangeStatus(lead, value)}
+                    sx={{
+                      minHeight: 32,
+                      px: 1.4,
+                      borderRadius: "10px",
+                      border: "1px solid var(--aa-border-strong)",
+                      color: "var(--aa-text-secondary)",
+                      fontSize: 10.5,
+                      fontWeight: 600,
+                      textTransform: "none",
+                    }}
+                  >
+                    {label}
+                  </Button>
+                ))}
+            </Stack>
+          </Box>
+        ))
+      ) : (
+        <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 12.5 }}>
+          Hozircha ariza yo‘q. Landing sahifasidagi forma to‘ldirilganda shu yerda paydo bo‘ladi.
+        </Typography>
+      )}
+    </Stack>
+  </PremiumDialog>
+);
 
 const ApplicationInbox = ({ open, applications, actionId, onClose, onReview }) => {
   const [adminPasswords, setAdminPasswords] = useState({});
