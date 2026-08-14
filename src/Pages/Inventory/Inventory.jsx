@@ -1410,7 +1410,7 @@ const Inventory = () => {
                   textTransform: "uppercase",
                 }}
               >
-                Al Amin CRM • ombor nazorati
+                Al-amin ERP • ombor nazorati
               </Typography>
             </Box>
 

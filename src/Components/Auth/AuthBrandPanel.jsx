@@ -39,7 +39,7 @@ const registerHighlights = [
 
 export default function AuthBrandPanel({
   variant = "login",
-  companyName = "Al-Amin CRM",
+  companyName = "Al-amin ERP",
   companyLogo,
   eyebrow = "Korxonani boshqarish tizimi",
   title = "Korxonangizni raqamli boshqaruv bilan",

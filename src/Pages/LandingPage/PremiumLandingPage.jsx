@@ -3,7 +3,7 @@ import { Box, Button, Container, Paper, Typography } from "@mui/material";
 import { motion, useReducedMotion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-import alAminCrmLogo from "../../images/al-amin-crm-logo.png";
+import alAminErpLogo from "../../images/al-amin-crm-logo.png";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -96,9 +96,9 @@ function Reveal({ children, className = "", delay = 0, component = "div" }) {
 function Brand({ compact = false }) {
   return (
     <Box className={`pl-brand ${compact ? "compact" : ""}`}>
-      <Box component="img" src={alAminCrmLogo} alt="Al-Amin CRM logosi" />
+      <Box component="img" src={alAminErpLogo} alt="Al-amin ERP logotipi" />
       <Box>
-        <Typography>AL-AMIN CRM</Typography>
+        <Typography>AL-AMIN ERP</Typography>
         <Typography>Korxonani boshqarish tizimi</Typography>
       </Box>
     </Box>
@@ -342,7 +342,7 @@ function MiniChart({ viewBox = "0 0 240 110", line, area }) {
 
 function DevicesVisual() {
   return (
-    <Box className="pl-devices" aria-label="Al-Amin CRM desktop va mobil ko‘rinishi">
+    <Box className="pl-devices" aria-label="Al-amin ERP desktop va mobil ko‘rinishi">
       <Box className="pl-desktop-device">
         <Box className="pl-device-bar">
           <i />
@@ -490,9 +490,11 @@ export default function PremiumLandingPage() {
           <Container maxWidth="xl">
             <Box className="pl-hero-grid">
               <Reveal className="pl-hero-copy">
-                <Typography className="pl-eyebrow">ISHLAB CHIQARISH VA BIZNES NAZORATI</Typography>
+                <Typography className="pl-eyebrow">
+                  ISHLAB CHIQARISH KORXONALARI UCHUN ERP
+                </Typography>
                 <Typography component="h1">
-                  Korxonangizdagi tartib, nazorat va hisob-kitob — <span>bitta tizimda.</span>
+                  Xomashyodan tayyor mahsulotgacha — <span>har bir so‘m nazoratda.</span>
                 </Typography>
                 <Typography component="p">
                   Savdo, ombor, ishlab chiqarish, xodimlar va moliyani tarqoq daftarlar bilan emas,
@@ -541,7 +543,7 @@ export default function PremiumLandingPage() {
             <SectionTitle
               eyebrow="TANISH MUAMMOLAR"
               title="Korxonani raqam bilan emas, xotira bilan boshqaryapsizmi?"
-              text="Kichik chalkashliklar yig‘ilib, pul va vaqt yo‘qotishiga aylanadi. Al-Amin CRM shu nuqtalarni bitta nazorat tizimiga bog‘laydi."
+              text="Kichik chalkashliklar yig‘ilib, pul va vaqt yo‘qotishiga aylanadi. Al-amin ERP shu nuqtalarni bitta nazorat tizimiga bog‘laydi."
             />
             <Box className="pl-pain-grid">
               {painPoints.map(([no, title, text], index) => (
@@ -680,7 +682,7 @@ export default function PremiumLandingPage() {
                   light
                   eyebrow="TELEFON VA KOMPYUTERDA"
                   title="Ofisda kompyuterdan, tashqarida telefondan nazorat qiling."
-                  text="Al-Amin CRM ekran o‘lchamiga moslashadi. Rahbar, admin va ishchi o‘ziga kerakli jarayonni ortiqcha murakkabliksiz ko‘radi."
+                  text="Al-amin ERP ekran o‘lchamiga moslashadi. Rahbar, admin va ishchi o‘ziga kerakli jarayonni ortiqcha murakkabliksiz ko‘radi."
                 />
                 <Box className="pl-device-points">
                   {[
@@ -725,7 +727,7 @@ export default function PremiumLandingPage() {
               <Box>
                 <Typography className="pl-eyebrow">KORXONANGIZGA MOS YECHIM</Typography>
                 <Typography component="h2">
-                  Al-Amin CRM’ni korxonangizda qanday ishlashini ko‘ring.
+                  Al-amin ERP korxonangizda qanday ishlashini ko‘ring.
                 </Typography>
                 <Typography component="p">
                   Daftar, tarqoq Excel va eslab qolishga tayangan hisobdan aniq boshqaruv tizimiga
@@ -766,7 +768,7 @@ export default function PremiumLandingPage() {
           </Box>
           <Box className="pl-footer-bottom">
             <Typography>
-              © {new Date().getFullYear()} Al-Amin CRM. Barcha huquqlar himoyalangan.
+              © {new Date().getFullYear()} Al-amin ERP. Barcha huquqlar himoyalangan.
             </Typography>
             <Typography>al-amin.uz · +998 91 571 70 09</Typography>
           </Box>
@@ -884,6 +886,17 @@ const premiumStyles = `
      bo'limlarga bosma nashr ohangini beradi. */
   .pl-eyebrow{position:relative;display:inline-flex;align-items:center;gap:11px;color:var(--wine)!important;font-size:10px!important;font-weight:700!important;letter-spacing:.16em!important}
   .pl-eyebrow:before{content:"";width:26px;height:1px;flex:0 0 auto;background:var(--brass)}
+
+  /* Hero yorlig'i alohida: aynan shu qator kimga mo'ljallanganini aytadi,
+     shuning uchun boshqa bo'lim yorliqlaridan kattaroq. Qolgan
+     .pl-eyebrow o'lchamlari o'zgarmaydi. */
+  .pl-hero-copy .pl-eyebrow{
+    gap:14px;
+    font-size:clamp(11.5px,1.05vw,14px)!important;
+    letter-spacing:.185em!important;
+    line-height:1.45!important
+  }
+  .pl-hero-copy .pl-eyebrow:before{width:38px;height:1.5px}
 
   .pl-hero-copy h1{max-width:720px;margin:22px 0 0;font-family:var(--display);font-size:clamp(44px,5vw,78px);line-height:1.02;letter-spacing:-.032em;font-weight:400}
   .pl-hero-copy h1 span{color:var(--wine);font-style:italic}

@@ -131,7 +131,7 @@ const Login = () => {
     branding?.name ||
     (normalizedSlug
       ? normalizedSlug.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
-      : "Al-Amin CRM");
+      : "Al-amin ERP");
 
   // Korxona logo yuklamagan bo'lsa loyihaning o'z logosi. Ilgari bu yerda
   // `zerrshoes` slugi uchun boshqa korxonaning logosi chiqarilardi.
@@ -861,7 +861,7 @@ const Login = () => {
                 textAlign: "center",
               }}
             >
-              © {new Date().getFullYear()} Al-Amin CRM. Barcha huquqlar himoyalangan.
+              © {new Date().getFullYear()} Al-amin ERP. Barcha huquqlar himoyalangan.
             </Typography>
 
             <FounderCredit sx={{ mt: 1.2 }} />

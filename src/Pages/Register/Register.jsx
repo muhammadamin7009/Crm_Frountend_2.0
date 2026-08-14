@@ -189,7 +189,7 @@ const Register = () => {
   });
 
   const password = watch("password");
-  const companyTitle = "Al-Amin CRM";
+  const companyTitle = "Al-amin ERP";
   // Ro'yxatdan o'tish sahifasi hali biror korxonaga tegishli emas — loyiha logosi.
   const companyLogo = AppLogo;
 

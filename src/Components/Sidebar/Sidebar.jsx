@@ -216,7 +216,7 @@ const Sidebar = () => {
   // Ilgari `zerrshoes` slugi uchun boshqa korxonaning (Zerr Collection) logosi
   // majburan chiqarilardi. Endi zaxira — loyihaning o'z logosi, ya'ni korxona
   // logo yuklamagan bo'lsa hech kimning brendi begona joyda ko'rinmaydi.
-  const companyName = user?.company_name || "Al-Amin CRM";
+  const companyName = user?.company_name || "Al-amin ERP";
 
   const companyLogo = getCompanyLogoUrl(user?.company_logo_url);
 

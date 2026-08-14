@@ -279,7 +279,7 @@ const PlatformLogin = () => {
                 <Box
                   component="img"
                   src={AppLogo}
-                  alt="Al-Amin CRM"
+                  alt="Al-amin ERP"
                   sx={{ width: 30, height: 30, objectFit: "contain" }}
                 />
               </Box>
@@ -306,7 +306,7 @@ const PlatformLogin = () => {
                     letterSpacing: ".12em",
                   }}
                 >
-                  CRM PLATFORM
+                  ERP PLATFORM
                 </Typography>
               </Box>
             </Box>
@@ -521,7 +521,7 @@ const PlatformLogin = () => {
               <Box
                 component="img"
                 src={AppLogo}
-                alt="Al-Amin CRM"
+                alt="Al-amin ERP"
                 sx={{ width: 38, height: 38, objectFit: "contain" }}
               />
             </Box>
@@ -750,7 +750,7 @@ const PlatformLogin = () => {
                 textAlign: "center",
               }}
             >
-              © {new Date().getFullYear()} AL AMIN CRM Platform
+              © {new Date().getFullYear()} AL-AMIN ERP Platform
             </Typography>
 
             <FounderCredit sx={{ mt: 1.4 }} />

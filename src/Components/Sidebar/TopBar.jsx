@@ -477,7 +477,7 @@ export default function TopBar() {
 
           <Box className="aa-mobile-brand-copy">
             <Typography>{user?.company_name || "AL AMIN"}</Typography>
-            <Typography>CRM</Typography>
+            <Typography>ERP</Typography>
           </Box>
 
           <Box className="aa-welcome">
@@ -625,7 +625,7 @@ export default function TopBar() {
             </Box>
 
             <Box className="aa-drawer-brand-copy">
-              <Typography>{user?.company_name || "Al-Amin CRM"}</Typography>
+              <Typography>{user?.company_name || "Al-amin ERP"}</Typography>
 
               <Typography>Korxona boshqaruv tizimi</Typography>
             </Box>
