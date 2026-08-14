@@ -12,6 +12,9 @@ platformApi.interceptors.request.use((config) => {
 
 export const platformLogin = (data) => platformApi.post("/login", data);
 export const submitCompanyApplication = (data) => platformApi.post("/applications", data);
+/** Landing sahifadagi "Bepul jarayon auditi" arizasi. Token talab qilmaydi. */
+export const submitAuditLead = (data) => platformApi.post("/leads", data);
+export const getAuditLeads = (params) => platformApi.get("/leads", { params });
 export const getCompanyApplicationStatus = (slug) =>
   platformApi.get(`/applications/status/${encodeURIComponent(slug)}`);
 export const getCompanyApplications = (params) => platformApi.get("/applications", { params });

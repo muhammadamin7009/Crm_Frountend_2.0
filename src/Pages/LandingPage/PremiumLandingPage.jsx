@@ -3,6 +3,7 @@ import { Box, Button, Container, Paper, Typography } from "@mui/material";
 import { motion, useReducedMotion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
+import AuditRequestDialog from "./AuditRequestDialog";
 import alAminErpLogo from "../../images/al-amin-crm-logo.png";
 
 const ease = [0.22, 1, 0.36, 1];
@@ -404,6 +405,14 @@ export default function PremiumLandingPage() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Sahifada bitta asosiy harakat bor: audit so'rash. Uch joydagi qizil
+  // tugma ham shu bitta oynani ochadi — mijoz nima bosishini o'ylamaydi.
+  const [auditOpen, setAuditOpen] = useState(false);
+  const openAudit = () => {
+    setMenuOpen(false);
+    setAuditOpen(true);
+  };
+
   useEffect(() => {
     const previousTitle = document.title;
     document.title = "Al-Amin CRM — korxonani to‘liq nazorat qilish tizimi";
@@ -455,8 +464,8 @@ export default function PremiumLandingPage() {
             <Button className="pl-button ghost" onClick={() => navigate("/login")}>
               Kirish
             </Button>
-            <Button className="pl-button primary" onClick={() => navigate("/register")}>
-              Bepul tanishib ko‘rish
+            <Button className="pl-button primary" onClick={openAudit}>
+              Bepul jarayon auditi
             </Button>
           </Box>
           <Button
@@ -477,8 +486,8 @@ export default function PremiumLandingPage() {
                 </Button>
               ))}
               <Button onClick={() => navigate("/login")}>Tizimga kirish</Button>
-              <Button className="pl-button primary" onClick={() => navigate("/register")}>
-                Boshlash
+              <Button className="pl-button primary" onClick={openAudit}>
+                Bepul jarayon auditi
               </Button>
             </Paper>
           )}
@@ -501,8 +510,8 @@ export default function PremiumLandingPage() {
                   o‘zaro bog‘langan aniq raqamlar bilan boshqaring.
                 </Typography>
                 <Box className="pl-hero-actions">
-                  <Button className="pl-button primary large" onClick={() => navigate("/register")}>
-                    Al-Amin CRM bilan boshlash
+                  <Button className="pl-button primary large" onClick={openAudit}>
+                    Bepul jarayon auditi
                   </Button>
                   <Button className="pl-button outline large" onClick={() => goTo("dashboard")}>
                     Tizimni ko‘rish
@@ -735,8 +744,8 @@ export default function PremiumLandingPage() {
                 </Typography>
               </Box>
               <Box className="pl-final-actions">
-                <Button className="pl-button white large" onClick={() => navigate("/register")}>
-                  Bepul tanishib ko‘rish
+                <Button className="pl-button white large" onClick={openAudit}>
+                  Bepul jarayon auditi
                 </Button>
                 <Button
                   component="a"
@@ -781,6 +790,8 @@ export default function PremiumLandingPage() {
           </Box>
         </Container>
       </Box>
+
+      <AuditRequestDialog open={auditOpen} onClose={() => setAuditOpen(false)} />
     </Box>
   );
 }
