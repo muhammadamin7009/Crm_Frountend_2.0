@@ -22,6 +22,7 @@ import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
 import SharedBalanceBox from "../../Components/UI/BalanceBox";
 import MoneyTextField from "../../Components/UI/MoneyTextField";
+import AddRowButton from "../../Components/UI/AddRowButton";
 
 import { useAuth } from "../../Context/AuthContext";
 import CrmPagination from "../../Components/Common/CrmPagination";
@@ -207,6 +208,22 @@ const ClientSales = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const [form, setForm] = useState(emptyForm);
+
+  const addSaleItem = () => {
+    setForm((previous) => ({
+      ...previous,
+
+      items: [
+        ...previous.items,
+
+        {
+          product_id: "",
+          quantity: "",
+          unit_price: "",
+        },
+      ],
+    }));
+  };
 
   const [selectedSale, setSelectedSale] = useState(null);
 
@@ -2100,42 +2117,6 @@ const ClientSales = () => {
                   </Typography>
                 </Box>
 
-                <Button
-                  className="aa-dialog-secondary-action"
-                  variant="outlined"
-                  disabled={
-                    !form.items.length ||
-                    form.items.some(
-                      (item) =>
-                        !item.product_id ||
-                        Number(item.quantity) <= 0 ||
-                        item.unit_price === "" ||
-                        Number(item.unit_price) < 0,
-                    )
-                  }
-                  onClick={() =>
-                    setForm((previous) => ({
-                      ...previous,
-
-                      items: [
-                        ...previous.items,
-
-                        {
-                          product_id: "",
-                          quantity: "",
-                          unit_price: "",
-                        },
-                      ],
-                    }))
-                  }
-                  sx={{
-                    borderRadius: "12px",
-                    textTransform: "none",
-                    fontWeight: 700,
-                  }}
-                >
-                  Yana mahsulot
-                </Button>
               </Box>
 
               <Stack spacing={1.4}>
@@ -2244,6 +2225,23 @@ const ClientSales = () => {
                   </Box>
                 ))}
               </Stack>
+
+              <AddRowButton
+                count={form.items.length}
+                disabled={
+                  !form.items.length ||
+                  form.items.some(
+                    (item) =>
+                      !item.product_id ||
+                      Number(item.quantity) <= 0 ||
+                      item.unit_price === "" ||
+                      Number(item.unit_price) < 0,
+                  )
+                }
+                onClick={addSaleItem}
+              >
+                + Yana mahsulot
+              </AddRowButton>
             </Box>
           )}{" "}
           {selectedSale && !selectedSale.inventory_tracked_at && (

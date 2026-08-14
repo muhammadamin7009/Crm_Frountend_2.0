@@ -22,6 +22,7 @@ import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
 
 import Card from "../../Components/UI/AppCard";
+import AddRowButton from "../../Components/UI/AddRowButton";
 import { useAuth } from "../../Context/AuthContext";
 import CrmPagination from "../../Components/Common/CrmPagination";
 import { hasPermission } from "../../utils/permissions";
@@ -1672,9 +1673,6 @@ const WorkerOutputs = () => {
                   </Typography>
                 </Box>
 
-                <Button variant="outlined" onClick={addBatchItem} sx={filterButtonSx}>
-                  + Qator qo‘shish
-                </Button>
               </Box>
 
               <Stack spacing={1.4}>
@@ -1769,6 +1767,10 @@ const WorkerOutputs = () => {
                   </Box>
                 ))}
               </Stack>
+
+              <AddRowButton count={batchItems.length} onClick={addBatchItem}>
+                + Qator qo‘shish
+              </AddRowButton>
             </Box>
           )}
 

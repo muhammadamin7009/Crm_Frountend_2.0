@@ -22,6 +22,7 @@ import SharedPremiumDialog from "../../Components/UI/PremiumDialog";
 import BalanceBox from "../../Components/UI/BalanceBox";
 import MoneyTextField from "../../Components/UI/MoneyTextField";
 import PhoneTextField from "../../Components/UI/PhoneTextField";
+import AddRowButton from "../../Components/UI/AddRowButton";
 import { getFinancialAccounts } from "../../api/finance";
 
 import Card from "../../Components/UI/AppCard";
@@ -530,6 +531,24 @@ const MaterialPurchases = () => {
             }
           : item,
       ),
+    }));
+  };
+
+  const addPurchaseItem = () => {
+    setPurchaseForm((previous) => ({
+      ...previous,
+
+      items: [
+        ...previous.items,
+
+        {
+          raw_material_id: "",
+
+          quantity: "",
+
+          unit_price: "",
+        },
+      ],
     }));
   };
 
@@ -1816,30 +1835,6 @@ const MaterialPurchases = () => {
                   Bir nechta xomashyoni bitta xaridga qo‘shish mumkin
                 </Typography>
               </Box>
-
-              <Button
-                variant="outlined"
-                onClick={() =>
-                  setPurchaseForm((previous) => ({
-                    ...previous,
-
-                    items: [
-                      ...previous.items,
-
-                      {
-                        raw_material_id: "",
-
-                        quantity: "",
-
-                        unit_price: "",
-                      },
-                    ],
-                  }))
-                }
-                sx={filterButtonSx}
-              >
-                + Yana xomashyo
-              </Button>
             </Box>
 
             <Stack spacing={1.4}>
@@ -1947,6 +1942,10 @@ const MaterialPurchases = () => {
                 </Box>
               ))}
             </Stack>
+
+            <AddRowButton count={purchaseForm.items.length} onClick={addPurchaseItem}>
+              + Yana xomashyo
+            </AddRowButton>
           </Box>
 
           {quickMaterialOpen && (
