@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Landing prerender vaqtinchalik bundle (build oxirida o'chiriladi)
+.prerender

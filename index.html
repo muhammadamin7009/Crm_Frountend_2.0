@@ -41,6 +41,30 @@
     <meta name="theme-color" content="#6e1622" />
     <link rel="canonical" href="https://al-amin.uz/landing" />
 
+    <!--
+      Mavzuni React yuklanishidan oldin qo'yamiz. Aks holda sahifa avval oq
+      chizilib, keyin qorayadi — bu lipillash landing sahifasida ayniqsa
+      ko'zga tashlanadi, chunki u oldindan chizilgan HTML bilan darrov
+      ochiladi. ThemeContext keyinchalik shu qiymatnigina tasdiqlaydi.
+    -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("al-amin-theme");
+          var mode =
+            saved === "light" || saved === "dark"
+              ? saved
+              : window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          document.documentElement.dataset.theme = mode;
+          document.documentElement.style.colorScheme = mode;
+        } catch (error) {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"

@@ -146,7 +146,7 @@ function Reveal({ children, className = "", delay = 0, component = "div" }) {
   return (
     <Box
       component={motion[component] || motion.div}
-      className={className}
+      className={`pl-reveal ${className}`.trim()}
       initial={reduceMotion ? false : { opacity: 0, y: 24 }}
       whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.15 }}
@@ -496,7 +496,28 @@ export default function PremiumLandingPage() {
 
   return (
     <Box className="premium-landing">
-      <style>{premiumStyles}</style>
+      {/*
+        `<style>{...}</style>` deb yozib bo'lmaydi: sahifa build paytida
+        HTML ga chizilganda React `>` belgisini `&gt;` ga aylantiradi, HTML
+        esa `<style>` ichini xom matn deb o'qib uni qaytarib o'girmaydi.
+        Natijada `.pl-brand>img` kabi 99 ta selektor buzilib, oldindan
+        chizilgan sahifa uslubsiz ochilardi.
+      */}
+      <style dangerouslySetInnerHTML={{ __html: premiumStyles }} />
+
+      {/*
+        Animatsiya JavaScript bilan ishlaydi: `Reveal` boshida shaffof turadi
+        va ko'rinish maydoniga kirganda paydo bo'ladi. JS o'chirilgan bo'lsa
+        u shaffofligicha qolib ketardi — sahifa bo'sh ko'rinardi. Stildagi
+        `!important` element ustidagi inline uslubdan kuchli.
+      */}
+      <noscript>
+        <style
+          dangerouslySetInnerHTML={{
+            __html: ".pl-reveal{opacity:1!important;transform:none!important}",
+          }}
+        />
+      </noscript>
 
       <Box component="header" className="pl-header">
         <Container maxWidth="xl" className="pl-header-container">
