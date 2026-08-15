@@ -44,6 +44,7 @@ import {
   createOrder,
   deleteOrder,
   getOrder,
+  getOrderProductRecipe,
   getOrderTasks,
   getOrders,
   getWorkflowWorkers,
@@ -352,7 +353,7 @@ const Orders = () => {
     }
   };
 
-  const changeItem = (index, key, value) =>
+  const changeItem = (index, key, value) => {
     setForm((current) => ({
       ...current,
       items: current.items.map((item, itemIndex) => {
@@ -362,10 +363,57 @@ const Orders = () => {
             ...item,
             product_id: value,
             unit_price: productById.get(Number(value))?.sale_price ?? "",
+            // Retsept kelguncha bo'sh: eski mahsulotning xomashyosi qolib
+            // ketsa, zakaz butunlay boshqa mol bilan yozilardi.
+            materials: [],
           };
         return { ...item, [key]: value };
       }),
     }));
+
+    if (key === "product_id" && value) loadRecipeInto(index, value);
+  };
+
+  /**
+   * Mahsulot tanlanganda bo'limlarni retsept bo'yicha to'ldiradi.
+   *
+   * Ilgari panel bo'sh ochilardi va "belgilanmagan" deb turardi — holbuki
+   * mahsulotda retsept bor edi. Zakaz oluvchi hammasini qaytadan yozishga
+   * majbur bo'lardi, shuning uchun ko'pincha umuman yozmasdi.
+   */
+  const loadRecipeInto = async (index, productId) => {
+    try {
+      const { data } = await getOrderProductRecipe(productId);
+
+      // Tanlash ro'yxati ham shu javobdan keladi: alohida `/raw-materials`
+      // so'rovi xarid ruxsatini talab qilardi va zakaz oluvchida u
+      // bo'lmasa tanlagich bo'm-bo'sh ochilardi.
+      if (data.available_materials?.length) setRawMaterials(data.available_materials);
+
+      const rows = (data.materials || [])
+        // Bo'limi belgilanmagan retsept qatorlari yakunlovchi bosqichda
+        // sarflanadi — ularni bu yerda ko'rsatmaymiz.
+        .filter((row) => row.department_id)
+        .map((row) => ({
+          department_id: Number(row.department_id),
+          raw_material_id: Number(row.raw_material_id),
+          quantity_per_pair: row.quantity_per_pair ?? "",
+          note: "",
+        }));
+
+      setForm((current) => ({
+        ...current,
+        items: current.items.map((item, itemIndex) =>
+          // Foydalanuvchi shu orada mahsulotni almashtirgan bo'lsa tegmaymiz.
+          itemIndex === index && Number(item.product_id) === Number(productId)
+            ? { ...item, materials: rows }
+            : item,
+        ),
+      }));
+    } catch {
+      // Retseptsiz ham zakaz olinaveradi — bo'limlarni qo'lda to'ldiradi.
+    }
+  };
 
   const save = async () => {
     if (

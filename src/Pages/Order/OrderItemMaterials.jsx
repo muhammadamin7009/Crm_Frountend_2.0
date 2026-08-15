@@ -5,28 +5,33 @@ import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 /**
  * Zakaz qatorining bo'lim-bo'lim xomashyosi.
  *
- * Retsept mahsulotning umumiy tarkibini biladi ("Loro Piano teri
- * sarflaydi"), lekin bu zakaz qora zamshdanmi yoki qora flutrdanmi —
- * buni faqat zakaz oluvchi biladi. Ilgari bu og'zaki uzatilardi va
- * kroychi adashib flutr kesib qo'yardi.
+ * Mahsulot tanlanganda retsept yuklanadi va bo'limlar shu bo'yicha
+ * oldindan to'ldiriladi. Zakaz oluvchi noldan yozmaydi — faqat farq
+ * qiladiganini almashtiradi: retsept "qora flutr" deb tursa, bu zakaz
+ * uchun "qora zamsh" ga o'giradi.
  *
- * Har bo'lim uchun bittadan qator: bo'lim → xomashyo → me'yor → izoh.
- * Bo'sh qoldirilgan bo'lim retseptdagicha ishlaydi.
+ * Bir bo'limda bir nechta xomashyo bo'lishi oddiy hol: kroy ham teri,
+ * ham podkladka sarflaydi. Shuning uchun bo'lim boshiga bitta emas,
+ * kerakligicha qator bo'ladi.
  */
 const OrderItemMaterials = ({ departments, materials, value = [], onChange, disabled }) => {
-  const [open, setOpen] = useState(value.length > 0);
+  const [open, setOpen] = useState(true);
 
-  const byDepartment = new Map(value.map((row) => [Number(row.department_id), row]));
+  const rowsOf = (departmentId) =>
+    value
+      .map((row, index) => ({ row, index }))
+      .filter(({ row }) => Number(row.department_id) === Number(departmentId));
 
-  const setFor = (departmentId, patch) => {
-    const current = byDepartment.get(Number(departmentId)) || { department_id: Number(departmentId) };
-    const next = { ...current, ...patch };
+  const patch = (index, changes) =>
+    onChange(value.map((row, i) => (i === index ? { ...row, ...changes } : row)));
 
-    // Xomashyo tanlanmagan bo'lsa qator umuman yozilmaydi.
-    const cleaned = value.filter((row) => Number(row.department_id) !== Number(departmentId));
-    if (next.raw_material_id) cleaned.push(next);
-    onChange(cleaned);
-  };
+  const removeAt = (index) => onChange(value.filter((_, i) => i !== index));
+
+  const addRow = (departmentId) =>
+    onChange([
+      ...value,
+      { department_id: Number(departmentId), raw_material_id: "", quantity_per_pair: "", note: "" },
+    ]);
 
   const filled = value.filter((row) => row.raw_material_id).length;
 
@@ -62,70 +67,93 @@ const OrderItemMaterials = ({ departments, materials, value = [], onChange, disa
       </Stack>
 
       {open && (
-        <Box sx={{ p: 1.5, display: "grid", gap: 1 }}>
+        <Box sx={{ p: 1.5, display: "grid", gap: 1.5 }}>
           <Typography sx={{ fontSize: 12, color: "var(--aa-text-tertiary)" }}>
-            Belgilanmagan bo'lim mahsulot retsepti bo'yicha ishlaydi.
+            Mahsulot retsepti bo'yicha to'ldirilgan. Bu zakaz uchun boshqacha bo'lsa —
+            almashtiring.
           </Typography>
 
           {departments.map((department) => {
-            const row = byDepartment.get(Number(department.id)) || {};
+            const rows = rowsOf(department.id);
             return (
-              <Box
-                key={department.id}
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: { xs: "1fr", md: "120px 1fr 90px 1fr auto" },
-                  gap: 1,
-                  alignItems: "center",
-                }}
-              >
-                <Typography sx={{ fontSize: 13, fontWeight: 600 }}>{department.name}</Typography>
-                <TextField
-                  select
-                  size="small"
-                  label="Xomashyo"
-                  disabled={disabled}
-                  value={row.raw_material_id || ""}
-                  onChange={(event) =>
-                    setFor(department.id, { raw_material_id: event.target.value || null })
-                  }
-                >
-                  <MenuItem value="">— belgilanmagan —</MenuItem>
-                  {materials.map((material) => (
-                    <MenuItem key={material.id} value={material.id}>
-                      {material.name}
-                      {material.unit ? ` · ${material.unit}` : ""}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
-                  size="small"
-                  type="number"
-                  label="1 juftga"
-                  disabled={disabled || !row.raw_material_id}
-                  value={row.quantity_per_pair ?? ""}
-                  onChange={(event) =>
-                    setFor(department.id, { quantity_per_pair: event.target.value })
-                  }
-                  inputProps={{ min: 0.001, step: 0.001 }}
-                />
-                <TextField
-                  size="small"
-                  label="Izoh"
-                  placeholder="masalan: 055 o'lcham"
-                  disabled={disabled || !row.raw_material_id}
-                  value={row.note || ""}
-                  onChange={(event) => setFor(department.id, { note: event.target.value })}
-                  inputProps={{ maxLength: 200 }}
-                />
-                <Button
-                  size="small"
-                  disabled={disabled || !row.raw_material_id}
-                  onClick={() => setFor(department.id, { raw_material_id: null })}
-                  sx={{ minWidth: 32, color: "var(--aa-danger)" }}
-                >
-                  ×
-                </Button>
+              <Box key={department.id} sx={{ display: "grid", gap: 0.75 }}>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Typography sx={{ fontSize: 13, fontWeight: 700, minWidth: 110 }}>
+                    {department.name}
+                  </Typography>
+                  {rows.length === 0 && (
+                    <Typography sx={{ fontSize: 12, color: "var(--aa-text-tertiary)", flex: 1 }}>
+                      retsept bo'yicha ishlaydi
+                    </Typography>
+                  )}
+                  <Button
+                    size="small"
+                    disabled={disabled}
+                    onClick={() => addRow(department.id)}
+                    sx={{ textTransform: "none", fontSize: 12, minWidth: 0 }}
+                  >
+                    + xomashyo
+                  </Button>
+                </Stack>
+
+                {rows.map(({ row, index }) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: { xs: "1fr", md: "1fr 100px 1fr auto" },
+                      gap: 1,
+                      alignItems: "center",
+                      pl: { md: 2 },
+                    }}
+                  >
+                    <TextField
+                      select
+                      size="small"
+                      label="Xomashyo"
+                      disabled={disabled}
+                      value={row.raw_material_id || ""}
+                      onChange={(event) =>
+                        patch(index, { raw_material_id: event.target.value })
+                      }
+                    >
+                      {materials.map((material) => (
+                        <MenuItem key={material.id} value={material.id}>
+                          {material.name}
+                          {material.unit ? ` · ${material.unit}` : ""}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                    <TextField
+                      size="small"
+                      type="number"
+                      label="1 juftga"
+                      disabled={disabled}
+                      value={row.quantity_per_pair ?? ""}
+                      onChange={(event) =>
+                        patch(index, { quantity_per_pair: event.target.value })
+                      }
+                      inputProps={{ min: 0.001, step: 0.001 }}
+                    />
+                    <TextField
+                      size="small"
+                      label="Izoh"
+                      placeholder="masalan: 055 o'lcham"
+                      disabled={disabled}
+                      value={row.note || ""}
+                      onChange={(event) => patch(index, { note: event.target.value })}
+                      inputProps={{ maxLength: 200 }}
+                    />
+                    <Button
+                      size="small"
+                      disabled={disabled}
+                      onClick={() => removeAt(index)}
+                      sx={{ minWidth: 32, color: "var(--aa-danger)" }}
+                    >
+                      ×
+                    </Button>
+                  </Box>
+                ))}
               </Box>
             );
           })}

@@ -9,6 +9,10 @@ const removeEmptyParams = (params = {}) =>
 
 export const getOrders = (params) => api.get("/orders", { params: removeEmptyParams(params) });
 export const getOrder = (id) => api.get(`/orders/${id}`);
+
+// Mahsulot retsepti — zakaz formasi bo'limlarni oldindan to'ldirishi uchun.
+export const getOrderProductRecipe = (productId) =>
+  api.get(`/order-product-recipe/${productId}`);
 export const createOrder = (data) => api.post("/orders", data);
 export const updateOrder = (id, data) => api.patch(`/orders/${id}`, data);
 export const deleteOrder = (id) => api.delete(`/orders/${id}`);
