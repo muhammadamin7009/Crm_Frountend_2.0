@@ -22,7 +22,8 @@ import HeroMetric from "../../Components/UI/HeroMetric";
 import PremiumDialog from "../../Components/UI/PremiumDialog";
 import { useAuth } from "../../Context/AuthContext";
 import { hasPermission } from "../../utils/permissions";
-import { getOrders } from "../../api/orders";
+import { StageProgressWithSummary } from "../../Components/UI/StageProgress";
+import { getOrders, getProductionProgress } from "../../api/orders";
 import { getProducts } from "../../api/products";
 import {
   completeProductionBatch,
@@ -95,6 +96,9 @@ const ProductionBatches = () => {
   const canSeeOutputs = hasPermission(user, "production.view");
 
   const [batches, setBatches] = useState([]);
+
+  // Bosqichlar bo'yicha holat: partiya id -> bosqichlar.
+  const [progress, setProgress] = useState({});
   const [pageInfo, setPageInfo] = useState({ total: 0, offset: 0, limit: 20 });
   const [counts, setCounts] = useState({ in_progress: 0, completed: 0 });
   const [loading, setLoading] = useState(true);
@@ -141,8 +145,19 @@ const ProductionBatches = () => {
           getProductionBatches({ ...countParams, status: "completed" }),
         ]);
 
-        setBatches(listRes.data.production_batches || []);
+        const rows = listRes.data.production_batches || [];
+        setBatches(rows);
         setPageInfo(listRes.data.pageInfo || { total: 0, offset, limit });
+
+        // Ro'yxatdagi hamma partiya uchun bitta so'rov.
+        if (rows.length) {
+          const { data } = await getProductionProgress({
+            batch_ids: rows.map((row) => row.id).join(","),
+          });
+          setProgress(data.batches || {});
+        } else {
+          setProgress({});
+        }
 
         setCounts({
           in_progress: Number(progressRes.data.pageInfo?.total || 0),
@@ -458,6 +473,7 @@ const ProductionBatches = () => {
                 <TableCell>Mahsulot</TableCell>
                 <TableCell>Material / padoj</TableCell>
                 <TableCell>Miqdor</TableCell>
+                <TableCell sx={{ minWidth: 220 }}>Qayerda</TableCell>
                 <TableCell>Ochilgan</TableCell>
                 <TableCell align="right">Amallar</TableCell>
               </TableRow>
@@ -466,7 +482,7 @@ const ProductionBatches = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 7 }}>
+                  <TableCell colSpan={7} align="center" sx={{ py: 7 }}>
                     <CircularProgress size={30} sx={{ color: "#6e1622" }} />
                   </TableCell>
                 </TableRow>
@@ -540,6 +556,16 @@ const ProductionBatches = () => {
                       <Typography sx={{ color: "var(--aa-text)", fontSize: 13, fontWeight: 700 }}>
                         {formatNumber(batch.quantity)} par
                       </Typography>
+                    </TableCell>
+
+                    <TableCell sx={{ minWidth: 220 }}>
+                      {progress[batch.id]?.length ? (
+                        <StageProgressWithSummary stages={progress[batch.id]} unit="par" />
+                      ) : (
+                        <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 10 }}>
+                          Vazifa ochilmagan
+                        </Typography>
+                      )}
                     </TableCell>
 
                     <TableCell sx={{ fontWeight: 600 }}>{formatDate(batch.started_at)}</TableCell>

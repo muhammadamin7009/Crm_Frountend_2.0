@@ -32,3 +32,6 @@ export const rejectOrderTask = (id, reason) => api.post(`/order-tasks/${id}/reje
 export const getDepartmentQueue = () => api.get("/order-tasks/department-queue");
 export const assignOrderTask = (id, worker_id, quantity) =>
   api.post(`/order-tasks/${id}/assign`, { worker_id, quantity });
+/** Bosqichlar bo'yicha holat: qaysi bo'limda qancha qilingan. */
+export const getProductionProgress = (params) =>
+  api.get("/order-tasks/progress", { params: removeEmptyParams(params) });
