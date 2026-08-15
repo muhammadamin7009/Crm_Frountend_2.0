@@ -178,6 +178,9 @@ const Orders = () => {
   const [departmentOrderOpen, setDepartmentOrderOpen] = useState(false);
   const [departmentOrder, setDepartmentOrder] = useState([]);
   const [workerDepartments, setWorkerDepartments] = useState({});
+
+  // Har bo'limning boshlig'i: bo'lim id -> xodim id.
+  const [departmentHeads, setDepartmentHeads] = useState({});
   const [departmentOrderSaving, setDepartmentOrderSaving] = useState(false);
 
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
@@ -536,6 +539,11 @@ const Orders = () => {
     setWorkerDepartments(
       Object.fromEntries(workers.map((worker) => [worker.id, worker.department_id || ""])),
     );
+    setDepartmentHeads(
+      Object.fromEntries(
+        departments.map((department) => [department.id, department.supervisor_id || ""]),
+      ),
+    );
     setDepartmentOrderOpen(true);
   };
 
@@ -554,7 +562,13 @@ const Orders = () => {
     try {
       await Promise.all(
         departmentOrder.map((department, index) =>
-          updateDepartment(department.id, { sort_order: index + 1 }),
+          updateDepartment(department.id, {
+            sort_order: index + 1,
+            // Bo'sh tanlov "boshliq yo'q" degani — backend `null` kutadi.
+            supervisor_id: departmentHeads[department.id]
+              ? Number(departmentHeads[department.id])
+              : null,
+          }),
         ),
       );
       for (const worker of workers) {
@@ -1126,39 +1140,71 @@ const Orders = () => {
               <Paper
                 key={department.id}
                 variant="outlined"
-                sx={{ p: 1.3, display: "flex", alignItems: "center", gap: 1.2, borderRadius: 2 }}
+                sx={{ p: 1.3, borderRadius: 2 }}
               >
-                <Box
-                  className="department-order-index"
-                  sx={{
-                    width: 30,
-                    height: 30,
-                    display: "grid",
-                    placeItems: "center",
-                    borderRadius: 1.5,
-                    color: "var(--aa-brand-400)",
-                    bgcolor: "var(--aa-brand-100)",
-                    border: "1px solid var(--aa-brand-200)",
-                    fontWeight: 700,
-                  }}
-                >
-                  {index + 1}
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
+                  <Box
+                    className="department-order-index"
+                    sx={{
+                      width: 30,
+                      height: 30,
+                      display: "grid",
+                      placeItems: "center",
+                      borderRadius: 1.5,
+                      color: "var(--aa-brand-400)",
+                      bgcolor: "var(--aa-brand-100)",
+                      border: "1px solid var(--aa-brand-200)",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {index + 1}
+                  </Box>
+                  <Typography sx={{ flex: 1, fontWeight: 600 }}>{department.name}</Typography>
+                  <Button
+                    size="small"
+                    disabled={index === 0}
+                    onClick={() => moveDepartment(index, -1)}
+                  >
+                    ↑
+                  </Button>
+                  <Button
+                    size="small"
+                    disabled={index === departmentOrder.length - 1}
+                    onClick={() => moveDepartment(index, 1)}
+                  >
+                    ↓
+                  </Button>
                 </Box>
-                <Typography sx={{ flex: 1, fontWeight: 600 }}>{department.name}</Typography>
-                <Button
+
+                {/* Bo'lim boshlig'i — ishni shu odam tarqatadi va bajarilganini
+                    tasdiqlaydi. Qo'yilmasa faqat administrator qila oladi. */}
+                <TextField
+                  select
+                  fullWidth
                   size="small"
-                  disabled={index === 0}
-                  onClick={() => moveDepartment(index, -1)}
+                  label="Bo'lim boshlig'i"
+                  value={departmentHeads[department.id] || ""}
+                  onChange={(event) =>
+                    setDepartmentHeads((current) => ({
+                      ...current,
+                      [department.id]: event.target.value,
+                    }))
+                  }
+                  helperText={
+                    departmentHeads[department.id]
+                      ? " "
+                      : "Qo'yilmasa ish faqat administrator orqali tarqaladi"
+                  }
+                  sx={{ mt: 1.2 }}
                 >
-                  ↑
-                </Button>
-                <Button
-                  size="small"
-                  disabled={index === departmentOrder.length - 1}
-                  onClick={() => moveDepartment(index, 1)}
-                >
-                  ↓
-                </Button>
+                  <MenuItem value="">Boshliq yo'q</MenuItem>
+                  {workers.map((worker) => (
+                    <MenuItem key={worker.id} value={worker.id}>
+                      {[worker.first_name, worker.last_name].filter(Boolean).join(" ") ||
+                        worker.username}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Paper>
             ))}
           </Stack>
