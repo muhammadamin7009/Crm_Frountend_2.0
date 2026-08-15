@@ -2,6 +2,7 @@ import { Box, Chip, CircularProgress, InputBase, Typography } from "@mui/materia
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { getFinishedGoods } from "../../api/inventory";
+import { getImageUrl } from "../../utils/imageUrl";
 
 /**
  * Tayyor mahsulot ombori — model va o'lcham bo'yicha guruhlangan.
@@ -394,6 +395,11 @@ const VariantRow = ({ variant }) => {
   const fromOrder = !!variant.order_number;
   const used = variant.used_materials || [];
 
+  // Rasm manzili to'g'ri bo'lsa ham fayl o'chgan bo'lishi mumkin. Bunda
+  // bo'sh quti emas, bosh harflar ko'rinsin.
+  const [imageBroken, setImageBroken] = useState(false);
+  const imageSrc = imageBroken ? null : getImageUrl(variant.image_url);
+
   // Kroy va kosib eng ko'p so'raladigan ikkitasi — ularni oldinga chiqaramiz.
   const byStage = (needle) =>
     used.find((row) => new RegExp(needle, "i").test(row.department_name || ""))?.material_name;
@@ -431,11 +437,12 @@ const VariantRow = ({ variant }) => {
             border: "1px solid var(--aa-border)",
           }}
         >
-          {variant.image_url ? (
+          {imageSrc ? (
             <Box
               component="img"
-              src={variant.image_url}
+              src={imageSrc}
               alt={variant.product_name}
+              onError={() => setImageBroken(true)}
               sx={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           ) : (
