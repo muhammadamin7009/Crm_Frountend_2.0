@@ -34,6 +34,9 @@ import { getInventoryStock, getWarehouses } from "../../api/inventory";
 import { getFinancialAccounts } from "../../api/finance";
 import { ENABLE_MULTI_ACCOUNT_SELECTION } from "../../utils/features";
 import { getDepartments, updateDepartment } from "../../api/departments";
+import { getRawMaterials } from "../../api/materialPurchases";
+import OrderItemMaterials from "./OrderItemMaterials";
+import OrderCard from "./OrderCard";
 import {
   assignWorkflowWorkerDepartment,
   convertOrderToSale,
@@ -101,7 +104,7 @@ const statuses = {
 const editableStatuses = Object.entries(statuses).filter(([value]) => value !== "completed");
 
 const today = () => new Date().toISOString().slice(0, 10);
-const emptyItem = { product_id: "", quantity: 1, unit_price: "", note: "" };
+const emptyItem = { product_id: "", quantity: 1, unit_price: "", note: "", materials: [] };
 const emptyForm = {
   client_id: "",
   status: "new",
@@ -154,6 +157,9 @@ const Orders = () => {
   const [warehouses, setWarehouses] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [rawMaterials, setRawMaterials] = useState([]);
+  // Sexga chiqariladigan yorliq.
+  const [cardOrder, setCardOrder] = useState(null);
   const [workers, setWorkers] = useState([]);
   const [conversionStock, setConversionStock] = useState([]);
   const [totals, setTotals] = useState({ total_orders: 0, total_amount: 0 });
@@ -210,6 +216,7 @@ const Orders = () => {
         warehousesResponse,
         accountsResponse,
         departmentsResponse,
+        rawMaterialsResponse,
         workersResponse,
       ] = await Promise.all([
         getUsers({ role: "client", limit: 100, offset: 0 }),
@@ -219,6 +226,7 @@ const Orders = () => {
           ? getFinancialAccounts().catch(() => ({ data: { financial_accounts: [] } }))
           : Promise.resolve({ data: { financial_accounts: [] } }),
         getDepartments({ is_active: true, limit: 100 }),
+        getRawMaterials({ limit: 200 }).catch(() => ({ data: { raw_materials: [] } })),
         canManage ? getWorkflowWorkers() : Promise.resolve({ data: { workers: [] } }),
       ]);
       setClients(clientsResponse.data.users || []);
@@ -232,6 +240,7 @@ const Orders = () => {
       );
       setAccounts(accountsResponse.data.financial_accounts || []);
       setDepartments(departmentsResponse.data.departments || []);
+      setRawMaterials(rawMaterialsResponse.data.raw_materials || []);
       setWorkers(workersResponse.data.workers || []);
       setSupervisorCandidates(workersResponse.data.supervisor_candidates || []);
     } catch (error) {
@@ -301,6 +310,16 @@ const Orders = () => {
     setOpen(true);
   };
 
+  /** Yorliq uchun zakazni to'liq — qatorlari va xomashyo ko'rsatmalari bilan — olamiz. */
+  const showCard = async (id) => {
+    try {
+      const { data } = await getOrder(id);
+      setCardOrder(data.order || data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Yorliqni ochib bo'lmadi");
+    }
+  };
+
   const openEdit = async (id) => {
     try {
       const { data } = await getOrder(id);
@@ -318,6 +337,13 @@ const Orders = () => {
           quantity: item.quantity,
           unit_price: item.unit_price,
           note: item.note || "",
+          // Bo'lim-bo'lim ko'rsatma tahrirda ham ochilib tursin.
+          materials: (item.materials || []).map((row) => ({
+            department_id: Number(row.department_id),
+            raw_material_id: Number(row.raw_material_id),
+            quantity_per_pair: row.quantity_per_pair ?? "",
+            note: row.note || "",
+          })),
         })),
       });
       setOpen(true);
@@ -358,6 +384,18 @@ const Orders = () => {
           ...item,
           unit_price: item.unit_price === "" ? undefined : Number(item.unit_price),
           quantity: Number(item.quantity),
+          // Bo'sh me'yor "retseptdagicha" degani — nol emas.
+          materials: (item.materials || [])
+            .filter((row) => row.raw_material_id)
+            .map((row) => ({
+              department_id: Number(row.department_id),
+              raw_material_id: Number(row.raw_material_id),
+              quantity_per_pair:
+                row.quantity_per_pair === "" || row.quantity_per_pair === null
+                  ? null
+                  : Number(row.quantity_per_pair),
+              note: row.note || null,
+            })),
         })),
       };
       if (editingId) await updateOrder(editingId, payload);
@@ -908,6 +946,14 @@ const Orders = () => {
                               Savdoga o'tkazish
                             </Button>
                           )}
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => showCard(order.id)}
+                            sx={{ textTransform: "none", fontWeight: 600 }}
+                          >
+                            Yorliq
+                          </Button>
                           {!order.converted_batch_id && Number(order.task_count || 0) === 0 && (
                             <>
                               <Button
@@ -1074,6 +1120,14 @@ const Orders = () => {
                 >
                   ×
                 </IconButton>
+                {item.product_id && (
+                  <OrderItemMaterials
+                    departments={departments}
+                    materials={rawMaterials}
+                    value={item.materials || []}
+                    onChange={(next) => changeItem(index, "materials", next)}
+                  />
+                )}
               </Box>
             ))}
             <Button
@@ -1712,6 +1766,7 @@ const Orders = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <OrderCard order={cardOrder} open={!!cardOrder} onClose={() => setCardOrder(null)} />
     </Stack>
   );
 };

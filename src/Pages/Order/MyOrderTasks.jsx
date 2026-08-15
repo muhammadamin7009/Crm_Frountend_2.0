@@ -258,6 +258,46 @@ const MyOrderTasks = () => {
                     sx={{ color: colors[task.status], fontWeight: 600 }}
                   />
                 </Box>
+
+                {/*
+                  Zakazda shu bo'lim uchun aniq xomashyo belgilangan bo'lsa —
+                  eng ko'rinadigan joyda turishi kerak. Aynan shu chalkashlik
+                  uchun kiritilgan: kroychi zamsh o'rniga flutr kesib qo'ymasin.
+                */}
+                {task.ordered_materials?.length > 0 && (
+                  <Box
+                    sx={{
+                      mt: 1.5,
+                      px: 1.5,
+                      py: 1,
+                      borderRadius: 2,
+                      border: "1px solid var(--aa-brass, #a9814b)",
+                      bgcolor: "color-mix(in srgb, var(--aa-brass, #a9814b) 10%, transparent)",
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        letterSpacing: ".06em",
+                        textTransform: "uppercase",
+                        color: "var(--aa-text-tertiary)",
+                      }}
+                    >
+                      Nima ishlatiladi
+                    </Typography>
+                    <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mt: 0.5, rowGap: 0.75 }}>
+                      {task.ordered_materials.map((material) => (
+                        <Chip
+                          key={material.name}
+                          size="small"
+                          label={material.note ? `${material.name} — ${material.note}` : material.name}
+                          sx={{ fontWeight: 700, fontSize: 12.5 }}
+                        />
+                      ))}
+                    </Stack>
+                  </Box>
+                )}
                 <Box sx={{ mt: 2 }}>
                   <Box sx={{ mb: 0.7, display: "flex", justifyContent: "space-between" }}>
                     <Typography sx={{ fontSize: 12.5, fontWeight: 600 }}>
