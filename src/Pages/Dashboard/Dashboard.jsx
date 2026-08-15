@@ -438,13 +438,17 @@ const WorkerDepartmentList = ({ items }) => {
 };
 
 const WorkerDashboard = ({ user }) => {
-  // Ishchi faqat o'ziga berilgan bo'limlarni ko'radi. Ruxsat bo'lmasa karta umuman
-  // chizilmaydi — ilgari u nol qiymat bilan turaverar edi (masalan ombor xodimida
-  // "Bu oy ishlab topilgan: 0"), bu esa noto'g'ri ma'lumot taassurotini berardi.
-  const canViewProduction = hasPermission(user, "production.view");
+  // O'z ishi va o'z oyligi — ishchining shaxsiy ma'lumoti, uni ko'rish
+  // uchun ruxsat so'ralmaydi. `production.view` esa boshqaruv ruxsati:
+  // u "hamma ishchining ishini ko'rish" degani, boshqa narsa.
+  //
+  // Ilgari kartalar o'sha boshqaruv ruxsatlariga bog'langan edi va
+  // ishchi bosh sahifada bo'm-bo'sh ekran ko'rardi.
+  const canViewProduction = true;
 
-  const canViewPayroll = hasPermission(user, "payroll.view");
+  const canViewPayroll = true;
 
+  // Ombor esa haqiqatan boshqa: u umumiy qoldiq, shaxsiy ma'lumot emas.
   const canViewInventory = hasPermission(user, "inventory.view");
 
   const [monthOutputs, setMonthOutputs] = useState([]);
