@@ -34,7 +34,6 @@ import { getInventoryStock, getWarehouses } from "../../api/inventory";
 import { getFinancialAccounts } from "../../api/finance";
 import { ENABLE_MULTI_ACCOUNT_SELECTION } from "../../utils/features";
 import { getDepartments, updateDepartment } from "../../api/departments";
-import { getRawMaterials } from "../../api/materialPurchases";
 import OrderItemMaterials from "./OrderItemMaterials";
 import OrderCard from "./OrderCard";
 import {
@@ -227,7 +226,10 @@ const Orders = () => {
           ? getFinancialAccounts().catch(() => ({ data: { financial_accounts: [] } }))
           : Promise.resolve({ data: { financial_accounts: [] } }),
         getDepartments({ is_active: true, limit: 100 }),
-        getRawMaterials({ limit: 200 }).catch(() => ({ data: { raw_materials: [] } })),
+        // Xomashyo ro'yxati bu yerda so'ralmaydi: `/raw-materials` xarid
+        // ruxsatini talab qiladi va limiti 100 bilan cheklangan. Ro'yxat
+        // mahsulot tanlanganda retsept bilan birga keladi.
+        Promise.resolve({ data: { raw_materials: [] } }),
         canManage ? getWorkflowWorkers() : Promise.resolve({ data: { workers: [] } }),
       ]);
       setClients(clientsResponse.data.users || []);
@@ -347,6 +349,13 @@ const Orders = () => {
           })),
         })),
       });
+
+      // Saqlangan ko'rsatmalar nomi bilan ko'rinishi uchun tanlash ro'yxati
+      // kerak. U retsept javobi bilan keladi — mahsulotlardan bittasi yetadi,
+      // ro'yxat butun katalog.
+      const firstProduct = (order.items || []).find((item) => item.product_id)?.product_id;
+      if (firstProduct) loadMaterialLookup(firstProduct);
+
       setOpen(true);
     } catch (error) {
       toast.error(error.response?.data?.message || "Zakazni ochib bo'lmadi");
@@ -372,6 +381,16 @@ const Orders = () => {
     }));
 
     if (key === "product_id" && value) loadRecipeInto(index, value);
+  };
+
+  /** Faqat tanlash ro'yxati — mavjud ko'rsatmalarga tegmaydi. */
+  const loadMaterialLookup = async (productId) => {
+    try {
+      const { data } = await getOrderProductRecipe(productId);
+      if (data.available_materials?.length) setRawMaterials(data.available_materials);
+    } catch {
+      // Ro'yxatsiz ham forma ochiladi — faqat nomlar id bo'lib ko'rinadi.
+    }
   };
 
   /**

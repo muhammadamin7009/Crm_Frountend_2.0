@@ -479,11 +479,14 @@ const ClientSales = () => {
       const [summaryRes, balanceRes] = await Promise.all([
         getClientSalesSummary(params),
 
+        // Korxona bo'yicha umumiy balans moliya ruxsatini talab qiladi.
+        // Ruxsat yo'q bo'lsa sahifa buzilmasin — qolgan hamma narsa
+        // ko'rinaveradi, faqat shu ko'rsatkich bo'sh qoladi.
         getClientBalance({
           client_id: filters.client_id || undefined,
           date_from: filters.date_from || undefined,
           date_to: filters.date_to || undefined,
-        }),
+        }).catch(() => ({ data: {} })),
       ]);
 
       setSummary(summaryRes.data.summary || []);
