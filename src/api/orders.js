@@ -29,3 +29,6 @@ export const getPendingApprovalTasks = (params) =>
   api.get("/order-tasks/pending-approval", { params: removeEmptyParams(params) });
 export const approveOrderTask = (id) => api.post(`/order-tasks/${id}/approve`);
 export const rejectOrderTask = (id, reason) => api.post(`/order-tasks/${id}/reject`, { reason });
+export const getDepartmentQueue = () => api.get("/order-tasks/department-queue");
+export const assignOrderTask = (id, worker_id, quantity) =>
+  api.post(`/order-tasks/${id}/assign`, { worker_id, quantity });

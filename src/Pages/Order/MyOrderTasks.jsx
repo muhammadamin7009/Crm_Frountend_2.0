@@ -14,7 +14,7 @@ import {
 import PageHeader from "../../Components/UI/PageHeader";
 import CrmPagination from "../../Components/Common/CrmPagination";
 import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
-import { claimOrderTask, getMyOrderTasks, updateOrderTaskProgress } from "../../api/orders";
+import { getMyOrderTasks, updateOrderTaskProgress } from "../../api/orders";
 import TaskFinishDialog from "./TaskFinishDialog";
 
 const labels = {
@@ -37,7 +37,6 @@ const MyOrderTasks = () => {
   const [pageInfo, setPageInfo] = useState({ total: 0, limit: 10, offset: 0 });
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState(null);
-  const [claimQuantities, setClaimQuantities] = useState({});
   const [department, setDepartment] = useState(null);
 
   // "Tugatish" darhol yopmaydi — avval nima sarflanganini so'raymiz.
@@ -104,30 +103,6 @@ const MyOrderTasks = () => {
     }
   };
 
-  const claim = async (task) => {
-    const availableQuantity = Number(task.available_quantity || 0);
-    const quantity = Number(claimQuantities[task.id] ?? availableQuantity);
-    if (!Number.isFinite(quantity) || quantity <= 0 || quantity > availableQuantity) {
-      toast.warning(`Miqdor 0 dan katta va ${availableQuantity} dan oshmasin`);
-      return;
-    }
-    setSavingId(task.id);
-    try {
-      await claimOrderTask(task.id, quantity);
-      toast.success(`${quantity} ${task.product_unit || "ta"} ish olindi`);
-      setClaimQuantities((current) => {
-        const next = { ...current };
-        delete next[task.id];
-        return next;
-      });
-      load();
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Vazifani olib bo'lmadi");
-    } finally {
-      setSavingId(null);
-    }
-  };
-
   const setCompleted = (task, value) => {
     const quantity = Math.max(0, Math.min(Number(value || 0), Number(task.planned_quantity)));
     setTasks((current) =>
@@ -147,7 +122,7 @@ const MyOrderTasks = () => {
       <PageHeader
         eyebrow={department?.name || "Ishlab chiqarish"}
         title="Bo'lim navbati"
-        description="Zakaz ham, omborga ishlab chiqariladigan partiya ham shu yerda. Shoshilinchlari navbat boshida. Ishni oling, bajarganingizni yozing — ish hisoboti o'zi tushadi."
+        description="Bo'lim boshlig'i biriktirgan ishlar. Bajarganingizni yozing — tasdiqlangach ish hisobingizga o'tadi."
       />
       <Paper
         className="crm-sticky-filters"
@@ -202,7 +177,6 @@ const MyOrderTasks = () => {
       ) : (
         <Stack className="aa-task-list" spacing={1.5}>
           {tasks.map((task) => {
-            const availableQuantity = Number(task.available_quantity || task.planned_quantity || 0);
             const percent = Math.round(
               (Number(task.completed_quantity || 0) * 100) / Number(task.planned_quantity || 1),
             );
@@ -287,7 +261,7 @@ const MyOrderTasks = () => {
                     <Typography sx={{ fontSize: 12.5, fontWeight: 600 }}>
                       {task.status === "pending" ? (
                         <>
-                          Keyingi ishga tayyor: {availableQuantity} {task.product_unit || "ta"}
+                          Kutilmoqda: {task.planned_quantity} {task.product_unit || "ta"}
                         </>
                       ) : (
                         <>
@@ -357,31 +331,9 @@ const MyOrderTasks = () => {
                   sx={{ mt: 2, display: "flex", alignItems: "center", gap: 1.2, flexWrap: "wrap" }}
                 >
                   {task.status === "pending" && (
-                    <>
-                      <TextField
-                        size="small"
-                        type="number"
-                        label="Olinadigan miqdor"
-                        value={claimQuantities[task.id] ?? availableQuantity}
-                        onChange={(event) =>
-                          setClaimQuantities((current) => ({
-                            ...current,
-                            [task.id]: event.target.value,
-                          }))
-                        }
-                        inputProps={{ min: 0.01, max: availableQuantity, step: 0.01 }}
-                        helperText={`Hozir tayyor: ${availableQuantity} ${task.product_unit || "ta"}`}
-                        sx={{ width: 190 }}
-                      />
-                      <Button
-                        variant="contained"
-                        disabled={savingId === task.id}
-                        onClick={() => claim(task)}
-                        sx={{ textTransform: "none", fontWeight: 600 }}
-                      >
-                        Shu miqdorni olish
-                      </Button>
-                    </>
+                    <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 12.5 }}>
+                      Bo‘lim boshlig‘i sizga biriktirgach ish boshlanadi.
+                    </Typography>
                   )}
                   {task.status === "in_progress" && (
                     <>
