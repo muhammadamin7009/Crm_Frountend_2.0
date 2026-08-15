@@ -93,6 +93,8 @@ export const menuGroups = [
         label: "Bo'lim nazorati",
         path: "/task-approvals",
         allowedRoles: ["super_admin", "admin", "worker"],
+        // Ishchilardan faqat bo'lim boshlig'i ko'radi.
+        requiresSupervisor: true,
       },
       {
         icon: CheckIcon,
@@ -245,6 +247,18 @@ export const buildInventoryMenuItems = (user, warehouses = []) => {
 /** Bitta menyu bandi shu foydalanuvchiga ochiqmi. */
 export const isMenuItemVisible = (user, item) => {
   if (item.allowedRoles && !item.allowedRoles.includes(user?.role)) return false;
+
+  // Ayrim sahifalar rolga emas, mas'uliyatga bog'liq: bo'lim boshlig'i
+  // bo'lmagan ishchi "Bo'lim nazorati" ni ochsa bo'm-bo'sh sahifa ko'radi,
+  // chunki backend unga baribir hech narsa bermaydi.
+  //
+  // `supervises` yo'q bo'lsa (eski sessiya, brauzerda saqlangan foydalanuvchi)
+  // bandni yashirmaymiz — aks holda yangilanishdan keyin haqiqiy boshliq
+  // qayta kirmaguncha o'z sahifasini yo'qotib turardi.
+  if (item.requiresSupervisor && !["super_admin", "admin"].includes(user?.role)) {
+    if (Array.isArray(user?.supervises) && user.supervises.length === 0) return false;
+  }
+
   if (user?.plan_code && item.requiredFeature) {
     if (!user.plan_features?.includes(item.requiredFeature)) return false;
   }
