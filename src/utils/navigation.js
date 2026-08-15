@@ -88,7 +88,9 @@ export const menuGroups = [
       },
       {
         icon: CheckIcon,
-        label: "Tasdiqlash",
+        // Sahifa ikki ishni qiladi: ish tarqatish va tasdiqlash.
+        // "Tasdiqlash" nomi birinchisini yashirib qo'yardi.
+        label: "Bo'lim nazorati",
         path: "/task-approvals",
         allowedRoles: ["super_admin", "admin", "worker"],
       },
