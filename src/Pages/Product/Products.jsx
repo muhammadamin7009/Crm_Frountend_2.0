@@ -360,7 +360,7 @@ const Products = () => {
     color: productForm.color.trim() || null,
     unit: "par",
     description: productForm.description.trim() || null,
-    purchase_price: Number(productForm.purchase_price || 0),
+    // `purchase_price` yuborilmaydi — backend uni qabul qilmaydi.
     sale_price: Number(productForm.sale_price),
     is_active: productForm.is_active,
   });
@@ -1158,12 +1158,12 @@ const Products = () => {
           helperText="Tayyor mahsulot omborda par hisobida yuritiladi."
         />
 
-        <MoneyTextField
-          label="Xarid narxi"
-          value={productForm.purchase_price}
-          onChange={handleProductChange("purchase_price")}
-        />
-
+        {/*
+          "Xarid narxi" maydoni olib tashlandi. Tannarx qo'lda yozilmaydi —
+          u sarflangan xomashyo va bo'lim ish haqidan hisoblanadi va
+          mahsulot sahifasida "Tannarx" bo'limida ko'rinadi. Qo'lda yozilgan
+          raqam hisoblangani bilan zid tushib, foyda yolg'on chiqardi.
+        */}
         <MoneyTextField
           required
           label="Sotuv narxi"
