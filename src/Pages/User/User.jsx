@@ -5,6 +5,7 @@ import {
   Button,
   Chip,
   CircularProgress,
+  Dialog,
   LinearProgress,
   Paper,
   Table,
@@ -793,6 +794,9 @@ const User = ({ backTo = "/users" }) => {
 
   const [employee, setEmployee] = useState(null);
 
+  // Suratni to'liq hajmda ko'rish.
+  const [photoOpen, setPhotoOpen] = useState(false);
+
   const [details, setDetails] = useState(null);
 
   const [loading, setLoading] = useState(true);
@@ -1222,24 +1226,32 @@ const User = ({ backTo = "/users" }) => {
               gap: 2.3,
             }}
           >
+            {/* Mahsulot rasmi kabi: yumaloq nishoncha emas, odam ko'rinadigan
+                o'lchamdagi surat. Bosilsa to'liq hajmda ochiladi. */}
             <Avatar
+              variant="rounded"
               src={getImageUrl(employee.user_image)}
+              onClick={() => employee.user_image && setPhotoOpen(true)}
               sx={{
                 width: {
-                  xs: 82,
-                  md: 94,
+                  xs: 128,
+                  md: 176,
                 },
                 height: {
-                  xs: 82,
-                  md: 94,
+                  xs: 128,
+                  md: 176,
                 },
                 flexShrink: 0,
+                borderRadius: "24px",
                 color: "#ffffff",
-                fontSize: 30,
+                fontSize: { xs: 44, md: 60 },
                 fontWeight: 700,
                 background: "linear-gradient(135deg,#4d0f18,#8c1d2b)",
-                border: "5px solid rgba(255,255,255,.12)",
-                boxShadow: "0 18px 42px rgba(77, 15, 24,.32)",
+                border: "1px solid rgba(255,255,255,.18)",
+                boxShadow: "0 24px 60px rgba(77, 15, 24,.34)",
+                cursor: employee.user_image ? "zoom-in" : "default",
+                transition: "transform .25s cubic-bezier(.22,1,.36,1)",
+                "&:hover": { transform: employee.user_image ? "scale(1.02)" : "none" },
               }}
             >
               {getInitials(employee)}
@@ -1829,6 +1841,38 @@ const User = ({ backTo = "/users" }) => {
           </Section>
         </Box>
       )}
+
+      <Dialog
+        open={photoOpen}
+        onClose={() => setPhotoOpen(false)}
+        maxWidth="sm"
+        slotProps={{
+          paper: {
+            sx: {
+              m: 2,
+              overflow: "hidden",
+              borderRadius: "24px",
+              backgroundColor: "var(--aa-surface-solid)",
+              backgroundImage: "none",
+            },
+          },
+        }}
+      >
+        <Box
+          component="img"
+          src={getImageUrl(employee.user_image)}
+          alt={`${employee.first_name || ""} ${employee.last_name || ""}`.trim()}
+          onClick={() => setPhotoOpen(false)}
+          sx={{
+            display: "block",
+            width: "100%",
+            maxHeight: "78vh",
+            objectFit: "contain",
+            cursor: "zoom-out",
+            backgroundColor: "var(--aa-surface-muted)",
+          }}
+        />
+      </Dialog>
     </Box>
   );
 };
