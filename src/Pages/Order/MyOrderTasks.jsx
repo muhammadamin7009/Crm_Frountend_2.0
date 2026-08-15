@@ -15,6 +15,7 @@ import PageHeader from "../../Components/UI/PageHeader";
 import CrmPagination from "../../Components/Common/CrmPagination";
 import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import { claimOrderTask, getMyOrderTasks, updateOrderTaskProgress } from "../../api/orders";
+import TaskFinishDialog from "./TaskFinishDialog";
 
 const labels = { pending: "Navbatda", in_progress: "Jarayonda", completed: "Tugallandi" };
 const colors = { pending: "#7d716a", in_progress: "#d97706", completed: "#2f6b45" };
@@ -27,6 +28,9 @@ const MyOrderTasks = () => {
   const [savingId, setSavingId] = useState(null);
   const [claimQuantities, setClaimQuantities] = useState({});
   const [department, setDepartment] = useState(null);
+
+  // "Tugatish" darhol yopmaydi — avval nima sarflanganini so'raymiz.
+  const [finishTask, setFinishTask] = useState(null);
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
 
   const load = useCallback(async () => {
@@ -60,6 +64,30 @@ const MyOrderTasks = () => {
       load();
     } catch (error) {
       toast.error(error.response?.data?.message || "Vazifani yangilab bo'lmadi");
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const finish = async (materials) => {
+    if (!finishTask) return;
+
+    setSavingId(finishTask.id);
+
+    try {
+      await updateOrderTaskProgress(finishTask.id, {
+        status: "completed",
+        completed_quantity: Number(finishTask.completed_quantity),
+        worker_note: finishTask.worker_note || "",
+        materials,
+      });
+      toast.success("Ish yakunlandi va hisobga o‘tdi");
+      setFinishTask(null);
+      load();
+    } catch (error) {
+      // Oyna ochiq qoladi: kiritilgan sarf yo'qolmasin, xatoni tuzatib
+      // qayta yuborsin. Ko'p uchraydigan sabab — bo'lim narxi yo'qligi.
+      toast.error(error.response?.data?.message || "Vazifani yakunlab bo'lmadi");
     } finally {
       setSavingId(null);
     }
@@ -348,13 +376,7 @@ const MyOrderTasks = () => {
                         variant="contained"
                         color="success"
                         disabled={savingId === task.id}
-                        onClick={() =>
-                          update(task, {
-                            status: "completed",
-                            completed_quantity: Number(task.completed_quantity),
-                            worker_note: task.worker_note || "",
-                          })
-                        }
+                        onClick={() => setFinishTask(task)}
                         sx={{ textTransform: "none", fontWeight: 600 }}
                       >
                         Tugatish
@@ -367,6 +389,14 @@ const MyOrderTasks = () => {
           })}
         </Stack>
       )}
+      <TaskFinishDialog
+        open={Boolean(finishTask)}
+        task={finishTask}
+        saving={savingId === finishTask?.id}
+        onClose={() => setFinishTask(null)}
+        onConfirm={finish}
+      />
+
       <CrmPagination
         total={pageInfo.total}
         page={page}

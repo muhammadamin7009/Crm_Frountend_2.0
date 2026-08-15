@@ -20,6 +20,8 @@ export const getMyOrderTasks = (params) =>
   api.get("/order-tasks/me", { params: removeEmptyParams(params) });
 export const claimOrderTask = (id, quantity) => api.post(`/order-tasks/${id}/claim`, { quantity });
 export const updateOrderTaskProgress = (id, data) => api.patch(`/order-tasks/${id}/progress`, data);
+/** Bosqichda sarflanadigan xomashyo va almashtirish uchun to'liq ro'yxat. */
+export const getOrderTaskMaterials = (id) => api.get(`/order-tasks/${id}/materials`);
 export const getWorkflowWorkers = () => api.get("/order-workflow/workers");
 export const assignWorkflowWorkerDepartment = (id, department_id) =>
   api.patch(`/order-workflow/workers/${id}/department`, { department_id });
