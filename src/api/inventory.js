@@ -7,6 +7,9 @@ export const updateWarehouse = (id, data) => api.patch(`/warehouses/${id}`, data
 export const archiveWarehouse = (id) => api.delete(`/warehouses/${id}`);
 
 export const getInventoryStock = (params) => api.get("/inventory/stock", { params });
+
+// Ishchi o'z bo'limining xomashyolarini ko'radi — boshqa bo'lim moli chiqmaydi.
+export const getMyDepartmentMaterials = () => api.get("/inventory/my-materials");
 export const getLowInventoryStock = (params) => api.get("/inventory/low-stock", { params });
 export const getInventoryItems = (params) => api.get("/inventory/items", { params });
 

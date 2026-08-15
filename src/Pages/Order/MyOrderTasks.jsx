@@ -16,6 +16,7 @@ import CrmPagination from "../../Components/Common/CrmPagination";
 import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import { getMyOrderTasks, updateOrderTaskProgress } from "../../api/orders";
 import TaskFinishDialog from "./TaskFinishDialog";
+import DepartmentMaterials from "./DepartmentMaterials";
 
 const labels = {
   pending: "Navbatda",
@@ -124,6 +125,7 @@ const MyOrderTasks = () => {
         title="Bo'lim navbati"
         description="Bo'lim boshlig'i biriktirgan ishlar. Bajarganingizni yozing — tasdiqlangach ish hisobingizga o'tadi."
       />
+      <DepartmentMaterials />
       <Paper
         className="crm-sticky-filters"
         elevation={0}
