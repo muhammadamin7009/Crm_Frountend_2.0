@@ -36,7 +36,16 @@ const GROUP_LAYOUT = [
   { label: "Savdo", paths: ["/clients", "/orders", "/client-sales"] },
   {
     label: "Ishlab chiqarish",
-    paths: ["/products", "/my-order-tasks", "/worker-outputs", "/production-batches"],
+    // Bu ro'yxat `navigation.js` bilan mos turishi shart: menyuda band
+    // faqat ikkalasida ham bo'lsa chiziladi. `/task-approvals` shu yerda
+    // yo'q edi va bo'lim boshlig'i sahifasini umuman ko'rmasdi.
+    paths: [
+      "/products",
+      "/my-order-tasks",
+      "/task-approvals",
+      "/worker-outputs",
+      "/production-batches",
+    ],
   },
   { label: "Omborlar", dynamic: true },
   { label: "Xodimlar", paths: ["/users", "/employees", "/worker-payments"] },
