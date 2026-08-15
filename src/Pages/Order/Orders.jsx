@@ -1016,7 +1016,14 @@ const Orders = () => {
                           <Button
                             variant="outlined"
                             size="small"
-                            onClick={() => showCard(order.id)}
+                            // Oyna ochilganda MUI `#root` ga aria-hidden
+                            // qo'yadi. Fokus shu tugmada qolib ketsa brauzer
+                            // "yashirilgan elementda fokus turibdi" deb
+                            // ogohlantiradi — ekran o'quvchi uni topa olmaydi.
+                            onClick={(event) => {
+                              event.currentTarget.blur();
+                              showCard(order.id);
+                            }}
                             sx={{ textTransform: "none", fontWeight: 600 }}
                           >
                             Yorliq

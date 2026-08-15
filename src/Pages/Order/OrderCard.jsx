@@ -38,7 +38,10 @@ const OrderCard = ({ order, open, onClose }) => {
           }
         `}</style>
 
-        <Box className="order-card-print" sx={{ p: 2.5, display: "grid", gap: 2.5 }}>
+        <Box
+          className="order-card-print"
+          sx={{ p: { xs: 1.5, sm: 2.5 }, display: "grid", gap: 2.5, overflowX: "hidden" }}
+        >
           {(order.items || []).map((item, index) => (
             <Box
               key={item.id || index}
@@ -46,8 +49,9 @@ const OrderCard = ({ order, open, onClose }) => {
               sx={{
                 border: "2px solid var(--aa-border)",
                 borderRadius: 2,
-                p: 2.5,
+                p: { xs: 1.5, sm: 2.5 },
                 breakInside: "avoid",
+                minWidth: 0,
               }}
             >
               <Box
@@ -63,7 +67,15 @@ const OrderCard = ({ order, open, onClose }) => {
                   <Typography sx={{ fontSize: 11, letterSpacing: ".1em", fontWeight: 700 }}>
                     ZAKAZ KARTASI
                   </Typography>
-                  <Typography sx={{ fontSize: 26, fontWeight: 800, lineHeight: 1.1 }}>
+                  {/* Raqam bo'linib ketmasin: telefonda shrift kichrayadi. */}
+                  <Typography
+                    sx={{
+                      fontSize: { xs: 19, sm: 26 },
+                      fontWeight: 800,
+                      lineHeight: 1.1,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
                     {order.order_number}
                   </Typography>
                   <Typography sx={{ fontSize: 13 }}>{order.client_name || "—"}</Typography>
@@ -72,7 +84,9 @@ const OrderCard = ({ order, open, onClose }) => {
                   <Typography sx={{ fontSize: 11, fontWeight: 700 }}>
                     {order.priority === "urgent" ? "SHOSHILINCH" : "ODATIY"}
                   </Typography>
-                  <Typography sx={{ fontSize: 13 }}>Muddat: {date(order.due_date)}</Typography>
+                  <Typography sx={{ fontSize: { xs: 11.5, sm: 13 }, whiteSpace: "nowrap" }}>
+                    Muddat: {date(order.due_date)}
+                  </Typography>
                   <Typography sx={{ fontSize: 12, color: "var(--aa-text-tertiary)" }}>
                     {index + 1} / {(order.items || []).length}
                   </Typography>
@@ -82,30 +96,45 @@ const OrderCard = ({ order, open, onClose }) => {
               <Box
                 sx={{
                   display: "flex",
+                  flexWrap: "wrap",
+                  gap: 1,
                   justifyContent: "space-between",
                   alignItems: "baseline",
                   py: 1.5,
                 }}
               >
-                <Typography sx={{ fontSize: 22, fontWeight: 700 }}>
+                <Typography
+                  sx={{ fontSize: { xs: 18, sm: 22 }, fontWeight: 700, minWidth: 0, flex: 1 }}
+                >
                   {item.product_name}
                   {item.product_sku ? (
-                    <Box component="span" sx={{ fontSize: 13, fontWeight: 500, ml: 1 }}>
+                    <Box
+                      component="span"
+                      sx={{ fontSize: 12, fontWeight: 500, ml: 1, wordBreak: "break-all" }}
+                    >
                       {item.product_sku}
                     </Box>
                   ) : null}
                 </Typography>
-                <Typography sx={{ fontSize: 30, fontWeight: 800, whiteSpace: "nowrap" }}>
+                <Typography
+                  sx={{ fontSize: { xs: 24, sm: 30 }, fontWeight: 800, whiteSpace: "nowrap" }}
+                >
                   {Number(item.quantity)} {item.product_unit || "par"}
                 </Typography>
               </Box>
 
               {item.materials?.length > 0 ? (
                 <Box sx={{ border: "1px solid var(--aa-border)", borderRadius: 1.5 }}>
+                  {/*
+                    Telefonda uch ustun sig'maydi va sahifa yon tomonga
+                    surilib ketardi. Kichik ekranda bo'lim nomi alohida
+                    qatorga chiqadi, sarlavha esa umuman ko'rsatilmaydi —
+                    har qatorning o'zida bo'lim yozib turadi.
+                  */}
                   <Box
                     sx={{
-                      display: "grid",
-                      gridTemplateColumns: "150px 1fr auto",
+                      display: { xs: "none", sm: "grid" },
+                      gridTemplateColumns: "140px 1fr auto",
                       gap: 1.5,
                       px: 1.5,
                       py: 0.75,
@@ -125,18 +154,28 @@ const OrderCard = ({ order, open, onClose }) => {
                       key={`${material.department_id}-${material.raw_material_id}`}
                       sx={{
                         display: "grid",
-                        gridTemplateColumns: "150px 1fr auto",
-                        gap: 1.5,
+                        gridTemplateColumns: { xs: "1fr auto", sm: "140px 1fr auto" },
+                        columnGap: 1.5,
+                        rowGap: 0.3,
                         px: 1.5,
                         py: 1.1,
                         borderTop: "1px solid var(--aa-border)",
                         alignItems: "center",
                       }}
                     >
-                      <Typography sx={{ fontSize: 13, fontWeight: 700 }}>
+                      <Typography
+                        sx={{
+                          gridColumn: { xs: "1 / -1", sm: "auto" },
+                          fontSize: { xs: 10.5, sm: 13 },
+                          fontWeight: 700,
+                          letterSpacing: { xs: ".06em", sm: 0 },
+                          textTransform: { xs: "uppercase", sm: "none" },
+                          color: { xs: "var(--aa-text-tertiary)", sm: "var(--aa-text)" },
+                        }}
+                      >
                         {material.department_name}
                       </Typography>
-                      <Typography sx={{ fontSize: 15, fontWeight: 600 }}>
+                      <Typography sx={{ fontSize: 15, fontWeight: 600, minWidth: 0 }}>
                         {material.material_name}
                         {material.note ? (
                           <Box component="span" sx={{ fontSize: 12.5, fontWeight: 500 }}>
