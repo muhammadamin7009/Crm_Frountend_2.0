@@ -102,7 +102,25 @@ const OrderCard = ({ order, open, onClose }) => {
 
               {item.materials?.length > 0 ? (
                 <Box sx={{ border: "1px solid var(--aa-border)", borderRadius: 1.5 }}>
-                  {item.materials.map((material, rowIndex) => (
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: "150px 1fr auto",
+                      gap: 1.5,
+                      px: 1.5,
+                      py: 0.75,
+                      bgcolor: "var(--aa-surface-muted)",
+                      fontSize: 11,
+                      fontWeight: 700,
+                      letterSpacing: ".06em",
+                      color: "var(--aa-text-tertiary)",
+                    }}
+                  >
+                    <span>BO'LIM</span>
+                    <span>XOMASHYO</span>
+                    <span>JAMI KERAK</span>
+                  </Box>
+                  {item.materials.map((material) => (
                     <Box
                       key={`${material.department_id}-${material.raw_material_id}`}
                       sx={{
@@ -111,7 +129,7 @@ const OrderCard = ({ order, open, onClose }) => {
                         gap: 1.5,
                         px: 1.5,
                         py: 1.1,
-                        borderTop: rowIndex === 0 ? "none" : "1px solid var(--aa-border)",
+                        borderTop: "1px solid var(--aa-border)",
                         alignItems: "center",
                       }}
                     >
@@ -127,10 +145,17 @@ const OrderCard = ({ order, open, onClose }) => {
                           </Box>
                         ) : null}
                       </Typography>
-                      <Typography sx={{ fontSize: 13, whiteSpace: "nowrap" }}>
-                        {material.quantity_per_pair
-                          ? `${material.quantity_per_pair} ${material.material_unit}/juft`
-                          : "retsept bo'yicha"}
+                      {/*
+                        Butun zakazga ketadigan miqdor. 1 juftga bo'lgan
+                        me'yor sexda kerak emas — ishchi 40 par ish oldi,
+                        unga "22 metr kerak" degan raqam kerak, "0,55" emas.
+                      */}
+                      <Typography
+                        sx={{ fontSize: 15, fontWeight: 700, whiteSpace: "nowrap" }}
+                      >
+                        {material.total_quantity === null
+                          ? "—"
+                          : `${material.total_quantity} ${material.material_unit}`}
                       </Typography>
                     </Box>
                   ))}
