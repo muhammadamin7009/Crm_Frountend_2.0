@@ -181,6 +181,9 @@ const Orders = () => {
 
   // Har bo'limning boshlig'i: bo'lim id -> xodim id.
   const [departmentHeads, setDepartmentHeads] = useState({});
+
+  // Boshliq bo'la oladiganlar — ishchilar ham, rahbariyat ham.
+  const [supervisorCandidates, setSupervisorCandidates] = useState([]);
   const [departmentOrderSaving, setDepartmentOrderSaving] = useState(false);
 
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
@@ -230,6 +233,7 @@ const Orders = () => {
       setAccounts(accountsResponse.data.financial_accounts || []);
       setDepartments(departmentsResponse.data.departments || []);
       setWorkers(workersResponse.data.workers || []);
+      setSupervisorCandidates(workersResponse.data.supervisor_candidates || []);
     } catch (error) {
       toast.error(error.response?.data?.message || "Ma'lumotnomalarni yuklab bo'lmadi");
     }
@@ -581,6 +585,7 @@ const Orders = () => {
       const workersResponse = await getWorkflowWorkers();
       setDepartments(data.departments || []);
       setWorkers(workersResponse.data.workers || []);
+      setSupervisorCandidates(workersResponse.data.supervisor_candidates || []);
       setDepartmentOrderOpen(false);
       toast.success("Bo'limlar tartibi va xodimlar saqlandi");
     } catch (error) {
@@ -1198,10 +1203,15 @@ const Orders = () => {
                   sx={{ mt: 1.2 }}
                 >
                   <MenuItem value="">Boshliq yo'q</MenuItem>
-                  {workers.map((worker) => (
-                    <MenuItem key={worker.id} value={worker.id}>
-                      {[worker.first_name, worker.last_name].filter(Boolean).join(" ") ||
-                        worker.username}
+                  {supervisorCandidates.map((person) => (
+                    <MenuItem key={person.id} value={person.id}>
+                      {person.name || person.username}
+                      <Box
+                        component="span"
+                        sx={{ ml: 1, color: "var(--aa-text-tertiary)", fontSize: 11 }}
+                      >
+                        {person.role === "worker" ? "ishchi" : "rahbariyat"}
+                      </Box>
                     </MenuItem>
                   ))}
                 </TextField>
