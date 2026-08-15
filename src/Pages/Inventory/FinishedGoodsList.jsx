@@ -347,92 +347,171 @@ const FinishedGoodsList = ({ warehouseId, lowOnly = false, onClearLowOnly }) => 
 };
 
 /** Bitta qoldiq qatori: rasm, rang, padoj, material, partiya, qoldiq. */
-const VariantRow = ({ variant }) => (
-  <Box
-    sx={{
-      display: "grid",
-      gridTemplateColumns: { xs: "44px 1fr", md: "44px 1fr 150px 120px" },
-      alignItems: "center",
-      gap: 1.2,
-      p: 1,
-      borderRadius: "11px",
-      backgroundColor: "var(--aa-surface-solid)",
-      border: "1px solid var(--aa-border)",
-    }}
-  >
-    <Box
-      sx={{
-        width: 44,
-        height: 44,
-        display: "grid",
-        placeItems: "center",
-        overflow: "hidden",
-        borderRadius: "10px",
-        backgroundColor: "var(--aa-surface-muted)",
-      }}
-    >
-      {variant.image_url ? (
-        <Box
-          component="img"
-          src={variant.image_url}
-          alt={variant.product_name}
-          sx={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      ) : (
-        <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 15, fontWeight: 700 }}>
-          {(variant.color || variant.product_name || "?").charAt(0).toUpperCase()}
-        </Typography>
-      )}
-    </Box>
+/** "Loro Piano" -> "LP". Rasm bo'lmaganda shu ko'rinadi. */
+const initials = (name) =>
+  String(name || "?")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase() || "?";
 
+const Fact = ({ label, value }) =>
+  value ? (
     <Box sx={{ minWidth: 0 }}>
-      <Typography noWrap sx={{ color: "var(--aa-text)", fontSize: 12, fontWeight: 600 }}>
-        {variant.product_name}
-        {variant.color ? ` · ${variant.color}` : ""}
-      </Typography>
-
-      <Typography noWrap sx={{ mt: 0.2, color: "var(--aa-text-tertiary)", fontSize: 10 }}>
-        {/* Partiyasiz eski qoldiqda padoj va material bo'lmaydi. */}
-        {[variant.sole_name, variant.material_name, variant.category_name]
-          .filter(Boolean)
-          .join(" · ") || "Partiya ma'lumoti yo‘q"}
-      </Typography>
-    </Box>
-
-    <Box sx={{ display: { xs: "none", md: "block" } }}>
-      {variant.batch_number ? (
-        <Chip
-          size="small"
-          label={variant.batch_number}
-          sx={{
-            height: 22,
-            color: "var(--aa-text-secondary)",
-            fontSize: 9.5,
-            fontWeight: 700,
-            backgroundColor: "var(--aa-surface-muted)",
-          }}
-        />
-      ) : null}
-    </Box>
-
-    <Box sx={{ textAlign: { md: "right" }, gridColumn: { xs: "2", md: "auto" } }}>
       <Typography
         sx={{
-          color: variant.is_low ? "var(--aa-danger)" : "var(--aa-text)",
-          fontSize: 13,
+          fontSize: 9,
           fontWeight: 700,
+          letterSpacing: ".08em",
+          color: "var(--aa-text-tertiary)",
+          textTransform: "uppercase",
         }}
       >
-        {formatNumber(variant.quantity)} {variant.unit || "par"}
+        {label}
       </Typography>
-
-      <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 9.5 }}>
-        {variant.minimum_quantity > 0
-          ? `minimum ${formatNumber(variant.minimum_quantity)}`
-          : "minimum belgilanmagan"}
+      <Typography noWrap sx={{ fontSize: 12.5, fontWeight: 600, color: "var(--aa-text)" }}>
+        {value}
       </Typography>
     </Box>
-  </Box>
-);
+  ) : null;
+
+/**
+ * Omborda turgan bitta partiya.
+ *
+ * Ilgari bu qator "nomi · rangi · padoj · material" bo'lib bir chiziqda
+ * ezilib turardi va omborchiga eng kerakli savolga javob bermasdi: bu
+ * karobka kimning zakazi, nimadan tikilgan va qaysi qog'ozga tegishli.
+ *
+ * Endi har fakt o'z yorlig'i bilan turadi. Zakazdan chiqqan partiyada
+ * mijoz va zakaz raqami, zakazsizida esa partiya raqami ko'rinadi.
+ *
+ * Xomashyo nomlari rejadan emas, ishchilar tugatishda yozgan HAQIQIY
+ * sarfdan olinadi.
+ */
+const VariantRow = ({ variant }) => {
+  const fromOrder = !!variant.order_number;
+  const used = variant.used_materials || [];
+
+  // Kroy va kosib eng ko'p so'raladigan ikkitasi — ularni oldinga chiqaramiz.
+  const byStage = (needle) =>
+    used.find((row) => new RegExp(needle, "i").test(row.department_name || ""))?.material_name;
+  const cutting = byStage("kroy") || variant.material_name;
+  const sole = byStage("kosib|padoj") || variant.sole_name;
+
+  return (
+    <Box
+      sx={{
+        p: 1.4,
+        borderRadius: "12px",
+        backgroundColor: "var(--aa-surface-solid)",
+        border: "1px solid var(--aa-border)",
+        display: "grid",
+        gap: 1.2,
+      }}
+    >
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "52px 1fr auto",
+          gap: 1.4,
+          alignItems: "center",
+        }}
+      >
+        <Box
+          sx={{
+            width: 52,
+            height: 52,
+            display: "grid",
+            placeItems: "center",
+            overflow: "hidden",
+            borderRadius: "12px",
+            backgroundColor: "var(--aa-surface-muted)",
+            border: "1px solid var(--aa-border)",
+          }}
+        >
+          {variant.image_url ? (
+            <Box
+              component="img"
+              src={variant.image_url}
+              alt={variant.product_name}
+              sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            <Typography
+              sx={{ color: "var(--aa-text-secondary)", fontSize: 17, fontWeight: 800 }}
+            >
+              {initials(variant.product_name)}
+            </Typography>
+          )}
+        </Box>
+
+        <Box sx={{ minWidth: 0 }}>
+          <Typography noWrap sx={{ fontSize: 14, fontWeight: 700, color: "var(--aa-text)" }}>
+            {variant.product_name}
+            {variant.color ? (
+              <Box component="span" sx={{ fontWeight: 500 }}> · {variant.color}</Box>
+            ) : null}
+          </Typography>
+          <Typography noWrap sx={{ fontSize: 11, color: "var(--aa-text-tertiary)" }}>
+            {fromOrder ? variant.client_name || "Mijoz ko'rsatilmagan" : "Omborga ishlab chiqarilgan"}
+            {variant.warehouse_name ? ` · ${variant.warehouse_name}` : ""}
+          </Typography>
+        </Box>
+
+        <Box sx={{ textAlign: "right" }}>
+          <Typography
+            sx={{
+              color: variant.is_low ? "var(--aa-danger)" : "var(--aa-text)",
+              fontSize: 17,
+              fontWeight: 800,
+              whiteSpace: "nowrap",
+            }}
+          >
+            {formatNumber(variant.quantity)} {variant.unit || "par"}
+          </Typography>
+          <Chip
+            size="small"
+            label={fromOrder ? variant.order_number : variant.batch_number || "Partiyasiz"}
+            sx={{
+              mt: 0.3,
+              height: 20,
+              fontSize: 10,
+              fontWeight: 700,
+              color: fromOrder ? "var(--aa-brass, #a9814b)" : "var(--aa-text-secondary)",
+              backgroundColor: "var(--aa-surface-muted)",
+            }}
+          />
+        </Box>
+      </Box>
+
+      {(cutting || sole || used.length > 0) && (
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr 1fr", sm: "repeat(auto-fit, minmax(120px, 1fr))" },
+            gap: 1.2,
+            pt: 1.1,
+            borderTop: "1px dashed var(--aa-border)",
+          }}
+        >
+          <Fact label="Kroy materiali" value={cutting} />
+          <Fact label="Padoj" value={sole} />
+          {/* Kroy va kosibdan boshqa bo'limlar — takrorlanmasin. */}
+          {used
+            .filter((row) => row.material_name !== cutting && row.material_name !== sole)
+            .map((row) => (
+              <Fact
+                key={`${row.department_name}-${row.material_name}`}
+                label={row.department_name}
+                value={row.material_name}
+              />
+            ))}
+        </Box>
+      )}
+    </Box>
+  );
+};
 
 export default FinishedGoodsList;
