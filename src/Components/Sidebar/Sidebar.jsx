@@ -48,7 +48,7 @@ const GROUP_LAYOUT = [
     ],
   },
   { label: "Omborlar", dynamic: true },
-  { label: "Xodimlar", paths: ["/users", "/employees", "/worker-payments"] },
+  { label: "Xodimlar", paths: ["/users", "/employees", "/worker-payments", "/ratings"] },
   { label: "Hisob-kitob", paths: ["/material-purchases", "/expenses", "/finance"] },
   { label: "Tizim", paths: ["/setup", "/permissions", "/audit-logs"] },
 ];

@@ -116,6 +116,14 @@ export const menuGroups = [
         allowedRoles: ["super_admin", "admin", "worker"],
         requiredPermission: "payroll.view",
       },
+      {
+        icon: CheckIcon,
+        // Ruxsat talab qilinmaydi: har bir xodim hamkasbini baholaydi.
+        // Kimni baholay olishini backend hal qiladi.
+        label: "Baholash",
+        path: "/ratings",
+        allowedRoles: ["super_admin", "admin", "worker"],
+      },
     ],
   },
   {

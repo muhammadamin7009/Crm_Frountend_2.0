@@ -28,6 +28,7 @@ const Expenses = lazy(() => import("../Pages/Expense/Expenses"));
 const Clients = lazy(() => import("../Pages/Client/Clients"));
 const Orders = lazy(() => import("../Pages/Order/Orders"));
 const MyOrderTasks = lazy(() => import("../Pages/Order/MyOrderTasks"));
+const Ratings = lazy(() => import("../Pages/Ratings/Ratings"));
 const TaskApprovals = lazy(() => import("../Pages/Order/TaskApprovals"));
 const Setup = lazy(() => import("../Pages/Setup/Setup"));
 
@@ -84,6 +85,7 @@ const AppRouter = () => {
               faqat o'zi qaraydigan bo'limdan keladi. */}
           <Route element={<ProtectedRoute allowedRoles={["super_admin", "admin", "worker"]} />}>
             <Route path="/task-approvals" element={page(TaskApprovals)} />
+            <Route path="/ratings" element={page(Ratings)} />
           </Route>
 
           <Route
