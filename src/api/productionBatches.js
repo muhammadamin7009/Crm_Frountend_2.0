@@ -9,4 +9,11 @@ export const getProductionBatch = (id) => api.get(`/production-batches/${id}`);
 
 export const createProductionBatch = (data) => api.post("/production-batches", data);
 
-export const completeProductionBatch = (id) => api.patch(`/production-batches/${id}/complete`);
+/**
+ * Partiyani yopish.
+ *
+ * Tugamagan ish bo'lsa server rad etadi va nima qolganini aytadi.
+ * `force` — foydalanuvchi shundan keyin ham yopishga rozi bo'lgani.
+ */
+export const completeProductionBatch = (id, force = false) =>
+  api.patch(`/production-batches/${id}/complete`, { force });

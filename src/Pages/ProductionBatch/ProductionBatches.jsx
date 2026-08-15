@@ -116,6 +116,9 @@ const ProductionBatches = () => {
   const [labelBatch, setLabelBatch] = useState(null);
   const [completing, setCompleting] = useState(null);
 
+  // Tugamagan partiyani yopishdan oldingi tasdiq.
+  const [closeWarning, setCloseWarning] = useState(null);
+
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
 
   const buildParams = useCallback(
@@ -237,15 +240,24 @@ const ProductionBatches = () => {
     }
   };
 
-  const handleComplete = async (batch) => {
+  const handleComplete = async (batch, force = false) => {
     setCompleting(batch.id);
 
     try {
-      await completeProductionBatch(batch.id);
+      await completeProductionBatch(batch.id, force);
       toast.success(`${batch.batch_number} yopildi.`);
+      setCloseWarning(null);
       fetchBatches(pageInfo.offset, pageInfo.limit);
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Partiyani yopishda xato.");
+      const message = error?.response?.data?.message || "Partiyani yopishda xato.";
+
+      // Server tugamagan ishni sanab, tasdiq so'ragan. Bu xato emas —
+      // savol, shuning uchun qizil xabar emas, oyna ko'rsatiladi.
+      if (!force && error?.response?.status === 400 && message.includes("tugamagan")) {
+        setCloseWarning({ batch, message });
+      } else {
+        toast.error(message);
+      }
     } finally {
       setCompleting(null);
     }
@@ -751,8 +763,54 @@ const ProductionBatches = () => {
         batch={labelBatch}
         onClose={() => setLabelBatch(null)}
       />
+
+      {/* Tugamagan partiyani yopish — istisno, shuning uchun bir marta
+          so'raladi va nima yo'qolishi aniq aytiladi. */}
+      <PremiumDialog
+        open={Boolean(closeWarning)}
+        onClose={() => setCloseWarning(null)}
+        title="Partiya hali tugamagan"
+        subtitle={closeWarning?.batch?.batch_number}
+        maxWidth="xs"
+        actions={
+          <>
+            <Button onClick={() => setCloseWarning(null)} sx={dialogCancelSx}>
+              Bekor qilish
+            </Button>
+
+            <Button
+              disabled={completing === closeWarning?.batch?.id}
+              onClick={() => handleComplete(closeWarning.batch, true)}
+              sx={forceCloseSx}
+            >
+              Baribir yopish
+            </Button>
+          </>
+        }
+      >
+        <Typography sx={{ color: "var(--aa-text-secondary)", fontSize: 13, lineHeight: 1.7 }}>
+          {closeWarning?.message}
+        </Typography>
+
+        <Typography sx={{ mt: 1.4, color: "var(--aa-text-tertiary)", fontSize: 11.5 }}>
+          Bekor qilingan vazifalar ishchilar navbatidan chiqadi. Bajarilgan va tasdiqlangan ish
+          o'z joyida qoladi.
+        </Typography>
+      </PremiumDialog>
     </Box>
   );
+};
+
+const forceCloseSx = {
+  minHeight: 44,
+  px: 2.4,
+  borderRadius: "12px",
+  color: "#ffffff !important",
+  fontSize: 12.5,
+  fontWeight: 600,
+  textTransform: "none",
+  backgroundColor: "var(--aa-brand-800)",
+  "&:hover": { backgroundColor: "var(--aa-brand-600)" },
 };
 
 const tableActionSx = {
