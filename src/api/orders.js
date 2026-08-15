@@ -25,3 +25,7 @@ export const getOrderTaskMaterials = (id) => api.get(`/order-tasks/${id}/materia
 export const getWorkflowWorkers = () => api.get("/order-workflow/workers");
 export const assignWorkflowWorkerDepartment = (id, department_id) =>
   api.patch(`/order-workflow/workers/${id}/department`, { department_id });
+export const getPendingApprovalTasks = (params) =>
+  api.get("/order-tasks/pending-approval", { params: removeEmptyParams(params) });
+export const approveOrderTask = (id) => api.post(`/order-tasks/${id}/approve`);
+export const rejectOrderTask = (id, reason) => api.post(`/order-tasks/${id}/reject`, { reason });

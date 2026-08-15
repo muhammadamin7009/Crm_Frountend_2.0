@@ -17,8 +17,19 @@ import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import { claimOrderTask, getMyOrderTasks, updateOrderTaskProgress } from "../../api/orders";
 import TaskFinishDialog from "./TaskFinishDialog";
 
-const labels = { pending: "Navbatda", in_progress: "Jarayonda", completed: "Tugallandi" };
-const colors = { pending: "#7d716a", in_progress: "#d97706", completed: "#2f6b45" };
+const labels = {
+  pending: "Navbatda",
+  in_progress: "Jarayonda",
+  // Ishchi tugatdim dedi, bo'lim boshlig'i hali ko'rgani yo'q.
+  submitted: "Tasdiq kutilmoqda",
+  completed: "Tasdiqlandi",
+};
+const colors = {
+  pending: "#7d716a",
+  in_progress: "#d97706",
+  submitted: "#a9814b",
+  completed: "#2f6b45",
+};
 
 const MyOrderTasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -297,6 +308,37 @@ const MyOrderTasks = () => {
                     }}
                   />
                 </Box>
+                {task.status === "submitted" && (
+                  <Typography
+                    sx={{
+                      mt: 1.5,
+                      p: 1.2,
+                      borderRadius: 2,
+                      fontSize: 12.5,
+                      color: "var(--aa-accent-strong)",
+                      bgcolor: "var(--aa-accent-soft)",
+                      border: "1px solid var(--aa-accent)",
+                    }}
+                  >
+                    {task.submitted_quantity} {task.product_unit || "ta"} topshirildi. Bo‘lim
+                    boshlig‘i tasdiqlagach ish hisobingizga o‘tadi.
+                  </Typography>
+                )}
+                {task.rejection_reason && task.status !== "completed" && (
+                  <Typography
+                    sx={{
+                      mt: 1.5,
+                      p: 1.2,
+                      borderRadius: 2,
+                      fontSize: 12.5,
+                      color: "var(--aa-danger)",
+                      bgcolor: "var(--aa-danger-soft, rgba(160,32,44,.08))",
+                      border: "1px solid var(--aa-danger)",
+                    }}
+                  >
+                    Qaytarildi: {task.rejection_reason}
+                  </Typography>
+                )}
                 {task.note && (
                   <Typography
                     sx={{

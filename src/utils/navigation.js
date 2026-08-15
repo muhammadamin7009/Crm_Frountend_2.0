@@ -88,6 +88,12 @@ export const menuGroups = [
       },
       {
         icon: CheckIcon,
+        label: "Tasdiqlash",
+        path: "/task-approvals",
+        allowedRoles: ["super_admin", "admin", "worker"],
+      },
+      {
+        icon: CheckIcon,
         label: "Ish hisoboti",
         path: "/worker-outputs",
         allowedRoles: ["super_admin", "admin", "worker"],
