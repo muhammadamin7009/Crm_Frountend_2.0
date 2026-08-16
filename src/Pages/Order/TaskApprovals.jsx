@@ -241,20 +241,62 @@ const TaskApprovals = () => {
                       </Typography>
                     </Box>
 
-                    <Chip
-                      size="small"
-                      label={task.status === "submitted" ? "Tasdiq kutmoqda" : "Ishlamoqda"}
-                      sx={{
-                        height: 22,
-                        fontSize: 9.5,
-                        fontWeight: 700,
-                        color: task.status === "submitted" ? "#7d5210" : "#1f6f8b",
-                        bgcolor:
-                          task.status === "submitted"
-                            ? "rgba(160, 106, 18,.12)"
-                            : "rgba(31, 111, 139,.10)",
-                      }}
-                    />
+                    {/* Ishchi hali bir dona ham qilmagan bo'lsa ishni boshqasiga
+                        o'tkazish kerak bo'ladi — kasal bo'lib qolsa ish qotib
+                        qolmasin. Boshlangan ishga tegilmaydi: bajarilgan miqdor
+                        va uning ish haqi aynan o'sha ishchiga bog'langan. */}
+                    {done === 0 && task.status === "in_progress" ? (
+                      <Box sx={{ display: "flex", gap: 0.8, alignItems: "center" }}>
+                        <TextField
+                          select
+                          size="small"
+                          label="Boshqasiga"
+                          sx={{ minWidth: 150 }}
+                          value={picks[task.id]?.worker_id || ""}
+                          onChange={(event) =>
+                            setPicks((current) => ({
+                              ...current,
+                              [task.id]: { worker_id: event.target.value },
+                            }))
+                          }
+                        >
+                          {(queue.workers || [])
+                            .filter(
+                              (worker) =>
+                                Number(worker.department_id) === Number(task.department_id) &&
+                                Number(worker.id) !== Number(task.assigned_to),
+                            )
+                            .map((worker) => (
+                              <MenuItem key={worker.id} value={worker.id}>
+                                {worker.name}
+                              </MenuItem>
+                            ))}
+                        </TextField>
+
+                        <Button
+                          disabled={busyId === task.id || !picks[task.id]?.worker_id}
+                          onClick={() => assign({ ...task, available_quantity: planned })}
+                          sx={assignSx}
+                        >
+                          O'tkazish
+                        </Button>
+                      </Box>
+                    ) : (
+                      <Chip
+                        size="small"
+                        label={task.status === "submitted" ? "Tasdiq kutmoqda" : "Ishlamoqda"}
+                        sx={{
+                          height: 22,
+                          fontSize: 9.5,
+                          fontWeight: 700,
+                          color: task.status === "submitted" ? "#7d5210" : "#1f6f8b",
+                          bgcolor:
+                            task.status === "submitted"
+                              ? "rgba(160, 106, 18,.12)"
+                              : "rgba(31, 111, 139,.10)",
+                        }}
+                      />
+                    )}
                   </Box>
                 );
               })}
@@ -318,20 +360,6 @@ const TaskApprovals = () => {
                             : "var(--aa-brand-100)",
                       }}
                     />
-
-                    {task.assigned_to && (
-                      <Chip
-                        size="small"
-                        label={`${task.worker_name || "Xodim"}da`}
-                        sx={{
-                          height: 20,
-                          fontSize: 9.5,
-                          fontWeight: 700,
-                          color: "#1f6f8b",
-                          bgcolor: "rgba(31, 111, 139,.10)",
-                        }}
-                      />
-                    )}
 
                     {task.priority === "urgent" && (
                       <Chip
@@ -441,12 +469,7 @@ const TaskApprovals = () => {
                       onClick={() => assign(task)}
                       sx={assignSx}
                     >
-                      {/* Bu qator allaqachon biriktirilgan bo'lishi mumkin:
-                          ishchi hali bir dona ham qilmagan bo'lsa uni boshqasiga
-                          o'tkazish kerak bo'ladi. Tugma nima qilishini aniq
-                          aytsin — "Biriktirish" deb tursa boshliq bu ishni hali
-                          hech kimga bermagan deb o'ylaydi. */}
-                      {task.assigned_to ? "Boshqasiga o'tkazish" : "Biriktirish"}
+                      Biriktirish
                     </Button>
                   </Box>
                 </Box>
