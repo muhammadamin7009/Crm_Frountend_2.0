@@ -109,6 +109,10 @@ const quantity = (value) =>
     maximumFractionDigits: 3,
   });
 
+/** Kamomat summasi — manfiy belgi alohida chiziladi, shuning uchun modul. */
+const money = (value) =>
+  `${new Intl.NumberFormat("uz-UZ").format(Math.abs(Number(value || 0)))} so'm`;
+
 const safeDateTime = (value) => {
   if (!value) return "-";
 
@@ -2859,6 +2863,44 @@ const Inventory = () => {
               {safeDateTime(countDetail?.counted_at)} • {countDetail?.note || "Izohsiz"}
             </Typography>
 
+            {/*
+              Kamomat va ortiqcha alohida turadi: 12 metr kamomat va 12 metr
+              ortiqcha "hammasi joyida" degani emas, ikkalasi ham izohlanishi
+              kerak bo'lgan hodisa.
+            */}
+            {(countDetail?.shortage_value > 0 ||
+              countDetail?.surplus_value > 0 ||
+              countDetail?.unpriced_lines > 0) && (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                {countDetail.shortage_value > 0 && (
+                  <Chip
+                    label={`Kamomat: ${money(countDetail.shortage_value)}`}
+                    sx={{
+                      fontWeight: 700,
+                      color: "var(--aa-danger)",
+                      bgcolor: "color-mix(in srgb, var(--aa-danger) 14%, transparent)",
+                    }}
+                  />
+                )}
+                {countDetail.surplus_value > 0 && (
+                  <Chip
+                    label={`Ortiqcha: ${money(countDetail.surplus_value)}`}
+                    sx={{
+                      fontWeight: 700,
+                      color: "#2f6b45",
+                      bgcolor: "rgba(47,107,69,.14)",
+                    }}
+                  />
+                )}
+                {countDetail.unpriced_lines > 0 && (
+                  <Chip
+                    label={`${countDetail.unpriced_lines} ta qatorning narxi noma'lum`}
+                    sx={{ fontWeight: 600, color: "var(--aa-text-tertiary)" }}
+                  />
+                )}
+              </Box>
+            )}
+
             <Box
               className="aa-mobile-records aa-inventory-count-detail-table"
               sx={{
@@ -2889,6 +2931,11 @@ const Inventory = () => {
                     <TableCell>Sanalgan</TableCell>
 
                     <TableCell>Farq</TableCell>
+
+                    {/* Summa sanoqda kiritilmaydi — o'sha kundagi tannarxdan
+                        hisoblanadi. Kamomat "12 metr" emas, "840 000 so'm"
+                        bo'lib ko'rinsagina kimdandir so'rasa bo'ladi. */}
+                    <TableCell>Summa</TableCell>
                   </TableRow>
                 </TableHead>
 
@@ -2933,6 +2980,30 @@ const Inventory = () => {
                         >
                           {Number(row.difference_quantity) > 0 ? "+" : ""}
                           {quantity(row.difference_quantity)} {row.unit}
+                        </Typography>
+                      </TableCell>
+
+                      <TableCell>
+                        <Typography
+                          sx={{
+                            color:
+                              row.difference_value === null
+                                ? "var(--aa-text-tertiary)"
+                                : row.difference_value < 0
+                                  ? "var(--aa-danger)"
+                                  : row.difference_value > 0
+                                    ? "#2f6b45"
+                                    : "var(--aa-text-tertiary)",
+                            fontSize: 10.5,
+                            fontWeight: 700,
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {/* Narx noma'lum bo'lsa nol yozmaymiz: "bepul" bilan
+                              "hisoblab bo'lmadi" bir narsa emas. */}
+                          {row.difference_value === null
+                            ? "narx yo'q"
+                            : `${row.difference_value > 0 ? "+" : ""}${money(row.difference_value)}`}
                         </Typography>
                       </TableCell>
                     </TableRow>
