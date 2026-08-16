@@ -94,6 +94,9 @@ const Setup = () => {
   const steps = status?.steps || [];
   const doneCount = steps.filter((step) => step.done).length;
 
+  const migration = status?.migration || [];
+  const migrationDone = migration.filter((row) => Number(row.missing) === 0).length;
+
   return (
     <Box className="crm-page" sx={{ pb: 3, display: "flex", flexDirection: "column", gap: 2.5 }}>
       <PageHeader
@@ -269,6 +272,117 @@ const Setup = () => {
           </Typography>
         )}
       </Card>
+
+      {/*
+        Ishlab turgan sexni tizimga ko'chirish.
+
+        Bu tekshiruvlar ilgari har xil sahifada yashiringan edi: bo'lim boshlig'i
+        zakaz oynasida, retsept mahsulot sahifasida, qoldiq inventarizatsiya
+        ichida. Egasi qaysi biri qolganini bilmasdi va tizim yarim to'ldirilgan
+        holda ishlay boshlardi.
+      */}
+      {migration.length > 0 && (
+        <Card sx={{ p: { xs: 2.2, md: 3 } }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 1.6,
+            }}
+          >
+            <Box>
+              <Typography
+                sx={{ fontFamily: "var(--aa-display)", fontSize: 18, color: "var(--aa-text)" }}
+              >
+                Ishlab turgan sexni ko'chirish
+              </Typography>
+
+              <Typography sx={{ mt: 0.5, color: "var(--aa-text-secondary)", fontSize: 12.5 }}>
+                {migrationDone} / {migration.length} bajarilgan — hammasi to'lguncha ayrim
+                hisob-kitoblar nol chiqadi.
+              </Typography>
+            </Box>
+          </Box>
+
+          <Box sx={{ mt: 2, display: "grid", gap: 1 }}>
+            {migration.map((row) => {
+              const done = Number(row.missing) === 0;
+
+              return (
+                <Box
+                  key={row.key}
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 1.4,
+                    p: 1.5,
+                    borderRadius: "13px",
+                    border: "1px solid var(--aa-border)",
+                    backgroundColor: done ? "var(--aa-surface-muted)" : "var(--aa-surface-solid)",
+                  }}
+                >
+                  <Box sx={{ minWidth: 0, display: "flex", alignItems: "flex-start", gap: 1.3 }}>
+                    <Box
+                      sx={{
+                        mt: 0.2,
+                        width: 22,
+                        height: 22,
+                        flexShrink: 0,
+                        display: "grid",
+                        placeItems: "center",
+                        borderRadius: "50%",
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: done ? "#ffffff" : "var(--aa-text-tertiary)",
+                        backgroundColor: done ? "var(--aa-success)" : "var(--aa-surface-hover)",
+                        border: done ? "none" : "1px solid var(--aa-border-strong)",
+                      }}
+                    >
+                      {done ? "✓" : ""}
+                    </Box>
+
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography sx={{ color: "var(--aa-text)", fontSize: 13, fontWeight: 600 }}>
+                        {row.label}
+
+                        {!done && (
+                          <Typography
+                            component="span"
+                            sx={{
+                              ml: 1,
+                              color: "var(--aa-warning)",
+                              fontSize: 11,
+                              fontWeight: 600,
+                            }}
+                          >
+                            {/* Sexdagi ish soni emas, borligi tekshiriladi —
+                                shuning uchun unga raqam yozilmaydi. */}
+                            {row.key === "work_in_progress"
+                              ? "kiritilmagan"
+                              : `${row.missing} ta qoldi`}
+                          </Typography>
+                        )}
+                      </Typography>
+
+                      <Typography sx={{ mt: 0.3, color: "var(--aa-text-tertiary)", fontSize: 10.5 }}>
+                        {row.hint}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Button variant="outlined" onClick={() => navigate(row.path)} sx={outlineSx}>
+                    {row.action}
+                  </Button>
+                </Box>
+              );
+            })}
+          </Box>
+        </Card>
+      )}
     </Box>
   );
 };
