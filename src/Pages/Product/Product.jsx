@@ -141,7 +141,7 @@ const getInitial = (value) =>
     .toUpperCase();
 
 const HeroMetric = (props) => <SharedHeroMetric {...props} labelSx={{ mt: 1.4 }} />;
-const InfoItem = ({ label, value, accent = false }) => (
+const InfoItem = ({ label, value, accent = false, valueColor, helper }) => (
   <Box
     sx={{
       minWidth: 0,
@@ -170,7 +170,7 @@ const InfoItem = ({ label, value, accent = false }) => (
       sx={{
         mt: 0.65,
 
-        color: accent ? "var(--aa-brand-600)" : "var(--aa-text)",
+        color: valueColor || (accent ? "var(--aa-brand-600)" : "var(--aa-text)"),
 
         fontSize: 12,
         fontWeight: 700,
@@ -178,6 +178,12 @@ const InfoItem = ({ label, value, accent = false }) => (
     >
       {value || "-"}
     </Typography>
+
+    {helper && (
+      <Typography sx={{ mt: 0.25, color: "var(--aa-text-tertiary)", fontSize: 9.5 }}>
+        {helper}
+      </Typography>
+    )}
   </Box>
 );
 
@@ -1719,7 +1725,11 @@ const Product = () => {
             <PricePanel
               label="Jami xomashyo"
               value={formatMoney(costReport.total_material_cost)}
-              helper="Butun ishlab chiqarish bo‘yicha"
+              helper={
+                costReport.opening_material_cost > 0
+                  ? `Shundan ko‘chirilgan: ${formatMoney(costReport.opening_material_cost)}`
+                  : "Butun ishlab chiqarish bo‘yicha"
+              }
               tone="amber"
             />
 
@@ -1775,6 +1785,11 @@ const Product = () => {
                     value={`${formatNumber(material.used_quantity)} ${material.unit}`}
                     valueColor={
                       over ? "var(--aa-danger)" : under ? "var(--aa-success)" : "var(--aa-text)"
+                    }
+                    helper={
+                      material.opening_quantity > 0
+                        ? `${formatNumber(material.opening_quantity)} ${material.unit} ko‘chirishdan`
+                        : undefined
                     }
                   />
 

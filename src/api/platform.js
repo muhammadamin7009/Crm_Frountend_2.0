@@ -36,3 +36,6 @@ export const deleteCompany = (id, confirmSlug) =>
   platformApi.delete(`/companies/${id}`, { data: { confirm_slug: confirmSlug } });
 export const getSubscriptionPayments = (params) => platformApi.get("/payments", { params });
 export const createSubscriptionPayment = (data) => platformApi.post("/payments", data);
+export const getPlatformSettings = () => platformApi.get("/settings");
+export const updatePlatformSettings = (data) => platformApi.patch("/settings", data);
+export const testPlatformTelegram = () => platformApi.post("/settings/telegram/test");

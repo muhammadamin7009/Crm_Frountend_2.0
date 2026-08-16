@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Avatar,
   Box,
@@ -42,6 +42,9 @@ import {
 } from "../../api/platform";
 import { money } from "../../utils/format";
 import { formatNumber as number } from "../../utils/format";
+
+// Sozlamalar kamdan-kam ochiladi — panel bilan birga yuklanmasin.
+const PlatformSettings = lazy(() => import("./PlatformSettings"));
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -364,6 +367,9 @@ const PlatformDashboard = () => {
   const [leads, setLeads] = useState([]);
 
   const [leadsOpen, setLeadsOpen] = useState(false);
+
+  // Kamdan-kam ochiladi, shuning uchun bosilgandagina yuklanadi.
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const [leadActionId, setLeadActionId] = useState(null);
 
@@ -1041,6 +1047,10 @@ const PlatformDashboard = () => {
                       {newLeads.length}
                     </Box>
                   )}
+                </Button>
+
+                <Button onClick={() => setSettingsOpen(true)} sx={heroSecondaryButtonSx}>
+                  ⚙️ Sozlamalar
                 </Button>
 
                 <Button onClick={logout} sx={heroSecondaryButtonSx}>
@@ -1787,6 +1797,12 @@ const PlatformDashboard = () => {
         }}
         onChangeStatus={changeLeadStatus}
       />
+
+      {settingsOpen && (
+        <Suspense fallback={null}>
+          <PlatformSettings open onClose={() => setSettingsOpen(false)} />
+        </Suspense>
+      )}
     </Box>
   );
 };
