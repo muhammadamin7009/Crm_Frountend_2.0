@@ -22,7 +22,7 @@ const emptyRow = {
   department_id: "",
   product_id: "",
   quantity: "",
-  client_name: "",
+  client_id: "",
   materials: [],
 };
 
@@ -32,6 +32,7 @@ const OpeningWip = () => {
     departments: [],
     products: [],
     materials: [],
+    clients: [],
     last_department: null,
   });
   const [loading, setLoading] = useState(true);
@@ -79,7 +80,7 @@ const OpeningWip = () => {
         department_id: Number(form.department_id),
         product_id: Number(form.product_id),
         quantity: Number(form.quantity),
-        client_name: form.client_name.trim() || null,
+        client_id: form.client_id ? Number(form.client_id) : null,
         materials: form.materials
           .filter((row) => row.raw_material_id && Number(row.quantity) > 0)
           .map((row) => ({
@@ -182,16 +183,26 @@ const OpeningWip = () => {
           slotProps={{ htmlInput: { min: 0, step: 1 } }}
         />
 
-        {/* Zakaz yaratilmaydi — mijoz ismi shunchaki yozib qo'yiladi.
-            Ko'chish paytida zakazlarni ham birma-bir kiritish uzoq va xato
-            ko'p bo'ladi; muhimi ish kimniki ekani ishchi ko'zi oldida turishi. */}
+        {/* Mijoz ro'yxatdan tanlanadi: qo'lda yozilganda bir odam bir necha
+            xil yozilib, ishlarni mijoz bo'yicha yig'ib bo'lmasdi. Zakaz esa
+            baribir yaratilmaydi — ko'chish paytida zakazlarni ham birma-bir
+            kiritish uzoq va xato ko'p bo'ladi. */}
         <TextField
+          select
           size="small"
-          label="Mijoz (bo'sh bo'lsa — omborga)"
-          value={form.client_name}
-          onChange={change("client_name")}
-          helperText="Zakaz yaratilmaydi, faqat ism yoziladi"
-        />
+          label="Mijoz"
+          value={form.client_id}
+          onChange={change("client_id")}
+          helperText="Bo'sh qoldirilsa — omborga ishlangan"
+        >
+          <MenuItem value="">Omborga (mijozsiz)</MenuItem>
+
+          {data.clients.map((client) => (
+            <MenuItem key={client.id} value={client.id}>
+              {client.name}
+            </MenuItem>
+          ))}
+        </TextField>
       </Box>
 
       <Box sx={{ mt: 1.6 }}>
