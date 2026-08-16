@@ -32,7 +32,7 @@ import {
  */
 const TaskApprovals = () => {
   const [tasks, setTasks] = useState([]);
-  const [queue, setQueue] = useState({ tasks: [], workers: [] });
+  const [queue, setQueue] = useState({ tasks: [], workers: [], assigned: [] });
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState(null);
   const [reasons, setReasons] = useState({});
@@ -48,6 +48,23 @@ const TaskApprovals = () => {
    */
   const [tab, setTab] = useState("approve");
 
+  /**
+   * Shu ishning qaysi qismi kimga berilgan.
+   *
+   * Bir zakaz ikki ishchiga bo'lingan bo'lsa u ikkita qatorga ajraydi:
+   * biriktirilgani alohida, qolgani navbatda. Ular bir-biriga zakaz (yoki
+   * partiya), bosqich va bo'lim orqali bog'lanadi.
+   */
+  const alreadyGiven = (task) =>
+    (queue.assigned || []).filter(
+      (row) =>
+        Number(row.department_id) === Number(task.department_id) &&
+        Number(row.stage_order) === Number(task.stage_order) &&
+        (task.order_item_id
+          ? Number(row.order_item_id) === Number(task.order_item_id)
+          : Number(row.batch_id) === Number(task.batch_id)),
+    );
+
   const load = useCallback(async () => {
     setLoading(true);
 
@@ -57,11 +74,11 @@ const TaskApprovals = () => {
         getDepartmentQueue(),
       ]);
       setTasks(approvals.data.tasks || []);
-      setQueue(department.data || { tasks: [], workers: [] });
+      setQueue(department.data || { tasks: [], workers: [], assigned: [] });
     } catch (error) {
       toast.error(error?.response?.data?.message || "Bo‘lim ma’lumotini olib bo‘lmadi.");
       setTasks([]);
-      setQueue({ tasks: [], workers: [] });
+      setQueue({ tasks: [], workers: [], assigned: [] });
     } finally {
       setLoading(false);
     }
@@ -151,8 +168,99 @@ const TaskApprovals = () => {
           items={[
             { value: "approve", label: "Tasdiq kutmoqda", count: tasks.length },
             { value: "assign", label: "Tarqatilmagan ish", count: queue.tasks.length },
+            { value: "given", label: "Biriktirilgan", count: (queue.assigned || []).length },
           ]}
         />
+      )}
+
+      {/*
+        Biriktirilgan ish. Ilgari ish biriktirilgach navbatdan yo'qolardi va
+        "bu zakazni kimga bergandim?" degan savolga javob yo'q edi. Zakaz ikki
+        ishchiga bo'lingan bo'lsa ham qaysi biri qancha olgani ko'rinmasdi.
+      */}
+      {!loading && tab === "given" && (
+        <Card sx={{ p: { xs: 2, md: 2.6 } }}>
+          <Typography
+            sx={{ fontFamily: "var(--aa-display)", fontSize: 18, color: "var(--aa-text)" }}
+          >
+            Kimda qanday ish bor
+          </Typography>
+
+          <Typography sx={{ mt: 0.4, mb: 1.6, color: "var(--aa-text-tertiary)", fontSize: 11.5 }}>
+            Bitta zakaz bir necha xodimga bo'lingan bo'lsa, har biri alohida qator bo'lib turadi.
+          </Typography>
+
+          {(queue.assigned || []).length === 0 ? (
+            <Typography sx={{ py: 3, textAlign: "center", color: "var(--aa-text-secondary)", fontSize: 13 }}>
+              Hozircha hech kimga ish biriktirilmagan.
+            </Typography>
+          ) : (
+            <Stack spacing={1}>
+              {(queue.assigned || []).map((task) => {
+                const planned = Number(task.planned_quantity || 0);
+                const done = Number(task.completed_quantity || 0);
+                const percent = planned > 0 ? Math.round((done * 100) / planned) : 0;
+
+                return (
+                  <Box
+                    key={task.id}
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr auto" },
+                      alignItems: "center",
+                      gap: 1.2,
+                      p: 1.5,
+                      borderRadius: "13px",
+                      border: "1px solid var(--aa-border)",
+                      backgroundColor: "var(--aa-surface-solid)",
+                    }}
+                  >
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography
+                        sx={{ color: "var(--aa-brand-text)", fontSize: 12.5, fontWeight: 700 }}
+                      >
+                        {task.source_label}
+                      </Typography>
+
+                      <Typography
+                        noWrap
+                        sx={{ mt: 0.2, color: "var(--aa-text-tertiary)", fontSize: 10.5 }}
+                      >
+                        {task.product_name}
+                        {task.department_name ? ` · ${task.department_name}` : ""}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography sx={{ color: "var(--aa-text)", fontSize: 12.5, fontWeight: 700 }}>
+                        {task.worker_name || "Noma'lum xodim"}
+                      </Typography>
+
+                      <Typography sx={{ mt: 0.2, color: "var(--aa-text-secondary)", fontSize: 11 }}>
+                        {done} / {planned} {task.product_unit || "par"} · {percent}%
+                      </Typography>
+                    </Box>
+
+                    <Chip
+                      size="small"
+                      label={task.status === "submitted" ? "Tasdiq kutmoqda" : "Ishlamoqda"}
+                      sx={{
+                        height: 22,
+                        fontSize: 9.5,
+                        fontWeight: 700,
+                        color: task.status === "submitted" ? "#7d5210" : "#1f6f8b",
+                        bgcolor:
+                          task.status === "submitted"
+                            ? "rgba(160, 106, 18,.12)"
+                            : "rgba(31, 111, 139,.10)",
+                      }}
+                    />
+                  </Box>
+                );
+              })}
+            </Stack>
+          )}
+        </Card>
       )}
 
       {!loading && tab === "assign" && queue.tasks.length > 0 && (
@@ -211,6 +319,20 @@ const TaskApprovals = () => {
                       }}
                     />
 
+                    {task.assigned_to && (
+                      <Chip
+                        size="small"
+                        label={`${task.worker_name || "Xodim"}da`}
+                        sx={{
+                          height: 20,
+                          fontSize: 9.5,
+                          fontWeight: 700,
+                          color: "#1f6f8b",
+                          bgcolor: "rgba(31, 111, 139,.10)",
+                        }}
+                      />
+                    )}
+
                     {task.priority === "urgent" && (
                       <Chip
                         size="small"
@@ -232,6 +354,40 @@ const TaskApprovals = () => {
                     {task.product_name} · {task.available_quantity} {task.product_unit || "ta"} ·{" "}
                     {task.department_name}
                   </Typography>
+
+                  {/* Shu zakazning bir qismi allaqachon berilgan bo'lsa, kimga
+                      va qanchasi bajarilgani shu yerda turadi. Bo'lim boshlig'i
+                      qolganini kimga berishni shunga qarab hal qiladi. */}
+                  {alreadyGiven(task).length > 0 && (
+                    <Box
+                      sx={{
+                        mt: 0.9,
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: 0.6,
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography sx={{ color: "var(--aa-text-tertiary)", fontSize: 10.5 }}>
+                        Allaqachon berilgan:
+                      </Typography>
+
+                      {alreadyGiven(task).map((given) => (
+                        <Chip
+                          key={given.id}
+                          size="small"
+                          label={`${given.worker_name || "?"} · ${given.completed_quantity}/${given.planned_quantity}`}
+                          sx={{
+                            height: 21,
+                            fontSize: 9.5,
+                            fontWeight: 700,
+                            color: "var(--aa-text-secondary)",
+                            bgcolor: "var(--aa-surface-muted)",
+                          }}
+                        />
+                      ))}
+                    </Box>
+                  )}
 
                   <Box
                     sx={{
@@ -285,7 +441,12 @@ const TaskApprovals = () => {
                       onClick={() => assign(task)}
                       sx={assignSx}
                     >
-                      Biriktirish
+                      {/* Bu qator allaqachon biriktirilgan bo'lishi mumkin:
+                          ishchi hali bir dona ham qilmagan bo'lsa uni boshqasiga
+                          o'tkazish kerak bo'ladi. Tugma nima qilishini aniq
+                          aytsin — "Biriktirish" deb tursa boshliq bu ishni hali
+                          hech kimga bermagan deb o'ylaydi. */}
+                      {task.assigned_to ? "Boshqasiga o'tkazish" : "Biriktirish"}
                     </Button>
                   </Box>
                 </Box>
@@ -299,14 +460,14 @@ const TaskApprovals = () => {
         <Box sx={{ py: 8, display: "grid", placeItems: "center" }}>
           <CircularProgress size={30} sx={{ color: "var(--aa-brand-800)" }} />
         </Box>
-      ) : tab === "assign" ? (
-        queue.tasks.length ? null : (
+      ) : tab !== "approve" ? (
+        tab === "assign" && !queue.tasks.length ? (
           <Card sx={{ py: 6, textAlign: "center" }}>
             <Typography sx={{ color: "var(--aa-text-secondary)", fontSize: 13 }}>
               Tarqatilmagan ish yo‘q — hammasi xodimlarga biriktirilgan.
             </Typography>
           </Card>
-        )
+        ) : null
       ) : !tasks.length ? (
         <Card sx={{ py: 6, textAlign: "center" }}>
           <Typography sx={{ color: "var(--aa-text-secondary)", fontSize: 13 }}>
