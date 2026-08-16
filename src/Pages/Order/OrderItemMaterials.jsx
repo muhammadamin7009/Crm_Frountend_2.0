@@ -77,7 +77,7 @@ const OrderItemMaterials = ({ departments, materials, value = [], onChange, disa
             const rows = rowsOf(department.id);
             return (
               <Box key={department.id} sx={{ display: "grid", gap: 0.75 }}>
-                <Stack direction="row" alignItems="center" spacing={1}>
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                   <Typography sx={{ fontSize: 13, fontWeight: 700, minWidth: 110 }}>
                     {department.name}
                   </Typography>

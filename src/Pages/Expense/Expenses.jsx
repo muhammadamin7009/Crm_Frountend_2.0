@@ -929,7 +929,7 @@ const Expenses = () => {
 
                       {canManage && (
                         <TableCell align="right">
-                          <Stack direction="row" spacing={0.7} justifyContent="flex-end">
+                          <Stack direction="row" spacing={0.7} sx={{ justifyContent: "flex-end" }}>
                             <Button size="small" onClick={() => openEditModal(item)}>
                               Tahrirlash
                             </Button>

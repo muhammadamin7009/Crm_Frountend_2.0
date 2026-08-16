@@ -33,7 +33,7 @@ import CoinsIcon from "../../images/ui-icons/coins.svg";
 import TrendUpIcon from "../../images/ui-icons/trend-up.svg";
 
 import { hasPermission } from "../../utils/permissions";
-import { getDashboardSummary } from "../../api/dashboard";
+import { getDashboardSummary, getDashboardTrend } from "../../api/dashboard";
 import { getSetupStatus } from "../../api/setup";
 import KpiBreakdownDialog from "./KpiBreakdownDialog";
 
@@ -1310,34 +1310,16 @@ const AdminOverview = ({ user }) => {
 
       const trendRanges = getTrendRanges(6);
 
+      // Olti oylik grafik bitta so'rov bilan olinadi. Ilgari har oyga
+      // alohida so'rov ketardi — bitta grafik uchun olti marta tarmoqqa
+      // chiqish. Grafik yiqilsa bosh sahifa qolgan qismi baribir ochiladi.
       const trendPromise = trendMode
-        ? Promise.allSettled(
-            trendRanges.map((trendRange) => {
-              if (trendMode === "sales") {
-                return getClientSales({
-                  date_from: trendRange.date_from,
-                  date_to: trendRange.date_to,
-                  offset: 0,
-                  limit: 1,
-                });
-              }
-
-              if (trendMode === "production") {
-                return getWorkerOutputs({
-                  date_from: trendRange.date_from,
-                  date_to: trendRange.date_to,
-                  offset: 0,
-                  limit: 1,
-                });
-              }
-
-              return getSupplierBalance({
-                date_from: trendRange.date_from,
-                date_to: trendRange.date_to,
-              });
-            }),
-          )
-        : Promise.resolve([]);
+        ? getDashboardTrend({
+            mode: trendMode,
+            date_from: trendRanges[0].date_from,
+            date_to: trendRanges[trendRanges.length - 1].date_to,
+          }).catch(() => null)
+        : Promise.resolve(null);
 
       const [
         usersRes,
@@ -1355,7 +1337,7 @@ const AdminOverview = ({ user }) => {
         supplierDebtRes,
         inventoryRes,
         accountsRes,
-        trendResponses,
+        trendResponse,
       ] = await Promise.all([
         canViewUsers
           ? getUsers({
@@ -1561,25 +1543,17 @@ const AdminOverview = ({ user }) => {
         warehouses: inventoryRes.data.warehouses || [],
       });
 
+      // Backend faqat ma'lumot bor oylarni qaytaradi — qolgani nol bo'ladi.
+      // Kalit "2026-08" ko'rinishida, oy boshining birinchi yetti belgisi.
+      const trendByMonth = new Map(
+        (trendResponse?.data?.months || []).map((row) => [row.month, Number(row.value || 0)]),
+      );
+
       setTrend(
-        trendRanges.map((trendRange, index) => {
-          const result = trendResponses[index];
-
-          const response = result?.status === "fulfilled" ? result.value : null;
-
-          let value = 0;
-
-          if (trendMode === "sales" || trendMode === "production") {
-            value = response?.data?.totals?.total_amount || 0;
-          } else if (trendMode === "purchases") {
-            value = response?.data?.total_purchase || 0;
-          }
-
-          return {
-            ...trendRange,
-            value: Number(value || 0),
-          };
-        }),
+        trendRanges.map((trendRange) => ({
+          ...trendRange,
+          value: trendByMonth.get(trendRange.date_from.slice(0, 7)) || 0,
+        })),
       );
     } catch (error) {
       toast.error(error?.response?.data?.message || "Bosh sahifa ma'lumotlarini olishda xato.");

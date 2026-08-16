@@ -878,7 +878,7 @@ const AuditLogs = () => {
                     </TableCell>
 
                     <TableCell>
-                      <Stack direction="row" spacing={0.8} alignItems="center">
+                      <Stack direction="row" spacing={0.8} sx={{ alignItems: "center" }}>
                         <Typography
                           sx={{
                             color: "var(--aa-text-secondary)",

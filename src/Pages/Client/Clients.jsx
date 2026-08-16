@@ -1194,7 +1194,7 @@ const Clients = () => {
                       <TableCell>{formatDate(client.updated_at)}</TableCell>
 
                       <TableCell align="right">
-                        <Stack direction="row" spacing={0.8} justifyContent="flex-end">
+                        <Stack direction="row" spacing={0.8} sx={{ justifyContent: "flex-end" }}>
                           {client.is_deleted && currentUser?.role === "super_admin" ? (
                             <>
                               <Button

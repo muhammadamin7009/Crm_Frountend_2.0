@@ -119,7 +119,11 @@ const Ratings = () => {
               Hozircha sizni hech kim baholamagan.
             </Typography>
           ) : (
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={3} alignItems="flex-start">
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={3}
+              sx={{ alignItems: "flex-start" }}
+            >
               <Box>
                 <Typography sx={{ fontSize: 34, fontWeight: 800, lineHeight: 1 }}>
                   {mine.score.toFixed(2)}
@@ -131,7 +135,7 @@ const Ratings = () => {
               </Box>
               <Box sx={{ display: "grid", gap: 0.75 }}>
                 {Object.entries(mine.criteria || {}).map(([key, label]) => (
-                  <Stack key={key} direction="row" spacing={1.5} alignItems="center">
+                  <Stack key={key} direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
                     <Typography sx={{ fontSize: 13, minWidth: 118 }}>{label}</Typography>
                     <StarRating value={mine[key] || 0} size={15} />
                     <Typography sx={{ fontSize: 13, fontWeight: 600 }}>
@@ -194,7 +198,7 @@ const Ratings = () => {
                 elevation={0}
                 sx={{ p: 2.5, border: "1px solid var(--aa-border)", borderRadius: 3 }}
               >
-                <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+                <Stack direction="row" spacing={2} sx={{ alignItems: "center", mb: 2 }}>
                   <Avatar src={person.user_image || undefined} sx={{ width: 44, height: 44 }}>
                     {initials(person)}
                   </Avatar>

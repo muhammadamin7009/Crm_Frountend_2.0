@@ -1738,7 +1738,7 @@ const Inventory = () => {
                   },
                 }}
               >
-                <Stack direction="row" justifyContent="space-between" spacing={1}>
+                <Stack direction="row" spacing={1} sx={{ justifyContent: "space-between" }}>
                   <Box
                     sx={{
                       minWidth: 0,

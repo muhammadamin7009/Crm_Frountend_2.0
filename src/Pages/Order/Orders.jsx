@@ -1604,7 +1604,7 @@ const Orders = () => {
                           {task.planned_quantity} {task.product_unit || "ta"}
                         </Typography>
                       </Box>
-                      <Stack direction="row" spacing={1} alignItems="center">
+                      <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                         <Chip
                           size="small"
                           label={
