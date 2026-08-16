@@ -7,7 +7,6 @@ import {
   CircularProgress,
   Dialog,
   LinearProgress,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -26,8 +25,8 @@ import { getWorkerOutputs } from "../../api/workerOutputs";
 import { getWorkerBalance, getWorkerPayments } from "../../api/workerPayments";
 import { useAuth } from "../../Context/AuthContext";
 import { hasPermission } from "../../utils/permissions";
-import { money } from "../../utils/format";
-import { formatNumber as number } from "../../utils/format";
+import { formatNumber as number, money } from "../../utils/format";
+import Surface from "../../Components/UI/Surface";
 
 const roleNames = {
   super_admin: "Super administrator",
@@ -128,22 +127,6 @@ const percent = (value, total) => {
 
   return Math.max(0, Math.min(100, Math.round((Number(value || 0) / safeTotal) * 100)));
 };
-
-const Surface = ({ children, sx = {} }) => (
-  <Paper
-    elevation={0}
-    sx={{
-      overflow: "hidden",
-      borderRadius: "22px",
-      border: "1px solid var(--aa-border)",
-      backgroundColor: "var(--aa-surface-solid)",
-      boxShadow: "var(--aa-shadow-md)",
-      ...sx,
-    }}
-  >
-    {children}
-  </Paper>
-);
 
 const RoleChip = ({ role }) => {
   const style = roleStyles[role] || roleStyles.default;

@@ -12,7 +12,6 @@ import {
   DialogContent,
   DialogTitle,
   MenuItem,
-  Paper,
   Stack,
   Typography,
 } from "@mui/material";
@@ -24,6 +23,7 @@ import {
 import SharedHeroMetric from "../../Components/UI/HeroMetric";
 import MoneyTextField from "../../Components/UI/MoneyTextField";
 import ActiveStatusChip from "../../Components/UI/ActiveStatusChip";
+import Surface from "../../Components/UI/Surface";
 
 import {
   getProduct,
@@ -139,22 +139,6 @@ const getInitial = (value) =>
     .trim()
     .slice(0, 1)
     .toUpperCase();
-
-const Surface = ({ children, sx = {} }) => (
-  <Paper
-    elevation={0}
-    sx={{
-      overflow: "hidden",
-      borderRadius: "22px",
-      border: "1px solid var(--aa-border)",
-      backgroundColor: "var(--aa-surface-solid)",
-      boxShadow: "0 14px 40px rgba(23, 17, 15,.045)",
-      ...sx,
-    }}
-  >
-    {children}
-  </Paper>
-);
 
 const HeroMetric = (props) => <SharedHeroMetric {...props} labelSx={{ mt: 1.4 }} />;
 const InfoItem = ({ label, value, accent = false }) => (
