@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { clearSession, getToken, getUser } from "../utils/auth";
 import { getMe } from "../api/getUsers";
+import { clearReferenceCache } from "../api/referenceCache";
 
 const AuthContext = createContext();
 
@@ -75,6 +76,8 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     clearSession();
+    // Keyingi foydalanuvchi oldingisining omborlari va bo'limlarini ko'rmasin.
+    clearReferenceCache();
     lastRefreshAt.current = 0;
     setUser(null);
   };

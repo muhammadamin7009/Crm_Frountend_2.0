@@ -1,10 +1,25 @@
 import api from "./axios";
+import { cachedGet, invalidate } from "./referenceCache";
 
-export const getWarehouses = (params) => api.get("/warehouses", { params });
+// Omborlar ro'yxatini har sahifada Sidebar, TopBar va sahifaning o'zi
+// alohida so'rardi — o'lchovda 4–7 ta bir xil so'rov chiqdi. Kesh ularni
+// bittaga yig'adi.
+export const getWarehouses = (params) =>
+  cachedGet(`warehouses:${JSON.stringify(params || {})}`, () =>
+    api.get("/warehouses", { params }),
+  );
+
+const afterWarehouseChange = (response) => {
+  invalidate("warehouses");
+  return response;
+};
+
 export const getInventorySummary = () => api.get("/inventory/summary");
-export const createWarehouse = (data) => api.post("/warehouses", data);
-export const updateWarehouse = (id, data) => api.patch(`/warehouses/${id}`, data);
-export const archiveWarehouse = (id) => api.delete(`/warehouses/${id}`);
+export const createWarehouse = (data) => api.post("/warehouses", data).then(afterWarehouseChange);
+export const updateWarehouse = (id, data) =>
+  api.patch(`/warehouses/${id}`, data).then(afterWarehouseChange);
+export const archiveWarehouse = (id) =>
+  api.delete(`/warehouses/${id}`).then(afterWarehouseChange);
 
 export const getInventoryStock = (params) => api.get("/inventory/stock", { params });
 
