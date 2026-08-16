@@ -326,36 +326,20 @@ const Users = () => {
       setLoading(true);
 
       try {
-        const countRequests = STAFF_ROLES.map((role) =>
-          getUsers({
-            scope: "staff",
-            role,
-            offset: 0,
-            limit: 1,
-            is_deleted: false,
-          }),
-        );
+        // Rol bo'yicha sonlar ro'yxat javobining ichida keladi. Ilgari har
+        // bir rol uchun alohida so'rov ketardi — uchta ortiqcha so'rov.
+        const usersResponse = await getUsers({
+          q: query,
+          scope: "staff",
+          role: roleFilter || undefined,
+          is_deleted: currentUser?.role === "super_admin" ? showingDeleted : false,
+          offset,
+          limit,
+          sort_by: sortBy,
+          sort_order: sortOrder,
+        });
 
-        const [usersResult, ...countResults] = await Promise.allSettled([
-          getUsers({
-            q: query,
-            scope: "staff",
-            role: roleFilter || undefined,
-            is_deleted: currentUser?.role === "super_admin" ? showingDeleted : false,
-            offset,
-            limit,
-            sort_by: sortBy,
-            sort_order: sortOrder,
-          }),
-
-          ...countRequests,
-        ]);
-
-        if (usersResult.status === "rejected") {
-          throw usersResult.reason;
-        }
-
-        const response = usersResult.value.data || usersResult.value;
+        const response = usersResponse.data || usersResponse;
 
         setUsers(response.users || []);
 
@@ -367,22 +351,11 @@ const Users = () => {
           },
         );
 
-        const nextCounts = {
-          super_admin: 0,
-          admin: 0,
-          worker: 0,
-        };
+        const counts = response.role_counts || {};
 
-        countResults.forEach((result, index) => {
-          if (result.status === "fulfilled") {
-            const role = STAFF_ROLES[index];
-            const countData = result.value?.data || result.value || {};
-
-            nextCounts[role] = countData.pageInfo?.total || 0;
-          }
-        });
-
-        setRoleCounts(nextCounts);
+        setRoleCounts(
+          Object.fromEntries(STAFF_ROLES.map((role) => [role, Number(counts[role] || 0)])),
+        );
       } catch (error) {
         toast.error(error?.response?.data?.message || "Foydalanuvchilarni olishda xato.");
       } finally {

@@ -231,6 +231,11 @@ const UsageBar = ({ label, value, limit, tone = "red" }) => {
     100,
   );
 
+  // Limit ishni to'xtatmaydi — korxona undan oshib ketishi mumkin. Shuning
+  // uchun oshgani shu yerda ko'rinishi kerak: aks holda biz buni faqat
+  // hisob-kitob paytida, ya'ni kech bilib qolamiz.
+  const over = Number(limit || 0) > 0 && Number(value || 0) > Number(limit);
+
   return (
     <Box>
       <Box
@@ -254,12 +259,13 @@ const UsageBar = ({ label, value, limit, tone = "red" }) => {
 
         <Typography
           sx={{
-            color: "var(--aa-text)",
+            color: over ? "#8c1d2b" : "var(--aa-text)",
             fontSize: 9,
             fontWeight: 700,
           }}
         >
           {number(value)} / {number(limit)}
+          {over ? ` · +${number(Number(value) - Number(limit))}` : ""}
         </Typography>
       </Box>
 
@@ -279,7 +285,11 @@ const UsageBar = ({ label, value, limit, tone = "red" }) => {
             height: "100%",
             borderRadius: 99,
 
-            background: colors[tone] || colors.red,
+            // Oshib ketgan chiziq yo'l-yo'l bo'ladi: to'la chiziq "aynan
+            // limitda" degan ma'noni beradi va oshganini yashirib qo'yardi.
+            background: over
+              ? "repeating-linear-gradient(45deg,#8c1d2b,#8c1d2b 4px,#c25464 4px,#c25464 8px)"
+              : colors[tone] || colors.red,
           }}
         />
       </Box>
