@@ -39,6 +39,8 @@ import {
   updateExpense,
 } from "../../api/finance";
 import { hasPermission } from "../../utils/permissions";
+import { money } from "../../utils/format";
+import { formatNumber as number } from "../../utils/format";
 
 const isoDate = (value = new Date()) => value.toISOString().slice(0, 10);
 
@@ -64,10 +66,6 @@ const getLocalUser = () => {
     return null;
   }
 };
-
-const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
-
-const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const displayDate = (value) => {
   if (!value) return "-";

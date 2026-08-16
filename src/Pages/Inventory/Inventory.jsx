@@ -52,6 +52,7 @@ import { getUsers } from "../../api/getUsers";
 import { getDepartments } from "../../api/departments";
 import FinishedGoodsList from "./FinishedGoodsList";
 import { hasPermission } from "../../utils/permissions";
+import { quantity } from "../../utils/format";
 
 const emptyMovement = {
   warehouse_id: "",
@@ -103,11 +104,6 @@ const itemTypeLabel = (type) => (type === "product" ? "Mahsulot" : "Xomashyo");
 
 const warehouseTypeLabel = (type) =>
   type === "product" ? "Tayyor mahsulot" : type === "raw_material" ? "Xomashyo" : "Aralash";
-
-const quantity = (value) =>
-  Number(value || 0).toLocaleString("uz-UZ", {
-    maximumFractionDigits: 3,
-  });
 
 /** Kamomat summasi — manfiy belgi alohida chiziladi, shuning uchun modul. */
 const money = (value) =>

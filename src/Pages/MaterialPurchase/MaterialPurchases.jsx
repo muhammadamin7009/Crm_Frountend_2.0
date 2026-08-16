@@ -45,6 +45,8 @@ import CrmPagination from "../../Components/Common/CrmPagination";
 import { useAuth } from "../../Context/AuthContext";
 import { hasPermission } from "../../utils/permissions";
 import { ENABLE_MULTI_ACCOUNT_SELECTION } from "../../utils/features";
+import { money } from "../../utils/format";
+import { formatNumber as number } from "../../utils/format";
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -126,8 +128,6 @@ const getLocalUser = () => {
   }
 };
 
-const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
-const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const date = (value) => {
   if (!value) return "-";

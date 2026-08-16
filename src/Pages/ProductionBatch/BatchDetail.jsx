@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getProductionBatch } from "../../api/productionBatches";
 import { getWorkerOutputs } from "../../api/workerOutputs";
 import { formatSize } from "./printLabels";
+import { formatNumber } from "../../utils/format";
 
 /**
  * Partiya kartasi — yopiq karobkani ochmasdan ichida nima borligini ko'rsatadi.
@@ -15,8 +16,6 @@ import { formatSize } from "./printLabels";
 
 const formatMoney = (value) =>
   `${new Intl.NumberFormat("uz-UZ").format(Math.round(Number(value || 0)))} so'm`;
-
-const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const formatDate = (value) =>
   value

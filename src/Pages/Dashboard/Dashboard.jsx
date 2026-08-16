@@ -27,6 +27,7 @@ import CheckIcon from "../../images/ui-icons/check.svg";
 import WalletIcon from "../../images/ui-icons/wallet.svg";
 import BoxIcon from "../../images/ui-icons/box.svg";
 import TrendUpIcon from "../../images/ui-icons/trend-up.svg";
+import { formatMoney, formatNumber } from "../../utils/format";
 
 const getLocalUser = () => {
   try {
@@ -35,16 +36,6 @@ const getLocalUser = () => {
     return null;
   }
 };
-
-const formatMoney = (value) => {
-  if (value === null || value === undefined || value === "") {
-    return "0 so'm";
-  }
-
-  return `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
-};
-
-const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const formatDate = (value) => {
   if (!value) return "-";

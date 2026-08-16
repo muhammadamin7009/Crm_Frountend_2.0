@@ -40,6 +40,7 @@ import {
   updateUserImage,
 } from "../../api/getUsers";
 import { hasPermission } from "../../utils/permissions";
+import { formatNumber as number } from "../../utils/format";
 
 const STAFF_ROLES = ["super_admin", "admin", "worker"];
 
@@ -65,8 +66,6 @@ const getLocalUser = () => {
     return null;
   }
 };
-
-const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const formatNameValue = (value = "") =>
   String(value)

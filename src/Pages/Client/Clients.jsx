@@ -39,6 +39,8 @@ import {
   updateUser,
 } from "../../api/getUsers";
 import { hasPermission } from "../../utils/permissions";
+import { money } from "../../utils/format";
+import { formatNumber as number } from "../../utils/format";
 
 const CLIENT_ROLES = ["client", "customer"];
 
@@ -57,10 +59,6 @@ const emptyForm = {
   client_debt_amount: "0",
   client_debt_original: "0",
 };
-
-const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
-
-const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const formatNameValue = (value = "") =>
   String(value)

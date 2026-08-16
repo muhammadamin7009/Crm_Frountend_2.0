@@ -21,10 +21,8 @@ import AlertIcon from "../../images/ui-icons/alert.svg";
 import CoinsIcon from "../../images/ui-icons/coins.svg";
 import TrendUpIcon from "../../images/ui-icons/trend-up.svg";
 import WalletIcon from "../../images/ui-icons/wallet.svg";
-
-const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
-
-const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
+import { money } from "../../utils/format";
+import { formatNumber as number } from "../../utils/format";
 
 const date = (value) => (value ? new Date(value).toLocaleDateString("uz-UZ") : "-");
 

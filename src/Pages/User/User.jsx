@@ -26,6 +26,8 @@ import { getWorkerOutputs } from "../../api/workerOutputs";
 import { getWorkerBalance, getWorkerPayments } from "../../api/workerPayments";
 import { useAuth } from "../../Context/AuthContext";
 import { hasPermission } from "../../utils/permissions";
+import { money } from "../../utils/format";
+import { formatNumber as number } from "../../utils/format";
 
 const roleNames = {
   super_admin: "Super administrator",
@@ -74,10 +76,6 @@ const roleStyles = {
     borderColor: "rgba(216, 206, 193,.16)",
   },
 };
-
-const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
-
-const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const date = (value, withTime = false) => {
   if (!value) return "-";

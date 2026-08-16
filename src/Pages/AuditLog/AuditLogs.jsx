@@ -26,6 +26,7 @@ import { toast } from "react-toastify";
 import Card from "../../Components/UI/AppCard";
 import { getAuditLogs } from "../../api/auditLogs";
 import CrmPagination from "../../Components/Common/CrmPagination";
+import { formatNumber } from "../../utils/format";
 
 const actionNames = {
   POST: "Yaratildi",
@@ -79,8 +80,6 @@ const actionStyles = {
     border: "rgba(140, 29, 43,.18)",
   },
 };
-
-const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const formatDate = (value) => {
   if (!value) return "-";

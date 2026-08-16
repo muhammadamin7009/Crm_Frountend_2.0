@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 
 import Card from "../../Components/UI/AppCard";
 import { getPermissionSettings, updateUserPermissions } from "../../api/permissions";
+import { formatNumber as number } from "../../utils/format";
 
 const roleNames = {
   super_admin: "Super administrator",
@@ -43,8 +44,6 @@ const getImageUrl = (path) => {
 
   return `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
 };
-
-const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const getRequiredViewPermission = (key) => {
   if (!key?.endsWith(".manage")) {

@@ -50,6 +50,7 @@ import {
   updateOrder,
   deleteOrderTask,
 } from "../../api/orders";
+import { money } from "../../utils/format";
 
 const statuses = {
   new: {
@@ -123,7 +124,7 @@ const emptyTask = {
   due_date: "",
   note: "",
 };
-const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
+
 const date = (value) => (value ? new Intl.DateTimeFormat("uz-UZ").format(new Date(value)) : "—");
 
 const StatusChip = ({ value }) => {

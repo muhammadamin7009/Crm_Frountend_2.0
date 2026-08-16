@@ -49,6 +49,7 @@ import {
   updateProductOption,
   uploadProductImage,
 } from "../../api/products";
+import { formatNumber } from "../../utils/format";
 
 const emptyProductForm = {
   category_name: "",
@@ -57,7 +58,6 @@ const emptyProductForm = {
   color: "",
   unit: "par",
   description: "",
-  purchase_price: "",
   sale_price: "",
   is_active: true,
 };
@@ -92,8 +92,6 @@ const formatMoney = (value) => {
 
   return `${new Intl.NumberFormat("uz-UZ").format(Number(value))} so'm`;
 };
-
-const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const formatDate = (value) => {
   if (!value) return "-";
@@ -396,7 +394,6 @@ const Products = () => {
       color: product.color || "",
       unit: "par",
       description: product.description || "",
-      purchase_price: product.purchase_price ?? "",
       sale_price: product.sale_price ?? "",
       is_active: product.is_active ?? true,
     });
@@ -1563,7 +1560,8 @@ const Products = () => {
 
                 <MenuItem value="sale_price">Sotuv narxi</MenuItem>
 
-                {canManage && <MenuItem value="purchase_price">Xarid narxi</MenuItem>}
+                {/* "Xarid narxi" bo'yicha saralash olib tashlandi — u endi
+                    to'ldirilmaydigan eski maydon, yangi mahsulotlarda doim nol. */}
               </TextField>
 
               <TextField
@@ -1797,18 +1795,9 @@ const Products = () => {
                         Sotuv: {formatMoney(product.sale_price)}
                       </Typography>
 
-                      {canManage && (
-                        <Typography
-                          sx={{
-                            mt: 0.4,
-                            color: "var(--aa-text-secondary)",
-                            fontSize: 9.5,
-                            fontWeight: 600,
-                          }}
-                        >
-                          Xarid: {formatMoney(product.purchase_price)}
-                        </Typography>
-                      )}
+                      {/* Tannarx ro'yxatda ko'rsatilmaydi: u har bir mahsulot
+                          uchun ombor harakatlaridan hisoblanadi va mahsulot
+                          sahifasidagi "Tannarx" bo'limida chiqadi. */}
                     </TableCell>
 
                     <TableCell>

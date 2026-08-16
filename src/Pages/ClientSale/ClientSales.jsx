@@ -41,6 +41,7 @@ import { createClientPayment } from "../../api/clientPayments";
 import { getInventoryStock, getWarehouses } from "../../api/inventory";
 import { getFinancialAccounts } from "../../api/finance";
 import { ENABLE_MULTI_ACCOUNT_SELECTION } from "../../utils/features";
+import { formatMoney, formatNumber } from "../../utils/format";
 
 const emptyForm = {
   client_id: "",
@@ -76,16 +77,6 @@ const getLocalUser = () => {
     return null;
   }
 };
-
-const formatMoney = (value) => {
-  if (value === null || value === undefined || value === "") {
-    return "0 so'm";
-  }
-
-  return `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
-};
-
-const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const formatDate = (value) => {
   if (!value) return "-";

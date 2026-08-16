@@ -33,6 +33,7 @@ import {
 import BatchDetail from "./BatchDetail";
 import BatchLabelDialog from "./BatchLabelDialog";
 import { formatSize } from "./printLabels";
+import { formatNumber } from "../../utils/format";
 
 /**
  * Partiyalar sahifasi.
@@ -65,7 +66,7 @@ const STATUS_TONES = {
   cancelled: ["#6e1622", "rgba(140, 29, 43,.10)"],
 };
 
-const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
+
 
 const formatDate = (value) =>
   value

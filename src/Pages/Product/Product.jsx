@@ -35,6 +35,7 @@ import {
 import { createDepartment, getDepartments } from "../../api/departments";
 import { useAuth } from "../../Context/AuthContext";
 import { hasPermission } from "../../utils/permissions";
+import { formatNumber } from "../../utils/format";
 
 const MANAGER_ROLES = ["super_admin", "admin"];
 
@@ -71,8 +72,6 @@ const formatMoney = (value) => {
 
   return `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
 };
-
-const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const formatDate = (value) => {
   if (!value) return "-";
@@ -392,9 +391,14 @@ const Product = () => {
 
   const activeImage = selectedImage || primaryImage?.image_url || "";
 
+  // Tannarx endi `products.purchase_price` dan olinmaydi. U qo'lda yozilgan
+  // eski maydon — yangi mahsulotlarda doim nol turadi va foydani yolg'on
+  // ko'rsatardi. Haqiqiy tannarx sarflangan xomashyodan hisoblanadi.
+  const unitCost = costReport?.produced_pairs > 0 ? Number(costReport.cost_per_pair || 0) : null;
+
   const profitAmount = useMemo(
-    () => Number(product?.sale_price || 0) - Number(product?.purchase_price || 0),
-    [product?.purchase_price, product?.sale_price],
+    () => (unitCost === null ? null : Number(product?.sale_price || 0) - unitCost),
+    [product?.sale_price, unitCost],
   );
 
   const fetchProduct = useCallback(async () => {
@@ -1035,11 +1039,11 @@ const Product = () => {
               tone="green"
             />
 
-            {canManageProduct && (
+            {canManageProduct && unitCost !== null && (
               <HeroMetric
-                label="Xarid narxi"
-                value={formatMoney(product.purchase_price)}
-                helper="Mahsulot tannarxi"
+                label="Tannarx"
+                value={formatMoney(unitCost)}
+                helper="Sarflangan xomashyodan hisoblangan"
                 tone="violet"
               />
             )}
@@ -1223,17 +1227,22 @@ const Product = () => {
               gridTemplateColumns: {
                 xs: "1fr",
 
-                sm: canManageProduct ? "repeat(3,minmax(0,1fr))" : "1fr",
+                // Tannarx va foyda faqat ishlab chiqarish bo'lgandagina
+                // chiziladi — ustunlar soni ko'rinadiganlarga qarab.
+                sm:
+                  canManageProduct && unitCost !== null
+                    ? "repeat(3,minmax(0,1fr))"
+                    : "1fr",
               },
 
               gap: 1.3,
             }}
           >
-            {canManageProduct && (
+            {canManageProduct && unitCost !== null && (
               <PricePanel
-                label="Xarid narxi"
-                value={formatMoney(product.purchase_price)}
-                helper="Mahsulot tannarxi"
+                label="Tannarx"
+                value={formatMoney(unitCost)}
+                helper="Sarflangan xomashyodan hisoblangan"
                 tone="blue"
               />
             )}
@@ -1245,11 +1254,11 @@ const Product = () => {
               tone="green"
             />
 
-            {canManageProduct && (
+            {canManageProduct && profitAmount !== null && (
               <PricePanel
-                label="Narx farqi"
+                label="Bir pardagi foyda"
                 value={formatMoney(profitAmount)}
-                helper="Sotuv va xarid narxi farqi"
+                helper="Sotuv narxi minus hisoblangan tannarx"
                 tone={profitAmount >= 0 ? "green" : "red"}
               />
             )}

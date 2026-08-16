@@ -36,10 +36,8 @@ import { hasPermission } from "../../utils/permissions";
 import { getDashboardSummary, getDashboardTrend } from "../../api/dashboard";
 import { getSetupStatus } from "../../api/setup";
 import KpiBreakdownDialog from "./KpiBreakdownDialog";
-
-const money = (value) => `${new Intl.NumberFormat("uz-UZ").format(Number(value || 0))} so'm`;
-
-const number = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
+import { money } from "../../utils/format";
+import { formatNumber as number } from "../../utils/format";
 
 /**
  * Ombor qoldig'i birliklar kesimida: "1 200 par · 480 juft".

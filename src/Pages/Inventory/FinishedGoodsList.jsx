@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { getFinishedGoods } from "../../api/inventory";
 import { getImageUrl } from "../../utils/imageUrl";
+import { formatNumber } from "../../utils/format";
 
 /**
  * Tayyor mahsulot ombori — model va o'lcham bo'yicha guruhlangan.
@@ -14,8 +15,6 @@ import { getImageUrl } from "../../utils/imageUrl";
  * Variantni faqat rang emas, PADOJ va MATERIAL ham ajratadi — bir xil rangdagi
  * ikki qator har xil padoj bilan omborda aralashmaydi.
  */
-
-const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const cardSx = {
   borderRadius: "16px",

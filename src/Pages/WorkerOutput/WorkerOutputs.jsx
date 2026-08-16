@@ -37,6 +37,7 @@ import {
   getWorkerOutputs,
   updateWorkerOutput,
 } from "../../api/workerOutputs";
+import { formatNumber } from "../../utils/format";
 
 const emptyForm = {
   worker_id: "",
@@ -70,8 +71,6 @@ const formatMoney = (value) => {
 
   return `${new Intl.NumberFormat("uz-UZ").format(Number(value))} so'm`;
 };
-
-const formatNumber = (value) => new Intl.NumberFormat("uz-UZ").format(Number(value || 0));
 
 const formatProductName = (product) => [product?.name, product?.color].filter(Boolean).join(" — ");
 
