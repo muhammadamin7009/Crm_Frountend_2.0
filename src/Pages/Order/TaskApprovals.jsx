@@ -12,6 +12,7 @@ import {
 
 import Card from "../../Components/UI/AppCard";
 import PageHeader from "../../Components/UI/PageHeader";
+import CountTabs from "../../Components/UI/CountTabs";
 import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import {
   approveOrderTask,
@@ -36,6 +37,16 @@ const TaskApprovals = () => {
   const [busyId, setBusyId] = useState(null);
   const [reasons, setReasons] = useState({});
   const [picks, setPicks] = useState({});
+
+  /**
+   * Ikki ish ustma-ust turardi: avval butun tarqatilmagan navbat, undan
+   * keyin tasdiqlar. Navbat o'sgani sari boshliq tasdiqqa yetish uchun
+   * hammasini aylanib o'tardi — kunlik ish shu bilan sekinlashardi.
+   *
+   * Endi ular alohida. Boshlang'ich ko'rinish "tasdiq": kutib turgan ish
+   * boshqa odamni to'xtatib qo'yadi, tarqatish esa kuta oladi.
+   */
+  const [tab, setTab] = useState("approve");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -133,7 +144,18 @@ const TaskApprovals = () => {
         description="Ishni xodimlarga taqsimlang va bajarilganini tasdiqlang. Tasdiqdan keyin ish hisobotiga tushadi, oylik hisoblanadi va xomashyo ombordan yechiladi."
       />
 
-      {!loading && queue.tasks.length > 0 && (
+      {!loading && (
+        <CountTabs
+          value={tab}
+          onChange={setTab}
+          items={[
+            { value: "approve", label: "Tasdiq kutmoqda", count: tasks.length },
+            { value: "assign", label: "Tarqatilmagan ish", count: queue.tasks.length },
+          ]}
+        />
+      )}
+
+      {!loading && tab === "assign" && queue.tasks.length > 0 && (
         <Card sx={{ p: { xs: 2, md: 2.6 } }}>
           <Typography
             sx={{ fontFamily: "var(--aa-display)", fontSize: 18, color: "var(--aa-text)" }}
@@ -277,6 +299,14 @@ const TaskApprovals = () => {
         <Box sx={{ py: 8, display: "grid", placeItems: "center" }}>
           <CircularProgress size={30} sx={{ color: "var(--aa-brand-800)" }} />
         </Box>
+      ) : tab === "assign" ? (
+        queue.tasks.length ? null : (
+          <Card sx={{ py: 6, textAlign: "center" }}>
+            <Typography sx={{ color: "var(--aa-text-secondary)", fontSize: 13 }}>
+              Tarqatilmagan ish yo‘q — hammasi xodimlarga biriktirilgan.
+            </Typography>
+          </Card>
+        )
       ) : !tasks.length ? (
         <Card sx={{ py: 6, textAlign: "center" }}>
           <Typography sx={{ color: "var(--aa-text-secondary)", fontSize: 13 }}>

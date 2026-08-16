@@ -229,7 +229,7 @@ const Ratings = () => {
                       key={key}
                       direction={{ xs: "column", sm: "row" }}
                       spacing={{ xs: 0.5, sm: 2 }}
-                      alignItems={{ xs: "flex-start", sm: "center" }}
+                      sx={{ alignItems: { xs: "flex-start", sm: "center" } }}
                     >
                       <Typography sx={{ fontSize: 13.5, minWidth: 130 }}>{label}</Typography>
                       <StarRating
@@ -245,8 +245,7 @@ const Ratings = () => {
                   <Stack
                     direction={{ xs: "column", sm: "row" }}
                     spacing={1.5}
-                    sx={{ mt: 2 }}
-                    alignItems={{ sm: "center" }}
+                    sx={{ mt: 2, alignItems: { sm: "center" } }}
                   >
                     <TextField
                       size="small"

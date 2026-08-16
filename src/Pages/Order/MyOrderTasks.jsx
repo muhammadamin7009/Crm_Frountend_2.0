@@ -6,7 +6,6 @@ import {
   Chip,
   CircularProgress,
   LinearProgress,
-  MenuItem,
   Paper,
   Stack,
   Typography,
@@ -17,6 +16,7 @@ import { CompatTextField as TextField } from "../../Components/UI/MuiCompat";
 import { getMyOrderTasks, updateOrderTaskProgress } from "../../api/orders";
 import TaskFinishDialog from "./TaskFinishDialog";
 import DepartmentMaterials from "./DepartmentMaterials";
+import CountTabs from "../../Components/UI/CountTabs";
 
 const labels = {
   pending: "Navbatda",
@@ -40,6 +40,11 @@ const MyOrderTasks = () => {
   const [savingId, setSavingId] = useState(null);
   const [department, setDepartment] = useState(null);
 
+  // Holat bo'yicha sonlar. Ular filtrdan qat'i nazar to'liq ro'yxatniki —
+  // shuning uchun bitta holatni tanlagan odam boshqasida nechta ish
+  // borligini ko'rib turadi.
+  const [counts, setCounts] = useState({});
+
   // "Tugatish" darhol yopmaydi — avval nima sarflanganini so'raymiz.
   const [finishTask, setFinishTask] = useState(null);
   const page = Math.floor(pageInfo.offset / pageInfo.limit);
@@ -53,6 +58,7 @@ const MyOrderTasks = () => {
         offset: pageInfo.offset,
       });
       setTasks(data.tasks || []);
+      setCounts(data.counts || {});
       setDepartment(data.department || null);
       setPageInfo((current) => ({ ...current, ...(data.pageInfo || {}) }));
     } catch (error) {
@@ -131,14 +137,12 @@ const MyOrderTasks = () => {
         elevation={0}
         sx={{
           p: 2,
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", sm: "2fr 1fr" },
-          gap: 1.5,
           border: "1px solid var(--aa-border)",
           borderRadius: 3,
         }}
       >
         <TextField
+          fullWidth
           size="small"
           label="Zakaz, partiya yoki mahsulot"
           value={filters.q}
@@ -147,24 +151,30 @@ const MyOrderTasks = () => {
             setPageInfo((current) => ({ ...current, offset: 0 }));
           }}
         />
-        <TextField
-          select
-          size="small"
-          label="Holat"
-          value={filters.status}
-          onChange={(event) => {
-            setFilters((current) => ({ ...current, status: event.target.value }));
-            setPageInfo((current) => ({ ...current, offset: 0 }));
-          }}
-        >
-          <MenuItem value="">Barchasi</MenuItem>
-          {Object.entries(labels).map(([value, label]) => (
-            <MenuItem key={value} value={value}>
-              {label}
-            </MenuItem>
-          ))}
-        </TextField>
       </Paper>
+
+      {/* Holat tanlagichi ochiq turadi. Ilgari u ochiladigan ro'yxat ichida
+          edi va odam qaysi holatda nechta ish borligini bilmasdi — natijada
+          uzun ro'yxatni pastga aylanib qidirardi. */}
+      <CountTabs
+        value={filters.status}
+        onChange={(status) => {
+          setFilters((current) => ({ ...current, status }));
+          setPageInfo((current) => ({ ...current, offset: 0 }));
+        }}
+        items={[
+          {
+            value: "",
+            label: "Hammasi",
+            count: Object.values(counts).reduce((sum, n) => sum + Number(n || 0), 0),
+          },
+          ...Object.entries(labels).map(([value, label]) => ({
+            value,
+            label,
+            count: counts[value] || 0,
+          })),
+        ]}
+      />
       {loading ? (
         <Box sx={{ py: 8, textAlign: "center" }}>
           <CircularProgress />
