@@ -256,9 +256,33 @@ const ClientSales = () => {
         )
       : 0;
 
-  const selectedProduct = useMemo(
-    () => products.find((product) => Number(product.id) === Number(form.product_id)),
-    [form.product_id, products],
+  /**
+   * Narx maydonining izohi: standart narx va undan qancha farq qilgani.
+   *
+   * Sotuvchi mahsulotning o'z narxini ko'rib turishi kerak — u zakaz
+   * olishda ko'rinardi, sotuvda esa yo'q edi. Farqni ham yozamiz: 5 000
+   * so'm tushirilganini "180 000" degan raqamning o'zidan bilib bo'lmaydi,
+   * uning uchun standart narxni yoddan bilish kerak edi.
+   */
+  const priceHint = useCallback(
+    (productId, value) => {
+      const product = products.find((item) => Number(item.id) === Number(productId));
+      if (!product) return "Mahsulot tanlanganda narx o'zi tushadi";
+
+      const standard = Number(product.sale_price || 0);
+      const current = Number(value);
+
+      if (value === "" || !Number.isFinite(current) || current === standard) {
+        return `Standart narx: ${formatMoney(standard)}`;
+      }
+
+      const diff = current - standard;
+
+      return `Standart: ${formatMoney(standard)} · ${
+        diff > 0 ? "oshirildi" : "tushirildi"
+      } ${formatMoney(Math.abs(diff))}`;
+    },
+    [products],
   );
 
   const activeWarehouses = useMemo(
@@ -2030,16 +2054,12 @@ const ClientSales = () => {
                 <MoneyTextField
                   required
                   label="Sotish narxi"
-                  disabled={!form.product_id || Number(form.quantity) <= 0}
+                  disabled={!form.product_id}
                   value={form.unit_price}
                   onChange={(event) =>
                     setForm((previous) => ({ ...previous, unit_price: event.target.value }))
                   }
-                  helperText={
-                    selectedProduct
-                      ? `Standart narx: ${formatMoney(selectedProduct.sale_price)}`
-                      : "Mahsulot tanlanganda avtomatik tushadi"
-                  }
+                  helperText={priceHint(form.product_id, form.unit_price)}
                 />
               </>
             )}
@@ -2189,13 +2209,18 @@ const ClientSales = () => {
                       }}
                     />
 
+                    {/* Miqdorga bog'lamaymiz: narxni miqdordan oldin ham
+                        ko'rish va o'zgartirish kerak bo'ladi. Ilgari maydon
+                        miqdor kiritilmaguncha o'chiq turardi va mahsulotning
+                        o'z narxi umuman ko'rinmasdi. */}
                     <MoneyTextField
                       label="Sotish narxi"
-                      disabled={!item.product_id || Number(item.quantity) <= 0}
+                      disabled={!item.product_id}
                       value={item.unit_price}
                       onChange={(event) =>
                         handleSaleItemChange(index, "unit_price", event.target.value)
                       }
+                      helperText={priceHint(item.product_id, item.unit_price)}
                     />
 
                     <Button

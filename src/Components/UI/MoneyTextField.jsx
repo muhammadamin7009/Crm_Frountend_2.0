@@ -9,7 +9,7 @@ import { formatMoneyInput, parseMoneyInput } from "../../utils/money";
  * DIQQAT: `value` ga XOM qiymat berilishi kerak, formatlashni komponent o'zi
  * qiladi. Formatlangan matn uzatilsa qo'sh formatlash bo'ladi.
  */
-const MoneyTextField = ({ value, onChange, slotProps, InputProps, ...props }) => (
+const MoneyTextField = ({ value, onChange, slotProps, InputProps, inputProps, ...props }) => (
   <TextField
     {...props}
     type="text"
@@ -20,17 +20,23 @@ const MoneyTextField = ({ value, onChange, slotProps, InputProps, ...props }) =>
     }}
     slotProps={{
       ...slotProps,
+      // MUI v9 da `inputProps` yo'q — u DOM'ga o'tib ketib konsolda
+      // ogohlantirish chiqarardi. Chaqiruvchilar hammasini o'zgartirish
+      // o'rniga shu yerda qabul qilamiz.
       htmlInput: {
         inputMode: "decimal",
         pattern: "[0-9 ]*",
+        ...inputProps,
         ...slotProps?.htmlInput,
       },
+      // `InputProps` ham MUI v9 da yo'q. Uni TextField'ga uzatgan edik va u
+      // DOM'ga tushib ketardi — konsolda ogohlantirish chiqardi.
       input: {
         endAdornment: <InputAdornment position="end">so‘m</InputAdornment>,
+        ...InputProps,
         ...slotProps?.input,
       },
     }}
-    InputProps={InputProps}
   />
 );
 

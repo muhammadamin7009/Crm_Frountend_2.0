@@ -198,6 +198,34 @@ const Orders = () => {
     () => new Map(products.map((product) => [Number(product.id), product])),
     [products],
   );
+  /**
+   * Narx maydonining izohi — sotuv sahifasidagi bilan bir xil.
+   *
+   * Mahsulotning standart narxi va undan qancha chetlashgani. Zakaz
+   * olayotgan odam "180 000" raqamiga qarab uni oshirgan yoki tushirganini
+   * bilolmaydi, uning uchun standart narxni yoddan bilish kerak edi.
+   */
+  const priceHint = useCallback(
+    (productId, value) => {
+      const product = productById.get(Number(productId));
+      if (!product) return "Mahsulot tanlanganda narx o'zi tushadi";
+
+      const standard = Number(product.sale_price || 0);
+      const current = Number(value);
+
+      if (value === "" || !Number.isFinite(current) || current === standard) {
+        return `Standart narx: ${money(standard)}`;
+      }
+
+      const diff = current - standard;
+
+      return `Standart: ${money(standard)} · ${
+        diff > 0 ? "oshirildi" : "tushirildi"
+      } ${money(Math.abs(diff))}`;
+    },
+    [productById],
+  );
+
   const formTotal = useMemo(
     () =>
       form.items.reduce((sum, item) => {
@@ -1178,10 +1206,11 @@ const Orders = () => {
                 <MoneyTextField
                   size="small"
                   label="Narx"
-                  disabled={!item.product_id || Number(item.quantity) <= 0}
+                  disabled={!item.product_id}
                   value={item.unit_price}
                   onChange={(event) => changeItem(index, "unit_price", event.target.value)}
                   inputProps={{ min: 0 }}
+                  helperText={priceHint(item.product_id, item.unit_price)}
                 />
                 <IconButton
                   disabled={form.items.length === 1}
