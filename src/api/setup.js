@@ -5,3 +5,10 @@ import api from "./axios";
 export const getSetupStatus = () => api.get("/setup/status");
 
 export const runSetupBootstrap = () => api.post("/setup/bootstrap");
+
+// Sexdagi tugallanmagan ish — ishlab turgan korxonani to'xtatmasdan
+// tizimga ko'chirish uchun. Ish haqi hisoblanmaydi, ombor qoldig'iga
+// tegilmaydi: sabablari backenddagi izohlarda.
+export const getOpeningWip = () => api.get("/setup/opening-wip");
+export const createOpeningWip = (data) => api.post("/setup/opening-wip", data);
+export const deleteOpeningWip = (id) => api.delete(`/setup/opening-wip/${id}`);

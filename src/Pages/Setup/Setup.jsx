@@ -7,6 +7,7 @@ import Card from "../../Components/UI/AppCard";
 import PageHeader from "../../Components/UI/PageHeader";
 import { useAuth } from "../../Context/AuthContext";
 import { getSetupStatus, runSetupBootstrap } from "../../api/setup";
+import OpeningWip from "./OpeningWip";
 
 /**
  * Boshlang'ich sozlash.
@@ -383,6 +384,10 @@ const Setup = () => {
           </Box>
         </Card>
       )}
+
+      {/* Poydevor tayyor bo'lgandan keyin: sexda hozir yurgan ish.
+          Undan oldin ko'rsatilsa bo'lim ham, mahsulot ham yo'q bo'ladi. */}
+      {status?.ready && <OpeningWip />}
     </Box>
   );
 };
