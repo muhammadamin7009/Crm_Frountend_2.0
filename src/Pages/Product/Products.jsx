@@ -59,6 +59,13 @@ const emptyProductForm = {
   unit: "par",
   description: "",
   sale_price: "",
+  // Ishlab chiqarish spetsifikatsiyasi — ulgurji xaridor shuni so'raydi
+  // va u korxona saytiga ham shu yerdan chiqadi.
+  upper_material: "",
+  sole_material: "",
+  size_from: "",
+  size_to: "",
+  per_box: "",
   is_active: true,
 };
 
@@ -360,6 +367,13 @@ const Products = () => {
     description: productForm.description.trim() || null,
     // `purchase_price` yuborilmaydi — backend uni qabul qilmaydi.
     sale_price: Number(productForm.sale_price),
+    // Bo'sh qoldirilsa null ketadi — nol emas. Nol "qutida 0 juft"
+    // degan ma'noni berardi.
+    upper_material: productForm.upper_material.trim() || null,
+    sole_material: productForm.sole_material.trim() || null,
+    size_from: productForm.size_from === "" ? null : Number(productForm.size_from),
+    size_to: productForm.size_to === "" ? null : Number(productForm.size_to),
+    per_box: productForm.per_box === "" ? null : Number(productForm.per_box),
     is_active: productForm.is_active,
   });
 
@@ -395,6 +409,11 @@ const Products = () => {
       unit: "par",
       description: product.description || "",
       sale_price: product.sale_price ?? "",
+      upper_material: product.upper_material || "",
+      sole_material: product.sole_material || "",
+      size_from: product.size_from ?? "",
+      size_to: product.size_to ?? "",
+      per_box: product.per_box ?? "",
       is_active: product.is_active ?? true,
     });
 
@@ -1167,6 +1186,78 @@ const Products = () => {
           value={productForm.sale_price}
           onChange={handleProductChange("sale_price")}
         />
+      </Box>
+
+      {/*
+        Ishlab chiqarish spetsifikatsiyasi.
+
+        Ulgurji xaridor rasmga qarab buyurtma bermaydi — u ust material,
+        taglik, o'lcham qatori va qutidagi juft sonini so'raydi. Ilgari bu
+        ma'lumot sotuvchining daftarida turardi va har safar telefon orqali
+        aniqlanardi. Endi mahsulot bilan birga saqlanadi va korxona saytiga
+        ham shu yerdan chiqadi.
+
+        Majburiy emas: mavjud mahsulotlarni bir kunda to'ldirib bo'lmaydi.
+      */}
+      <Box sx={{ mt: 2.2 }}>
+        <Typography
+          sx={{
+            color: "var(--aa-text-tertiary)",
+            fontSize: 11,
+            fontWeight: 600,
+          }}
+        >
+          Spetsifikatsiya — saytda va ulgurji so‘rovda ko‘rinadi
+        </Typography>
+
+        <Box
+          sx={{
+            mt: 1.2,
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+            gap: 1.4,
+          }}
+        >
+          <TextField
+            label="Ust material"
+            placeholder="Tabiiy charm"
+            value={productForm.upper_material}
+            onChange={handleProductChange("upper_material")}
+          />
+
+          <TextField
+            label="Taglik"
+            placeholder="TPR"
+            value={productForm.sole_material}
+            onChange={handleProductChange("sole_material")}
+          />
+
+          <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.4 }}>
+            <TextField
+              type="number"
+              label="O‘lcham (dan)"
+              value={productForm.size_from}
+              onChange={handleProductChange("size_from")}
+              slotProps={{ htmlInput: { min: 15, max: 60 } }}
+            />
+
+            <TextField
+              type="number"
+              label="O‘lcham (gacha)"
+              value={productForm.size_to}
+              onChange={handleProductChange("size_to")}
+              slotProps={{ htmlInput: { min: 15, max: 60 } }}
+            />
+          </Box>
+
+          <TextField
+            type="number"
+            label="Qutida (juft)"
+            value={productForm.per_box}
+            onChange={handleProductChange("per_box")}
+            slotProps={{ htmlInput: { min: 1, max: 999 } }}
+          />
+        </Box>
       </Box>
 
       <Button
