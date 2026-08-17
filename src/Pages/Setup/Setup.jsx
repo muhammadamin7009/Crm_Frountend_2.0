@@ -8,6 +8,7 @@ import PageHeader from "../../Components/UI/PageHeader";
 import { useAuth } from "../../Context/AuthContext";
 import { getSetupStatus, runSetupBootstrap } from "../../api/setup";
 import OpeningWip from "./OpeningWip";
+import SiteContent from "./SiteContent";
 
 /**
  * Boshlang'ich sozlash.
@@ -388,6 +389,9 @@ const Setup = () => {
       {/* Poydevor tayyor bo'lgandan keyin: sexda hozir yurgan ish.
           Undan oldin ko'rsatilsa bo'lim ham, mahsulot ham yo'q bo'ladi. */}
       {status?.ready && <OpeningWip />}
+
+      {/* Sayt matnlari — korxona poydevori qo'yilgach ma'nosi bo'ladi. */}
+      {status?.ready && <SiteContent />}
     </Box>
   );
 };

@@ -12,3 +12,9 @@ export const runSetupBootstrap = () => api.post("/setup/bootstrap");
 export const getOpeningWip = () => api.get("/setup/opening-wip");
 export const createOpeningWip = (data) => api.post("/setup/opening-wip", data);
 export const deleteOpeningWip = (id) => api.delete(`/setup/opening-wip/${id}`);
+
+// Korxona saytining matnlari. Ular butun internetga ko'rinadi, shuning
+// uchun faqat rahbar va administrator tahrirlay oladi.
+export const getSiteContent = () => api.get("/site-content");
+
+export const saveSiteContent = (data) => api.patch("/site-content", data);
