@@ -9,6 +9,7 @@ import { useAuth } from "../../Context/AuthContext";
 import { getSetupStatus, runSetupBootstrap } from "../../api/setup";
 import OpeningWip from "./OpeningWip";
 import SiteContent from "./SiteContent";
+import SiteGallery from "./SiteGallery";
 import SiteLeads from "./SiteLeads";
 
 /**
@@ -394,8 +395,12 @@ const Setup = () => {
       {/* Sayt matnlari — korxona poydevori qo'yilgach ma'nosi bo'ladi. */}
       {status?.ready && <SiteContent />}
 
-      {/* Saytdan kelgan so'rovlar — matnlarning ostida, chunki javob
-          shu yerda: "sayt nima berdi?" */}
+      {/* Galereya — matnlardan keyin: avval nima yozilishi, keyin
+          nima ko'rsatilishi. */}
+      {status?.ready && <SiteGallery />}
+
+      {/* Saytdan kelgan so'rovlar — oxirida, chunki javob shu yerda:
+          "sayt nima berdi?" */}
       {status?.ready && <SiteLeads />}
     </Box>
   );

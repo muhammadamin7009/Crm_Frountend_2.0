@@ -23,3 +23,16 @@ export const saveSiteContent = (data) => api.patch("/site-content", data);
 export const getSiteLeads = (params) => api.get("/site-leads", { params });
 
 export const updateSiteLead = (id, data) => api.patch(`/site-leads/${id}`, data);
+
+// Galereya: har uyacha uchun bitta rasm. Uyachalar ro'yxati backenddan
+// keladi — u yerda topshiriq matni va nisbat ham yozilgan.
+export const getSiteGallery = () => api.get("/site-gallery");
+
+export const uploadSiteGalleryImage = (slot, file) => {
+  const form = new FormData();
+  form.append("image", file);
+
+  return api.post(`/site-gallery/${slot}`, form);
+};
+
+export const deleteSiteGalleryImage = (slot) => api.delete(`/site-gallery/${slot}`);
