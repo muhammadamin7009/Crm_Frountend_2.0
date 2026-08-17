@@ -151,7 +151,9 @@ const SiteContent = () => {
                   // ogohlantirish, kesib qo'yish uchun emas.
                   slotProps={{ htmlInput: { maxLength: field.max } }}
                   helperText={
-                    left < 20 ? `${left} belgi qoldi` : `Ko‘pi bilan ${field.max} belgi`
+                    left < 20
+                      ? `${left} belgi qoldi`
+                      : field.hint || `Ko‘pi bilan ${field.max} belgi`
                   }
                 />
               );

@@ -18,3 +18,8 @@ export const deleteOpeningWip = (id) => api.delete(`/setup/opening-wip/${id}`);
 export const getSiteContent = () => api.get("/site-content");
 
 export const saveSiteContent = (data) => api.patch("/site-content", data);
+
+// Saytdagi formadan kelgan narx so'rovlari.
+export const getSiteLeads = (params) => api.get("/site-leads", { params });
+
+export const updateSiteLead = (id, data) => api.patch(`/site-leads/${id}`, data);
