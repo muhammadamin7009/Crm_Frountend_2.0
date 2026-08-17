@@ -616,7 +616,7 @@ export default function AuthBrandPanel({
               letterSpacing: ".025em",
             }}
           >
-            al-amin.uz · Xavfsiz va ishonchli tizim
+            erp.al-amin.uz · Xavfsiz va ishonchli tizim
           </Typography>
         </Box>
       </Box>

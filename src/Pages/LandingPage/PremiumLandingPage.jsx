@@ -916,7 +916,7 @@ export default function PremiumLandingPage() {
             <Typography>
               © {new Date().getFullYear()} Al-amin ERP. Barcha huquqlar himoyalangan.
             </Typography>
-            <Typography>al-amin.uz · +998 91 571 70 09</Typography>
+            <Typography>erp.al-amin.uz · +998 91 571 70 09</Typography>
           </Box>
 
           {/* Asoschi imzosi — kitob oxiridagi nashriyot qatoridek. */}

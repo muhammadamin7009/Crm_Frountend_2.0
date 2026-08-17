@@ -16,9 +16,18 @@ import { setSession } from "../../utils/auth";
 import {
   getCompanyLogoUrl,
   getCompanySlug,
+  getSlugFromPath,
   normalizeCompanySlug,
   setCompanySlug,
 } from "../../utils/company";
+
+/**
+ * Kod manzildan olinganmi.
+ *
+ * Render paytida bir marta o'qiladi: manzil bu sahifada o'zgarmaydi va
+ * har renderda `window` ga murojaat qilishning ma'nosi yo'q.
+ */
+const slugFromUrl = getSlugFromPath();
 
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
@@ -194,6 +203,19 @@ const Login = () => {
     setUser(data.user);
 
     toast.success("Muvaffaqiyatli tizimga kirdingiz");
+
+    // Manzilda kod bo'lmasa (eski havola, `erp.al-amin.uz/login`) uni
+    // kodli manzilga ko'chiramiz — shunda ishchi keyingi safar to'g'ri
+    // manzilni saqlab qo'yadi.
+    //
+    // To'liq qayta yuklash: `basename` ilova ishga tushganda bir marta
+    // o'rnatiladi va uni `navigate` bilan o'zgartirib bo'lmaydi.
+    const slug = normalizeCompanySlug(data.user?.company_slug) || getCompanySlug();
+
+    if (!slugFromUrl && slug) {
+      window.location.replace(`/${slug}/`);
+      return;
+    }
 
     navigate("/");
   };
@@ -697,6 +719,11 @@ const Login = () => {
                     gap: 2,
                   }}
                 >
+                  {/* Kod manzilda bo'lsa maydon ko'rsatilmaydi — ishchi
+                      uni har kuni qayta yozib o'tirmasin. Qaysi korxonaga
+                      kirayotgani yuqoridagi nom va logotipdan ko'rinadi.
+                      Ro'yxatdan `register` esa qoladi: qiymat baribir
+                      formaga kerak. */}
                   <TextField
                     fullWidth
                     label="Korxona kodi"
@@ -714,7 +741,7 @@ const Login = () => {
                         message: "Faqat kichik harf, raqam va chiziqcha kiriting",
                       },
                     })}
-                    sx={fieldSx}
+                    sx={{ ...fieldSx, display: slugFromUrl ? "none" : undefined }}
                   />
 
                   <TextField
